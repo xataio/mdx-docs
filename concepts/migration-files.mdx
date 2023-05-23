@@ -1,18 +1,18 @@
 ---
 title: Migration files
 navTitle: Migration files
-keywords: ['migration', 'migrating', 'git']
+keywords: ["migration", "migrating", "git"]
 description: How Xata stores migration files and creates a history of migrations
 slug: migration-files
-published: true,
+published: true
 ---
 
 # Migration files
 
 The Xata CLI stores migration files in the `.xata/migrations` folder. The folder contains a list of migration files and the `.ledger` file.
 
-* The `xata pull my_feature` command pulls migrations from your branch and updates the `.ledger` file.
-* The `xata push my_feature` command pushes your migrations to a defined branch.
+- The `xata pull my_feature` command pulls migrations from your branch and updates the `.ledger` file.
+- The `xata push my_feature` command pushes your migrations to a defined branch.
 
 Important: The `.xata/migrations` folder should be committed to your git repository if you plan to use the `xata push`, `xata pull` command or the GitHub integration.
 
