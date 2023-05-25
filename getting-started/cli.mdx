@@ -1,0 +1,180 @@
+---
+title: Command line interface
+navTitle: CLI
+keywords: ["terminal", "term", "commands"]
+description: Xata provides a CLI for working with databases
+slug: dave/cli
+published: true
+---
+
+# Using the Xata CLI
+
+Xata provides a CLI (command line interface) through an **[NPM package](https://www.npmjs.com/package/@xata.io/cli)** that can be installed with any [Node.js](https://nodejs.org/) package manager (npm, yarn or pnpm). The CLI provides tools you'll need to work with Xata databases within your applications.
+
+## Installation
+
+To facilitate work across multiple projects and reduce the number of parameters required for executing commands, we advise installing the CLI globally.
+
+```sh
+npm install -g @xata.io/cli@latest
+```
+
+> If you are installing the Xata CLI on Windows using Powershell, you may need to wrap this part of the install command in quotes: `'@xata.io/cli'`
+
+To confirm your installation went smoothly run the `xata -h` command in your terminal to see a list of commands.
+
+## Authentication
+
+The Xata CLI requires credentials (in the form of an API key) to perform commands on your system and your Xata databases. Similar to installation, we recommend authenticating the application globally across your system to make everything easy. To authenticate in this fashion run the following one-liner in your terminal:
+
+```sh
+xata auth login
+```
+
+Running the above will ask if you want to authenticate using an existing API key or by creating a new key. If this is your first time using Xata, choose to create a new key. The CLI willprompt you to visit the Xata website in your browser where a key will be generated. To instead use an existing key, copy a key you previously created on the [account settings][0] page.
+
+Regardless of the method you chose, Xata generates a file at `~/.config/xata/credentials` to store your API keys. It looks something like this.
+
+```toml
+[default]
+apiKey=xau_some_long_hash
+```
+
+### Authentication profiles
+
+If you are using Xata across many projects with multiple logins, you can optionally set up authentication profiles to run Xata CLI commands through a `--profile` flag. For example, if you want to use Xata for a personal account, not connected to a default work account, create a `personal` profile similar to the following:
+
+```
+xata auth login --profile personal
+```
+
+The `.config/xata/credentials` file will now have a new option.
+
+```toml
+[default]
+apiKey=xau_some_long_hash
+
+[personal]
+apiKey=xau_some_long_hash
+```
+
+After this profile is created, run any CLI command with the `--profile personal` flag to run it against that API key. For example, to create a new Xata project against the personal profile using the init command, run the following:
+
+```sh
+xata init --profile personal
+```
+
+## Commands
+
+The Xata CLI provides a variety of commands for working with your databases. The most up-to-date documentation will be in the CLI itself. You can run `xata -h` in your terminal to get a full list of commands and their accepted parameters. As an introduction, the most common flows are documented below.
+
+### init
+
+Use `xata init` to initialize a Xata database in a project folder. The `init` command creates a `.xatarc` and `.env` file to store Xata credentials for your database. When run without flags, the UI will prompt you to select the workspace and database you wish to init.
+
+```sh
+# To initialize a project using the wizard
+xata init
+```
+
+Several parameters can be passed to the `xata init` command that allow you to bypass the wizard's choices. Run `xata init -h` for a full list.
+
+### codegen
+
+The `xata codegen` command updates the Xata client and optionally creates typings for a TypeScript based project. On its initial run, the CLI generates these files in the `src/xata.ts` directory. Subsequent runs will update the file. Since this file is automated, it is important that you'd edit it directly, but rerun the `xata codegen` command periodically as you make schema updates.
+
+Running `xata pull my_branch` with a provided database branch will automatically run `xata codegen` in the background, updating your client and typings as needed.
+
+### schema
+
+The `xata schema` command provides three sub-commands for interacting with the schema in your current project. For an example, check the [create schema from code][2] recipe. If you edit the schema in the CLI, a `xata pull` command will be run after. If you choose to edit the schema in the web UI, remember to execute `xata pull` to update your existing client with the latest schema.
+
+- `xata schema edit` provides a wizard to edit the schema for a particular database and related tables.
+- `xata schema dump --file filename.json` provides a wizard to print out the existing schema for a particular database in JSON format. It creates a `filename.json` file in the project root.
+- `xata schema upload filename.json` uploads the schema from the local file to the database you choose in the resulting wizard.
+
+Several parameters can be passed to the `xata schema` subcommands that allow you to bypass many of the wizard steps. Run `xata schema -h` for a full list.
+
+### branch
+
+The `xata branch` command allows you to list, create or delete branches on a specific Xata database through an interactive wizard. Here are some common commands.
+
+```bash
+# List all branches available
+xata branch
+
+# Create a new branch from main
+xata branch create my_feature
+
+# Create a new my_feature branch using from_another_branch as the base
+xata branch create my_feature --from from_another_branch
+
+# Delete a branch
+xata branch delete my_feature
+```
+
+Several parameters can be passed to the `xata branch` command that allow you to bypass the wizard's choices. Run `xata branch -h` for a full list.
+
+Note that using the `xata branch` command does not switch your application to use a particular branch. The `.env` file parameter `XATA_BRANCH` will always dictate the current branch in use by the application. For example, if you wanted your application to utilize the `my_feature` branch on your Xata database, you would set up your `.env` file as follows:
+
+```
+XATA_API_KEY=xau_some_long_hash
+XATA_BRANCH=my_feature
+```
+
+### pull
+
+The `xata pull` command pulls down schema changes, generating a migration file along with new typings and client files that your application may require. You need to provide the specific branch that you want to pull. For example, if you wanted to bring in changes from a `my_feature` database branch with your local code you would run:
+
+```sh
+xata pull my_feature
+```
+
+Assuming there are schema edits in that branch, this would update files in `src/xata.ts` and `.xata/migrations`. Several parameters can be passed to the `xata pull` command. Run `xata pull -h` for a full list.
+
+### push
+
+The `xata push` command allows you to push local migration files stored in the `.xata/migrations` folder to your connected Xata database branch, running a migration. This is an advanced feature that should be very rarely used. In almost all cases, making schema changes in the Xata application and then running `xata pull` is the recommended way to perform schema changes in your code. If you are building internal tooling though, you might have reason to use `xata push` to automatic migrations. This can be a destructive action though, so we recommend using the `--dry-run` flag before attempting a xata push.
+
+```sh
+# To perform a dry run of your push against the target_branch
+xata push target_branch --dry-run
+
+# To perform the push
+xata push target_branch
+```
+
+Several parameters can be passed to the `xata push` command that allow you to bypass the wizard's choices. Run `xata push -h` for a full list.
+
+### diff
+
+The `xata diff` command outputs the schema diff between two branches. This is an experimental feature that you should always validate with [Xata's UI application][3]. At a minimum you should provide the two branches you wish to compare. The following would compare the `my_feature` branch against `main`.
+
+```bash
+xata diff my_feature main
+```
+
+Several parameters can be passed to the `xata diff` command. Run `xata diff -h` for a full list.
+
+### random-data
+
+The `xata random-data` command allows you to generate randomized data records to a database. It will not replace records, but add new records on top of what already exists in those tables.
+
+```sh
+xata random-data
+```
+
+Several parameters can be passed to the `xata random-data` command that allow you to bypass the wizard's choices. Run `xata random-data -h` for a full list.
+
+### browse
+
+The `xata browse` command opens the selected database your default browser.
+
+### import
+
+The `xata import` command allows you to import CSV data from a file into a Xata database. An example scenario is documented on the [Import CSV Data][1] page.
+
+[0]: https://app.xata.io/settings
+[1]: /recipes/import-data
+[2]: /recipes/load-schema
+[3]: https://app.xata.io
