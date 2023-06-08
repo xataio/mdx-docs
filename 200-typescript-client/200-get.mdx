@@ -1,10 +1,11 @@
 ---
-sidebar_position: 3
-sidebar_label: Getting Data
-keywords: get, get data, get record, get records, getting record
+title: Getting records with TypeScript
+navTitle: Getting data
+keywords: ["typescript", "get record", "query"]
+description: Code examples for how to query for records with the TypeScript client
+slug: typescript-client/get
+published: true
 ---
-
-# Querying Records
 
 The general form of a query is:
 
@@ -547,7 +548,7 @@ In this case, notice that the `meta.page` objects contains `"more": true`. This 
   const page1 = await xata.db.Users.getPaginated({
     pagination: { size: 2 }
   });
-  
+
   const page2 = await page1.nextPage();
   ```
   ```json
@@ -578,7 +579,7 @@ An example of offset based pagination:
   ```
   ```json
   // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
-  
+
   {
     "page": {
       "offset": 10,

@@ -7,8 +7,6 @@ slug: typescript-client/search
 published: true
 ---
 
-# Full-text search
-
 As you insert data into Xata, it is automatically indexed for full-text search. You can run a search by using the [/search endpoint](/api-reference/db/db_branch_name/tables/table_name/search#free-text-search-in-a-table). While the `/query` endpoint exists only at the table level, the `/search` endpoint exists both at the database branch and the table level, because it is possible to search across table.
 
 The search index is updated asynchronously after each insert/update, meaning that the search results are eventually consistent with the results that you get from the `/query` endpoint. Another fundamental difference to the `/query` endpoint is that `/search` doesn't support following links. This means that for links records you can filter by the ID of the linked record, but not any of the other columns. If you need filter or search by linked columns, other than the ID, it is recommended that you denormalize the data.
