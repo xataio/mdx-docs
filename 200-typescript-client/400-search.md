@@ -1,0 +1,639 @@
+---
+title: Search for records with TypeScript
+navTitle: Search
+keywords: ["typescript", "search"]
+description: Code examples for how to search for xata records using the TypeScript client
+slug: typescript-client/search
+published: true
+---
+
+# Full-text search
+
+As you insert data into Xata, it is automatically indexed for full-text search. You can run a search by using the [/search endpoint](/api-reference/db/db_branch_name/tables/table_name/search#free-text-search-in-a-table). While the `/query` endpoint exists only at the table level, the `/search` endpoint exists both at the database branch and the table level, because it is possible to search across table.
+
+The search index is updated asynchronously after each insert/update, meaning that the search results are eventually consistent with the results that you get from the `/query` endpoint. Another fundamental difference to the `/query` endpoint is that `/search` doesn't support following links. This means that for links records you can filter by the ID of the linked record, but not any of the other columns. If you need filter or search by linked columns, other than the ID, it is recommended that you denormalize the data.
+
+## Searching across tables
+
+The format of a search request at the branch level (across tables) is as follows:
+
+````ts|json
+  ```ts
+  const records = await xata.search.all("<search phrase>", {
+      tables: [
+        {
+          table: "...",
+          target: [...],
+          filter: {...},
+          boosters: [...]
+        },
+        { ... },
+        ...
+      ],
+      fuzziness: 1,
+      prefix: "phrase",
+      highlight: {...}
+  });
+  ```
+  ```json
+  // POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/search
+
+  {
+    "query": "<search phrase>",
+    "tables": [{
+      "table": "...",
+      "filter": {...},
+      "target": [...],
+      "boosters": [...]
+    }, {
+      ...
+    }],
+    "fuzziness": 1,
+    "prefix": "phrase",
+    "highlight": {...}
+  }
+  ```
+````
+
+A simple example, which searches across all tables with default relevancy settings, looks like this:
+
+````ts|json
+  ```ts
+  const results = await xata.search.all("new st")
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "new st"
+  }
+  ```
+````
+
+Which returns results in the following format:
+
+````ts|json
+  ```ts
+  for (const res of results) {
+    // result record
+    console.log(res.record);
+    /*
+    {
+      "email": "carrie@example.com",
+      "id": "rec_cd8s4c0avc42pi67m14g",
+      "name": "Carrie-Anne Moss",
+      "bio": null,
+      "address": null,
+      "team": null
+    }
+    */
+
+    // found in table
+    console.log(res.table);
+    // Users
+
+    // meta information about the result
+    console.log(res.record.xata)
+    /*
+    {
+      "highlight": {
+        "address": {
+          "street": [
+            "123 Main <em>St</em>"
+          ]
+        }
+      },
+      "score": 0.2876821,
+      "table": "Users",
+      "version": 0
+    }
+    */
+  }
+  ```
+  ```json
+  {
+    "records": [
+      {
+        "address": {
+          "street": "123 New St",
+          "zipcode": 12345
+        },
+        "email": "keanu@example.com",
+        "full_name": "Keanu Reeves",
+        "id": "rec_c8stghniqa4ckd0ao9q0",
+        "xata": {
+          "highlight": {
+            "address": {
+              "street": [
+                "123 Main <em>St</em>"
+              ]
+            }
+          },
+          "score": 0.2876821,
+          "table": "Users",
+          "version": 0
+        }
+      }
+    ]
+  }
+  ```
+````
+
+The responses include the special `xata` field, which contains metadata about the result.
+
+The metadata includes:
+
+- the table in which the results was found.
+- the relevancy `score` of the result. See [Relevancy control](#relevancy-control) for more information.
+- the `version` of the record.
+- the `highlight` field, which contains the highlighted search terms.
+
+## Restricting Search By Tables
+
+If you'd like to search only some of the tables in the database, you can specify the tables to search in the `tables` field of the request. It expects an array, for example:
+
+````ts|json
+  ```ts
+    const results = await xata.search.all("new st", {
+      tables: ["Users", "Posts"]
+    })
+
+    // equivalent to:
+    const results = await xata.search.all("new st", {
+      tables: [
+        { table: "Users" },
+        { table: "Posts" }
+    })
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "new st",
+    "tables": ["Users", "Posts"]
+  }
+
+  // equivalent to:
+  {
+    "query": "new st",
+    "tables": [
+      { "table": "Users" },
+      { "table": "Posts" }
+    ]
+  }
+  ```
+````
+
+## Searching in a single table
+
+If you want to search in a single table, it's easier to use the table-level search API. It looks like this:
+
+````ts|json
+  ```ts
+  const records = await xata.db.Users.search("<search phrase>", {
+    target: [...],
+    filter: {...},
+    boosters: [...],
+    fuzziness: 1,
+    prefix: "phrase",
+    highlight: {...}
+  });
+  ```
+  ```json
+  // POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/search
+  {
+    "query": "<search phrase>",
+    "filter": {...},
+    "target": [...],
+    "boosters": [...],
+    "fuzziness": 1,
+    "prefix": "phrase",
+    "highlight": {...}
+  }
+  ```
+````
+
+In other words, the table level settings from the branch-level search API (`filter`, `target`, `boosters`) are top level settings in the per-table search API.
+
+## Fuzziness and Typo Tolerance
+
+By default, Xata searches tolerate typos of one character. You can control this behavior by setting the `fuzziness` parameter, which represents the maximum [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance) for the search terms. Informally, the Levenshtein distance between two words is the minimum number of single-character edits (insertions, deletions or substitutions) required to change one word into the other. Xata accepts 3 possible values:
+
+- `0`: no typo tolerance
+- `1`: one letter changed/added/removed (default)
+- `2`: two letters changed/added/removed
+
+For example, instead of `Keanu` you can search for `kaanu` (one letter replaced) or `kenu` (one letter missing) and still get the same result:
+
+````ts|json
+  ```ts
+  const results = await xata.search.all("kaanu")
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "kaanu"
+  }
+  ```
+````
+
+The above matches `Keanu`. You can disable this typo tolerance by setting the `fuzziness` field to 0:
+
+````ts|json
+  ```ts
+  const results = await xata.search.all("kaanu", { fuzziness: 0 })
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "kaanu",
+    "fuzziness": 0
+  }
+  ```
+````
+
+The above won't match `Keanu`.
+
+You can also increase the `fuzziness` to accept two typos per word:
+
+````ts|json
+  ```ts
+  const results = await xata.search.all("kaano", { fuzziness: 2 })
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "kaano",
+    "fuzziness": 2
+  }
+  ```
+````
+
+The above will match records containing `Keanu`.
+
+## Filtering
+
+Filtering allows you to filter out records before passing them through the search algorithm. The filtering syntax is the same as for the query API, with the limitation that you cannot filter by linked columns.
+
+The filtering is applied at the table level. For example:
+
+````ts|json
+  ```ts
+  const records = await xata.search.all("new st", {
+  tables: [
+      {
+        table: "Users",
+        filter: {
+          "address.city": "New York",
+        },
+      },
+    ],
+  });
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "new st",
+    "tables": [
+      {
+        "table": "Users",
+        "filter": {
+          "address.city": "New York"
+        }
+      }
+    ]
+  }
+  ```
+````
+
+## Targeting specific columns
+
+By default, Xata searches across all columns from the selected tables. You can restrict the search to specific columns by using the `target` field.
+
+````ts|json
+  ```ts
+  const records = await xata.search.all("new st", {
+    tables: [
+      {
+        table: "Users",
+        target: ["name", "address.street"],
+      },
+    ],
+  });
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "new st",
+    "tables": [
+      {
+        "table": "Users",
+        "target": ["name", "address.street"]
+      }
+    ]
+  }
+  ```
+````
+
+## Pagination
+
+The search API provides a configurable page size and offset-based pagination. To skip pages set offset to a multiple of the page size.
+
+For example, here we retrieve the second page of up to `10` search results:
+
+````ts|json
+  ```ts
+  const records = await xata.search.all("new st", {
+    tables: [
+      {
+        table: "Users",
+        target: ["name", "address.street"],
+      },
+    ],
+    page: {
+      size: 10,
+      offset: 10,
+    }
+  });
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "new st",
+    "tables": [
+      {
+        "table": "Users",
+        "target": ["name", "address.street"]
+      }
+    ],
+    "page": {
+      "size": 10,
+      "offset": 10
+    }
+  }
+  ```
+````
+
+## Relevancy control
+
+When using the search API, Xata assigns a relevancy score to each result and the results are returned sorted by their relevancy to the provided query. Behind the scenes,
+Xata uses a [BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm to rank the results. The algorithm takes into account the frequency of the search
+terms in the document, the length of the document, and the frequency of the search terms in the database.
+
+To the relevancy score is returned for each result in the metadata. See [Searching across tables](#searching-across-tables) for sample responses.
+
+You can fine-tune the relevancy of your searches by using column weights and boosters. We recommend using the web UI to experiment with these settings, then use the "Get Code Snippet"
+button to get the code to use in your app.
+
+### Column weights
+
+You can assign an integer weight to each column. The default weight is 1. The higher the weight, the higher the relevancy score will be for matches in that column.
+
+````ts|json
+  ```ts
+  const records = await xata.search.all("matrix", {
+    tables: [
+      {
+        table: "Posts",
+        target: [
+          { column: "title", weight: 5 },
+          { column: "labels", weight: 2 },
+          "*"
+        ],
+      },
+    ],
+  });
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "matrix",
+    "tables": [
+      {
+        "table": "Posts",
+        "target": [
+          {
+            "column": "title",
+            "weight": 5
+          },
+          {
+            "column": "labels",
+            "weight": 2
+          },
+          "*"
+        ]
+      }
+    ]
+  }
+  ```
+````
+
+In the above example, all columns are still targeted (`*` is included in `target`) but the `titles` and `labels` columns are boosted.
+
+### Numeric Booster
+
+The numeric booster allows making use of numeric columns to influence the relevancy score. This is particularly useful when you have columns that
+contain metrics relevant for the relevancy, like "number of stars", or "number of views'.
+
+````ts|json
+  ```ts
+  const records = await xata.search.all("matrix", {
+    tables: [
+      {
+        table: "Posts",
+        boosters: [{ numericBooster: { column: "views", factor: 3 } }],
+      },
+    ]
+  });
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "matrix",
+    "tables": [
+      {
+        "table": "Posts",
+        "boosters": [
+          {
+            "numericBooster": {
+              "column": "views",
+              "factor": 3
+            }
+          }
+        ]
+      }
+    ]
+  }
+  ```
+````
+
+In this example, the `views` column is multiplied with the factor of 3 and then added to the relevancy score.
+
+Additionally, the numeric booster can be configured with the `modifier` parameter which applies on the factor and value of the column before adding it to the item score.
+
+The formula for the application of the modifier in combination with the factor is: `modifier(factor*value)+base_score`
+
+The modifier parameter options are:
+
+- `none`: default
+- `log`: common logarithm (base 10).
+- `log1p`: add 1 then take the common logarithm. This ensures that the output is positive if the value is between 0 and 1.
+- `ln`: natural logarithm (base e).
+- `ln1p`: add 1 then take the natural logarithm. This ensures that the output is positive if the value is between 0 and 1.
+- `square`: raise the value to the power of two.
+- `sqrt`: take the square root of the value.
+- `reciprocal`: reciprocate the value (if the value is `x`, the reciprocal is `1/x`).
+
+````ts|json
+  ```ts
+  const records = await xata.search.all("matrix", {
+    tables: [
+      {
+        table: "Posts",
+        boosters: [{ numericBooster: { column: "views", factor: 3, modifier: "square" } }],
+      },
+    ]
+  });
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "matrix",
+    "tables": [
+      {
+        "table": "Posts",
+        "boosters": [
+          {
+            "numericBooster": {
+              "column": "views",
+              "factor": 3,
+              "modifier": "square"
+            }
+          }
+        ]
+      }
+    ]
+  }
+  ```
+````
+
+In this example, the `views` column is multiplied with the factor of 3, the result is squared and then added to the relevancy score.
+
+### Exact value booster
+
+The exact value booster allows boosting the relevancy of records that have an exact value in a column. This can be useful to boost, for
+example, articles in a given category. Or you can use it to "pin" a particular result at the top of the results.
+
+````ts|json
+  ```ts
+    const records = await xata.search.all("matrix", {
+    tables: [
+      {
+        table: "Posts",
+        boosters: [
+          { valueBooster: { column: "labels", value: "movies", factor: 5 } },
+        ],
+      },
+    ],
+  });
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "matrix",
+    "tables": [
+      {
+        "table": "Posts",
+        "boosters": [
+          {
+            "valueBooster": {
+              "column": "labels",
+              "value": "movies",
+              "factor": 5
+            }
+          }
+        ]
+      }
+    ]
+  }
+  ```
+````
+
+In this example, records that have the label "movies" in the `labels` column will have the factor of 5 added to their relevancy score.
+
+### Date booster
+
+The date booster allows boosting the relevancy of records that have a date in a column depending on the proximity of the date to a particular date. This can
+be used to boost, for example, more recent articles.
+
+````ts|json
+  ```ts
+  const records = await xata.search.all("matrix", {
+    tables: [
+      {
+        table: "Posts",
+        boosters: [
+          {
+            dateBooster: {
+              column: "xata.createdAt",
+              decay: 0.5,
+              scale: "30d",
+              factor: 10
+            }
+          },
+        ],
+      },
+    ]
+  });
+  ```
+  ```json
+  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/search
+
+  {
+    "query": "matrix",
+    "tables": [
+      {
+        "table": "Posts",
+        "boosters": [
+          {
+            "dateBooster": {
+              "column": "xata.createdAt",
+              "decay": 0.5,
+              "scale": "30d",
+              "factor": 10
+            }
+          }
+        ]
+      }
+    ]
+  }
+  ```
+````
+
+The date booster is configured via `origin`, `scale`, and `decay` parameters. The further away from the `origin`,
+the more the score is decayed. The decay function uses an exponential function. The exponential function returns a value between 0 and 1, which is added to the score. This value can be multiplied by the `factor` parameter in order to have a bigger impact.
+
+In the example above, the parameters can be interpreted as: the posts from 30 days ago will be boosted 50% of what
+the equivalent post from today would be boosted.
+
+The parameter definitions are:
+
+- `column`: the column in which to look for the value.
+- `origin`: The datetime from where to apply the score decay function. If it is not specified, the current date and time is used.
+- `scale`: The duration at which distance from origin the score is decayed with factor, using an exponential function. It is formatted as number + units, for example: `5d`, `20m`, `10s`.
+- `decay`: The decay factor to expect at "scale" distance from the "origin".
+- `factor`: The factor to multiply the decayed boost with.
+
+## Next Steps
+
+If you're here, there's a great chance you've completed our guide on working with records. If so, we'd recommend exploring the [API reference](/api-reference) to get more familiar with our API. If not, feel free to visit the pages on [getting data](/typescript-client/get) from a database. Alternatively, we can also look into [updating data](/typescript-client/update), [inserting data](/typescript-client/insert), or [deleting data](/typescript-client/delete). We've got guides for each of these operations.
