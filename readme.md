@@ -35,6 +35,16 @@ The folder structure you create in this repository will transform into a collaps
 
 The following are extra components that can be used within the markdown files.
 
+#### Alerts
+
+Alerts accept a `status` prop.
+
+```tsx
+<Alert status="warning">
+  This feature is Beta. It is still under active development. While we are avoiding breaking changes, we do not guarantee backwards compatibility until the functionality is GA.
+</Alert
+```
+
 #### Images
 
 To make pretty images, utilize the following component. The `variant`, `caption` and `position` are all optional.
