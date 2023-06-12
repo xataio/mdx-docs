@@ -20,7 +20,7 @@ You can create a record like this:
   </SnippetTabList>
   <TabPanels>
     <TabPanel>
-```ts
+```ts title="Typescript"
 const record = await xata.db.Users.create({
   email: "keanu@example.com",
   name: "keanu@example.com"
@@ -28,7 +28,7 @@ const record = await xata.db.Users.create({
 ```
     </TabPanel>
     <TabPanel>
-```json
+```json title="JSON"
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/data
 
 {
