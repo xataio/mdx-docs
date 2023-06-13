@@ -73,7 +73,7 @@ You can create tabbed code blocks by enclosing multiple fenced snippets within `
 
 ```tsx
 <TabbedCode tabs={['Some typescript', 'Some JSON']}>
-~~~
+````markdown
 ```ts
 import { getXataClient } from "./xata";
 
@@ -86,8 +86,8 @@ const data = await client
   .page({ ... })
   .getMany();
 ```
-~~~
-~~~
+````
+````markdown
 ```json
 // POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/query
 
@@ -103,6 +103,6 @@ const data = await client
   }
 }
 ```
-~~~
+````
 </TabbedCode>
 ```
