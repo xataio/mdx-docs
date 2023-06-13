@@ -9,36 +9,34 @@ published: true
 
 The general form of a query is:
 
-<TabbedCode tabs={['ts', 'json']}
+<TabbedCode tabs={['ts', 'json']}>
+```ts
+import { getXataClient } from "./xata";
 
-  ```ts
-  import { getXataClient } from "./xata";
+const client = getXataClient();
+const data = await client
+  .db[table]
+  .select([...])
+  .filter({ ... })
+  .sort({ ... })
+  .page({ ... })
+  .getMany();
+```
+```json
+// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/query
 
-  const client = getXataClient();
-  const data = await client
-    .db[table]
-    .select([...])
-    .filter({ ... })
-    .sort({ ... })
-    .page({ ... })
-    .getMany();
-  ```
-  ```json
-  // POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/query
-
-  {
-    "columns": [...],
-    "filter": {
-      ...
-    },
-    "sort": {
-      ...
-    },
-    "page": {
-    }
+{
+  "columns": [...],
+  "filter": {
+    ...
+  },
+  "sort": {
+    ...
+  },
+  "page": {
   }
-  ```
-
+}
+```
 </TabbedCode>
 
 For the REST API example, note that a POST request is used, even though the data is not modified, in order to be able to use a body for the request ([GET requests with a body are non-standard](https://www.rfc-editor.org/rfc/rfc2616#section-4.3)).
