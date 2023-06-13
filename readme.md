@@ -47,20 +47,10 @@ Alerts accept a `status` prop.
 
 #### Images
 
-To make pretty images, utilize the following component. The `variant`, `caption` and `position` are all optional.
+Images using typical markdown syntax will transform into ones that will work with the Next JS / Vercel pipeline. Images can exist anywhere within this repo, but should be relative to the document they are referenced in
 
-The `variant` prop accepts `random` or any camelCase name from [web gradients](https://webgradients.com/)
-
-```tsx
-<ArticleImage
-  src="https://xata.io/images/blog/auth_js/diagram.png"
-  width="954"
-  height="420"
-  alt="Diagram mapping how authentication will work in our app"
-  caption="Our auth architecture"
-  variant="crystalRiver"
-  position="center"
-/>
+```
+![My image](../images/my-image.png)
 ```
 
 #### Video
