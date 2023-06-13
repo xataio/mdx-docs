@@ -42,7 +42,7 @@ Alerts accept a `status` prop.
 ```tsx
 <Alert status="warning">
   This feature is Beta. It is still under active development. While we are avoiding breaking changes, we do not guarantee backwards compatibility until the functionality is GA.
-</Alert
+</Alert>
 ```
 
 #### Images
@@ -61,3 +61,44 @@ When including video in your MDX, utilize the following component. `platform` ac
 <ArticleVideo platform="html" src="https://xata.io/images/blog/launch/search.mp4" autoplay loop />
 ```
 
+#### Code syntax
+
+Snippets can have the following syntax on the first line to enable various abilities
+
+```
+tsx  title="my/file.tsx" showLineNumbers {3-5,7} /highlightWord/
+```
+
+You can create tabbed code blocks by enclosing multiple fenced snippets within `<TabbedCode>`.
+
+```tsx
+<TabbedCode tabs={['Some typescript', 'Some JSON']}>
+```ts
+import { getXataClient } from "./xata";
+
+const client = getXataClient();
+const data = await client
+  .db[table]
+  .select([...])
+  .filter({ ... })
+  .sort({ ... })
+  .page({ ... })
+  .getMany();
+\`\`\`
+\`\`\`json
+// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/query
+
+{
+  "columns": [...],
+  "filter": {
+    ...
+  },
+  "sort": {
+    ...
+  },
+  "page": {
+  }
+}
+\`\`\`
+</TabbedCode>
+```
