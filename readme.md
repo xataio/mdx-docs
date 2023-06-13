@@ -69,40 +69,10 @@ Snippets can have the following syntax on the first line to enable various abili
 tsx  title="my/file.tsx" showLineNumbers {3-5,7} /highlightWord/
 ```
 
-You can create tabbed code blocks by enclosing multiple fenced snippets within `<TabbedCode>`.
+You can create tabbed code blocks by enclosing multiple fenced snippets within `<TabbedCode>`. This is hard to show because of Markdown inception within this Readme, but the below example would have two triple tick code blocks within the component.
 
 ```tsx
 <TabbedCode tabs={['Some typescript', 'Some JSON']}>
-````markdown
-```ts
-import { getXataClient } from "./xata";
-
-const client = getXataClient();
-const data = await client
-  .db[table]
-  .select([...])
-  .filter({ ... })
-  .sort({ ... })
-  .page({ ... })
-  .getMany();
-```
-````
-````markdown
-```json
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/query
-
-{
-  "columns": [...],
-  "filter": {
-    ...
-  },
-  "sort": {
-    ...
-  },
-  "page": {
-  }
-}
-```
-````
+  {/*  fence based code blocks within */}
 </TabbedCode>
 ```
