@@ -86,6 +86,8 @@ const data = await client
   .page({ ... })
   .getMany();
 ```
+~~~
+~~~
 ```json
 // POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/query
 
