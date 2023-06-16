@@ -2,7 +2,7 @@
 title: Examples
 navTitle: Examples
 keywords: ['examples']
-description: 
+description: Description
 slug: python-sdk/examples
 published: true
 ---
@@ -104,7 +104,7 @@ print(record.status_code)
 
 ## Insert records in bulk
 
-The Bulk Processor is a helpful tool for performing bulk operations using the Xata Python client. It abstracts away the complexity of managing bulk operations, making it easier to perform large-scale insert operations. Using the [Bulk Processor](/python-sdk/bulk-processor) is recommended  for bulk operations in Xata.
+The Bulk Processor is a helpful tool for performing bulk operations using the Xata Python client. It abstracts away the complexity of managing bulk operations, making it easier to perform large-scale insert operations. Using the [Bulk Processor](/python-sdk/bulk-processor) is recommended for bulk operations in Xata.
 
 ```python
 from xata.client import XataClient
@@ -153,9 +153,9 @@ print(user.status_code)
 
 ## Handling RFC 3339 dates
 
-To use the [`datetime`](/concepts/data-model#datetime) data type in Xata, you must provide an [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) compliant string. 
+To use the [`datetime`](/concepts/data-model#datetime) data type in Xata, you must provide an [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) compliant string.
 
-The Xata SDK provides a convenient `to_rfc3339()` helper function to simplify the submission of Python native [`datetime`](https://docs.python.org/3/library/datetime.html) values. You can pass the `datetime` object as a parameter to the helper function, and it will convert the value to a RFC 3339 compliant string. 
+The Xata SDK provides a convenient `to_rfc3339()` helper function to simplify the submission of Python native [`datetime`](https://docs.python.org/3/library/datetime.html) values. You can pass the `datetime` object as a parameter to the helper function, and it will convert the value to a RFC 3339 compliant string.
 
 To specify a timezone, you can do so by using the optional `timezone` argument. If no timezone is specified, UTC time is applied by default.
 
@@ -166,7 +166,7 @@ The `to_rfc3339()` helper function was introduced with the [`v0.9.0`](https://gi
 from xata.helpers import to_rfc339
 from datetime import datetime
 
-# 
+#
 my_date = datetime.strptime("2023-03-20 13:42:00", "%Y-%m-%d %H:%M:%S")
 print(to_rfc339(my_date))
 > "2023-03-20T13:42:00+00:00"
