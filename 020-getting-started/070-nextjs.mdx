@@ -135,8 +135,9 @@ export default function PostsListPage() {
 To fix the error we'll need to utilize the Xata client in Next.js's server-side mode. This can be done with the `getServerSideProps` function that Next.js provides. On save, you'll notice the page still errors.
 
 <Alert status="warning">
-  Error: Error serializing `.records[0].pubDate` returned from `getServerSideProps` in "/posts". Reason: `object` ("[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
-<Alert>
+  Error: Error serializing `.records[0].pubDate` returned from `getServerSideProps` in "/posts". Reason: `object`
+  ("[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
+</Alert>
 
 ```tsx
 // highlight 4-15
