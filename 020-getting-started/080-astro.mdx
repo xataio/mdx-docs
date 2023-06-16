@@ -1,0 +1,203 @@
+---
+title: Astro with Xata starter guide
+keywords: ['astro']
+description: Get started with Astro and Xata
+slug: getting-started/astro
+published: true
+---
+
+In this tutorial we'll create a new Xata database and query it using [Astro][2]. Before you begin you will need a user account. If you haven't done so already, please [sign up or log in][0].
+
+## Create a new database
+
+From the [Xata UI][0], create a new database called `my-xata-app`, assigning it to your closest region.
+
+Next create a basic `Posts` table with the following basic schema:
+
+- `title`: A `string` column.
+- `body`: A `long text` column.
+- `pubDate`: A `date` column
+
+Then use the `generate random data` button on the bottom of the screen to populate it with some random data. Your table should look like the screenshot below. This is all we need to do within the UI. The rest of this tutorial will cover the CLI and Next.js code we'll need to write to interact with the database we just set up.
+
+![Posts table](images/posts.png)
+
+## Install the Xata CLI
+
+Xata comes with a CLI (command line tool) to help connect your project code to Xata. It does this by setting up environment variables for your database location and API keys to securely fetch against your data. We recommend installing Xata globally to make this easier. The Xata client is delivered through [npm](https://nodejs.dev/en/download/) which you'll need to have installed before this step.
+
+```bash
+# Installs the CLI globally
+npm install -g @xata.io/cli
+```
+
+### Authenticate the CLI to your account
+
+The CLI needs to know who is running it. This means authenticating it against our logged in user and generating an API key to use when we push, pull or create any databases we make. To set this up run:
+
+```bash
+xata auth login
+```
+
+This should open your browser and give a confirmation message. Remember to make sure you are logged in to Xata before performing this step. On completion this command will create a new API key for your user account which you should [see in account settings page within the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for each OS). It should look like this:
+
+```toml
+# .config/xata/credentials
+[default]
+apiKey=YOUR_API_KEY_HERE
+```
+
+## Create a new Astro app
+
+To start lets create a new Astro project. Set it up with typescript support so that we can utilize the SDK later in this tutorial. Move to that directory, and run `npm run` to see your website at http://localhost:3000
+
+```bash
+npm create astro@latest
+```
+
+For the purpose of this tutorial, we're going to assume you named this project `my-xata-app` and choose to use TypeScript.
+
+### Initialize Xata in your your `my-xata-app` directory
+
+Xata needs a few things to communicate with the databases we set up. It needs to know the location of the database, along with the API key it can use to request data from that location. These are stored in the project root directory within `.env` and `.xatarc` respectively. We can use the newly installed CLI to initialize any project with these details.
+
+```bash
+# cd into /path-to/my-xata-app
+xata init
+```
+
+This will prompt you to answer some questions about whether you are creating a new database or utilizing an existing one. If you followed the instructions above you should choose to use the existing `my-xata-app` database. Also choose to use `TypeScript codegen` to follow along with this tutorial. On completion the CLI will create `.env`, `.xatarc`, and `src/xata.ts` files within your project folder with the correct credentials to access your database.
+
+Your `.env` file should look something like this.
+
+```bash
+# You should now have a ~/my-xata-project/.env file
+XATA_API_KEY=YOUR_API_KEY_HERE
+XATA_BRANCH=main
+```
+
+Since we set the project up with TypeScript support it also created files that provide typings and functions to call using Xata's TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows.
+
+```json
+// highlight 3
+{
+  "databaseUrl": "https://my-xata-app-database-url"
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}
+```
+
+The `src/xata.ts` includes generated code that typically you should never touch manually. If you change the schema of your `my-xata-app` database, like adding a column to `Posts`, you'll want to run `xata pull` to update the typings within that file.
+
+```bash
+# To update the contents of ~/project/src/.xatarc
+xata pull
+```
+
+## Edit the index.astro file
+
+Astro starts with a mininal setup on its `src/pages/index.astro` file. We'll keep it as is. It should look something like the below.
+
+```tsx
+---
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Astro</h1>
+	</body>
+</html>
+```
+
+First let's import the `getXataClient` function which was provided to us by the `xata init` command that was run earlier. It should have placed the file in `src/xata.ts`. You'll notice that if we save this file, Astro will error out with the following message.
+
+> ❌ Error: Option apiKey is required
+
+```tsx
+// highlight 2-3
+---
+import { getXataClient } from "../xata";
+const xata = getXataClient();
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Astro</h1>
+	</body>
+</html>
+```
+
+This error occurs because the Xata client is being called directly in the browser where the API key is not set. We can fix this a few different ways but the easiest is to import the key from `.env` key when calling the client. Rather than use the `getXataClient()` function directly from the `src/xata.ts` file, let's instead make our own wrapping function that passes the key in the options.
+
+```tsx
+// highlight 2-3
+---
+import { XataClient } from "../xata";
+const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>Astro</h1>
+	</body>
+</html>
+```
+
+After refreshing we'll notice we have no more errors. At this point it should be easy to query the `Posts` table.
+
+```tsx
+// highlight 4,17-23
+---
+import { XataClient } from "../xata";
+const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
+const records = await xata.db.Posts.getMany();
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<h1>My posts</h1>
+		{records.map((record) => (
+				<div>
+					<h2>{record.title}</h2>
+					<p>{record.body}</p>
+					<p>{record.pubDate}</p>
+				</div>
+		))}
+	</body>
+</html>
+```
+
+At this point you should have a basic understanding of how to query Xata records from the Database with Astro. Note that this method will only return records on build. If you need to wanted to output the same method dynamically, we'd need to utilize Astro's server-side rendering.
+
+[0]: https://app.xata.io
+[1]: https://app.xata.io/settings
+[2]: https://astro.build
