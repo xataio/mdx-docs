@@ -64,7 +64,7 @@ When this data is stored in PostgreSQL and Elasticsearch, the objects are flatte
 
 As a result, the underlying PostgreSQL table might look something like this:
 
-```
+```bash
   Column  |  Type   | Collation | Nullable | Default | Storage  | Stats target | Description
 ----------+---------+-----------+----------+---------+----------+--------------+-------------
  _id      | text    |           | not null |         | extended |              |
@@ -137,7 +137,7 @@ Another typical challenge with logical replication is that the number of events 
 
 Xata exposes its functionality over a RESTful-like API. A sample query with a filter looks like this:
 
-```json
+```jsonc
 // POST /db/tutorial:main/tables/Users/query
 {
   "filter": {
@@ -149,7 +149,7 @@ Xata exposes its functionality over a RESTful-like API. A sample query with a fi
 
 A simple free-text-search request looks something like this:
 
-```json
+```jsonc
 // POST /db/tutorial:main/tables/Users/search
 {
   "query": "keanu",
@@ -162,7 +162,7 @@ A simple free-text-search request looks something like this:
 
 And an aggregation request looks something like this:
 
-```json
+```jsonc
 // POST /db/tutorial:main/tables/Users/aggregate
 {
   "aggs": {
