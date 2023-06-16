@@ -4,9 +4,13 @@ This repository contains the guide oriented documentation at xata.io/docs. It do
 
 PRs are welcome in this repository. Any merges will trigger a build that will update the statically generated website. Our docs use [MDX](https://mdxjs.com/) syntax, which adds some extra features to typical Markdown.
 
+### Linting
+
+There's a hefty dose of linting through `eslint`, `prettier` and `remark`. If you'd like to see lint errors as you work run `pnpm install` as you work.
+
 ### Frontmatter
 
-Each MDX document needs to include the following frontmatter at the top of the page. Most fields should be self-explanatory.
+Each MDX document needs to include the following frontmatter at the top of the page. Most fields should be self-explanatory. The `doc.schema.yaml` file defines its shape.
 
 ```yaml
 ---
