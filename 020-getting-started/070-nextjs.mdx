@@ -111,7 +111,11 @@ export default function PostsListsPage() {
 
 Next let's import the `getXataClient` function which was provided to us by the `xata init` command that was run earlier. It should have placed the file in `src/xata.ts`. You'll notice that if we save this file, Next.js will error out with the following message.
 
-> ❌ Error: You are trying to use Xata from the browser, which is potentially a non-secure environment. If you understand the security concerns, such as leaking your credentials, pass `enableBrowser: true` to the client options to remove this error.
+<Alert status="warning">
+  Error: You are trying to use Xata from the browser, which is potentially a non-secure environment. If you understand
+  the security concerns, such as leaking your credentials, pass `enableBrowser: true` to the client options to remove
+  this error.
+</Alert>
 
 ```tsx
 // highlight 1-3
@@ -130,7 +134,9 @@ export default function PostsListPage() {
 
 To fix the error we'll need to utilize the Xata client in Next.js's server-side mode. This can be done with the `getServerSideProps` function that Next.js provides. On save, you'll notice the page still errors.
 
-> ❌ Error: Error serializing `.records[0].pubDate` returned from `getServerSideProps` in "/posts". Reason: `object` ("[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
+<Alert status="warning">
+  Error: Error serializing `.records[0].pubDate` returned from `getServerSideProps` in "/posts". Reason: `object` ("[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
+<Alert>
 
 ```tsx
 // highlight 4-15
