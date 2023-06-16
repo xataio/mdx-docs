@@ -1,0 +1,109 @@
+---
+title: Schema
+navTitle: Schema
+keywords: ['schema']
+description: TODO
+slug: concepts/schema
+published: true
+---
+
+Xata databases are described by a **schema**. A schema describes each table in the database, and the relationships between tables. Xata schemas are expressed as code in JSON and used by our internal systems, as well as the [Command Line Interface](/getting-started/cli) to work with your database.
+
+## Understanding the Schema
+
+Let's look at a JSON representation of a sample Xata schema to understand how it describes a database.
+
+```json
+{
+  "tables": [
+    {
+      "name": "teams",
+      "columns": [
+        {
+          "name": "name",
+          "type": "string",
+          "unique": true
+        },
+        {
+          "name": "labels",
+          "type": "multiple"
+        },
+        {
+          "name": "owner",
+          "type": "link",
+          "link": {
+            "table": "users"
+          }
+        }
+      ]
+    },
+    {
+      "name": "users",
+      "columns": [
+        {
+          "name": "email",
+          "type": "email"
+        },
+        {
+          "name": "full_name",
+          "type": "string"
+        },
+        {
+          "name": "address",
+          "type": "object",
+          "columns": [
+            {
+              "name": "street",
+              "type": "string"
+            },
+            {
+              "name": "zipcode",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "team",
+          "type": "link",
+          "link": {
+            "table": "teams"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### `tables`
+
+The `tables` field is an array (a collection) of objects, each representing a table. Every table has a unique `name`, and a set of `columns`. Table names must be case-insensitive unique within a database schema. Each column is described by the following set of fields.
+
+These fields are **required**:
+
+- `name`: A unique name for the column. Valid column names contain only alphanumerics and the '-', '\_', or '~' characters. Column names must be case-insensitive unique in a table.
+- `type`: The type of data intended to be stored in this column. For a detailed description of each column type, please see the [Column Types](/concepts/data-model#column-types) section.
+
+These fields are **optional**:
+
+- `unique`: A boolean value answering the question "is every value in this column expected to be unique?"
+- `notNull`: A boolean value answering the question "is this column exected to have data?"
+- `defaultValue`: The default value of the column, if nothing is provided.
+
+## Loading the Schema from a File
+
+You can initialize a Xata database with a schema from a JSON file by passing it to the init command:
+
+```bash
+xata init --schema=schema.json
+```
+
+For a more complete example see the [API Guide](/typescript-client/overview).
+
+## Editing the Schema
+
+You can edit the schema in a variety of ways:
+
+- From the web UI in the Schema menu or in the Table view.
+- From the [CLI](/getting-started/cli#schema) using commands such as `xata schema edit` or `xata schema upload`.
+- From the Typescript/Javascript SDK using the `XataApiClient`.

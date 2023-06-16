@@ -1,0 +1,217 @@
+---
+title: Next.js with Xata starter guide
+navTitle: Next.js
+keywords: ['nextjs']
+description: Get started with Next.js and Xata
+slug: getting-started/nextjs
+published: true
+---
+
+In this tutorial we'll create a new Xata database and query it using `getServerSideProps()` from [Next.js][2]. Before you begin you will need a user account. If you haven't done so already, please [sign up or log in][0].
+
+## Create a new database
+
+From the [Xata UI][0], create a new database called `my-xata-app`, assigning it to your closest region.
+
+Next create a basic `Posts` table with the following basic schema:
+
+- `title`: A `string` column.
+- `body`: A `long text` column.
+- `pubDate`: A `date` column
+
+Then use the `generate random data` button on the bottom of the screen to populate it with some random data. Your table should look like the screenshot below. This is all we need to do within the UI. The rest of this tutorial will cover the CLI and Next.js code we'll need to write to interact with the database we just set up.
+
+![Posts table](images/posts.png)
+
+## Install the Xata CLI
+
+Xata comes with a CLI (command line tool) to help connect your project code to xata. It does this by setting up environment variables for your database location and API keys to securely fetch against your data. We recommend installing Xata globally to make this easier. The xata client is delivered through [npm](https://nodejs.dev/en/download/) which you'll need to have installed before this step.
+
+```bash
+# Installs the CLI globally
+npm install -g @xata.io/cli
+```
+
+### Authenticate the CLI to your account
+
+The CLI needs to know who is running it. This means authenticating it against our logged in user and generating an API key to use when we push, pull or create any databases we make. To set this up run:
+
+```bash
+xata auth login
+```
+
+This should open your browser and give a confirmation message. Remember to make sure you are logged in to Xata before performing this step. On completion this command will create a new API key for your user account which you should [see in account settings page within the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for each OS). It should look like this:
+
+```toml
+# .config/xata/credentials
+[default]
+apiKey=YOUR_API_KEY_HERE
+```
+
+## Create a new Next.js app
+
+To start lets create a Next.js application. Set it up with typescript support so that we can utilize the SDK later in this tutorial.
+
+```bash
+npx create-next-app@latest --typescript my-xata-app
+```
+
+For the purpose of this tutorial, we're going to assume you named this project `my-xata-app`. Move to that directory, and run `npm run` to see your website at http://localhost:3000
+
+### Initialize Xata in your your `my-xata-app` directory
+
+Xata needs a few things to communicate with the databases we set up. It needs to know the location of the database, along with the API key it can use to request data from that location. These are stored in the project root directory within `.env` and `.xatarc` respectively. We can use the newly installed CLI to initialize any project with these details.
+
+```bash
+# cd into /path-to/my-xata-app
+xata init
+```
+
+This will prompt you to answer some questions about whether you are creating a new database or utilizing an existing one. If you followed the instructions above you should choose to use the existing `my-xata-app` database. Also choose to use `TypeScript codegen` to follow along with this tutorial. On completion the CLI will create `.env`, `.xatarc`, and `src/xata.ts` files within your project folder with the correct credentials to access your database.
+
+Your `.env` file should look something like this.
+
+```bash
+# You should now have a ~/my-xata-project/.env file
+XATA_API_KEY=YOUR_API_KEY_HERE
+XATA_BRANCH=main
+```
+
+Since we askes for TypeScript support it also created files that provide typings and functions to call using Xata's TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows.
+
+```json
+{
+  "databaseUrl": "https://my-xata-app-database-url"
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}
+```
+
+The `src/xata.ts` includes generated code that typically you should never touch manually. If you change the schema of your `my-xata-app` database, like adding a column to `Posts`, you'll want to run `xata pull` to update the typings within that file.
+
+```bash
+# To update the contents of ~/project/src/.xatarc
+xata pull
+```
+
+## Create a new page to output our posts
+
+Create a new file at `src/pages/posts.tsx` and start with a typical Hello World output. Next JS will render and pages added to the `pages` directory as distinct URL. This means we can find our new page at https://localhost:3000/posts
+
+```tsx
+export default function PostsListsPage() {
+  return (
+    <>
+      <h1>My xata posts</h1>
+    </>
+  );
+}
+```
+
+Next let's import the `getXataClient` function which was provided to us by the `xata init` command that was run earlier. It should have placed the file in `src/xata.ts`. You'll notice that if we save this file, Next.js will error out with the following message.
+
+> ❌ Error: You are trying to use Xata from the browser, which is potentially a non-secure environment. If you understand the security concerns, such as leaking your credentials, pass `enableBrowser: true` to the client options to remove this error.
+
+```tsx
+// highlight 1-3
+import { getXataClient } from '../xata';
+// We'll assign the client to xata to make it easier to call
+const xata = getXataClient();
+
+export default function PostsListPage() {
+  return (
+    <>
+      <h1>My xata posts</h1>
+    </>
+  );
+}
+```
+
+To fix the error we'll need to utilize the Xata client in Next.js's server-side mode. This can be done with the `getServerSideProps` function that Next.js provides. On save, you'll notice the page still errors.
+
+> ❌ Error: Error serializing `.records[0].pubDate` returned from `getServerSideProps` in "/posts". Reason: `object` ("[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
+
+```tsx
+// highlight 4-15
+import { getXataClient, Posts } from '../xata';
+const xata = getXataClient();
+
+// We will make the query to Xata on the server.
+// This will allow the query to read the API_KEY from the .env file
+export const getServerSideProps = async () => {
+  const records: Posts[] = await xata.db.Posts.getMany();
+  return {
+    props: {
+      records: records.map((record) => ({
+        ...record
+      }))
+    }
+  };
+};
+
+export default function PostsListPage() {
+  return (
+    <>
+      <h1>My xata posts</h1>
+    </>
+  );
+}
+```
+
+This error is because Xata stores date fields as an object. To use it within this application we'll need to serialize it to a string before it can be used.
+
+```tsx
+// highlight 6
+// ...
+records: records.map((record) => ({
+  ...record,
+  // We need to convert our date from an object to a string to use it here
+  // If you didn't set up your pubDate column as "not null" Typescript may complain, so we'll add ? after pubDate for this example
+  pubDate: record.pubDate?.toDateString(),
+})),
+// ...
+```
+
+On save our page should contain no errors. The last thing to do is pass our newly created server-side props to the render so we can see the results on the page.
+
+```tsx
+// highlight 16-32
+import { getXataClient, Posts } from '../xata';
+const xata = getXataClient();
+
+export const getServerSideProps = async () => {
+  const records: Posts[] = await xata.db.Posts.getMany();
+  return {
+    props: {
+      records: records.map((record) => ({
+        ...record,
+        pubDate: record.pubDate?.toDateString()
+      }))
+    }
+  };
+};
+
+// Pass the props defined above to the page and map against it
+export default function PostsListPage({ records }: { records: Posts[] }) {
+  return (
+    <>
+      <h1>My xata posts</h1>
+      {records.map((record: Posts) => (
+        <div key={record.id}>
+          <h2>{record.title}</h2>
+          <p>{record.id}</p>
+          <p>{record.body}</p>
+          <p>{record.pubDate}</p>
+        </div>
+      ))}
+    </>
+  );
+}
+```
+
+At this point you should have a basic understanding of how to query Xata records from the Database with Next.js.
+
+[0]: https://app.xata.io
+[1]: https://app.xata.io/settings
+[2]: https://nextjs.org/

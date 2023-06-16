@@ -1,0 +1,184 @@
+---
+title: Python examples
+navTitle: Examples
+keywords: ['examples']
+description: Description
+slug: python-sdk/examples
+published: true
+---
+
+The following examples assume the `client` variable is an instance of `XataClient` with the correct credentials. Please refer to the [Configuration](/python-sdk/overview#configuration) page to learn more about initializing the SDK.
+
+Each endpoint returns an instance of [`requests.Response`](https://requests.readthedocs.io/en/latest/api/#requests.Response). If your query reaches the threshold of concurrent connections, the server will respond with a `429` status code and the SDK will throw a [`RateLimitingException`](https://github.com/xataio/xata-py/blob/main/xata/errors.py#L25).
+
+You can refer to the [API Reference](https://xata-py.readthedocs.io/en/latest/api.html) for the relevant parameters to each method.
+
+More examples are available in the [GitHub repository of the SDK](https://github.com/xataio/xata-py/tree/main/examples), including runnable demo apps for the BulkProcessor, pagination of query results, and leveraging transactions.
+
+## At a glance
+
+Below are the parameters passed to the methods in the following examples:
+
+- `insertRecord`: table name (string), record (dictionary)
+- `insertRecordWithID`: table name (string), record id (string), record (dictionary)
+- `updateRecordWithID`: table name (string), record id (string), record (dictionary)
+- `upsertRecordWithID`: table name (string), record id (string), record (dictionary)
+- `getRecord`: table name (string), record id (string)
+- `deleteRecord`: table name (string), record id (string)
+- `deleteRecord`: table name (string), record id (string)
+- `bulkInsertTableRecords`: table name (string), records (dictionary with records array)
+- `users().getUser()`
+- `to_rfc3339()`: dt (datetime), tz (timezone, default: utc)
+
+## Insert or update new Record
+
+```python
+from xata.client import XataClient
+
+client = XataClient(db_name="my_db")
+
+record = {
+    "name": "Peter Parker",
+    "job": "Spiderman",
+}
+
+# Insert record to table "Avengers" and let Xata generate a record Id
+resp = client.records().insertRecord("Avengers", record)
+assert resp.status_code == 201
+print("Record Id: %s" % resp.json()["id"])
+
+# Insert record to table "Avengers" with your own record Id "spidey-1"
+resp = client.records().insertRecordWithID("Avengers", "spidey-1", record)
+assert resp.status_code == 201
+
+# Update the record with Id "spidey-1" in table "Avengers"
+record["job"] = "your friendly neighborhood spider man"
+resp = client.records().updateRecordWithID("Avengers", "spidey-1", record)
+assert resp.status_code == 200
+
+# Upsert: Update or Insert a record
+record = {
+    "name": "Bruce Banner",
+    "job": "Hulk",
+}
+resp = client.records().upsertRecordWithID("Avengers", "hulk-1", record)
+# On insert status code = 201
+assert resp.status_code == 201
+
+record["job"] = "the incredible hulk"
+resp = client.records().upsertRecordWithID("Avengers", "spidey-1", record)
+# On update status code = 200
+assert resp.status_code == 200
+```
+
+## Get a record from a table
+
+The following example shows how to retrieve a record with the id `spidey`, from the table `Avengers` and how to handle records that do not exist.
+
+```python
+from xata.client import XataClient
+records = XataClient().records()
+
+spiderman = records.getRecord("Avengers", "spidey")
+print(spiderman.json())
+# {"id": "spidey", "name": "Peter Parker", "job": "spiderman"}
+
+# If the record with the Id does not exist, the status code will be 404
+batman = records.getRecord("Avengers", "bruce-wayne")
+print(batman.status_code)
+# 404
+```
+
+## Delete a Record from a Table
+
+```python
+from xata.client import XataClient
+records = XataClient().records()
+
+record = records.deleteRecord("Avengers", "captain-america")
+print(record.status_code)
+# 204
+```
+
+## Insert records in bulk
+
+The Bulk Processor is a helpful tool for performing bulk operations using the Xata Python client. It abstracts away the complexity of managing bulk operations, making it easier to perform large-scale insert operations. Using the [Bulk Processor](/python-sdk/bulk-processor) is recommended for bulk operations in Xata.
+
+```python
+from xata.client import XataClient
+
+client = XataClient(api_key="REDACTED_API_KEY", db_name="my_db", branch_name="feature-042")
+
+avengers = [
+    {"name": "Peter Parker", "job": "Spiderman"},
+    {"name": "Bruce Banner", "job": "Hulk"},
+    {"name": "Steve Rodgers Parker", "job": "Captain America"},
+    {"name": "Tony Stark", "job": "Iron Man"},
+]
+resp = client.records().bulkInsertTableRecords("Avengers", {"records": avengers})
+assert resp.status_code == 200
+```
+
+## Ask AI Endpoint
+
+The `ask` endpoint uses search or similarity search algorithms to find relevant information from your database. Please refer to [this page](/typescript-client/ask) to get more information about the endpoint.
+
+```python
+client = XataClient(api_key="REDACTED_API_KEY", workspace_id="REDACTED_WS_ID")
+client.set_db_and_branch_names("harry-potter", "main")
+
+question_to_ask = "is harry potter able to fly?"
+resp = client.search_and_filter().askTable(my_table_name, {
+    "question": question_to_ask
+})
+
+assert resp.status_code == 200
+print("Answer: %s" % resp.json()["answer"])
+print("Records: %s" % resp.json()["records"])
+```
+
+## Get the current User
+
+```python
+from xata.client import XataClient
+
+client = XataClient()
+
+user = client.users().getUser()
+print(user.status_code)
+# 200
+```
+
+## Handling RFC 3339 dates
+
+To use the [`datetime`](/concepts/data-model#datetime) data type in Xata, you must provide an [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) compliant string.
+
+The Xata SDK provides a convenient `to_rfc3339()` helper function to simplify the submission of Python native [`datetime`](https://docs.python.org/3/library/datetime.html) values. You can pass the `datetime` object as a parameter to the helper function, and it will convert the value to a RFC 3339 compliant string.
+
+To specify a timezone, you can do so by using the optional `timezone` argument. If no timezone is specified, UTC time is applied by default.
+
+The `to_rfc3339()` helper function was introduced with the [`v0.9.0`](https://github.com/xataio/xata-py/releases/tag/v0.9.0) release.
+
+```python
+# import the helper function
+from xata.helpers import to_rfc339
+from datetime import datetime
+
+#
+my_date = datetime.strptime("2023-03-20 13:42:00", "%Y-%m-%d %H:%M:%S")
+print(to_rfc339(my_date))
+> "2023-03-20T13:42:00+00:00"
+
+# with time
+date_without_time = datetime.strptime("2023-03-20", "%Y-%m-%d")
+print(to_rfc339(date_without_time))
+> "2023-03-20T00:00:00+00:00"
+
+# With a timezone
+from pytz import timezone
+
+date_with_tz = datetime.strptime("2023-03-20 13:42:16", "%Y-%m-%d %H:%M:%S")
+tz_europe_vienna = timezone("Europe/Vienna")
+print(to_rfc339(date_with_tz, tz_europe_vienna))
+> "2023-03-20T13:42:16+01:05"
+```
