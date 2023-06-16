@@ -144,7 +144,7 @@ const xata = getXataClient();
 
 This error occurs because the Xata client is being called directly in the browser where the API key is not set. We can fix this a few different ways but the easiest is to import the key from `.env` key when calling the client. Rather than use the `getXataClient()` function directly from the `src/xata.ts` file, let's instead make our own wrapping function that passes the key in the options.
 
-```astro {2-3}
+```astro {2-3} /new XataClient/
 ---
 import { XataClient } from "../xata";
 const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
@@ -166,7 +166,7 @@ const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
 
 After refreshing we'll notice we have no more errors. At this point it should be easy to query the `Posts` table.
 
-```astro {4,17-23} /apiKey/
+```astro {4,17-23}
 ---
 import { XataClient } from "../xata";
 const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
