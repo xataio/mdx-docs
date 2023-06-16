@@ -183,7 +183,7 @@ Example definition:
 
 The `email` type represents an email address. Valid email addresses are not longer than 254 characters and respect this regular expression:
 
-```
+```bash
 ^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@
 [a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?
 (?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$
@@ -249,7 +249,12 @@ produced by any other machine learning model. Once you store the embeddings, you
 
 ### object
 
-> ⚠️ **Warning**: The `object` type will be [deprecated](#what-is-the-deprecation-period) from June 14th, 2023 and will no longer be available after December 13th, 2023. If you are using the `object` type in your workspace, we strongly encourage you to review your implementations and update them accordingly, replacing the `object` type with suitable alternatives as recommended in our [migration options](#object-type-migration) documentation.
+<Alert>
+  The `object` type will be [deprecated](#what-is-the-deprecation-period) from June 14th, 2023 and will no longer be
+  available after December 13th, 2023. If you are using the `object` type in your workspace, we strongly encourage you
+  to review your implementations and update them accordingly, replacing the `object` type with suitable alternatives as
+  recommended in our [migration options](#object-type-migration) documentation.
+</Alert>
 
 The `object` type represents a group of columns. Objects can also be nested multiple times by adding a column of type `object` inside the object. Set `unique` to make sure the objects you insert are unique.
 
