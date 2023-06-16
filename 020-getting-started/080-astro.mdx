@@ -100,7 +100,7 @@ xata pull
 
 Astro starts with a mininal setup on its `src/pages/index.astro` file. We'll keep it as is. It should look something like the below.
 
-```tsx
+```astro
 ---
 ---
 
@@ -120,10 +120,9 @@ Astro starts with a mininal setup on its `src/pages/index.astro` file. We'll kee
 
 First let's import the `getXataClient` function which was provided to us by the `xata init` command that was run earlier. It should have placed the file in `src/xata.ts`. You'll notice that if we save this file, Astro will error out with the following message.
 
-> ❌ Error: Option apiKey is required
+<Alert status="danger">Error: Option apiKey is required</Alert>
 
-```tsx
-// highlight 2-3
+```astro {2-3}
 ---
 import { getXataClient } from "../xata";
 const xata = getXataClient();
@@ -145,8 +144,7 @@ const xata = getXataClient();
 
 This error occurs because the Xata client is being called directly in the browser where the API key is not set. We can fix this a few different ways but the easiest is to import the key from `.env` key when calling the client. Rather than use the `getXataClient()` function directly from the `src/xata.ts` file, let's instead make our own wrapping function that passes the key in the options.
 
-```tsx
-// highlight 2-3
+```astro {2-3}
 ---
 import { XataClient } from "../xata";
 const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
@@ -168,8 +166,7 @@ const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
 
 After refreshing we'll notice we have no more errors. At this point it should be easy to query the `Posts` table.
 
-```tsx
-// highlight 4,17-23
+```astro {4,17-23}
 ---
 import { XataClient } from "../xata";
 const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
