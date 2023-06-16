@@ -405,7 +405,7 @@ This allows the available concurrency slots in the Primary Store to serve write 
 
 In order to change the consistency level from `strong` to `eventual`, you must add the property `consistency: eventual` to your `/query` or `/summarize` request. For example:
 
-<TabbedCode tabs={['TypeScript', 'CURL, 'Python']}>
+<TabbedCode tabs={['TypeScript', 'CURL', 'Python']}>
 ```ts
 const result = await xata.db.Companies.summarize({
   columns: ['exchange', 'ceo'],
