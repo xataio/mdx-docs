@@ -403,6 +403,32 @@ Xata units grant dedicated concurrency slots to the Primary and the eventually c
 
 This allows the available concurrency slots in the Primary Store to serve write operations and queries that purposely retrieve the latest state of content. Thus making it less likely for the operations that use the Primary Store to reach the [concurrency limit](/rest-api/limits) and allowing you to get the best possible performance out of your branch's assigned units by utilizing both Store types.
 
+In order to change the consistency level from `strong` to `eventual`, you must add the property `consistency: eventual` to your `/query` or `/summarize` request. For example:
+
+<TabbedCode tabs={['TypeScript', 'Python']}>
+```ts
+const result = await xata.db.Companies.summarize({
+  columns: ['exchange', 'ceo'],
+  consistency: 'eventual'
+});
+```
+```json
+curl -X POST "https://REDACTED.us-east-1.xata.sh/db/mydb:main/tables/Companies/summarize" \
+  -H "content-type: application/json" \
+  -H "authorization: Bearer xau_REDACTED" \
+  -d '{"columns": ["exchange", "ceo"], "consistency": "eventual"}'
+```
+```python
+resp = self.xata.data().summarizeTable("Companies", {
+  "columns": ["exchange", "ceo"],
+  "consistency": "eventual"
+})
+```
+
+</TabbedCode>
+
+Using `consistency: eventual` is beneficial if you are not bound to real time data. In the given example, you are running a report from yesterday's data. With the delay it is not possible to guarantee consistency or ensure that a record inserted less than 100 milliseconds ago will be part of the result set. By using leveraging `consistency: eventual` for read requests, you are doubling your [concurrency limits](/rest-api/limits).
+
 ## Conclusion
 
 This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/concepts/schema).
