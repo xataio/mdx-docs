@@ -1,13 +1,11 @@
 ---
 title: Auth JS with Xata
 navTitle: Auth JS
-keywords: ['auth']
-description: 
+keywords: ['auth', 'authentication']
+description: TODO
 slug: integrations/auth-js
 published: true
 ---
-
-# Auth JS with Xata
 
 [Auth JS][0] (also known as Next Auth) is a popular open-source library to provide login support to Javascript based applications. It works within the OAuth specification to provide easy to use social login for popular providers like Google, GitHub, Facebook, and others. Xata provides an official adapter that works with Next Auth to allow you to map these logins to a user table within a Xata database.
 
@@ -204,12 +202,12 @@ xata init --schema=./path/to/your/schema.json
 Going to the [Xata web application][1] you should see your new, empty database and table. At this point we now need to set up the API routes to talk to the Xata client. Since this is a Next.js application, we'll do that by adding a new file called `/pages/api/auth/[...nextauth].ts` with the following content.
 
 ```tsx
-import NextAuth from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
-import { XataAdapter } from '@next-auth/xata-adapter'
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import { XataAdapter } from '@next-auth/xata-adapter';
 // When you ran `xata init` it created a `src/xata.ts` that exports the client
-import { XataClient } from '../../../src/xata'
-const client = new XataClient()
+import { XataClient } from '../../../src/xata';
+const client = new XataClient();
 
 export default NextAuth({
   adapter: XataAdapter(client),
@@ -217,10 +215,10 @@ export default NextAuth({
     // Auth JS provides many providers, but we'll only use Google for this demo
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
-    }),
-  ],
-})
+      clientSecret: process.env.GOOGLE_SECRET
+    })
+  ]
+});
 ```
 
 ## Set up your env keys
@@ -246,31 +244,31 @@ If this is your first time working with the Google OAuth client you may be wonde
 4. On completion, make sure to snag the `Client ID` and `Client Secret`
 5. Paste these values into the `.env` file we set up earlier
 
-![Select Oauth from the dropdown](/docs/images/docs/auth/gcp01.png)
+![Select Oauth from the dropdown](docs/gcp01.png)
 
-![Note the credentials and the redirect URI](/docs/images/docs/auth/gcp02.png)
+![Note the credentials and the redirect URI](images/gcp02.png)
 
 ## Test the application
 
 At this point we have everything set up and can run the application.
 
-```
+```bash
 npm run dev
 ```
 
 This should bring up the Auth JS example site. Clicking the sign in button should allow us to log in with our google account and return us back to the homepage.
 
-![Find the sign in button at the top of the page](/docs/images/docs/auth/home.png)
+![Find the sign in button at the top of the page](images/home.png)
 
-![You should be able to select a Google account](/docs/images/docs/auth/choose.png)
+![You should be able to select a Google account](images/choose.png)
 
-![If the callback URI was set, it should send you back to the home page](/docs/images/docs/auth/login.png)
+![If the callback URI was set, it should send you back to the home page](images/login.png)
 
 ## Verify the Xata database contains a user reference
 
 The [Xata web application][2] should now show a new record in the `nextauth_users` table. At this point we can tie the user to other content within our database. Consult the [Auth JS][0] docs for more configuration options. You can set up social and email logins for just about anything.
 
-![Xata should show a new user record](/docs/images/docs/auth/xata.png)
+![Xata should show a new user record](images/xata.png)
 
 [0]: https://next-auth.js.org/
 [1]: https://github.com/nextauthjs/next-auth-example

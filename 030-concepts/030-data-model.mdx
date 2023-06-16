@@ -2,12 +2,10 @@
 title: Data model
 navTitle: Data Model
 keywords: ['data model']
-description: 
+description: TODO
 slug: concepts/how-it-works
 published: true
 ---
-
-# Data Model
 
 Xata has a relational data model, with a strict schema (schemaful) and with support for JSON-like objects. Records are grouped into tables, which are grouped into databases. Xata supports rich column types and relations between tables can be represented via link columns, which are similar to foreign keys.
 
@@ -168,7 +166,6 @@ Example values:
 
 To learn more about automatic tracking of record creation and manipulation, refer to the [`createdAt`](#xata-createdat) and [`updatedAt`](#xata-updatedat) fields, which contain relevant date information.
 
-
 ### bool
 
 The `bool` type represents a boolean.
@@ -252,7 +249,7 @@ produced by any other machine learning model. Once you store the embeddings, you
 
 ### object
 
-> ⚠️ **Warning**: The `object` type will be [deprecated](#what-is-the-deprecation-period) from June 14th, 2023 and will no longer be available after December 13th, 2023. If you are using the `object` type in your workspace, we strongly encourage you to review your implementations and update them accordingly, replacing the `object` type with suitable alternatives as recommended in our [migration options](#object-type-migration) documentation. 
+> ⚠️ **Warning**: The `object` type will be [deprecated](#what-is-the-deprecation-period) from June 14th, 2023 and will no longer be available after December 13th, 2023. If you are using the `object` type in your workspace, we strongly encourage you to review your implementations and update them accordingly, replacing the `object` type with suitable alternatives as recommended in our [migration options](#object-type-migration) documentation.
 
 The `object` type represents a group of columns. Objects can also be nested multiple times by adding a column of type `object` inside the object. Set `unique` to make sure the objects you insert are unique.
 
@@ -345,7 +342,7 @@ The `xata.createdAt` column contains the timestamp of when the row was created. 
 
 ### xata.updatedAt
 
-The `xata.updatedAt` column contains the timestamp of when the row was last updated. 
+The `xata.updatedAt` column contains the timestamp of when the row was last updated.
 
 ## Links and Relations
 
@@ -410,7 +407,6 @@ This allows the available concurrency slots in the Primary Store to serve write 
 
 This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/concepts/schema).
 
-
 ## Object type migration
 
 The `object` type will sunset on December 13th, 2023 as mentioned [here](#object). We recommend you explore various migration options to transition away from this type.
@@ -423,7 +419,7 @@ During the deprecation period, we recommend that users move away from using `obj
 
 Flattening a schema simplifies a database or table structure by removing nested objects. After flattening, all columns are at the same level, making it easier to represent in a tabular format.
 
-You can flatten your table schema by adding the columns from the object column to the table itself. To simplify your table structure, you can incorporate the columns from the object column directly into the table itself, using an underscore (_) to separate them.
+You can flatten your table schema by adding the columns from the object column to the table itself. To simplify your table structure, you can incorporate the columns from the object column directly into the table itself, using an underscore (\_) to separate them.
 
 The column name is defined as follows:
 
@@ -467,7 +463,7 @@ To flatten the structure, the column name should be split into three new columns
 
 ### Option 2: Join table
 
-The second option is to normalize your schema and create a joined table by establishing a [link](#link). For example, if you have a table named `social_content` with a column `profile` of the  type `object`, you can extract the columns of the `profile` object  into their own table. This option is particularly good if you expect that the `profile` table might be linked to from other tables.
+The second option is to normalize your schema and create a joined table by establishing a [link](#link). For example, if you have a table named `social_content` with a column `profile` of the type `object`, you can extract the columns of the `profile` object into their own table. This option is particularly good if you expect that the `profile` table might be linked to from other tables.
 
 ```json
 {
@@ -512,6 +508,7 @@ Create a new table called `profiles` with the same schema as the `object` type:
 ```
 
 Link the `profiles` table in the original `social_content` table:
+
 ```json
 {
   "name": "profile",
@@ -544,13 +541,16 @@ As per [our roadmap](https://xata.io/roadmap), we are working on introducing sup
 ```
 
 Change to the following:
+
 ```json
 {
   "name": "location",
   "type": "text"
 }
 ```
+
 Store the following JSON body:
+
 ```json
 {
   "lat": 47.259659,

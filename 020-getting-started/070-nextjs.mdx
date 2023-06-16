@@ -7,9 +7,6 @@ slug: getting-started/nextjs
 published: true
 ---
 
-
-# Xata with Next.js
-
 In this tutorial we'll create a new Xata database and query it using `getServerSideProps()` from [Next.js][2]. Before you begin you will need a user account. If you haven't done so already, please [sign up or log in][0].
 
 ## Create a new database
@@ -24,7 +21,7 @@ Next create a basic `Posts` table with the following basic schema:
 
 Then use the `generate random data` button on the bottom of the screen to populate it with some random data. Your table should look like the screenshot below. This is all we need to do within the UI. The rest of this tutorial will cover the CLI and Next.js code we'll need to write to interact with the database we just set up.
 
-![Posts table](/docs/images/docs/getting-started/posts.png)
+![Posts table](images/posts.png)
 
 ## Install the Xata CLI
 
@@ -45,7 +42,7 @@ xata auth login
 
 This should open your browser and give a confirmation message. Remember to make sure you are logged in to Xata before performing this step. On completion this command will create a new API key for your user account which you should [see in account settings page within the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for each OS). It should look like this:
 
-```sh
+```toml
 # .config/xata/credentials
 [default]
 apiKey=YOUR_API_KEY_HERE
@@ -93,7 +90,7 @@ Since we askes for TypeScript support it also created files that provide typings
 
 The `src/xata.ts` includes generated code that typically you should never touch manually. If you change the schema of your `my-xata-app` database, like adding a column to `Posts`, you'll want to run `xata pull` to update the typings within that file.
 
-```
+```bash
 # To update the contents of ~/project/src/.xatarc
 xata pull
 ```
@@ -108,7 +105,7 @@ export default function PostsListsPage() {
     <>
       <h1>My xata posts</h1>
     </>
-  )
+  );
 }
 ```
 
@@ -118,16 +115,16 @@ Next let's import the `getXataClient` function which was provided to us by the `
 
 ```tsx
 // highlight 1-3
-import { getXataClient } from '../xata'
+import { getXataClient } from '../xata';
 // We'll assign the client to xata to make it easier to call
-const xata = getXataClient()
+const xata = getXataClient();
 
 export default function PostsListPage() {
   return (
     <>
       <h1>My xata posts</h1>
     </>
-  )
+  );
 }
 ```
 
@@ -137,28 +134,28 @@ To fix the error we'll need to utilize the Xata client in Next.js's server-side 
 
 ```tsx
 // highlight 4-15
-import { getXataClient, Posts } from '../xata'
-const xata = getXataClient()
+import { getXataClient, Posts } from '../xata';
+const xata = getXataClient();
 
 // We will make the query to Xata on the server.
 // This will allow the query to read the API_KEY from the .env file
 export const getServerSideProps = async () => {
-  const records: Posts[] = await xata.db.Posts.getMany()
+  const records: Posts[] = await xata.db.Posts.getMany();
   return {
     props: {
       records: records.map((record) => ({
-        ...record,
-      })),
-    },
-  }
-}
+        ...record
+      }))
+    }
+  };
+};
 
 export default function PostsListPage() {
   return (
     <>
       <h1>My xata posts</h1>
     </>
-  )
+  );
 }
 ```
 
@@ -180,20 +177,20 @@ On save our page should contain no errors. The last thing to do is pass our newl
 
 ```tsx
 // highlight 16-32
-import { getXataClient, Posts } from '../xata'
-const xata = getXataClient()
+import { getXataClient, Posts } from '../xata';
+const xata = getXataClient();
 
 export const getServerSideProps = async () => {
-  const records: Posts[] = await xata.db.Posts.getMany()
+  const records: Posts[] = await xata.db.Posts.getMany();
   return {
     props: {
       records: records.map((record) => ({
         ...record,
-        pubDate: record.pubDate?.toDateString(),
-      })),
-    },
-  }
-}
+        pubDate: record.pubDate?.toDateString()
+      }))
+    }
+  };
+};
 
 // Pass the props defined above to the page and map against it
 export default function PostsListPage({ records }: { records: Posts[] }) {
@@ -209,7 +206,7 @@ export default function PostsListPage({ records }: { records: Posts[] }) {
         </div>
       ))}
     </>
-  )
+  );
 }
 ```
 
