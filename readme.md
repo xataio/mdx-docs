@@ -12,7 +12,7 @@ Each MDX document needs to include the following frontmatter at the top of the p
 ---
 title: Command line interface
 navTitle: CLI
-keywords: ["terminal", "term", "commands", "cli"]
+keywords: ['terminal', 'term', 'commands', 'cli']
 description: Xata provides a CLI for working with databases
 slug: dave/cli
 published: true
@@ -41,7 +41,8 @@ Alerts accept a `status` prop.
 
 ```tsx
 <Alert status="warning">
-  This feature is Beta. It is still under active development. While we are avoiding breaking changes, we do not guarantee backwards compatibility until the functionality is GA.
+  This feature is Beta. It is still under active development. While we are avoiding breaking changes, we do not
+  guarantee backwards compatibility until the functionality is GA.
 </Alert>
 ```
 
@@ -49,9 +50,7 @@ Alerts accept a `status` prop.
 
 Images using typical markdown syntax will transform into ones that will work with the Next JS / Vercel pipeline. Images can exist anywhere within this repo, but should be relative to the document they are referenced in
 
-```
-![My image](../images/my-image.png)
-```
+    ![My image](../images/my-image.png)
 
 #### Video
 
@@ -65,14 +64,10 @@ When including video in your MDX, utilize the following component. `platform` ac
 
 Snippets can have the following syntax on the first line to enable various abilities
 
-```
-tsx  title="my/file.tsx" showLineNumbers {3-5,7} /highlightWord/
-```
+    tsx  title="my/file.tsx" showLineNumbers {3-5,7} /highlightWord/
 
 You can create tabbed code blocks by enclosing multiple fenced snippets within `<TabbedCode>`. This is hard to show because of Markdown inception within this Readme, but the below example would have two triple tick code blocks within the component.
 
 ```tsx
-<TabbedCode tabs={['Some typescript', 'Some JSON']}>
-  {/*  fence based code blocks within */}
-</TabbedCode>
+<TabbedCode tabs={['Some typescript', 'Some JSON']}>{/*  fence based code blocks within */}</TabbedCode>
 ```

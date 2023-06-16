@@ -1,0 +1,35 @@
+properties:
+  title:
+    title: Title
+    description: Used for page title
+    type: string
+    maxLength: 80
+  navTitle:
+    title: NavTitle
+    description: Shorter version of title used for the search result and menu
+    type: string
+    maxLength: 80
+  description:
+    title: Description
+    description: Used for SEO
+    type: string
+    maxLength: 300
+  keywords:
+    title: Keywords
+    description: Used for SEO
+    type: array
+    maxLength: 300
+  slug:
+    title: slug
+    description: URL without forward slash or "docs" prefix
+    type: string
+    maxLength: 300
+  published:
+    description: Whether to list this doc in the menu and search
+    type: boolean
+
+required:
+  - title
+  - description
+  - slug
+  - published
