@@ -117,8 +117,7 @@ Next let's import the `getXataClient` function which was provided to us by the `
   this error.
 </Alert>
 
-```tsx
-// highlight 1-3
+```tsx {1-3}
 import { getXataClient } from '../xata';
 // We'll assign the client to xata to make it easier to call
 const xata = getXataClient();
@@ -139,8 +138,7 @@ To fix the error we'll need to utilize the Xata client in Next.js's server-side 
   ("[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
 </Alert>
 
-```tsx
-// highlight 4-15
+```tsx {4-15}
 import { getXataClient, Posts } from '../xata';
 const xata = getXataClient();
 
@@ -168,8 +166,7 @@ export default function PostsListPage() {
 
 This error is because Xata stores date fields as an object. To use it within this application we'll need to serialize it to a string before it can be used.
 
-```tsx
-// highlight 6
+```tsx {6}
 // ...
 records: records.map((record) => ({
   ...record,
@@ -182,8 +179,7 @@ records: records.map((record) => ({
 
 On save our page should contain no errors. The last thing to do is pass our newly created server-side props to the render so we can see the results on the page.
 
-```tsx
-// highlight 16-32
+```tsx {16-32}
 import { getXataClient, Posts } from '../xata';
 const xata = getXataClient();
 
