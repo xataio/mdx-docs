@@ -1,0 +1,37 @@
+{
+  "name": "mdx-docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext md,mdx"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.42.0",
+    "eslint-config-next": "^13.3.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-mdx": "^2.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "lint-staged": "^13.2.1",
+    "prettier": "^2.8.8",
+    "remark-preset-lint-consistent": "^5.1.2",
+    "remark-preset-lint-markdown-style-guide": "^5.1.3",
+    "remark-preset-lint-recommended": "^6.1.3",
+    "remark-preset-prettier": "^2.0.1",
+    "remark-frontmatter": "^4.0.1",
+    "remark-lint-frontmatter-schema": "^3.15.2"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,mdx,md}": [
+      "prettier --config=.prettierrc.precommit.js --write",
+      "eslint --cache --fix"
+    ],
+    "*.{css,json,md,yml,yaml,mdx,md}": [
+      "prettier --write"
+    ]
+  }
+}

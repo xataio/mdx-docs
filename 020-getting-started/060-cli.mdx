@@ -1,25 +1,25 @@
 ---
 title: Command line interface
 navTitle: CLI
-keywords: ["terminal", "term", "commands", "cli"]
+keywords: ['terminal', 'term', 'commands', 'cli']
 description: Xata provides a CLI for working with databases
-slug: dave/cli
+slug: getting-started/cli
 published: true
 ---
 
-Xata provides a CLI (command line interface) through an **[NPM package](https://www.npmjs.com/package/@xata.io/cli)** that can be installed with any [Node.js](https://nodejs.org/) package manager (npm, yarn or pnpm). The CLI provides tools you'll need to work with Xata databases within your applications.
+# Using the Xata CLI
 
-## Installation Dave
+Xata provides a CLI (command line interface) through an **[NPM package](https://www.npmjs.com/package/@xata.io/cli)** that can be installed with any [Node.js][4] package manager (npm, yarn or pnpm). The CLI provides tools you'll need to work with Xata databases within your applications.
+
+## Installation
 
 To facilitate work across multiple projects and reduce the number of parameters required for executing commands, we advise installing the CLI globally.
 
-```sh
+```bash
 npm install -g @xata.io/cli@latest
 ```
 
-<Alert status="warning">
-If you are installing the Xata CLI on Windows using Powershell, you may need to wrap this part of the install command in quotes: `'@xata.io/cli'`
-</Alert>
+> If you are installing the Xata CLI on Windows using Powershell, you may need to wrap this part of the install command in quotes: `'@xata.io/cli'`
 
 To confirm your installation went smoothly run the `xata -h` command in your terminal to see a list of commands.
 
@@ -27,15 +27,13 @@ To confirm your installation went smoothly run the `xata -h` command in your ter
 
 The Xata CLI requires credentials (in the form of an API key) to perform commands on your system and your Xata databases. Similar to installation, we recommend authenticating the application globally across your system to make everything easy. To authenticate in this fashion run the following one-liner in your terminal:
 
-```sh
+```bash
 xata auth login
 ```
 
 Running the above will ask if you want to authenticate using an existing API key or by creating a new key. If this is your first time using Xata, choose to create a new key. The CLI willprompt you to visit the Xata website in your browser where a key will be generated. To instead use an existing key, copy a key you previously created on the [account settings][0] page.
 
 Regardless of the method you chose, Xata generates a file at `~/.config/xata/credentials` to store your API keys. It looks something like this.
-
-### Three depth
 
 ```toml
 [default]
@@ -46,7 +44,7 @@ apiKey=xau_some_long_hash
 
 If you are using Xata across many projects with multiple logins, you can optionally set up authentication profiles to run Xata CLI commands through a `--profile` flag. For example, if you want to use Xata for a personal account, not connected to a default work account, create a `personal` profile similar to the following:
 
-```
+```bash
 xata auth login --profile personal
 ```
 
@@ -62,7 +60,7 @@ apiKey=xau_some_long_hash
 
 After this profile is created, run any CLI command with the `--profile personal` flag to run it against that API key. For example, to create a new Xata project against the personal profile using the init command, run the following:
 
-```sh
+```bash
 xata init --profile personal
 ```
 
@@ -74,7 +72,7 @@ The Xata CLI provides a variety of commands for working with your databases. The
 
 Use `xata init` to initialize a Xata database in a project folder. The `init` command creates a `.xatarc` and `.env` file to store Xata credentials for your database. When run without flags, the UI will prompt you to select the workspace and database you wish to init.
 
-```sh
+```bash
 # To initialize a project using the wizard
 xata init
 ```
@@ -119,7 +117,7 @@ Several parameters can be passed to the `xata branch` command that allow you to 
 
 Note that using the `xata branch` command does not switch your application to use a particular branch. The `.env` file parameter `XATA_BRANCH` will always dictate the current branch in use by the application. For example, if you wanted your application to utilize the `my_feature` branch on your Xata database, you would set up your `.env` file as follows:
 
-```
+```sh
 XATA_API_KEY=xau_some_long_hash
 XATA_BRANCH=my_feature
 ```
@@ -128,7 +126,7 @@ XATA_BRANCH=my_feature
 
 The `xata pull` command pulls down schema changes, generating a migration file along with new typings and client files that your application may require. You need to provide the specific branch that you want to pull. For example, if you wanted to bring in changes from a `my_feature` database branch with your local code you would run:
 
-```sh
+```bash
 xata pull my_feature
 ```
 
@@ -138,7 +136,7 @@ Assuming there are schema edits in that branch, this would update files in `src/
 
 The `xata push` command allows you to push local migration files stored in the `.xata/migrations` folder to your connected Xata database branch, running a migration. This is an advanced feature that should be very rarely used. In almost all cases, making schema changes in the Xata application and then running `xata pull` is the recommended way to perform schema changes in your code. If you are building internal tooling though, you might have reason to use `xata push` to automatic migrations. This can be a destructive action though, so we recommend using the `--dry-run` flag before attempting a xata push.
 
-```sh
+```bash
 # To perform a dry run of your push against the target_branch
 xata push target_branch --dry-run
 
@@ -162,7 +160,7 @@ Several parameters can be passed to the `xata diff` command. Run `xata diff -h` 
 
 The `xata random-data` command allows you to generate randomized data records to a database. It will not replace records, but add new records on top of what already exists in those tables.
 
-```sh
+```bash
 xata random-data
 ```
 
@@ -177,6 +175,7 @@ The `xata browse` command opens the selected database your default browser.
 The `xata import` command allows you to import CSV data from a file into a Xata database. An example scenario is documented on the [Import CSV Data][1] page.
 
 [0]: https://app.xata.io/settings
-[1]: /recipes/import-data
-[2]: /recipes/load-schema
+[1]: /docs/recipes/import-data
+[2]: /docs/recipes/load-schema
 [3]: https://app.xata.io
+[4]: https://nodejs.org/
