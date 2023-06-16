@@ -166,7 +166,7 @@ const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
 
 After refreshing we'll notice we have no more errors. At this point it should be easy to query the `Posts` table.
 
-```astro {4,17-23}
+```astro {4,17-23} /apiKey/
 ---
 import { XataClient } from "../xata";
 const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
