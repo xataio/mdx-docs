@@ -6,7 +6,7 @@ PRs are welcome in this repository. Any merges will trigger a build that will up
 
 ### Linting
 
-There's a hefty dose of linting through `eslint`, `prettier` and `remark`. If you'd like to see lint errors as you work run `pnpm install` as you work.
+There's a hefty dose of linting through `eslint`, `prettier` and `remark`. If you'd like to see lint errors as you work run `pnpm install` as you work. `husky` should make checks on your commits. Similarly, there are GitHub actions that will run on PRs to this repo.
 
 ### Frontmatter
 
