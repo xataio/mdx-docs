@@ -1,0 +1,62 @@
+name: Docs preview
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Website branch to build from"
+        # TODO: Change default to "main" once we have a stable release
+        default: "docs_migration"
+        type: string
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout website repo
+        uses: actions/checkout@v3
+        with:
+          repository: xataio/website
+          ref: ${{ inputs.branch }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - run: npm i -g vercel@latest
+
+      - id: deploy
+        name: Deploy to Vercel
+        run: vercel deploy --no-wait --token ${{ secrets.VERCEL_TOKEN }} > deploy_url.txt
+        env:
+          VERCEL_ORG_ID: team_lMj2cFnO13wwm6LWz3X5kulx
+          VERCEL_PROJECT_ID: prj_Ax1jCZgyvr6gOAOKY0kfmaBqjvj1
+
+      - name: Get deployment URL
+        id: get-url
+        run: |
+          echo "URL=$(cat deploy_url.txt)" >> $GITHUB_OUTPUT
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        if: github.event_name == 'pull_request'
+        id: find-comment
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "xata-bot"
+          body-includes: Check out the preview at
+
+      - name: Create or update comment of npm release
+        uses: peter-evans/create-or-update-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: |
+            Check out the preview at ${{ steps.get-url.outputs.URL }}
