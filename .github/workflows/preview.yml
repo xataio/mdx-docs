@@ -21,6 +21,7 @@ jobs:
         with:
           repository: xataio/website
           ref: ${{ inputs.branch }}
+          token: ${{ secrets.GIT_TOKEN }}
 
       - uses: actions/setup-node@v3
         with:
