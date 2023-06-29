@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint . --ext md,mdx"
+    "lint": "eslint . --ext md,mdx",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-mdx": "^2.1.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^2.8.8",
     "remark-frontmatter": "^4.0.1",
