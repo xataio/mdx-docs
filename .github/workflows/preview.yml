@@ -31,7 +31,16 @@ jobs:
 
       - id: deploy
         name: Deploy to Vercel
-        run: vercel deploy --no-wait --token ${{ secrets.VERCEL_TOKEN }} --build-env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}' --build-env XATA_PREVIEW=none --build-env XATA_BRANCH=docs_migration --env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}' --env XATA_PREVIEW=none --env XATA_BRANCH=docs_migration > deploy_url.txt
+        run: |
+          vercel deploy --no-wait
+            --token ${{ secrets.VERCEL_TOKEN }}
+            --build-env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}'
+            --env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}'
+            --build-env XATA_PREVIEW=none
+            --env XATA_PREVIEW=none
+            --build-env XATA_BRANCH=docs_migration
+            --env XATA_BRANCH=docs_migration
+            > deploy_url.txt
         env:
           VERCEL_ORG_ID: team_lMj2cFnO13wwm6LWz3X5kulx
           VERCEL_PROJECT_ID: prj_7fENPf4qHhMCnz6j2IGYWDUkJ9wU
