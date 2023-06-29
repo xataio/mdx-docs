@@ -6,8 +6,7 @@ on:
     inputs:
       branch:
         description: "Website branch to build from"
-        # TODO: Change default to "main" once we have a stable release
-        default: "docs_migration"
+        default: "main"
         type: string
 
 jobs:
@@ -21,7 +20,7 @@ jobs:
         with:
           repository: xataio/website
           # TODO: Change branch to "main" once we have a stable release
-          ref: ${{ inputs.branch || 'docs_migration' }}
+          ref: ${{ inputs.branch || 'missing-mdx-compile' }}
           token: ${{ secrets.GIT_TOKEN }}
 
       - uses: actions/setup-node@v3
