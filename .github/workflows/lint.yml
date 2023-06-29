@@ -15,8 +15,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup node
         uses: actions/setup-node@v3
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
       - name: Install Node.js dependencies
         run: pnpm install
       - name: Run linters
