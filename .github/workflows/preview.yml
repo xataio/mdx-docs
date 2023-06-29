@@ -6,21 +6,22 @@ on:
     inputs:
       branch:
         description: "Website branch to build from"
-        # TODO: Change default to "main" once we have a stable release
-        default: "docs_migration"
+        default: "main"
         type: string
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - name: Checkout website repo
         uses: actions/checkout@v3
         with:
           repository: xataio/website
-          ref: ${{ inputs.branch }}
+          # TODO: Change branch to "main" once we have a stable release
+          ref: ${{ inputs.branch || 'missing-mdx-compile' }}
+          token: ${{ secrets.GIT_TOKEN }}
 
       - uses: actions/setup-node@v3
         with:
@@ -30,10 +31,19 @@ jobs:
 
       - id: deploy
         name: Deploy to Vercel
-        run: vercel deploy --no-wait --token ${{ secrets.VERCEL_TOKEN }} > deploy_url.txt
+        run: |
+          vercel deploy --no-wait \
+            --token ${{ secrets.VERCEL_TOKEN }} \
+            --build-env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}' \
+            --env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}' \
+            --build-env XATA_PREVIEW=none \
+            --env XATA_PREVIEW=none \
+            --build-env XATA_BRANCH=docs_migration \
+            --env XATA_BRANCH=docs_migration \
+            > deploy_url.txt
         env:
           VERCEL_ORG_ID: team_lMj2cFnO13wwm6LWz3X5kulx
-          VERCEL_PROJECT_ID: prj_Ax1jCZgyvr6gOAOKY0kfmaBqjvj1
+          VERCEL_PROJECT_ID: prj_7fENPf4qHhMCnz6j2IGYWDUkJ9wU
 
       - name: Get deployment URL
         id: get-url
