@@ -1,3 +1,4 @@
+/* eslint-env node */
 module.exports = {
   extends: ['eslint:recommended', 'prettier', 'plugin:mdx/recommended', 'plugin:prettier/recommended'],
   parserOptions: {
