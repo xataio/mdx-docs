@@ -7,7 +7,7 @@ module.exports = {
     'mdx/code-blocks': true,
     'mdx/language-mapper': {}
   },
-  ignorePatterns: ['node_modules/', 'package.json', 'pnpm-lock.yaml', '.eslintrc.js'],
+  ignorePatterns: ['node_modules/', 'package.json', 'pnpm-lock.yaml'],
   rules: {
     'react/jsx-no-undef': 'off'
   }
