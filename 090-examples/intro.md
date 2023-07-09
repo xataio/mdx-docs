@@ -1,0 +1,23 @@
+---
+sidebar_position: 1
+sidebar_label: Intro
+---
+
+# Xata Examples
+
+Xata is a flexible serverless data platform that supports various application architectures. The examples provided in this section illustrate the implementation of specific functionalities using Xata - ranging from user authentication to image and file uploads and storage. These examples serve as practical guides for solving specific problems while working with Xata.
+
+We highlight real-world open-source applications that are already in production and use Xata. These examples are meant to assist you in learning how to develop your own applications with Xata.
+
+<div className="docs-cards">
+<div className="docs-card-group">
+<a href="/examples/starters-samples" className="docs-card">
+<span>Read About Starters & Samples</span>
+<p>Learn what we mean when we talk about Xata starters and sample apps</p>
+</a>
+<a href="https://github.com/xataio/examples" className="docs-card">
+<span>Explore Examples on GitHub</span>
+<p>Read through a number of starter projects or examples on our examples GitHub repository</p>
+</a>
+</div>
+</div>
