@@ -113,18 +113,18 @@ git checkout my_feature
 
 The Xata CLI creates client and migration files that will vary based upon the database you are pointing to. Due to this we always recommend creating a new `git` branch when making changes to a Xata database's schema.
 
-### Initialize Xata, and create a branch
+### Initialize Xata and create a branch
 
 In the same Xata database that we installed the integrations to, create a new database branch using either the UI or the CLI. Although the name of the branch does not need to match the Git branch we made earlier, it's typically good practice, so we'll use the CLI to make a `my_feature` branch. Xata will assume you are branching from your `main` database branch unless told otherwise.
 
 ```bash
-## If you haven't done so yet, you'll need to do a one-time initialization to let Xata know which database to use
+## If you haven't done so yet, you'll need to do a one-time initialization to let Xata know which database to use:
 xata init
 
-## Once initialized. Create a new a branch from main
+## Once initialized, create a new a branch from main:
 xata branch create my_feature
 
-## The above command is the equivalent of
+## The above command is the equivalent of:
 xata branch create my_feature --from main
 ```
 

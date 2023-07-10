@@ -1,13 +1,13 @@
 ---
 title: How Xata works
-navTitle: How it Works
+navTitle: How Xata works
 keywords: ['cloud service']
 description: TODO
 slug: concepts/how-it-works
 published: true
 ---
 
-Xata is a new type of cloud service: it offers an abstraction layer on top of multiple data stores in order to make application development and operations simpler. We call this type of service a [Serverless Data Platform](/concepts/serverless-data-platform). This document explains the internal architecture of the Xata service, which can be useful to build a correct mental model of Xata. It can also be useful if you want to replicate the same architecture for yourself, which would give you some of the benefits of using Xata.
+Xata is a new type of cloud service: it offers an abstraction layer on top of multiple data stores in order to make application development and operations simpler. We call this type of service a [Serverless Data Platform](/docs/concepts/serverless-data-platform). This document explains the internal architecture of the Xata service, which can be useful to build a correct mental model of Xata. It can also be useful if you want to replicate the same architecture for yourself, which would give you some of the benefits of using Xata.
 
 If you just want to build apps and use the Xata serverless service, you **do not** need to read this document. We’re solving these problems so that you don’t have to.
 
@@ -25,7 +25,7 @@ Xata is a global multi-tenant system, composed of **cells**, each living in a re
 
 While the above architecture is a very common one in the industry, it hasn’t been —until now— productized in a service, which means a lot of teams were forced to either implement something similar to the above or live with reduced functionality.
 
-## Going Global
+## Going global
 
 As we’ve seen above, we call the combination of PostgreSQL + Elasticsearch and the associated services a “cell”. The cells are grouped into regions and form our **data plane**.
 
@@ -39,7 +39,7 @@ Besides the cells, the regions contain other services:
 
 The control plane information (users, workspaces, API keys) are stored in a single central region and then replicated in near real-time to all other regions. This way, we can offer minimal latencies in each geographical area while still maintaining the convenience of a global service.
 
-## Data Model Representation
+## Data model representation
 
 Xata has a relational data model, with a strict schema (schemaful) and with support for JSON-like objects. Records are grouped into tables, which are grouped into databases. Xata supports rich column types and relations between tables can be represented via link columns, which are similar to foreign keys.
 
@@ -92,7 +92,7 @@ We also rely on PostgreSQL to enforce constraints (unique, not null), data size 
 
 Because our data model contains rich types, we know, for example, the difference between a short “string” column (containing a name, or a label) and a “text” column (containing maybe a blog post in markdown). This means we can have sane defaults for representing and indexing those columns in both PostgreSQL and Elasticsearch.
 
-## Branches and Zero-Downtime Migrations
+## Branches and zero-downtime migrations
 
 A database in Xata can have multiple branches, which are first-class citizens in the API. Branches are full logical databases that might or might not exist on the same set of physical instances. When you start a new branch from an existing one, the schema is copied, but the data is not automatically available in the new branch. As you create a development branch from a production branch, you can copy and sanitize parts of the data or initialize the branch with test data.
 
@@ -129,7 +129,7 @@ We are using logical replication events today to replicate the data from Postgre
 
 One interesting challenge with processing replication events is that it’s generally hard to guarantee exactly-once delivery and the ordering of events. Solutions for delivery in order usually imply a single thread of processing. Instead, we have chosen to use version numbers for the records, which are incremented every time a record is updated or deleted. On the consumer side, these versions can be used to both identify duplicate events and to know in which order they are safe to apply.
 
-The version field for a record is stored in a special column, which is exposed in the Xata API because it is also useful for [optimistic concurrency control](/typescript-client/update#optimistic-concurrency-control).
+The version field for a record is stored in a special column, which is exposed in the Xata API because it is also useful for [optimistic concurrency control](/docs/typescript-client/update#optimistic-concurrency-control).
 
 Another typical challenge with logical replication is that the number of events created can become quite large and overwhelm the PostgreSQL replication slot. For example, imagine running a statement `UPDATE foo` with no `WHERE` condition executed against a table with millions of rows. PostgreSQL executes that in a single transaction at the end of which all the rows in the table have been changed and need to be passed through the replication slot. Issues like this make it hard to rely on logical replication in the general case of arbitrary SQL access. Because we control the API, we can ensure that updates and deletes are done in transactions of reasonable size, which can be rate limited in order to protect the system from overload.
 
@@ -190,7 +190,7 @@ While we expect most users to use our high-level SDK clients, which make develop
 
 At the moment, the Xata service doesn’t offer direct access to the PostgreSQL and Elasticsearch instances using their native protocols. The reasons for this might become more clear after reading the following sections, but in short: it allows us to control the underlying schema and what type of queries are possible, and therefore we can ultimately offer our users a new and safer developer experience. For the future, we do have plans to offer SQL support while still maintaining the advantages of mediating access to the underlying stores.
 
-## TypeScript SDK and Type Safety
+## TypeScript SDK and type safety
 
 Xata has official SDKs for TypeScript/Javascript and Python, and the REST API is meant to be used with ease from any programming language. Having said that, the TypeScript SDK is by far the most advanced SDK that we have.
 
@@ -222,7 +222,7 @@ In usage, using the Xata TypeScript SDK is similar to using a typescript ORM, fo
 
 Under the hood, however, the Xata SDK is implemented a bit differently and makes use of recent TypeScript additions to generate the types at run-time. It also has a somewhat simpler problem to solve, because it only needs to talk with the Xata API, not generate SQL. The result of this is that the Xata SDK is very lightweight and has zero dependencies, so it can be used in many JavaScript runtimes including Node.js, Cloudflare Workers, Deno, Electron, etc.
 
-## Edge Caching and Edge Functions (Private Beta)
+## Edge caching and edge functions (Private Beta)
 
 Another interesting aspect of the TypeScript SDK is that it has the notion of plugins. The SDK plugins extend the base functionality and are allowed to use dependencies. It is possible to use such a plugin, for example, to cache the query results in the edge function memory, or even better, in Cloudflare Durable Objects. This makes it easy and cheap for applications to scale reads globally and provide very small latencies at the same time.
 
@@ -261,7 +261,7 @@ export const Home = () => {
 
 Behind the scenes, we’re using [Cloudflare Workers for Platforms](https://blog.cloudflare.com/workers-for-platforms/), but you don’t need a Cloudflare account, it works automatically with your Xata account. The Xata Edge Functions are currently in private Beta, if you are interested to try them out, make sure to reach out to us.
 
-## Data Safety
+## Data safety
 
 Xata is committed to protecting the security and ensuring the availability of user data. To do so, we implement appropriate technical measures and internal organization policies to protect from unauthorized access, data leak or loss.
 
@@ -274,15 +274,15 @@ The same level of security standard applies to internal backups, logs and traces
 
 For disaster recovery and change control purposes, Xata performs frequent backups of user data which is retained only as required and while it continues to have a legitimate purpose for delivering our services to the user.
 
-## Pricing Model
+## Pricing model
 
 Xata uses a **unit** to define the amount of capacity in your database. Billing units provide increments of resources and bandwidth to a branch.
 
 - Each billing unit enables extra capacity per the unit definition in the [Pricing](https://xata.io/pricing) page.
 - By default, every branch is assigned 3 units. Additional units can be purchased in the Usage & Limits section of a branch.
-- In addition to the resources that depend on billing units, there are also [service limits](/rest-api/limits) which are not tied to the number of units assigned on a branch. Some of those limits can be increased or removed under Custom Plans, [contact us](https://support.xata.io/hc/en-us/requests/new) for more details.
+- In addition to the resources that depend on billing units, there are also [service limits](/docs/rest-api/limits) which are not tied to the number of units assigned on a branch. Some of those limits can be increased or removed under Custom Plans, [contact us](https://support.xata.io/hc/en-us/requests/new) for more details.
 
-## Conclusions and Design Principles
+## Conclusions and design principles
 
 At Xata we are taking hard data problems, solve them using the industry's best practices, and then offer them to you in the most easy-to-use way possible.
 

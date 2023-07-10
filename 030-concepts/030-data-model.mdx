@@ -1,6 +1,6 @@
 ---
 title: Data model
-navTitle: Data Model
+navTitle: Data model
 keywords: ['data model']
 description: TODO
 slug: concepts/data-model
@@ -9,9 +9,9 @@ published: true
 
 Xata has a relational data model, with a strict schema (schemaful) and with support for JSON-like objects. Records are grouped into tables, which are grouped into databases. Xata supports rich column types and relations between tables can be represented via link columns, which are similar to foreign keys.
 
-Internally, we are storing the data both in a transactional database (OLTP) as well as in a search/analytics engine (OLAP). This is done transparently for you and the different stores are exposed via the same API. You can read more about how Xata works behind the scenes on the [How it Works](/concepts/how-it-works) page.
+Internally, we are storing the data both in a transactional database (OLTP) as well as in a search/analytics engine (OLAP). This is done transparently for you and the different stores are exposed via the same API. You can read more about how Xata works behind the scenes on the [How it Works](/docs/concepts/how-it-works) page.
 
-Data is organized in "tables" which are grouped into "databases". Tables have a strict [schema](/concepts/schema), which contains a list of columns. Xata supports many column types and the type information is used, among other things, to generate type-safe clients.
+Data is organized in "tables" which are grouped into "databases". Tables have a strict [schema](/docs/concepts/schema), which contains a list of columns. Xata supports many column types and the type information is used, among other things, to generate type-safe clients.
 
 You can represent relations between tables of the same database by using columns with type `link`, and it is possible to "join" tables at query time.
 
@@ -32,7 +32,7 @@ The following is an example of a record that you can store natively in Xata:
 }
 ```
 
-The keys in the JSON are the column names. The values are the data. The coresponding [schema file](/concepts/schema) for the above record looks like this:
+The keys in the JSON are the column names. The values are the data. The coresponding [schema file](/docs/concepts/schema) for the above record looks like this:
 
 ```json
 {
@@ -245,7 +245,7 @@ be defined in the schema, and must be a number between 2 and 10,000. For example
 ```
 
 In the example above we set the dimension to 1536, which is the output dimension produced by the OpenAI embeddings API, however, you can store embeddings
-produced by any other machine learning model. Once you store the embeddings, you can use vector search for a number of use cases, see the [Similarity/Vector search](/typescript-client/vector-search) section for more information.
+produced by any other machine learning model. Once you store the embeddings, you can use vector search for a number of use cases, see the [Similarity/Vector search](/docs/typescript-client/vector-search) section for more information.
 
 ### object
 
@@ -324,7 +324,7 @@ To insert the value for a `link` column, use the target record ID as the value. 
 
 Xata maintains a special set of columns that don't have to be defined in the schema. The `id` and the `xata.*` columns names are reserved and you cannot create your own columns with these names. No other column names are reserved.
 
-The `id` and `xata.*` are not explicitely represented in the [schema](/concepts/schema) file, because they are present for all tables and maintained by Xata.
+The `id` and `xata.*` are not explicitely represented in the [schema]/docs/concepts/schema) file, because they are present for all tables and maintained by Xata.
 
 ### id
 
@@ -333,13 +333,13 @@ The `id` column contains the record ID. It is of type `string`, limited to 255 c
 - globally unique
 - sortable, with the newest record having the highest ID
 
-It is possible to use your own ID values, by using the [insert record with ID API](/typescript-client/insert#creating-a-record-with-a-given-id).
+It is possible to use your own ID values, by using the [insert record with ID API](/docs/typescript-client/insert#creating-a-record-with-a-given-id).
 
 ### xata.version
 
 The `xata.version` column contains the current version of the record. It is of type `int` and it is automatically incremented any time the record is updated. A newly inserted record will have a version of 0.
 
-This column is meant to be use for optimistic concurrency control, see the [dedicated section](/typescript-client/update#optimistic-concurrency-control) for more information.
+This column is meant to be use for optimistic concurrency control, see the [dedicated section](/docs/typescript-client/update#optimistic-concurrency-control) for more information.
 
 ### xata.createdAt
 
@@ -351,7 +351,7 @@ The `xata.updatedAt` column contains the timestamp of when the row was last upda
 
 ## Links and Relations
 
-You can represent 1:N relations between tables by using columns of the `link` type. The value of the link column points to a record in the target table, specified by the ID. At query time, you can easily include columns from the target table by specifying the `"columns"` field in the request. For an example, see [Selecting Columns from the Linked Tables](/typescript-client/get#selecting-columns-from-the-linked-tables).
+You can represent 1:N relations between tables by using columns of the `link` type. The value of the link column points to a record in the target table, specified by the ID. At query time, you can easily include columns from the target table by specifying the `"columns"` field in the request. For an example, see [Selecting Columns from the Linked Tables](/docs/typescript-client/get#selecting-columns-from-the-linked-tables).
 
 It is also possible to use `link` columns that target the same table. For example, you can have a `parent` column that points to the parent record of the current record.
 
@@ -406,7 +406,7 @@ The propagation delay may vary and there is no strict guarantee but it is typica
 
 Xata units grant dedicated concurrency slots to the Primary and the eventually consistent Replica Stores. Read operations performed by the `/query` and `/summarize` endpoints can run against either of the Primary or Replica Stores. While the default method for those operations is `consistency: strong`, so they use the Primary Store to ensure the Xata API returns most accurate data by default, it is strongly advised to use the Replica Store wherever possible.
 
-This allows the available concurrency slots in the Primary Store to serve write operations and queries that purposely retrieve the latest state of content. Thus making it less likely for the operations that use the Primary Store to reach the [concurrency limit](/rest-api/limits) and allowing you to get the best possible performance out of your branch's assigned units by utilizing both Store types.
+This allows the available concurrency slots in the Primary Store to serve write operations and queries that purposely retrieve the latest state of content. Thus making it less likely for the operations that use the Primary Store to reach the [concurrency limit](/docs/rest-api/limits) and allowing you to get the best possible performance out of your branch's assigned units by utilizing both Store types.
 
 In order to change the consistency level from `strong` to `eventual`, you must add the property `consistency: eventual` to your `/query` or `/summarize` request. For example:
 
@@ -431,11 +431,11 @@ resp = self.xata.data().summarizeTable("Companies", {
 ```
 </TabbedCode>
 
-Using `consistency: eventual` is beneficial if you are not bound to real time data. In the given example, you are running a report from yesterday's data. With the delay it is not possible to guarantee consistency or ensure that a record inserted less than 100 milliseconds ago will be part of the result set. By using leveraging `consistency: eventual` for read requests, you are doubling your [concurrency limits](/rest-api/limits).
+Using `consistency: eventual` is beneficial if you are not bound to real time data. In the given example, you are running a report from yesterday's data. With the delay it is not possible to guarantee consistency or ensure that a record inserted less than 100 milliseconds ago will be part of the result set. By using leveraging `consistency: eventual` for read requests, you are doubling your [concurrency limits](/docs/rest-api/limits).
 
 ## Conclusion
 
-This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/concepts/schema).
+This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/docs/concepts/schema).
 
 ## Object type migration
 
