@@ -324,7 +324,7 @@ To insert the value for a `link` column, use the target record ID as the value. 
 
 Xata maintains a special set of columns that don't have to be defined in the schema. The `id` and the `xata.*` columns names are reserved and you cannot create your own columns with these names. No other column names are reserved.
 
-The `id` and `xata.*` are not explicitely represented in the [schema]/docs/concepts/schema) file, because they are present for all tables and maintained by Xata.
+The `id` and `xata.*` are not explicitely represented in the \[schema]/docs/concepts/schema) file, because they are present for all tables and maintained by Xata.
 
 ### id
 
@@ -411,24 +411,27 @@ This allows the available concurrency slots in the Primary Store to serve write 
 In order to change the consistency level from `strong` to `eventual`, you must add the property `consistency: eventual` to your `/query` or `/summarize` request. For example:
 
 <TabbedCode tabs={['TypeScript', 'CURL', 'Python']}>
-```ts
-const result = await xata.db.Companies.summarize({
-  columns: ['exchange', 'ceo'],
-  consistency: 'eventual'
-});
-```
+  ```ts
+  const result = await xata.db.Companies.summarize({
+    columns: ['exchange', 'ceo'],
+    consistency: 'eventual'
+  });
+  ```
+
 ```bash
 curl -X POST "https://REDACTED.us-east-1.xata.sh/db/mydb:main/tables/Companies/summarize" \
   -H "content-type: application/json" \
   -H "authorization: Bearer xau_REDACTED" \
   -d '{"columns": ["exchange", "ceo"], "consistency": "eventual"}'
 ```
+
 ```python
 resp = self.xata.data().summarizeTable("Companies", {
   "columns": ["exchange", "ceo"],
   "consistency": "eventual"
 })
 ```
+
 </TabbedCode>
 
 Using `consistency: eventual` is beneficial if you are not bound to real time data. In the given example, you are running a report from yesterday's data. With the delay it is not possible to guarantee consistency or ensure that a record inserted less than 100 milliseconds ago will be part of the result set. By using leveraging `consistency: eventual` for read requests, you are doubling your [concurrency limits](/docs/rest-api/limits).
