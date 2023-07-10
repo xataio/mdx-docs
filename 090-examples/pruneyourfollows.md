@@ -1,4 +1,12 @@
 ---
+title: Python SDK overview
+navTitle: Overview
+keywords: ['python', 'sdk']
+description: TODO
+slug: python-sdk/overview
+published: true
+---
+---
 sidebar_position: 5
 sidebar_label: PruneYourFollows
 ---

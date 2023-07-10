@@ -1,4 +1,13 @@
 ---
+title: What is a serverless data platform
+navTitle: Serverless Data Platform
+keywords: ['severless']
+description: TODO
+slug: concepts/serverless-data-platform
+published: true
+---
+
+---
 sidebar_position: 6
 sidebar_label: Deleting Data
 keywords: delete, delete data, delete record, delete records, deleting record

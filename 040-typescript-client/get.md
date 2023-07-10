@@ -1,4 +1,13 @@
 ---
+title: What is a serverless data platform
+navTitle: Serverless Data Platform
+keywords: ['severless']
+description: TODO
+slug: concepts/serverless-data-platform
+published: true
+---
+
+---
 sidebar_position: 3
 sidebar_label: Getting Data
 keywords: get, get data, get record, get records, getting record
