@@ -58,7 +58,7 @@ npx create-next-app@latest --typescript my-xata-app
 
 For the purpose of this tutorial, we're going to assume you named this project `my-xata-app`. Move to that directory, and run `npm run` to see your website at http://localhost:3000
 
-### Initialize Xata in your your `my-xata-app` directory
+### Initialize Xata in your my-xata-app directory
 
 Xata needs a few things to communicate with the databases we set up. It needs to know the location of the database, along with the API key it can use to request data from that location. These are stored in the project root directory within `.env` and `.xatarc` respectively. We can use the newly installed CLI to initialize any project with these details.
 
@@ -135,7 +135,7 @@ To fix the error we'll need to utilize the Xata client in Next.js's server-side 
 
 <Alert status="warning">
   Error: Error serializing `.records[0].pubDate` returned from `getServerSideProps` in "/posts". Reason: `object`
-  ("[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
+  ("\[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
 </Alert>
 
 ```tsx {4-15}
