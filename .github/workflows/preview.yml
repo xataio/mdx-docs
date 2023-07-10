@@ -20,7 +20,7 @@ jobs:
         with:
           repository: xataio/website
           # TODO: Change branch to "main" once we have a stable release
-          ref: ${{ inputs.branch || 'missing-mdx-compile' }}
+          ref: ${{ inputs.branch || 'docs_migration' }}
           token: ${{ secrets.GIT_TOKEN }}
 
       - uses: actions/setup-node@v3
