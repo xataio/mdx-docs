@@ -54,7 +54,7 @@ Additionally you can customize the results with these optional parameters:
 
 - `similarityFunction` - the function used to measure the distance between two points. It can be one of the following: `cosineSimilarity`, `l1`, `l2`. The default is `cosineSimilarity` for which you can expect a score between 0 and 2. Because `cosineSimilarity` returns a value between -1 and 1, but relevance scores must not be below 0, we add 1 for the final score.
 - `size` - the number of results to return. The default is 10.
-- `filter` - a filter expression that can be used to filter before applying the search (pre-filter). See [Filtering](/typescript-client/filtering) for more details.
+- `filter` - a filter expression that can be used to filter before applying the search (pre-filter). See [Filtering](/docs/typescript-client/filtering) for more details.
 
 Here is a simple example:
 

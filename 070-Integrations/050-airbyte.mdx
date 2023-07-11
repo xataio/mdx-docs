@@ -7,8 +7,6 @@ slug: integrations/airbyte
 published: true
 ---
 
-# Airbyte
-
 [Airbyte](https://airbyte.com/) is an ETL platform to connect your databases and data warehouses. Xata has [contributed](https://github.com/airbytehq/airbyte/pull/24192) a [Destination Connector](https://docs.airbyte.com/integrations/destinations/xata/) that enables you to ingest data from various sources into your Xata workspace. Under the hood, the connector leverages the [BulkProcessor](/docs/python-sdk/bulk-processor) of the [Python SDK](/docs/python-sdk/overview).
 
 The connector operates in upsert mode, if a record does not have a property `id`, then the record is created otherwise the record is overwritten.
@@ -22,7 +20,7 @@ You need to have an Airbyte instance running either [self-hosted](https://docs.a
 
 - Please note that not all destinations are available in the free tier of Airbyte Cloud.
 
-Next you need to create the table in Xata with the corresponding schema. Please note that databases, tables and schemas in Xata are not created by the connector, you need to take care of that before ingesting data. One important convention is used, as highlighted [here](#3-configure-source), that the name of a table and the dataset name in Airbyte must be same.
+Next you need to create the table in Xata with the corresponding schema. Please note that databases, tables and schemas in Xata are not created by the connector, you need to take care of that before ingesting data. One important convention is used, as highlighted [here](#3-configure-the-source), that the name of a table and the dataset name in Airbyte must be same.
 
 The following example will guide you through the steps necessary.
 
@@ -87,7 +85,7 @@ As mentioned before, we must setup our tables for the incoming data. We assume t
 }
 ```
 
-For simplicity, the schema is publicly available and you can use our [CLI](/getting-started/cli) to create the table `Companies` with the schema.
+For simplicity, the schema is publicly available and you can use our [CLI](/docs/getting-started/cli) to create the table `Companies` with the schema.
 
 ```bash
 curl -XGET https://raw.githubusercontent.com/xataio/xata-py/main/examples/datasets/airbyte/schema.json > schema.json
@@ -110,7 +108,7 @@ Set up a new source of type CSV.
 
 ![Select new File (CSV) Source](images/select-new-csv-source.png)
 
-The illustration and the next steps assume you don't have the source created yet. If you already have a CSV source created, please skip to [step 4](#4-select-destination).
+The illustration and the next steps assume you don't have the source created yet. If you already have a CSV source created, please skip to [step 4](#4-select-a-destination).
 
 #### 3. Configure the source
 

@@ -7,7 +7,7 @@ slug: python-sdk/examples
 published: true
 ---
 
-The following examples assume the `client` variable is an instance of `XataClient` with the correct credentials. Please refer to the [Configuration](/python-sdk/overview#configuration) page to learn more about initializing the SDK.
+The following examples assume the `client` variable is an instance of `XataClient` with the correct credentials. Please refer to the [Configuration](/docs/python-sdk/overview#configuration) page to learn more about initializing the SDK.
 
 Each endpoint returns an instance of [`requests.Response`](https://requests.readthedocs.io/en/latest/api/#requests.Response). If your query reaches the threshold of concurrent connections, the server will respond with a `429` status code and the SDK will throw a [`RateLimitingException`](https://github.com/xataio/xata-py/blob/main/xata/errors.py#L25).
 
@@ -102,7 +102,7 @@ print(record.status_code)
 
 ## Insert records in bulk
 
-The Bulk Processor is a helpful tool for performing bulk operations using the Xata Python client. It abstracts away the complexity of managing bulk operations, making it easier to perform large-scale insert operations. Using the [Bulk Processor](/python-sdk/bulk-processor) is recommended for bulk operations in Xata.
+The Bulk Processor is a helpful tool for performing bulk operations using the Xata Python client. It abstracts away the complexity of managing bulk operations, making it easier to perform large-scale insert operations. Using the [Bulk Processor](/docs/python-sdk/bulk-processor) is recommended for bulk operations in Xata.
 
 ```python
 from xata.client import XataClient
@@ -121,7 +121,7 @@ assert resp.status_code == 200
 
 ## Ask AI Endpoint
 
-The `ask` endpoint uses search or similarity search algorithms to find relevant information from your database. Please refer to [this page](/typescript-client/ask) to get more information about the endpoint.
+The `ask` endpoint uses search or similarity search algorithms to find relevant information from your database. Please refer to [this page](/docs/typescript-client/ask) to get more information about the endpoint.
 
 ```python
 client = XataClient(api_key="REDACTED_API_KEY", workspace_id="REDACTED_WS_ID")
@@ -151,7 +151,7 @@ print(user.status_code)
 
 ## Handling RFC 3339 dates
 
-To use the [`datetime`](/concepts/data-model#datetime) data type in Xata, you must provide an [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) compliant string.
+To use the [`datetime`](/docs/concepts/data-model#datetime) data type in Xata, you must provide an [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) compliant string.
 
 The Xata SDK provides a convenient `to_rfc3339()` helper function to simplify the submission of Python native [`datetime`](https://docs.python.org/3/library/datetime.html) values. You can pass the `datetime` object as a parameter to the helper function, and it will convert the value to a RFC 3339 compliant string.
 

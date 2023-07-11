@@ -112,7 +112,7 @@ Here, we've chosen to call the summarized column `total_sales` and added up all 
 
 ## What can summarize do?
 
-Before we get started, keep in mind that we keep reference material that can be found [here](/api-reference/db/db_branch_name/tables/table_name/summarize#summarize-table).
+Before we get started, keep in mind that we keep reference material that can be found [here](/docs/api-reference/db/db_branch_name/tables/table_name/summarize#summarize-table).
 
 In its most basic form `summarize` can be used as a "distinct" method to get the unique values or value combinations of the summarized columns.
 
@@ -214,7 +214,7 @@ One can specify several summaries in the same request. As long as the names are 
 
 ### columns
 
-The `columns` key lets you specify how you'd like to group your data. Columns work exactly the same as with the [query](/api-reference/db/db_branch_name/tables/table_name/query#query-table) endpoint.
+The `columns` key lets you specify how you'd like to group your data. Columns work exactly the same as with the [query](/docs/api-reference/db/db_branch_name/tables/table_name/query#query-table) endpoint.
 
 You may submit explicit column names, use wildcards, and reference linked columns as needed.
 
@@ -294,7 +294,7 @@ Page lets you determine how many results are returned. We currently only support
 
 The default setting for `size` , if not specified in the request, is 20 results. We allow you to set this between 1 and 1000.
 
-If this limitation is too small, we ask that you move your workload to the [aggregate](/typescript-client/aggregate) endpoint which does not have such limitations.
+If this limitation is too small, we ask that you move your workload to the [aggregate](/docs/typescript-client/aggregate) endpoint which does not have such limitations.
 
 An example of a page request looks like:
 

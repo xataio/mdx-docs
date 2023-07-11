@@ -70,3 +70,9 @@ jobs:
           edit-mode: replace
           body: |
             Check out the preview at ${{ steps.get-url.outputs.URL }}
+        #  uses: ruzickap/action-my-broken-link-checker@v2
+        #  with:
+        #  url: ${{ steps.get-url.outputs.URL }}
+        #  cmd_params: '--exclude=(github.com|twitter.com|localhost:3000) --buffer-size=8192 --max-connections=10 --color=always --rate-limit=10 --header="User-Agent:curl/7.54.0"'
+        #  debug: true
+      #  - name: Check links
