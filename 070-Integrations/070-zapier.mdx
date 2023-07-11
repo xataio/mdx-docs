@@ -1,0 +1,50 @@
+---
+title: Zapier with Xata
+navTitle: Zapier
+keywords: ['zapier', 'data migration']
+description: TODO
+slug: integrations/zapier
+published: true
+---
+
+# Zapier
+
+Xata's [Zapier Integration](https://zapier.com/apps/xata/integrations) moves data from other apps you use every day into Xata, no code required.
+
+Zapier supports thousands of applications as data sources. In a few minutes, you can set up automated workflows (Zaps) that ship data from those sources into Xata.
+
+Here are some example workflows you can accomplish with Zapier and Xata:
+
+- Replicate rows from PostgreSQL to Xata for testing or migrations.
+- Copy content from Google docs into Xata and take advantage of free text [search](/docs/typescript-client/search) and [Ask AI](/docs/typescript-client/ask) features.
+- Forward Slack or Discord events, messages, and reactions in order to track [search](/typescript-client/search) or [aggregate](https://xata.io/docs/typescript-client/aggregate) them in Xata.
+
+## Using the Xata Integration in Zapier
+
+In the Zap editor, click the **Action** step, or click the plus **+** icon to add an action to your Zap. Search for the Xata (Beta) Integration and click the **Event** dropdown menu. The Event selection list presents the following options:
+
+- **Create Record**: Create a record with an automatically generated ID.
+- **Create Record With a Given ID**: Create a record with a provided record . In case the record ID already exists in the table, the operation is canceled and an error is returned.
+- **Create or Update Record With a Given ID**: Create or partially update a record with the provided record ID. In case the record ID already exists in the table, existing values are updated and values of columns that are not referenced in the update are preserved.
+- **Create or Replace Record With a Given ID**: Create or replace a record with the provided record ID. In case the record ID already exists in the table, the record is fully replaced overwritting all existing column values.
+
+After choosing the method that works best for your use case, the next step prompts you to **Choose an Account** to connect with Xata. A Xata account in Zapier represents a configured connection to a `database:branch` endpoint.
+
+When setting up a new Xata account connection in Zapier, you will be prompted for the following details:
+
+- **Xata API key**: API keys authenticate a user, granting access to the respective Workspaces and Databases. You can create new API keys in your Xata [Account Settings](https://app.xata.io/settings) page.
+- **Database endpoint**: You must create a database and define the branch schema in Xata before you configure the Action to use it. You can find the Database Endpoint in the Xata UI in the **Settings** section of your Database.
+- **Branch**: This indicates the database branch which you can connect to. This defaults to `main`, which is the default branch that all Xata databases start with. Change this value if you would like your Zap to connect to a different branch.
+
+After the Xata account is configured successfully you can proceed to the **Action** setup step.
+The action prompt extracts information from your branch schema so you can select a table and list its available columns.
+
+The Xata table columns can be mapped to fields from the input triggers. Make sure to match input fields that are compatible with the respective [column type](/docs/concepts/data-model#column-types) in Xata.
+
+## Tips and Limitations
+
+- Currently Xata is only available as an action for your Zap. Providing triggers is being considered as a future enhancement.
+- In case you made changes to the table schema after you started configuring the action, you can use the **Refresh fields** option to reload columns from your schema. If you created a new table, you may need to reload the Zap configuration page for the new table to be recognized.
+- Some columns may not be available in the action:`link` and `vector` columns are not supported by this integration.
+- Each action can only be set to write to one table.
+- If you have feedback or feature requests, please let us know by creating an issue in the [feedback boards](https://feedback.xata.io/feature-requests) or [contact Support](https://support.xata.io/hc/en-us/requests/new).

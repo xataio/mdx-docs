@@ -1,0 +1,592 @@
+---
+title: Data model
+navTitle: Data model
+keywords: ['data model']
+description: TODO
+slug: concepts/data-model
+published: true
+---
+
+Xata has a relational data model, with a strict schema (schemaful) and with support for JSON-like objects. Records are grouped into tables, which are grouped into databases. Xata supports rich column types and relations between tables can be represented via link columns, which are similar to foreign keys.
+
+Internally, we are storing the data both in a transactional database (OLTP) as well as in a search/analytics engine (OLAP). This is done transparently for you and the different stores are exposed via the same API. You can read more about how Xata works behind the scenes on the [How it Works](/docs/concepts/how-it-works) page.
+
+Data is organized in "tables" which are grouped into "databases". Tables have a strict [schema](/docs/concepts/schema), which contains a list of columns. Xata supports many column types and the type information is used, among other things, to generate type-safe clients.
+
+You can represent relations between tables of the same database by using columns with type `link`, and it is possible to "join" tables at query time.
+
+## Records
+
+The following is an example of a record that you can store natively in Xata:
+
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "age": 42,
+  "address": {
+    "street": "123 Main St",
+    "city": "New York"
+  },
+  "labels": ["admin", "user"]
+}
+```
+
+The keys in the JSON are the column names. The values are the data. The coresponding [schema file](/docs/concepts/schema) for the above record looks like this:
+
+```json
+{
+  "tables": [
+    {
+      "name": "users",
+      "columns": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "type": "email"
+        },
+        {
+          "name": "age",
+          "type": "int"
+        },
+        {
+          "name": "address",
+          "type": "object",
+          "columns": [
+            {
+              "name": "street",
+              "type": "string"
+            },
+            {
+              "name": "city",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "name": "labels",
+          "type": "multiple"
+        }
+      ]
+    }
+  ]
+}
+```
+
+In the above, it's worth noting:
+
+- Each column has a well-defined type. Xata has a strongly typed schema, as opposed to a schemaless model.
+- Some of the Xata data types are higher level than typically in a database. For example, the "email" type performs automatic validation of email addresses.
+
+## Column types
+
+### string
+
+The `string` type represents a simple string. The values of this type are indexed both for quick exact matching and for full-text search. Set `unique` to make sure the strings you insert are unique. Set `notNull` to require a value.
+
+Example definition:
+
+```json
+{
+  "name": "name",
+  "type": "string"
+}
+```
+
+### text
+
+The `text` type represents a long-form text. The difference to `string` is that the values of the `text` columns are indexed and optimised for free-text search, but not for exact matching. Set `notNull` to require a value.
+
+Example definition:
+
+```json
+{
+  "name": "address",
+  "type": "text"
+}
+```
+
+### int
+
+The `int` type represents an integer. Internally it's represented as a 64-bit signed integer. This means the minimum value is `-9223372036854775808` and the maximum value is `9223372036854775807`. Set `unique` to make sure the integers you insert are unique. Set `notNull` to require a value.
+
+Example definition:
+
+```json
+{
+  "name": "age",
+  "type": "int"
+}
+```
+
+### float
+
+The `float` type represents a double precision floating point number. Internally, it's represented as a 64-bit signed number with up to 15 decimal digit precision. Set `unique` to make sure the floats you insert are unique. Set `notNull` to require a value.
+
+Example definition:
+
+```json
+{
+  "name": "distance",
+  "type": "float"
+}
+```
+
+### datetime
+
+The `datetime` type represents a point in time up to millisecond precision. It has the _date_ part and the _time_ part, and both are mandatory. A [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339)-compliant `string` is used for input and output representation. Set `unique` to make sure the values you insert are unique. Set `notNull` so the column value cannot be empty. Select a default value using `defaultValue`. If you set `now` as the default value, the default value of the column will be the time when the record was inserted.
+
+Example definition:
+
+```json
+{
+  "name": "publishedAt",
+  "type": "datetime",
+  "notNull": true,
+  "defaultValue": "now"
+}
+```
+
+Example values:
+
+```json
+{
+  "publishedAt": "2020-11-10T10:38:16Z"
+}
+```
+
+```json
+{
+  "publishedAt": "2020-11-10T12:38:16+02:00"
+}
+```
+
+To learn more about automatic tracking of record creation and manipulation, refer to the [`createdAt`](#xata-createdat) and [`updatedAt`](#xata-updatedat) fields, which contain relevant date information.
+
+### bool
+
+The `bool` type represents a boolean.
+
+Example definition:
+
+```json
+{
+  "name": "isPublished",
+  "type": "bool"
+}
+```
+
+### email
+
+The `email` type represents an email address. Valid email addresses are not longer than 254 characters and respect this regular expression:
+
+```bash
+^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@
+[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?
+(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$
+```
+
+Set `unique` to make sure the strings you insert are unique. Set `notNull` to require a value.
+
+Example definition:
+
+```json
+{
+  "name": "emailAddress",
+  "type": "email"
+}
+```
+
+Example value:
+
+```json
+{
+  "emailAddress": "test@example.com"
+}
+```
+
+### multiple
+
+The `multiple` type represents an array of strings.
+
+Example definition:
+
+```json
+{
+  "name": "labels",
+  "type": "multiple"
+}
+```
+
+To insert a value into a `multiple` column, use a JSON array of strings, for example:
+
+```json
+{
+  "labels": ["admin", "user"]
+}
+```
+
+### vector
+
+The `vector` type represents a vector of floating point numbers with a fixed dimension. This type can be used to store embeddings computed via machine learning, for example by calling the [OpenAI embeddings API](https://platform.openai.com/docs/guides/embeddings). The dimension of the vector must
+be defined in the schema, and must be a number between 2 and 10,000. For example:
+
+```json
+{
+  "name": "embedding",
+  "type": "vector",
+  "vector": {
+    "dimension": 1536
+  }
+}
+```
+
+In the example above we set the dimension to 1536, which is the output dimension produced by the OpenAI embeddings API, however, you can store embeddings
+produced by any other machine learning model. Once you store the embeddings, you can use vector search for a number of use cases, see the [Similarity/Vector search](/docs/typescript-client/vector-search) section for more information.
+
+### object
+
+<Alert>
+  The `object` type will be [deprecated](#what-is-the-deprecation-period) from June 14th, 2023 and will no longer be
+  available after December 13th, 2023. If you are using the `object` type in your workspace, we strongly encourage you
+  to review your implementations and update them accordingly, replacing the `object` type with suitable alternatives as
+  recommended in our [migration options](#object-type-migration) documentation.
+</Alert>
+
+The `object` type represents a group of columns. Objects can also be nested multiple times by adding a column of type `object` inside the object. Set `unique` to make sure the objects you insert are unique.
+
+Example definition:
+
+```json
+{
+  "name": "address",
+  "type": "object",
+  "columns": [
+    {
+      "name": "street",
+      "type": "string"
+    },
+    {
+      "name": "city",
+      "type": "string"
+    }
+  ]
+}
+```
+
+To insert a value of type `object`, simply use a JSON map:
+
+```json
+{
+  "address": {
+    "street": "123 Main St",
+    "city": "New York"
+  }
+}
+```
+
+While the API supports the object type, the Web UI and CLI do not expose it as an option yet. There is still work in progress.
+
+In the Web UI, object fields can be created implicitly by creating columns with dotted names. For example columns "user.id" and "user.name" will result in a column "user" of type "object" with the fields "id" and "name" in it, while "user.details.address" will create a nested object "details" within the object "user".
+
+At the moment Xata does not provide automatic schema expansion from JSON objects. The object's structure must be explicitly defined with matching columns in the schema. In case an incoming record contains a JSON object that does not comply with the defined schema, the record will be rejected. Alternatively, JSON content can be stored in text columns.
+
+### link
+
+The `link` type represents a link to another table. See the [links and relations](#links-and-relations) section for more information.
+
+Example definition:
+
+```json
+{
+  "name": "author",
+  "type": "link",
+  "link": {
+    "table": "users"
+  }
+}
+```
+
+In the above example, the `link.table` property is mandatory and indicates the target table.
+
+To insert the value for a `link` column, use the target record ID as the value. For example:
+
+```json
+{
+  "author": "rec_1234567890"
+}
+```
+
+## Special Columns
+
+Xata maintains a special set of columns that don't have to be defined in the schema. The `id` and the `xata.*` columns names are reserved and you cannot create your own columns with these names. No other column names are reserved.
+
+The `id` and `xata.*` are not explicitely represented in the \[schema]/docs/concepts/schema) file, because they are present for all tables and maintained by Xata.
+
+### id
+
+The `id` column contains the record ID. It is of type `string`, limited to 255 chars and it is guaranteed to be unique within the table. If you don't explicitly provide an `id` value, Xata will generate one for you, with the following properties:
+
+- globally unique
+- sortable, with the newest record having the highest ID
+
+It is possible to use your own ID values, by using the [insert record with ID API](/docs/typescript-client/insert#creating-a-record-with-a-given-id).
+
+### xata.version
+
+The `xata.version` column contains the current version of the record. It is of type `int` and it is automatically incremented any time the record is updated. A newly inserted record will have a version of 0.
+
+This column is meant to be use for optimistic concurrency control, see the [dedicated section](/docs/typescript-client/update#optimistic-concurrency-control) for more information.
+
+### xata.createdAt
+
+The `xata.createdAt` column contains the timestamp of when the row was created. This timestamp is set when the row is inserted into the table and never updated.
+
+### xata.updatedAt
+
+The `xata.updatedAt` column contains the timestamp of when the row was last updated.
+
+## Links and Relations
+
+You can represent 1:N relations between tables by using columns of the `link` type. The value of the link column points to a record in the target table, specified by the ID. At query time, you can easily include columns from the target table by specifying the `"columns"` field in the request. For an example, see [Selecting Columns from the Linked Tables](/docs/typescript-client/get#selecting-columns-from-the-linked-tables).
+
+It is also possible to use `link` columns that target the same table. For example, you can have a `parent` column that points to the parent record of the current record.
+
+You can represent N:M relations between two tables by using a third table dedicated for the relationship. For example, lets say you have a `mentors` table and a `mentee` table, and you want to represent an N:M relation where a mentor can have multiple mentees and a mentee can have multiple mentors. You can create a `relationships` table with a schema looking like this:
+
+```json
+{
+  "name": "relationships",
+  "columns": [
+    {
+      "name": "mentor",
+      "type": "link",
+      "link": {
+        "table": "mentors"
+      }
+    },
+    {
+      "name": "mentee",
+      "type": "link",
+      "link": {
+        "table": "mentees"
+      }
+    },
+    {
+      "name": "status",
+      "type": "string"
+    }
+  ]
+}
+```
+
+In the above, you have links to the `mentors` and `mentees` tables, but you can also add other columns that are specific for the relationship. In the SQL world, this is called an associative or a [junction table](https://en.wikipedia.org/wiki/Associative_entity).
+
+## Default values
+
+You can set a default value for every data type. Default values are used when the value of a column is empty. Keep in mind that zero length string is not empty. You can set a default value using `defaultValue`.
+
+## Constraints
+
+You can add constraints to protect the integrity of your data. We support the following constaints:
+
+- `unique`: All values of a column must be different within the same table. In case of creating or updating a record with a value that does not satisfy the uniqueness contraint, the record operation will be rejected with an error.
+- `notNull`: Column value cannot be NULL. Requests to create or update a record are rejected with an error if they set this column to NULL. When `notNull` is set, you must also set a default value for the column using `defaultValue`. In case no value is set for this column when creating a record, **the defaultValue will be applied**.
+
+Limitations: You can add constraints only to new columns of empty tables.
+
+## Consistency
+
+Branches in Xata are replicated from a Primary Store to multiple Replica Stores. Data operations such as insert/update/delete are first performed in the Primary Store and changes are subsequently propagated to the Replica Stores, making them eventually consistent.
+
+The propagation delay may vary and there is no strict guarantee but it is typically much less than 100 milliseconds for the vast majority of requests.
+
+Xata units grant dedicated concurrency slots to the Primary and the eventually consistent Replica Stores. Read operations performed by the `/query` and `/summarize` endpoints can run against either of the Primary or Replica Stores. While the default method for those operations is `consistency: strong`, so they use the Primary Store to ensure the Xata API returns most accurate data by default, it is strongly advised to use the Replica Store wherever possible.
+
+This allows the available concurrency slots in the Primary Store to serve write operations and queries that purposely retrieve the latest state of content. Thus making it less likely for the operations that use the Primary Store to reach the [concurrency limit](/docs/rest-api/limits) and allowing you to get the best possible performance out of your branch's assigned units by utilizing both Store types.
+
+In order to change the consistency level from `strong` to `eventual`, you must add the property `consistency: eventual` to your `/query` or `/summarize` request. For example:
+
+<TabbedCode tabs={['TypeScript', 'CURL', 'Python']}>
+  ```ts
+  const result = await xata.db.Companies.summarize({
+    columns: ['exchange', 'ceo'],
+    consistency: 'eventual'
+  });
+  ```
+
+```bash
+curl -X POST "https://REDACTED.us-east-1.xata.sh/db/mydb:main/tables/Companies/summarize" \
+  -H "content-type: application/json" \
+  -H "authorization: Bearer xau_REDACTED" \
+  -d '{"columns": ["exchange", "ceo"], "consistency": "eventual"}'
+```
+
+```python
+resp = self.xata.data().summarizeTable("Companies", {
+  "columns": ["exchange", "ceo"],
+  "consistency": "eventual"
+})
+```
+
+</TabbedCode>
+
+Using `consistency: eventual` is beneficial if you are not bound to real time data. In the given example, you are running a report from yesterday's data. With the delay it is not possible to guarantee consistency or ensure that a record inserted less than 100 milliseconds ago will be part of the result set. By using leveraging `consistency: eventual` for read requests, you are doubling your [concurrency limits](/docs/rest-api/limits).
+
+## Conclusion
+
+This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/docs/concepts/schema).
+
+## Object type migration
+
+The `object` type will sunset on December 13th, 2023 as mentioned [here](#object). We recommend you explore various migration options to transition away from this type.
+
+### What is the deprecation period?
+
+During the deprecation period, we recommend that users move away from using `object` columns and explore alternative schema options, which are listed below. While it is still possible to create a schema with `object` columns and input `object` values during this period, we discourage their usage. At the end of the deprecation period, any existing object columns will be automatically flattened.
+
+### Option 1: Flatten your schema
+
+Flattening a schema simplifies a database or table structure by removing nested objects. After flattening, all columns are at the same level, making it easier to represent in a tabular format.
+
+You can flatten your table schema by adding the columns from the object column to the table itself. To simplify your table structure, you can incorporate the columns from the object column directly into the table itself, using an underscore (\_) to separate them.
+
+The column name is defined as follows:
+
+```json
+{
+  "name": "name",
+  "type": "object",
+  "columns": [
+    {
+      "name": "first",
+      "type": "string"
+    },
+    {
+      "name": "middle",
+      "type": "string"
+    },
+    {
+      "name": "last",
+      "type": "string"
+    }
+  ]
+}
+```
+
+To flatten the structure, the column name should be split into three new columns: `first_name`, `middle_name`, and `last_name`, which will represent the corresponding fields `first`, `middle`, and `last`.
+
+```json
+{
+  "name": "first_name",
+  "type": "string"
+},
+{
+  "name": "middle_name",
+  "type": "string"
+},
+{
+  "name": "last_name",
+  "type": "string"
+}
+```
+
+### Option 2: Join table
+
+The second option is to normalize your schema and create a joined table by establishing a [link](#link). For example, if you have a table named `social_content` with a column `profile` of the type `object`, you can extract the columns of the `profile` object into their own table. This option is particularly good if you expect that the `profile` table might be linked to from other tables.
+
+```json
+{
+  "name": "profile",
+  "type": "object",
+  "columns": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "email",
+      "type": "email"
+    },
+    {
+      "name": "homepage",
+      "type": "string"
+    }
+  ]
+}
+```
+
+Create a new table called `profiles` with the same schema as the `object` type:
+
+```json
+{
+  "columns": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "email",
+      "type": "email"
+    },
+    {
+      "name": "homepage",
+      "type": "string"
+    }
+  ]
+}
+```
+
+Link the `profiles` table in the original `social_content` table:
+
+```json
+{
+  "name": "profile",
+  "type": "link",
+  "link": {
+    "table": "profiles"
+  }
+}
+```
+
+### Option 3: Store as raw JSON
+
+As per [our roadmap](https://xata.io/roadmap), we are working on introducing support for a dedicated JSON type. As an interim solution, we suggest storing the data from an object column as serialized JSON in a column of type `text`.
+
+```json
+{
+  "name": "location",
+  "type": "object",
+  "columns": [
+    {
+      "name": "lat",
+      "type": "float"
+    },
+    {
+      "name": "lng",
+      "type": "float"
+    }
+  ]
+}
+```
+
+Change to the following:
+
+```json
+{
+  "name": "location",
+  "type": "text"
+}
+```
+
+Store the following JSON body:
+
+```json
+{
+  "lat": 47.259659,
+  "lng": 11.400375
+}
+```
