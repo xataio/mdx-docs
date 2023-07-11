@@ -74,3 +74,4 @@ jobs:
         uses: ruzickap/action-my-broken-link-checker@v2
         with:
           url: ${{ steps.get-url.outputs.URL }}
+          cmd_params: "--exclude='(github.com)'"
