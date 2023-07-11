@@ -73,4 +73,4 @@ jobs:
       - name: Check links
         uses: ruzickap/action-my-broken-link-checker@v2
         with:
-          arguments: ${{ steps.get-url.outputs.URL }}
+          url: ${{ steps.get-url.outputs.URL }}
