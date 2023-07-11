@@ -145,6 +145,7 @@ The source and destination are setup, now we can finalize the connection.
 ![Select source](images/create-connection-02.png)
 
 Set `manual` for the _Replication frequency_ as we want to run the example only on need. For more complex scenarios please refer to Airbyte's documentation of [sync schedules](https://docs.airbyte.com/understanding-airbyte/connections/#sync-schedules).
+
 ![Setup connection](images/create-connection-03.png)
 
 #### 7. Synchronize
@@ -153,9 +154,11 @@ We need to manually trigger Airbyte to start the sync between source and destina
 ![Sync source and destination](images/sync-01.png)
 
 After the sync was successful, you will see the following dialog indicating the 50 records from the CSV being committed. If you need to troubleshoot, please browse the logs from the runs as error messages from Xata are propagated.
+
 ![Sync success](images/sync-02.png)
 
 If the previous step succeeded, you should see the records in the `Companies` table.
+
 ![Data in Xata](images/sync-03.png)
 
 ## Getting Involved
