@@ -70,8 +70,19 @@ jobs:
           edit-mode: replace
           body: |
             Check out the preview at ${{ steps.get-url.outputs.URL }}
-      - name: Check links
-        uses: ruzickap/action-my-broken-link-checker@v2
+      - name: Check for broken links
+        id: link-report
+        uses: celinekurpershoek/link-checker@v1.0.2
         with:
           url: ${{ steps.get-url.outputs.URL }}
-          cmd_params: '--exclude=(github.com|twitter.com|localhost:3000) --buffer-size=8192 --max-connections=10 --max-connections=5 --color=always --rate-limit=5 --header="User-Agent:curl/7.54.0"'
+          # optional:
+          honorRobotExclusions: false
+          ignorePatterns: 'github,localhost,twitter'
+          recursiveLinks: true # Check all URLs on all reachable pages (could take a while)
+      - name: Get the result
+        run: echo "${{steps.link-report.outputs.result}}"
+      #  - name: Check links
+      #  uses: ruzickap/action-my-broken-link-checker@v2
+      #  with:
+      #  url: ${{ steps.get-url.outputs.URL }}
+      #  cmd_params: '--exclude=(github.com|twitter.com|localhost:3000) --buffer-size=8192 --max-connections=10 --max-connections=5 --color=always --rate-limit=5 --header="User-Agent:curl/7.54.0"'
