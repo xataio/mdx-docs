@@ -11,7 +11,9 @@ Xata has a relational data model, with a strict schema (schemaful) and with supp
 
 Internally, we are storing the data both in a transactional database (OLTP) as well as in a search/analytics engine (OLAP). This is done transparently for you and the different stores are exposed via the same API. You can read more about how Xata works behind the scenes on the [How it Works](/docs/concepts/how-it-works) page.
 
-Data is organized in "tables" which are grouped into "databases". Tables have a strict [schema](/docs/concepts/schema), which contains a list of columns. Xata supports many column types and the type information is used, among other things, to generate type-safe clients.
+Data is organized in "tables" which are grouped into "databases". Tables have a strict [schema](/docs/concepts/schema), which contains a list of columns.
+
+Xata supports many column types and the type is used, among other things, to generate type-safe clients.
 
 You can represent relations between tables of the same database by using columns with type `link`, and it is possible to "join" tables at query time.
 
@@ -32,7 +34,7 @@ The following is an example of a record that you can store natively in Xata:
 }
 ```
 
-The keys in the JSON are the column names. The values are the data. The coresponding [schema file](/docs/concepts/schema) for the above record looks like this:
+The keys in the JSON are the column names. The values are the data. The coresponding [schema file](/docs/concepts/schema) for the above record looks like the following:
 
 ```json
 {
@@ -79,7 +81,7 @@ The keys in the JSON are the column names. The values are the data. The corespon
 In the above, it's worth noting:
 
 - Each column has a well-defined type. Xata has a strongly typed schema, as opposed to a schemaless model.
-- Some of the Xata data types are higher level than typically in a database. For example, the "email" type performs automatic validation of email addresses.
+- Some of the Xata data types are higher level than what is typically in a database. For example, the "email" type performs automatic validation of email addresses.
 
 ## Column types
 
@@ -320,7 +322,7 @@ To insert the value for a `link` column, use the target record ID as the value. 
 }
 ```
 
-## Special Columns
+## Special columns
 
 Xata maintains a special set of columns that don't have to be defined in the schema. The `id` and the `xata.*` columns names are reserved and you cannot create your own columns with these names. No other column names are reserved.
 
@@ -349,13 +351,109 @@ The `xata.createdAt` column contains the timestamp of when the row was created. 
 
 The `xata.updatedAt` column contains the timestamp of when the row was last updated.
 
-## Links and Relations
+## Links and relationships
 
-You can represent 1:N relations between tables by using columns of the `link` type. The value of the link column points to a record in the target table, specified by the ID. At query time, you can easily include columns from the target table by specifying the `"columns"` field in the request. For an example, see [Selecting Columns from the Linked Tables](/docs/typescript-client/get#selecting-columns-from-the-linked-tables).
+A column of type `link` describes a relationship between two entities that you can navigate in both directions.
 
-It is also possible to use `link` columns that target the same table. For example, you can have a `parent` column that points to the parent record of the current record.
+You can represent many-to-one relationships between tables by using columns of the `link` type. The value of the link column points to a record in the target table, referenced by the ID.
 
-You can represent N:M relations between two tables by using a third table dedicated for the relationship. For example, lets say you have a `mentors` table and a `mentee` table, and you want to represent an N:M relation where a mentor can have multiple mentees and a mentee can have multiple mentors. You can create a `relationships` table with a schema looking like this:
+At query time, you can easily include columns from the target table by specifying the `"columns"` field in the request. For an example, see [Selecting columns from the linked tables](/docs/typescript-client/get#selecting-columns-from-the-linked-tables).
+
+Also, you can navigate the link in the opposite direction, from the target table to the source table. For example, if you have a `posts` table with an `author` column of type `link` that points to a `users` table. You are able to navigate the link from the `users` table to the `posts` table. At query time, you can get a list of the related posts in a single request by specifying the `<-posts.author` field. The arrow (`<-`) token indicates we are using a backwards relationship established by the `author` column (of type `link`) from `posts`. An example request that retrieves the name and related posts from the `users` table would look like this:
+
+```jsonc
+// POST /db/blogs:main/tables/users/query
+{
+  "table": "users",
+  "columns": [
+    "name",
+    {
+      "name": "<-posts.author",
+      "columns": ["title"],
+      "as": "posts",
+      "limit": 10,
+      "offset": 0,
+      "order": [
+        {
+          "column": "createdAt",
+          "order": "desc"
+        }
+      ]
+    }
+  ]
+}
+```
+
+The response would look like this (notice the nested `records` array under the `posts` field):
+
+```json
+{
+  "meta": {
+    "page": {
+      "cursor": "XM4xTsUwDAbgnWP8c0DpAxZvnONRoZA6JSVtwHZZqt4dpUUIMdmWP_n31G1Qk7yMoCuWMDPcdlbC8-r9fbz9qGp6F1Z7qwKHWMs6L9q8ZSuM3iEoCIeDQ8lzNlDnHWpKygZqrQwsoOv2cwCEKByMhyfD7xoDa8Te772DVrGWkocWkbLoMQrHl5jZP77LZHV6nR-69HX59A2V8M-U6a8ZD3O-d_EOqYRRQX6_-Q4AAP__",
+      "more": false,
+      "size": 20
+    }
+  },
+  "records": [
+    {
+      "id": "rec_cie05krjtojbm41fv2q0",
+      "name": "John Doe",
+      "posts": {
+        "records": [
+          {
+            "id": "rec_cie05srjtojbm41fv2t0",
+            "title": "Introduction to Xata",
+            "xata": {
+              "createdAt": "2023-06-28T09:52:51.474094+00:00",
+              "updatedAt": "2023-06-29T10:39:18.430212+00:00",
+              "version": 1
+            }
+          },
+          {
+            "id": "rec_cie05v3jtojbm41fv2tg",
+            "title": "Working with relationships",
+            "xata": {
+              "createdAt": "2023-06-28T09:53:00.398131+00:00",
+              "updatedAt": "2023-06-29T10:39:31.148422+00:00",
+              "version": 1
+            }
+          }
+        ]
+      },
+      "xata": {
+        "createdAt": "2023-06-28T11:52:19.763366+02:00",
+        "updatedAt": "2023-06-29T12:38:41.212738+02:00",
+        "version": 1
+      }
+    },
+    {
+      "id": "rec_cie05ljjtojbm41fv2qg",
+      "name": "Keanu Reeves",
+      "postsauthor": {
+        "records": [
+          {
+            "id": "rec_cie060jjtojbm41fv2u0",
+            "title": "Blue or Red?",
+            "xata": {
+              "createdAt": "2023-06-28T09:53:06.568533+00:00",
+              "updatedAt": "2023-06-29T10:39:10.7602+00:00",
+              "version": 1
+            }
+          }
+        ]
+      },
+      "xata": {
+        "createdAt": "2023-06-28T11:52:22.660549+02:00",
+        "updatedAt": "2023-06-29T12:38:50.456018+02:00",
+        "version": 2
+      }
+    }
+  ]
+}
+```
+
+You can represent many-to-many relationships between two tables by using a third table dedicated to storing the relationships between the two entities. For example, you have a `mentors` table and a `mentee` table, and you want to represent an N:M relationship where a mentor can have multiple mentees and a mentee can have multiple mentors. You can create a `relationships` table with a schema looking like this:
 
 ```json
 {
@@ -391,7 +489,7 @@ You can set a default value for every data type. Default values are used when th
 
 ## Constraints
 
-You can add constraints to protect the integrity of your data. We support the following constaints:
+You can add constraints to protect the integrity of your data. We support the following constraints:
 
 - `unique`: All values of a column must be different within the same table. In case of creating or updating a record with a value that does not satisfy the uniqueness contraint, the record operation will be rejected with an error.
 - `notNull`: Column value cannot be NULL. Requests to create or update a record are rejected with an error if they set this column to NULL. When `notNull` is set, you must also set a default value for the column using `defaultValue`. In case no value is set for this column when creating a record, **the defaultValue will be applied**.
@@ -554,7 +652,7 @@ Link the `profiles` table in the original `social_content` table:
 
 ### Option 3: Store as raw JSON
 
-As per [our roadmap](https://xata.io/roadmap), we are working on introducing support for a dedicated JSON type. As an interim solution, we suggest storing the data from an object column as serialized JSON in a column of type `text`.
+As indicated [our roadmap](https://xata.io/roadmap), we are working on introducing support for a dedicated JSON type. As an interim solution, we suggest storing the data from an object column as serialized JSON in a column of type `text`.
 
 ```json
 {
