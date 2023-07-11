@@ -74,4 +74,4 @@ jobs:
         uses: ruzickap/action-my-broken-link-checker@v2
         with:
           url: ${{ steps.get-url.outputs.URL }}
-          cmd_params: "--exclude='(github.com)'"
+          cmd_params: '--exclude=(github.com|twitter.com) --buffer-size=8192 --max-connections=10 --max-connections=5 --color=always --rate-limit=5 --header="User-Agent:curl/7.54.0"'
