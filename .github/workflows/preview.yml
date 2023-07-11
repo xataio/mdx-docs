@@ -71,6 +71,6 @@ jobs:
           body: |
             Check out the preview at ${{ steps.get-url.outputs.URL }}
       - name: Check links
-        uses: filiph/linkcheck@2.0.23
+        uses: ruzickap/action-my-broken-link-checker@v2
         with:
           arguments: ${{ steps.get-url.outputs.URL }}
