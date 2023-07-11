@@ -41,7 +41,7 @@ The following are extra components that can be used within the markdown files.
 
 #### Alerts
 
-Alerts accept a `status` prop.
+Alerts accept a `status` prop with values of `info | warning | danger`
 
 ```tsx
 <Alert status="warning">
