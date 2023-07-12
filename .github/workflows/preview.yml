@@ -20,7 +20,7 @@ jobs:
         with:
           repository: xataio/website
           # TODO: Change branch to "main" once we have a stable release
-          ref: ${{ inputs.branch || 'docs_migration' }}
+          ref: ${{ inputs.branch || 'main' }}
           token: ${{ secrets.GIT_TOKEN }}
 
       - uses: actions/setup-node@v3
@@ -38,8 +38,8 @@ jobs:
             --env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}' \
             --build-env XATA_PREVIEW=none \
             --env XATA_PREVIEW=none \
-            --build-env XATA_BRANCH=docs_migration \
-            --env XATA_BRANCH=docs_migration \
+            --build-env XATA_BRANCH=main \
+            --env XATA_BRANCH=main \
             > deploy_url.txt
         env:
           VERCEL_ORG_ID: team_lMj2cFnO13wwm6LWz3X5kulx
