@@ -15,7 +15,7 @@ To create an API key, visit the [account settings](https://app.xata.io/settings)
 
 Once you've got an API key, you're ready to interact with any route on our [API Reference](/docs/api-reference/user), passing the key in the request's `Authorization` header. For example, to get a list of your workspaces, you'd do a request like this in TypeScript:
 
-<TabbedCode tabs={['TypeScript', 'CURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
 ```ts
 import fetch from 'node-fetch'
 fetch('https://api.xata.io/workspaces', {
@@ -26,6 +26,15 @@ fetch('https://api.xata.io/workspaces', {
 })
 .then((response) => response.json())
 .then((workspaces) => console.log('Look ma! Workspaces!', workspaces))
+```
+```python
+from requests import request
+headers = {
+  'Authorization': 'Bearer YOUR_API_KEY',
+  'Content-Type': 'application/json',
+}
+resp = request("GET", "https://api.xata.io/workspaces", headers=headers)
+print(resp.json())
 ```
 ```bash
 curl -X GET https://api.xata.io/workspaces \

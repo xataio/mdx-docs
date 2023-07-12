@@ -141,9 +141,9 @@ Xata exposes its functionality over a RESTful-like API. A sample query with a fi
 // POST /db/tutorial:main/tables/Users/query
 {
   "filter": {
-    "address.zipcode": 12345
+    "zipcode": 12345
   },
-  "columns": ["name", "address.*"]
+  "columns": ["name", "street_name", "zipcode", "city", "country"]
 }
 ```
 
@@ -155,7 +155,7 @@ A simple free-text-search request looks something like this:
   "query": "keanu",
   "fuzziness": 1,
   "filter": {
-    "address.zipcode": 12345
+    "zipcode": 12345
   }
 }
 ```
@@ -169,13 +169,13 @@ And an aggregation request looks something like this:
     "NewYorkUsers": {
       "count": {
         "filter": {
-          "address.city": "New York"
+          "city": "New York"
         }
       }
     },
     "citiesCount": {
       "uniqueCount": {
-        "column": "address.city"
+        "column": "city"
       }
     }
   }
