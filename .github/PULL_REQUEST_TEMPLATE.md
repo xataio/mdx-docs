@@ -4,9 +4,7 @@ Closes #
 
 <!-- Add a brief description of changes -->
 
--
-
----
+- ***
 
 <!-- Remove this entire section if not needed -->
 
@@ -27,4 +25,4 @@ The following work still needs to be completed:
 **Release**:
 
 - [ ] When ready
-- [ ] Hold for release | After: <mm/dd/yy>
+- [ ] Hold for release | Release after: <mm/dd/yy>
