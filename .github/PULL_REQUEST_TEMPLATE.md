@@ -4,11 +4,13 @@ Closes #
 
 <!-- Add a brief description of changes -->
 
-- ***
+-
+
+---
 
 <!-- Remove this entire section if not needed -->
 
-## Remaining work
+### Remaining work
 
 The following work still needs to be completed:
 
