@@ -9,6 +9,7 @@ published: true
 
 You **should not** edit your generated file (e.g. `./src/xata.ts`) since any changes to your schema will cause the file to rebuild when `xata codegen` is run. If you need to override the configuration, you can set up a separate file alongside the generated code.
 
+<TabbedCode tabs={['Whatever', 'Dave']}>
 ```ts
 export const getXataClient = () => {
   if (instance) return instance;
@@ -24,15 +25,22 @@ export const getXataClient = () => {
   return instance;
 };
 ```
+```ts
+import { XataClient } from './xata';
+const xata = new XataClient({ apiKey: XATA_API_KEY });
+```
+</TabbedCode>
+
+<Alert status="warning">
+  This feature is Beta. It is still under active development. While we are avoiding breaking changes, we do not
+  guarantee backwards compatibility until the functionality is GA.
+</Alert>
 
 ## Manually passing the apiKey
 
 Some frameworks may not be compatible with parsing credentials from `.env`, instead requiring to pass your API key manually with the `apiKey` constructor option:
 
-```ts
-import { XataClient } from './xata';
-const xata = new XataClient({ apiKey: XATA_API_KEY });
-```
+
 
 ## Providing a fetch implementation
 
