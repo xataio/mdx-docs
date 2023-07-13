@@ -173,4 +173,5 @@ a transaction if no record is found.
 
 ## Limitations
 
-The only limitation to be aware of at this point s that Xata allows a maximum of 1000 operations to run in a single transaction. If you exceed this limit, you will receive an error message.
+- A maximum of 1000 operations are allowed in a single transaction. If you exceed this limit, you will receive an error message.
+- Inserting and updating content to file and file[] (file array) columns is not permitted with transactions.
