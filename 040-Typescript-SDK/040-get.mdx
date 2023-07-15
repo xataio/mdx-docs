@@ -145,7 +145,7 @@ Unless you have a specific reason to prefer another method, we generally recomme
 
 ## Getting a record by ID
 
-You can retrieve a recorded with a given ID using a request like this:
+You can retrieve a record with a given ID using a request like this:
 
 <TabbedCode tabs={['TypeScript', 'JSON']}>
 ```ts
@@ -584,7 +584,7 @@ const page = await xata.db.Users.getPaginated({
 
 </TabbedCode>
 
-You can find more infromation about pagination in the [API reference](/docs/api-reference/db/db_branch_name/tables/table_name/query#pagination).
+You can find more information about pagination in the [API reference](/docs/api-reference/db/db_branch_name/tables/table_name/query#pagination).
 
 ## Next Steps
 
@@ -598,7 +598,7 @@ The default value for the consistency option is `strong`, which retrieves data f
 
 It is recommended to use the Replica Store for queries wherever possible, in order to get the best possible performance out of your branch's assigned units.
 
-<TabbedCode tabs={['TypeScript', 'Pyton', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const page = await xata.db.Users.getPaginated({
   consistency: "eventual"
