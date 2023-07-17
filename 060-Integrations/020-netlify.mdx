@@ -8,9 +8,10 @@ published: true
 ---
 
 # Netlify
+
 [Netlify](https://https://www.netlify.com/) is a platform for hosting and deploying web applications that offers continuous deployment, build automation, and team collaboration.
 
-Xata provides a first-class integration with Netlify and its [deploy previews](https://www.netlify.com/products/deploy-previews/). 
+Xata provides a first-class integration with Netlify and its [deploy previews](https://www.netlify.com/products/deploy-previews/).
 
 The Xata + Netlify integration simplifies database development and provides an efficient workflow for production databases at scale. Xata offers a single service for all capabilities, accessed through a type-safe SDK, to help teams manage multiple data stores, such as search engines and relational databases.
 
@@ -32,14 +33,14 @@ This walkthrough assumes you have an application using Xata in a GitHub reposito
 
 ### Install the Xata app for GitHub
 
-1. Navigate to the Settings page for your Xata database. 
+1. Navigate to the Settings page for your Xata database.
 1. Click the GitHub icon and select the repository. The Xata GitHub app listens to commit and pull requests events and reads the migration files stored in the repository.
 
 ### Install the Xata - Netlify integration
 
 1. From the Settings page, click **Back to integration list**.
 1. Add the listed Netlify integration.
-1. Select the Netlify site you wish to connect.  
+1. Select the Netlify site you wish to connect.
 
 The Xata Netlify integration configures the Xata API key and other required environment variables in your Netlify site, so you won’t have to manually copy & paste settings.
 
@@ -48,16 +49,15 @@ The Xata Netlify integration configures the Xata API key and other required envi
 In order to select the correct Xata branch for the deployment previews, Xata uses a Netlify plugin that’s easy to install:
 
 1. In the terminal, enter the following command:
-    ```bash
-    npm install @xata.io/netlify
-    ```
-    **Note:** The plugin should not be installed as a `devDependency`. On production, Netlify does not install `devDependencies` in `package.json` and deployments won't use the correct branch. 
-   
+   ```bash
+   npm install @xata.io/netlify
+   ```
+   **Note:** The plugin should not be installed as a `devDependency`. On production, Netlify does not install `devDependencies` in `package.json` and deployments won't use the correct branch.
 1. Add the following to the `netlify.toml` file:
-    ```bash
-    [[plugins]]
-    package = "@xata.io/netlify"
-    ```
+   ```bash
+   [[plugins]]
+   package = "@xata.io/netlify"
+   ```
 
 ### Create a git branch with schema changes
 
@@ -65,14 +65,16 @@ When working on a new feature that requires schema changes, create a git branch 
 Modify the schema via the Xata Schema editor and then pull the schema changes to your repository:
 
 1. Enter the following command to checkout the branch:
-    ```bash
-    git checkout -b feature1
-    ```
+
+   ```bash
+   git checkout -b feature1
+   ```
 
 1. Pull changes from the branch:
-    ```bash
-    xata pull feature1
-    ```
+
+   ```bash
+   xata pull feature1
+   ```
 
 1. Commit and push changes to GitHub, and open a pull request.
 
@@ -83,8 +85,9 @@ The Xata GitHub app reacts to commits and pull requests just like the Netlify ap
 ![Preview and test the deploy](images/test-preview-deploy.png)
 
 If you click the **View on Xata** preview link, you’ll see that:
-* Xata has created a `preview-feature1` branch just for this deployment preview.
-* Xata has automatically copied the data from the main branch to this preview branch.
+
+- Xata has created a `preview-feature1` branch just for this deployment preview.
+- Xata has automatically copied the data from the main branch to this preview branch.
 
 If you click the Netlify deploy preview link, you will notice that the deploy preview is connected to the Xata preview branch and uses the new schema. This means that the reviewers can modify the data using the preview while testing and they won’t affect the data in production.
 
