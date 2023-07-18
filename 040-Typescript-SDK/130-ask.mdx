@@ -7,23 +7,17 @@ slug: typescript-client/ask
 published: true
 ---
 
-The `ask` endpoint helps you create interactive and engaging conversational interfaces, Q&A assistants, and chatbots. It gives users the information they need quickly and directly, letting them engage with your product without having to wade through documentation on articles. It uses up-to-date information from your database inside of Xata. This could be your documentation, team knowledge base, or any source of data you've set up. The ask endpoint uses search or similarity search algorithms to find relevant information from your database, and then applies the OpenAI ChatGPT API to generate natural language responses to user queries.
+The `ask` endpoint helps you create interactive and engaging conversational interfaces, Q&A assistants, and chatbots. It gives users the information they need quickly and directly, letting them engage with your product without having to wade through documentation on articles. It uses up-to-date information from your database inside of Xata. This could be your documentation, team knowledge-base, or any source of data you've set up. The ask endpoint uses Xata's search capabilities to find relevant information from your database, and uses this with OpenAI's ChatGPT API to interpret your question and to generate natural-sounding responses.
 
 At a high level, the `ask` endpoint works like this:
 
 - Run a text search against the database to find the records that are most relevant to the question asked by the user.
-- Produce a prompt with this general form:
-
-```text
-With these rules: {rules}
-And this text: {context}
-Given the above text, answer the question: {question}
-Answer:
-```
-
+- Take the most relevant results, and create a custom prompt for OpenAI.
 - Send the prompt to the ChatGPT API and let the model complete the answer.
 
-The ask endpoint can use either keyword search or vector/similarity search to find records that are most relevant to the user's query. To learn more about keyword or vector searches, see our [blog the compares the two approaches](https://xata.io/blog/keyword-vs-semantic-search-chatgpt).
+The ask endpoint can use either keyword or vector search to find records that are most relevant to the user's query. To learn more about keyword or vector searches, see our [blog the compares the two approaches](https://xata.io/blog/keyword-vs-semantic-search-chatgpt).
+
+When you use the ask endpoint, you can choose to continue any conversation you've started. Xata will remember the rules and context you've set, and allow you to continue to ask follow-up questions. Check the examples below to see how to use it.
 
 ## Usage
 
@@ -107,13 +101,14 @@ The other options are:
 
 Note that after performing the search step, the `ask` endpoint will use the top 3 results. In case of keyword search, all string or text columns that have more than 150 characters in the top 3 results will be added to the prompt. In case of vector search, the specified `contentColumn` from the top 3 results will be added to the prompt.
 
-Because the context size is limited, if the generated context is too large, the ask endpoint will attempt to dynamically select the portions of the text that are more relevant.
+OpenAI has limits on how much information can be sent or received. If your data is too large for OpenAI to process, Xata will take care of it for you. The endpoint will attempt to dynamically select the portions of the text that are most relevant . In chat sessions that span many messages, Xata will always ensure your context and rules are maintained, and pop messages in FIFO order; the first messages will be trimmed first.
 
 The response contains the generated answer and the record IDs that were used as context:
 
 ```jsonc
 {
   "answer": /*<< answer >>*/,
+  "session_id": "cg52bk1eqh5rd5hndhq95jercs",
   "records": [
     "b70d541d114ff54ad15915636450663f",
     "8ae4837002e21f013aa85c30a126ea1c",
@@ -164,6 +159,29 @@ data: {"done":true,"records":["0415d654cc8dd113e9b9423f425697ae","91301cdc08524e
 
 You can find a full Next.js application using the ask endpoint with server-sent events in our [examples repository](https://github.com/xataio/examples/tree/main/apps/sample-chatgpt).
 
+## Asking follow-up questions
+
+Xata supports asking follow-up questions, enabling ChatGPT-style interfaces for your data. Here, we have the concept of a **session**. A session represents a single conversation between a user and data in one of your Xata tables. A session has data from your tables, aka **context**. It also persists the rules you defined when starting the session, and all question sent and answers received.
+
+When communicating with OpenAI, the ask endpoint ensures that your rules, your context, and as many questions as possible are transmitted each time. If the total amount of messages becomes too long for OpenAI to process, Xata will remove messages from early in the conversation until the message size is small enough to work.
+
+Each session maintains its own cached set of your context, so changes to the underlying data in your database will not affect ongoing conversations. All cached information: your context, rules, and all conversations are automatically removed after 7 days.
+
+<TabbedCode tabs={['TypeScript', 'JSON']}>
+
+```ts
+const result = await xata.db.Tutorial.askTableContinue('<session_id>', { message: '<your follow-up message>' });
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask/<session_id>
+{
+  "message": "<your follow-up message>"
+}
+```
+
+</TabbedCode>
+
 ## Examples
 
 To run these examples you need to have a table that contains enough text to make the context useful for a question. String/text columns that are less than 150 characters are ignored by the model.
@@ -194,7 +212,7 @@ The following example tunes the rules and the search step, while still using key
 <TabbedCode tabs={['TypeScript', 'JSON']}>
 
 ```ts
-const result = await xata.db.Tutorial.ask('How do a retrieve a single record?', {
+const result = await xata.db.Tutorial.ask('How do I retrieve a single record?', {
   rules: [
     'Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.',
     'When you give an example, this example must exist exactly in the context given.',
@@ -222,7 +240,7 @@ const result = await xata.db.Tutorial.ask('How do a retrieve a single record?', 
 ```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
 {
-  "question": "How do a retrieve a single record?",
+  "question": "How do I retrieve a single record?",
   "rules": [
     "Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
     "When you give an example, this example must exist exactly in the context given.",
@@ -299,6 +317,101 @@ The following example uses vector search:
 
 </TabbedCode>
 
+The following example shows a conversation.
+
+<TabbedCode tabs={['TypeScript', 'JSON']}>
+
+```ts
+const result = await xata.db.Tutorial.ask("What's the difference between summarize and aggregate?", {
+  rules: [
+    'Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.',
+    'When you give an example, this example must exist exactly in the context given.',
+    'Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with "It doesn\'t look like I have enough information to answer that. Check the documentation or contact support."',
+    'Your name is DanGPT'
+  ],
+  searchType: 'keyword',
+  search: {
+    fuzziness: 2,
+    prefix: 'phrase',
+    target: ['slug', { column: 'title', weight: 4 }, 'content', 'section', { column: 'keywords', weight: 4 }],
+    boosters: [
+      {
+        valueBooster: {
+          column: 'section',
+          value: 'guide',
+          factor: 18
+        }
+      }
+    ]
+  }
+});
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+{
+  "question": "What's the difference between summarize and aggregate?",
+  "rules": [
+    "Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
+    "When you give an example, this example must exist exactly in the context given.",
+    "Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with \"It doesn't look like I have enough information to answer that. Check the documentation or contact support.\"",
+    "Your name is DanGPT"
+  ],
+  "searchType": "keyword",
+  "search": {
+    "fuzziness": 2,
+    "prefix": "phrase",
+    "target": ["slug", { "column": "title", "weight": 4 }, "content", "section", { "column": "keywords", "weight": 4 }],
+    "boosters": [
+      {
+        "valueBooster": {
+          "column": "section",
+          "value": "guide",
+          "factor": 18
+        }
+      }
+    ]
+  }
+}
+```
+
+</TabbedCode>
+
+From here, you might receive:
+
+```json
+{
+  "answer": "Summarize and aggregate both return similar results, but they differ in terms of the underlying store the data is served from. When using summarize, data is retrieved from PostgreSQL, which ensures consistent results. However, PostgreSQL storage is not optimized for these types of queries. On the other hand, the aggregate endpoint retrieves data from the column-store, which is optimized for larger tables and can handle more cardinality. This makes the aggregate endpoint faster and more suitable for workloads with eventual consistency. Please refer to the documentation for more information on the differences between summarize and aggregate.",
+  "session_id": "cg52bk1eqh5rd5hndhq95jercs",
+  "records": ["rec_a", "rec_b", "rec_c"]
+}
+```
+
+Now, using the `session_id` key returned in the response, we're able to continue the dialogue.
+
+<TabbedCode tabs={['TypeScript', 'JSON']}>
+
+```ts
+const result = await xata.db.TutorialaskContinue('cg52bk1eqh5rd5hndhq95jercs', 'Can you show me an example of both?');
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask/cg52bk1eqh5rd5hndhq95jercs
+{
+  "message": "Can you show me an example of both?"
+}
+```
+
+</TabbedCode>
+
+From which you will receive a response with the same structure as below.
+
+```json
+{
+  "answer": "Sure, ..."
+}
+```
+
 ## Troubleshooting
 
 ### No records found
@@ -312,3 +425,15 @@ no records found, it seems that I don't have enough data to answer this question
 It means that the search step did not return any results or that the returned results don't have enough text to generate a prompt. Note that string and text columns that have less than 150 characters are ignored.
 
 To solve the issue, you typically need to add more text to the content column, making it sure it has more than 150 characters for most records.
+
+## FAQs
+
+### How does pricing work?
+
+Please check the [pricing](<[pricing](https://xata.io/pricing)>) page for the details.
+
+### What data is given to OpenAI?
+
+If you never use the ask endpoint, your data will **never** be sent to OpenAI.
+
+When you use the endpoint, Xata finds the most relevant fields matching your search query and sends them in fragments or in their entirety to OpenAI. This is done per-request. No data is synced on any kind of schedule, and only data in the table you search for and matching the parameters you provide can be sent.
