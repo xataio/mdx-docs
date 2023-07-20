@@ -167,7 +167,7 @@ For example, if you are only interested in the name and the city of the user, yo
 <TabbedCode tabs={['TypeScript', 'JSON']}>
 ```ts
 const users = await xata.db.Users
-  .select(["name", "address.city"])
+  .select(["name", "city"])
   .getMany();
 ```
 
@@ -175,7 +175,7 @@ const users = await xata.db.Users
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
 
 {
-  "columns": ["name", "address.city"]
+  "columns": ["name", "city"]
 }
 ```
 
@@ -274,7 +274,7 @@ To refer to nested columns, you can use either the dot notation:
 <TabbedCode tabs={['TypeScript', 'JSON']}>
 
 ```ts
-const users = await xata.db.Users.filter({ 'address.zipcode': 12345 }).getMany();
+const users = await xata.db.Users.filter({ 'zipcode': 12345 }).getMany();
 ```
 
 ```jsonc
@@ -282,7 +282,7 @@ const users = await xata.db.Users.filter({ 'address.zipcode': 12345 }).getMany()
 
 {
   "filter": {
-    "address.zipcode": 12345
+    "zipcode": 12345
   }
 }
 ```
@@ -317,7 +317,7 @@ To give a more complex filtering example, consider the following:
 ```ts
 const users = await xata.db.Users
   .filter({
-    "address.zipcode": { $gt: 100 },
+    "zipcode": { $gt: 100 },
     $any: [
       { name: { $contains: "Keanu" } },
       { name: { $contains: "Carrie" } },
@@ -331,7 +331,7 @@ const users = await xata.db.Users
 
 {
   "filter": {
-    "address.zipcode": {
+    "zipcode": {
       "$gt": 100
     },
     "$any": [
@@ -406,7 +406,7 @@ It is also possible to have secondary sort criteria. For example:
 <TabbedCode tabs={['TypeScript', 'JSON']}>
 
 ```ts
-const users = await xata.db.Users.sort('address.city', 'desc').sort('name', 'asc').getMany();
+const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMany();
 ```
 
 ```jsonc
@@ -415,7 +415,7 @@ const users = await xata.db.Users.sort('address.city', 'desc').sort('name', 'asc
 {
   "sort": [
     {
-      "address.city": "desc"
+      "city": "desc"
     },
     {
       "name": "asc"
