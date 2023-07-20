@@ -14,7 +14,7 @@ You can create a record like this:
 ```ts
 const record = await xata.db.Users.create({
   email: 'keanu@example.com',
-  name: 'keanu@example.com'
+  name: 'Keanu Reeves'
 });
 ```
 
@@ -34,11 +34,11 @@ The TypeScript SDK returns the created record. The response looks like this:
 <TabbedCode tabs={['TypeScript', 'JSON']}>
   ```ts
   {
-    "email":"keanu@example.com"
-    "id":"rec_cd8rqcoavc42pi67lgd0"
-    "name":"keanu@example.com"
-    "bio":NULL
-    "address":NULL
+    "email": "keanu@example.com",
+    "id": "rec_cd8rqcoavc42pi67lgd0",
+    "name": "Keanu Reeves",
+    "bio": NULL,
+    "address": NULL,
   }
 ```
 
@@ -68,7 +68,7 @@ If you want to specify your own ID, you can do it like this:
 ```ts
 const record = await xata.db.Users.create("myid", {
   email: "keanu@example.com",
-  name: "keanu@example.com"
+  name: "Keanu Reeves"
 });
 ```
 

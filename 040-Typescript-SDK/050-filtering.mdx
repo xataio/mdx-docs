@@ -119,7 +119,7 @@ When you include multiple columns within the same filter, they are logically com
 ```ts
 const records = await xata.db.Users.filter({
   name: 'Keanu Reaves',
-  'address.city': 'New York'
+  'city': 'New York'
 }).getMany();
 ```
 
@@ -129,7 +129,7 @@ const records = await xata.db.Users.filter({
 {
   "filter": {
     "name": "Keanu Reaves",
-    "address.city": "New York"
+    "city": "New York"
   }
 }
 ```
@@ -145,7 +145,7 @@ operators:
 const records = await xata.db.Users.filter({
   $any: {
     name: 'Keanu Reaves',
-    'address.city': 'New York'
+    'city': 'New York'
   }
 }).getMany();
 ```
@@ -157,7 +157,7 @@ const records = await xata.db.Users.filter({
   "filter": {
     "$any": {
       "name": "Keanu Reaves",
-      "address.city": "New York"
+      "city": "New York"
     }
   }
 }
@@ -327,7 +327,7 @@ The `$not: { $any: {}}` can be shorted using the `$none` operator:
 const records = await xata.db.Users.filter({
   $none: {
     name: 'Keanu Reave',
-    'address.city': 'New York'
+    'city': 'New York'
   }
 }).getMany();
 ```
@@ -339,7 +339,7 @@ const records = await xata.db.Users.filter({
   "filter": {
     "$none": {
       "name": "Keanu Reave",
-      "address.city": "New York"
+      "city": "New York"
     }
   }
 }
