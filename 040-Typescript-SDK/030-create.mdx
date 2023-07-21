@@ -18,8 +18,6 @@ slug: typescript-client/insert
 published: true
 ---
 
-# Creating records
-
 You can create a record like this:
 
 <TabbedCode tabs={['TypeScript', 'JSON']}>
@@ -74,7 +72,7 @@ In the above:
 - `id` is the ID of the record, which Xata generates automatically. The generated records are globally unique and sortable. This means that sorting by the IDs you sort by the insertion order.
 - `xata.version` is the version of the record. It is automatically incremented any time the record is updated and can be used for optimistic locking.
 
-## Creating a Record with a given ID
+## Creating a record with a given ID
 
 If you want to specify your own ID, you can do it like this:
 
@@ -99,72 +97,81 @@ const record = await xata.db.Users.create('myid', {
 
 In the REST API example, note the change from `POST` to `PUT`. The `createOnly` query parameter signals Xata to return an error in case a record with the given ID already exists.
 
-## Creating a Record with a Linked Field
+## Creating a record with a linked field
 
 In the schema that we chose, the `Posts` table has an `author` column of type `link` that links to the `Users` table. To insert a record with a linked field, use the ID of the target record in the link column. For example:
 
-````ts|json
-  ```ts
-  const record = await xata.db.Posts.create({
-      title: "Filming the Matrix",
-      author: "rec_cd8rqcoavc42pi67lgd0"
-  });
-  ```
-  ```json
-  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Posts/data
+<TabbedCode tabs={['TypeScript', 'JSON']}>
 
-  {
-    "title": "Filming the Matrix",
-    "author": "rec_cd8rqcoavc42pi67lgd0"
-  }
-  ```
-````
+```ts
+const record = await xata.db.Posts.create({
+  title: 'Filming the Matrix',
+  author: 'rec_cd8rqcoavc42pi67lgd0'
+});
+```
 
-## Creating Records in Bulk
+```json
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Posts/data
+
+{
+  "title": "Filming the Matrix",
+  "author": "rec_cd8rqcoavc42pi67lgd0"
+}
+```
+
+</TabbedCode>
+
+## Creating records in bulk
 
 If you have multiple records to insert, you can send them in a single request via the [`/bulk` endpoint](/api-reference/db/db_branch_name/tables/table_name/bulk#bulk-insert-table-records). For example:
 
-````ts|json
-  ```ts
-  const users = await xata.db.Users.create([{
-      email: "laurence@example.com",
-      name: "Laurence Fishburne",
-      team: "rec_cd8s4kbo8dsvsjilo1ug",
-    }, {
-      email: "hugo@example.com",
-      name: "Hugo Weaving",
-      team: "rec_cd8s4kbo8dsvsjilo1ug"
-    }, {
-      email: "joe@example.com",
-      name: "Joe Pantoliano",
-      team: "rec_cd8s4kbo8dsvsjilo1ug"
-    }
-  ]);
-  ```
-  ```json
-  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/bulk
+<TabbedCode tabs={['TypeScript', 'JSON']}>
 
+```ts
+const users = await xata.db.Users.create([
   {
-    "records": [
-      {
-        "email": "laurence@example.com",
-        "name": "Laurence Fishburne",
-        "team": "rec_cd8s4kbo8dsvsjilo1ug"
-      },
-      {
-        "email": "hugo@example.com",
-        "name": "Hugo Weaving",
-        "team": "rec_cd8s4kbo8dsvsjilo1ug"
-      },
-      {
-        "email": "joe@example.com",
-        "name": "Joe Pantoliano",
-        "team": "rec_cd8s4kbo8dsvsjilo1ug"
-      }
-    ]
+    email: 'laurence@example.com',
+    name: 'Laurence Fishburne',
+    team: 'rec_cd8s4kbo8dsvsjilo1ug'
+  },
+  {
+    email: 'hugo@example.com',
+    name: 'Hugo Weaving',
+    team: 'rec_cd8s4kbo8dsvsjilo1ug'
+  },
+  {
+    email: 'joe@example.com',
+    name: 'Joe Pantoliano',
+    team: 'rec_cd8s4kbo8dsvsjilo1ug'
   }
-  ```
-````
+]);
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/bulk
+
+{
+  "records": [
+    {
+      "email": "laurence@example.com",
+      "name": "Laurence Fishburne",
+      "team": "rec_cd8s4kbo8dsvsjilo1ug"
+    },
+    {
+      "email": "hugo@example.com",
+      "name": "Hugo Weaving",
+      "team": "rec_cd8s4kbo8dsvsjilo1ug"
+    },
+    {
+      "email": "joe@example.com",
+      "name": "Joe Pantoliano",
+      "team": "rec_cd8s4kbo8dsvsjilo1ug"
+    }
+  ]
+}
+```
+
+</TabbedCode>
 
 It is possible to provide IDs for each of the records. If records with the same IDs already exist, the bulk operation is cancelled and an error is returned.
 
