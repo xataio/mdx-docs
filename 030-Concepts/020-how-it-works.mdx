@@ -27,7 +27,7 @@ Xata is a global multi-tenant system, composed of **cells**, each living in a re
 
 While the above architecture is a very common one in the industry, it hasn’t been —until now— productized in a service, which means a lot of teams were forced to either implement something similar to the above or live with reduced functionality.
 
-## Going Global
+## Going global
 
 As we’ve seen above, we call the combination of PostgreSQL + Elasticsearch and the associated services a “cell”. The cells are grouped into regions and form our **data plane**.
 
@@ -41,7 +41,7 @@ Besides the cells, the regions contain other services:
 
 The control plane information (users, workspaces, API keys) are stored in a single central region and then replicated in near real-time to all other regions. This way, we can offer minimal latencies in each geographical area while still maintaining the convenience of a global service.
 
-## Data Model Representation
+## Data model representation
 
 Xata has a relational data model, with a strict schema (schemaful) and with support for JSON-like objects. Records are grouped into tables, which are grouped into databases. Xata supports rich column types and relations between tables can be represented via link columns, which are similar to foreign keys.
 
@@ -87,13 +87,13 @@ Check constraints:
 
 We also rely on PostgreSQL to enforce constraints (unique, not null), data size limitations, and referential integrity for the linked columns. Array types, like `multiple`, are represented using PostgreSQL array types.
 
-Because our data model contains rich types, we know, for example, the difference between a short “string” column (containing a name, or a label) and a “text” column (containing maybe a blog post in markdown). This means we can have sane defaults for representing and indexing those columns in both PostgreSQL and Elasticsearch.
+Our data model contains rich types, which refer to data types that allow for more complex and structured data representations that can include a short “string” column (containing a name, or a label) and a “text” column (containing maybe a blog post in Markdown). This means we can have the same defaults for representing and indexing those columns in both PostgreSQL and Elasticsearch.
 
-## Branches and Zero-Downtime Migrations
+## Branches and zero-downtime migrations
 
 A database in Xata can have multiple branches, which are first-class citizens in the API. Branches are full logical databases that might or might not exist on the same set of physical instances. When you start a new branch from an existing one, the schema is copied, but the data is not automatically available in the new branch. As you create a development branch from a production branch, you can copy and sanitize parts of the data or initialize the branch with test data.
 
-For each branch, we record its schema history in a list of “commits”. These commits contain operations like “add a column”, “rename a column”, “add a new table”, “delete a table”, and so on. We also record which branch is created from which. This history information, together with the fact that each table and column are identified by IDs, allows us to create the correct migration diffs and perform the minimum set of operations required for a migration.
+For each branch, we record the schema history in a list of “commits”. These commits contain operations like “add a column”, “rename a column”, “add a new table”, “delete a table”, and more. We also record which branch is created from which. This history information, together with the fact that each table and column are identified by IDs, allows us to create the correct migration diffs and perform the minimum set of operations required for a migration.
 
 There are multiple benefits to having database branches, which is why they are being lately adopted by multiple database products:
 
@@ -103,7 +103,7 @@ There are multiple benefits to having database branches, which is why they are b
 
 The last one is particularly interesting because migrating database schemas is usually easy with small amounts of data, but becomes very painful when dealing with large amounts of data. In the NoSQL wave of DB products, this issue was avoided by going schemaless. However, not having a schema introduces its own class of problems, so lately the pendulum is swinging back toward databases with strict schemas.
 
-![Migration Request](images/migration-screenshot.png)
+![Migration Request](/images/migration-screenshot.png)
 
 One reason why migrations are difficult at scale is that `ALTER` statements can lock the database table. If an `ALTER` statement takes an exclusive table lock and it takes, say, one minute to execute, it essentially means one minute of downtime for your application, which is usually unacceptable. In PostgreSQL some `ALTER` statements are “safe”, meaning that they don’t take an exclusive lock, or if they take a lock they hold it for a very small amount of time. Simple migrations like adding a column or dropping a column are usually safe in PostgreSQL, but if that column has constraints, then the operation might become unsafe.
 
@@ -130,7 +130,7 @@ The version field for a record is stored in a special column, which is exposed i
 
 Another typical challenge with logical replication is that the number of events created can become quite large and overwhelm the PostgreSQL replication slot. For example, imagine running a statement `UPDATE foo` with no `WHERE` condition executed against a table with millions of rows. PostgreSQL executes that in a single transaction at the end of which all the rows in the table have been changed and need to be passed through the replication slot. Issues like this make it hard to rely on logical replication in the general case of arbitrary SQL access. Because we control the API, we can ensure that updates and deletes are done in transactions of reasonable size, which can be rate limited in order to protect the system from overload.
 
-## File Storage
+## File storage
 
 Xata offers general purpose file storage through the `file` column type. By integrating file support in the database, Xata aims to simplify the management of large binary content, by exposing it under the same API, same security model, same SDK. At the same time, the queries, filters, summaries, aggregations available can now be used on files metadata. The metadata (file name, media type, tags) is also indexed for search so it can be included in search results.
 
@@ -209,7 +209,7 @@ Xata has official SDKs for TypeScript/Javascript and Python, and the REST API is
 
 It uses code generation to generate the models from your schema, so using it is similar to using an ORM.
 
-For example:
+For example the following :
 
 ```tsx
 const user = await xata.db.users.filter('email', 'foo@example.com').getFirst();
@@ -299,7 +299,7 @@ Xata uses a **unit** to define the amount of capacity in your database. Billing 
 
 At Xata we are taking hard data problems, solve them using the industry's best practices, and then offer them to you in the most easy-to-use way possible.
 
-Zero-down-time migrations are an example of this: difficult under the hood, but a familiar-looking pull request with a diff in our UI. Change Data Capture is another example: generally difficult to get right, but inside Xata your data is simply replicated to the search engine, with zero configuration.
+Zero-downtime migrations are an example of this: difficult under the hood, but a familiar-looking pull request with a diff in our UI. Change Data Capture is another example: generally difficult to get right, but inside Xata your data is simply replicated to the search engine, with zero configuration.
 
 Our design principles are:
 
