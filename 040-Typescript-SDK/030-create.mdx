@@ -22,46 +22,52 @@ published: true
 
 You can create a record like this:
 
-````ts|json
-  ```ts
-  const record = await xata.db.Users.create({
-    email: "keanu@example.com",
-    name: "keanu@example.com"
-  });
-  ```
-  ```json
-  // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/data
+<TabbedCode tabs={['TypeScript', 'JSON']}>
 
-  {
-    "email": "keanu@example.com",
-    "name": "Keanu Reeves"
-  }
-  ```
-````
+```ts
+const record = await xata.db.Users.create({
+  email: 'keanu@example.com',
+  name: 'Keanu Reeves'
+});
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/data
+
+{
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves"
+}
+```
+
+</TabbedCode>
 
 The TypeScript SDK returns the created record. The response looks like this:
 
-````ts|json
-  ```ts
-  {
-    "email":"keanu@example.com"
-    "id":"rec_cd8rqcoavc42pi67lgd0"
-    "name":"keanu@example.com"
-    "bio":NULL
-    "address":NULL
+<TabbedCode tabs={['TypeScript', 'JSON']}>
+
+```ts
+{
+  "email": "keanu@example.com",
+  "id": "rec_cd8rqcoavc42pi67lgd0",
+  "name": "Keanu Reeves",
+  "bio": NULL,
+  "address": NULL,
+}
+```
+
+```jsonc
+{
+  "id": "rec_c8hnbch26un1nl0rthkg",
+  "xata": {
+    "version": 0,
+    "createdAt": "2023-05-15T08:21:31.96526+01:00",
+    "updatedAt": "2023-05-15T21:58:54.072595+01:00"
   }
-  ```
-  ```json
-  {
-    "id": "rec_c8hnbch26un1nl0rthkg",
-    "xata": {
-      "version": 0,
-      "createdAt": "2023-05-15T08:21:31.96526+01:00",
-      "updatedAt": "2023-05-15T21:58:54.072595+01:00",
-    }
-  }
-  ```
-````
+}
+```
+
+</TabbedCode>
 
 In the above:
 
@@ -72,21 +78,24 @@ In the above:
 
 If you want to specify your own ID, you can do it like this:
 
-````ts|json
-  ```ts
-  const record = await xata.db.Users.create("myid", {
-    email: "keanu@example.com",
-    name: "keanu@example.com"
-  });
-  ```
-  ```json
-  // PUT https://tutorial-ng7s8c.xata.sh/db/tutorial:main/tables/users/data/myid?createOnly=true
-  {
-    "email": "keanu@example.com",
-    "name": "Keanu Reeves"
-  }
-  ```
-````
+<TabbedCode tabs={['TypeScript', 'JSON']}>
+
+```ts
+const record = await xata.db.Users.create('myid', {
+  email: 'keanu@example.com',
+  name: 'Keanu Reeves'
+});
+```
+
+```jsonc
+// PUT https://tutorial-ng7s8c.xata.sh/db/tutorial:main/tables/users/data/myid?createOnly=true
+{
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves"
+}
+```
+
+</TabbedCode>
 
 In the REST API example, note the change from `POST` to `PUT`. The `createOnly` query parameter signals Xata to return an error in case a record with the given ID already exists.
 

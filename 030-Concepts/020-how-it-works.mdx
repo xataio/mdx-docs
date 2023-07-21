@@ -57,9 +57,7 @@ A record in Xata can look something like this:
 }
 ```
 
-The above shows a column of type email and an array-like column (`labels` of type `multiple`).
-
-When this data is stored in PostgreSQL and Elasticsearch, columns are identified by IDs. By using IDs for columns, instead of their user-visible names, we make some migrations simpler and we make it possible, for example, to track a column across branches even if it was renamed.
+The above shows a column of type email and an array-like column (`labels` of type `multiple`). When this data is stored in PostgreSQL and Elasticsearch, columns identified by IDs. By using IDs for columns, instead of their user-visible names, we make some migrations simpler and we make it possible, for example, to track a column across branches even if it was renamed.
 
 As a result, the underlying PostgreSQL table might look something like this:
 
