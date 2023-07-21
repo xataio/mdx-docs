@@ -163,7 +163,7 @@ You can find a full Next.js application using the ask endpoint with server-sent 
 
 Xata supports asking follow-up questions, enabling ChatGPT-style interfaces for your data. Here, we have the concept of a **session**. A session represents a single conversation between a user and data in one of your Xata tables. A session has data from your tables, aka **context**. It also persists the rules you defined when starting the session, and all question sent and answers received.
 
-When communicating with OpenAI, the ask endpoint ensures that your rules, your context, and as many questions as possible are transmitted each time. If the total amount of messages becomes too long for OpenAI to process, Xata will remove messages from early in the conversation until the message size is small enough to work.
+When communicating with OpenAI, the `ask` endpoint ensures that your rules, your context, and as many questions as possible are transmitted each time. If the total amount of messages becomes too long for OpenAI to process, Xata will trim messages from earlier in  the conversation until the message size is manageable for OpenAI to handle effectively.
 
 Each session maintains its own cached set of your context, so changes to the underlying data in your database will not affect ongoing conversations. All cached information: your context, rules, and all conversations are automatically removed after 7 days.
 
