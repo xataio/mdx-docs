@@ -60,7 +60,7 @@ Available parameters:
 
 ### Fetch all records
 
-```ts|python|json
+````ts|python|json
   ```ts
   const { records: myRecord } = await xata.sql<TeamsRecord>`SELECT * FROM teams`;
   ```
@@ -72,7 +72,7 @@ Available parameters:
 	  "query": "SELECT * FROM \"teams\""
   }
   ```
-```
+````
 
 The following response is returned:
 
@@ -97,7 +97,7 @@ The following response is returned:
 
 ### Select a subset of columns from your table
 
-```ts|python|json
+````ts|python|json
   ```ts
   const { records: myRecord } = await xata.sql<TeamsRecord>`SELECT name, city FROM "Users"`;
   ```
@@ -109,7 +109,7 @@ The following response is returned:
 	  "query": "SELECT name, city FROM \"Users\""
   }
   ```
-```
+````
 
 Response:
 
@@ -126,7 +126,7 @@ Response:
 
 ### Insert a new record using a parameterized query
 
-```ts|python|json
+````ts|python|json
   ```ts
   const { records: myRecord } = await xata.sql<TeamsRecord>`INSERT INTO "Users" (name, email) VALUES ($1, $2)`;
   ```
