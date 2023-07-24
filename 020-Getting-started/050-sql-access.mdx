@@ -1,0 +1,160 @@
+---
+title: SQL access
+keywords: ['sql', 'access', 'rest']
+description: How to access Xata using SQL directly
+slug: getting-started/sql-access
+published: false
+---
+
+Xata uses PostgreSQL under the hood to store your data. You can work
+with your data using the well-known SQL and get the results in a
+regular Xata JSON response over HTTP. Query, insert, update and delete
+records as you wish.
+
+Xata supports a subset of PostgreSQL language and functions.
+Supported functions include subquery, comparison, aggregate, window,
+range, json, string, datetime and array functions. All other functions
+are forbidden.
+
+## Data model
+
+Database tables are stored in PostgreSQL as tables. Xata datatypes
+are mapped to PostgreSQL types with additional constraints.
+
+| Xata datatype | PostgreSQL datatype | Notes |
+| ------------- | ------------------- | ----- |
+| string | text | |
+| text | text | with constaint on maximum length |
+| int | bigint | |
+| float | double precision | |
+| datetime | timestamptz | |
+| bool | boolean | |
+| email | text | validated by Xata |
+| multiple | text[] | validated by Xata |
+| file | jsonb | validated by Xata |
+| filearray | jsonb | validated by Xata |
+| link | foreign key | |
+
+Database tables are stored in PostgreSQL. Linked columns are foreign
+keys pointing to the linked table. If you want to access a linked
+column, use JOINs or WHERE conditions to find the corresponding
+records.  Example: `SELECT "Users".email, address.city FROM "Users"
+LEFT JOIN address ON "Users".id=address.id `.
+
+Other special Xata datatypes like `email` require you to insert it
+using the Xata API or SDK, otherwise Xata cannot check if the data
+inserted is valid or not. Thus, we suggest you do not write such
+column directly. Instead use the API we provide.
+
+## Endpoint
+
+`POST https://{your-workspace-slug}.{region}.xata.sh/db/db_branch_name/sql`
+
+Available parameters:
+
+* `query`: required, your SQL statement.
+
+* `params`: list of parameters when submitting a parameterized query.
+
+*  `consistency`:  consistency  when   executing  a  query.  Available
+  options: `strong`, `eventual`. Default: `strong`.
+
+## Examples
+
+### Fetch all records
+
+```ts|json
+  ```ts
+  const { records: myRecord } = await xata.sql<TeamsRecord>`SELECT * FROM teams`;
+  ```
+  ```json
+  {
+	"query": "SELECT * FROM teams"
+  }
+  ```
+```
+
+The following response is returned:
+
+```json
+{
+  "records": [
+    {
+      "id": "rec_c8hng2h26un90p8sr7k0",
+      "name": "Matrix",
+      "owner": {
+        "id": "myid"
+      },
+      "xata": {
+        "version": 0,
+        "createdAt": "2023-05-15T08:21:31.96526+01:00",
+        "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+      }
+    }
+  ]
+}
+```
+
+### Select a subset of columns from your table
+
+```ts|json
+  ```ts
+  const { records: myRecord } = await xata.sql<TeamsRecord>`SELECT name, city FROM "Users"`;
+  ```
+  ```json
+  {
+	"query": "SELECT name, city FROM \"Users\"",
+  }
+  ```
+```
+
+Response:
+
+```json
+{
+  "records": [
+    {
+      "address": {
+        "city": "New York"
+      },
+    	"name": "Keanu Reave",
+    }
+  ]
+}
+```
+
+### Insert a new record using a parameterized query
+
+```ts|json
+  ```ts
+  const { records: myRecord } = await xata.sql<TeamsRecord>`INSERT INTO "Users" (name, email) VALUES ($1, $2)`;
+  ```
+  ```json
+  {
+	"query": "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
+	"params": ["Keanu Reeves", "keanu@example.com"]
+  }
+  ```
+```
+
+## Limitations
+
+* `xata.*` internal fields are read-only.
+
+* You can only submit one statement per request.
+
+* Xata returns 1000 records at a time. Please access your data using
+  `LIMIT` and `OFFSET` keywords to iterate over your data.
+
+* `CASE` keyword is not supported.
+
+* JSON formatter functions do not work as the endpoint already returns
+  a JSON response.
+
+* Columns with the same name are overwritten by default. If you have
+  multiple columns with the same name please use aliasing to rename at
+  least one of them. For example: `SELECT address AS physical_address,
+  address AS email FROM people, emails WHERE people.id=emails.id;`
+
+* `RETURNING *` is not supported, list all columns you want to be
+  returned when inserting or updating records.
