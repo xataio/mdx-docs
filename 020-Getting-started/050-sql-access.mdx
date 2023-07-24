@@ -53,23 +53,23 @@ column directly. Instead use the API we provide.
 Available parameters:
 
 * `query`: required, your SQL statement.
-
 * `params`: list of parameters when submitting a parameterized query.
-
-*  `consistency`:  consistency  when   executing  a  query.  Available
-  options: `strong`, `eventual`. Default: `strong`.
+*  `consistency`:  consistency  when   executing  a  query.  Available options: `strong`, `eventual`. Default: `strong`.
 
 ## Examples
 
 ### Fetch all records
 
-```ts|json
+```ts|python|json
   ```ts
   const { records: myRecord } = await xata.sql<TeamsRecord>`SELECT * FROM teams`;
   ```
+  ```python
+  records = xata.sql().query("SELECT * FROM \"teams\"")
+  ```
   ```json
   {
-	"query": "SELECT * FROM teams"
+	  "query": "SELECT * FROM \"teams\""
   }
   ```
 ```
@@ -97,13 +97,16 @@ The following response is returned:
 
 ### Select a subset of columns from your table
 
-```ts|json
+```ts|python|json
   ```ts
   const { records: myRecord } = await xata.sql<TeamsRecord>`SELECT name, city FROM "Users"`;
   ```
+  ```python
+  records = xata.sql().query("SELECT name, city FROM \"Users\"")
+  ```
   ```json
   {
-	"query": "SELECT name, city FROM \"Users\"",
+	  "query": "SELECT name, city FROM \"Users\""
   }
   ```
 ```
@@ -114,10 +117,8 @@ Response:
 {
   "records": [
     {
-      "address": {
-        "city": "New York"
-      },
-    	"name": "Keanu Reave",
+      "city": "New York",
+    	"name": "Keanu Reaves"
     }
   ]
 }
@@ -125,14 +126,20 @@ Response:
 
 ### Insert a new record using a parameterized query
 
-```ts|json
+```ts|python|json
   ```ts
   const { records: myRecord } = await xata.sql<TeamsRecord>`INSERT INTO "Users" (name, email) VALUES ($1, $2)`;
   ```
+  ```python
+  records = xata.sql().query(
+    "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
+    ["Keanu Reeves", "keanu@example.com"]
+  )
+  ```
   ```json
   {
-	"query": "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
-	"params": ["Keanu Reeves", "keanu@example.com"]
+	  "query": "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
+	  "params": ["Keanu Reeves", "keanu@example.com"]
   }
   ```
 ```
