@@ -376,7 +376,7 @@ Note that in the above, `name` is a column in the `Teams` table, and we can refe
 
 To give a more complex filtering example, consider the following:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 ```ts
 const users = await xata.db.Users
   .filter({
@@ -406,6 +406,14 @@ const users = await xata.db.Users
       }
     ]
   }
+}
+```
+
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE zipcode > 100 AND (name LIKE '%Keanu%' OR name LIKE '%Carrie%') LIMIT 20;"
 }
 ```
 
@@ -462,11 +470,19 @@ const users = await xata.db.Users
 }
 ```
 
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" ORDER BY \"name\" asc LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 It is also possible to have secondary sort criteria. For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMany();
@@ -484,6 +500,14 @@ const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMa
       "name": "asc"
     }
   ]
+}
+```
+
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" ORDER BY \"city\" desc, \"name\" asc LIMIT 20;"
 }
 ```
 
