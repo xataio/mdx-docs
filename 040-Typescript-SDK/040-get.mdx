@@ -701,7 +701,7 @@ The default value for the consistency option is `strong`, which retrieves data f
 
 It is recommended to use the Replica Store for queries wherever possible, in order to get the best possible performance out of your branch's assigned units.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON', 'SQL']}>
 ```ts
 const page = await xata.db.Users.getPaginated({
   consistency: "eventual"
@@ -721,6 +721,15 @@ records = xata.data().query("Users", {
 {
   "columns": ["*"],
   "consistency": "eventual"
+}
+```
+
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" LIMIT 20;",
+    "consistency": "eventual"
 }
 ```
 
