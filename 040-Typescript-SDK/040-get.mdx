@@ -515,7 +515,7 @@ const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMa
 
 To sort results in random order, use `random` instead of `desc` or `asc`:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const users = await xata.db.Users.sort('*', 'random').getMany();
@@ -528,6 +528,14 @@ const users = await xata.db.Users.sort('*', 'random').getMany();
   "sort": {
     "*": "random"
   }
+}
+```
+
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" ORDER BY RANDOM() LIMIT 20;"
 }
 ```
 
@@ -650,7 +658,7 @@ The offset-page pagination is limited to querying up to 1000 records and is reco
 
 An example of offset based pagination:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL]}>
 
 ```ts
 const page = await xata.db.Users.getPaginated({
@@ -666,6 +674,14 @@ const page = await xata.db.Users.getPaginated({
     "offset": 10,
     "size": 10
   }
+}
+```
+
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" LIMIT 10 OFFSET 10;"
 }
 ```
 
