@@ -41,7 +41,7 @@ const data = await client
 }
 ```
 
-```sql
+```jsonc
 // POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/sql
 
 {
@@ -65,7 +65,7 @@ const teams = await xata.db.Teams.getMany();
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Teams/query
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -115,7 +115,7 @@ The response looks like this:
 }
 ```
 
-```sql
+```json
 {
   "records": [
     {
@@ -191,7 +191,7 @@ const user = await xata.db.Users.read("myid");
 // GET https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/myid
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -222,7 +222,7 @@ const users = await xata.db.Users
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -269,7 +269,7 @@ const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -298,7 +298,7 @@ const users = await xata.db.Posts.select([
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -332,7 +332,7 @@ const users = await xata.db.Users.filter({ email: 'keanu@example.com' }).getMany
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -362,7 +362,7 @@ const users = await xata.db.Users.filter({ 'team.name': 'Matrix' }).getMany();
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -409,7 +409,7 @@ const users = await xata.db.Users
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -470,7 +470,7 @@ const users = await xata.db.Users
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -503,7 +503,7 @@ const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMa
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -531,7 +531,7 @@ const users = await xata.db.Users.sort('*', 'random').getMany();
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -677,7 +677,7 @@ const page = await xata.db.Users.getPaginated({
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
@@ -724,7 +724,7 @@ records = xata.data().query("Users", {
 }
 ```
 
-```sql
+```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
