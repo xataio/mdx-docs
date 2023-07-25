@@ -60,19 +60,19 @@ Available parameters:
 
 ### Fetch all records
 
-````ts|python|json
-  ```ts
-  const { records: myRecord } = await xata.sql<TeamsRecord>`SELECT * FROM teams`;
-  ```
-  ```python
-  records = xata.sql().query("SELECT * FROM \"teams\"")
-  ```
-  ```json
-  {
-	  "query": "SELECT * FROM \"teams\""
-  }
-  ```
-````
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const { records: myRecord } = await xata.sql<TeamsRecord>`SELECT * FROM teams`;
+```
+```python
+records = xata.sql().query("SELECT * FROM \"teams\"")
+```
+```json
+{
+  "query": "SELECT * FROM \"teams\""
+}
+```
+</TabbedCode>
 
 The following response is returned:
 
@@ -97,19 +97,19 @@ The following response is returned:
 
 ### Select a subset of columns from your table
 
-````ts|python|json
-  ```ts
-  const { records: myRecord } = await xata.sql<TeamsRecord>`SELECT name, city FROM "Users"`;
-  ```
-  ```python
-  records = xata.sql().query("SELECT name, city FROM \"Users\"")
-  ```
-  ```json
-  {
-	  "query": "SELECT name, city FROM \"Users\""
-  }
-  ```
-````
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const { records: myRecord } = await xata.sql<TeamsRecord>`SELECT name, city FROM "Users"`;
+```
+```python
+records = xata.sql().query("SELECT name, city FROM \"Users\"")
+```
+```json
+{
+  "query": "SELECT name, city FROM \"Users\""
+}
+```
+</TabbedCode>
 
 Response:
 
@@ -126,42 +126,30 @@ Response:
 
 ### Insert a new record using a parameterized query
 
-````ts|python|json
-  ```ts
-  const { records: myRecord } = await xata.sql<TeamsRecord>`INSERT INTO "Users" (name, email) VALUES ($1, $2)`;
-  ```
-  ```python
-  records = xata.sql().query(
-    "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
-    ["Keanu Reeves", "keanu@example.com"]
-  )
-  ```
-  ```json
-  {
-	  "query": "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
-	  "params": ["Keanu Reeves", "keanu@example.com"]
-  }
-  ```
-````
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const { records: myRecord } = await xata.sql<TeamsRecord>`INSERT INTO "Users" (name, email) VALUES ($1, $2)`;
+```
+```python
+records = xata.sql().query(
+  "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
+  ["Keanu Reeves", "keanu@example.com"]
+)
+```
+```json
+{
+  "query": "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
+  "params": ["Keanu Reeves", "keanu@example.com"]
+}
+```
+</TabbedCode>
 
 ## Limitations
 
 * `xata.*` internal fields are read-only.
-
 * You can only submit one statement per request.
-
-* Xata returns 1000 records at a time. Please access your data using
-  `LIMIT` and `OFFSET` keywords to iterate over your data.
-
+* Xata returns 1000 records at a time. Please access your data using `LIMIT` and `OFFSET` keywords to iterate over your data.
 * `CASE` keyword is not supported.
-
-* JSON formatter functions do not work as the endpoint already returns
-  a JSON response.
-
-* Columns with the same name are overwritten by default. If you have
-  multiple columns with the same name please use aliasing to rename at
-  least one of them. For example: `SELECT address AS physical_address,
-  address AS email FROM people, emails WHERE people.id=emails.id;`
-
-* `RETURNING *` is not supported, list all columns you want to be
-  returned when inserting or updating records.
+* JSON formatter functions do not work as the endpoint already returns a JSON response.
+* Columns with the same name are overwritten by default. If you have multiple columns with the same name please use aliasing to rename at least one of them. For example: `SELECT address AS physical_address, address AS email FROM people, emails WHERE people.id=emails.id;`
+* `RETURNING *` is not supported, list all columns you want to be returned when inserting or updating records.
