@@ -9,7 +9,7 @@ published: true
 
 The general form of a query is:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 import { getXataClient } from "./xata";
@@ -41,13 +41,21 @@ const data = await client
 }
 ```
 
+```sql
+// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/sql
+
+{
+    "query": "SELECT <columns> from \"table_name\" WHERE <filter> ORDER BY <sort> LIMIT <number>;"
+}
+```
+
 </TabbedCode>
 
 For the REST API example, note that a POST request is used, even though the data is not modified, in order to be able to use a body for the request ([GET requests with a body are non-standard](https://www.rfc-editor.org/rfc/rfc2616#section-4.3)).
 
 All the requests are optional, so the simplest query request looks like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const teams = await xata.db.Teams.getMany();
@@ -57,11 +65,19 @@ const teams = await xata.db.Teams.getMany();
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Teams/query
 ```
 
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * from \"Teams\" LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 The response looks like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 ```ts
 [
   {
@@ -96,6 +112,25 @@ The response looks like this:
       "more": false
     }
   }
+}
+```
+
+```sql
+{
+  "records": [
+    {
+      "id": "rec_c8hng2h26un90p8sr7k0",
+      "name": "Matrix",
+      "owner": {
+        "id": "myid"
+      },
+      "xata": {
+        "version": 0,
+        "createdAt": "2023-05-15T08:21:31.96526+01:00",
+        "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+      }
+    }
+  ]
 }
 ```
 
@@ -147,13 +182,21 @@ Unless you have a specific reason to prefer another method, we generally recomme
 
 You can retrieve a record with a given ID using a request like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 ```ts
 const user = await xata.db.Users.read("myid");
 ```
 
 ```jsonc
 // GET https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/myid
+```
+
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * from \"Users\" WHERE id='myid';"
+}
 ```
 
 </TabbedCode>
@@ -164,7 +207,7 @@ By default, the Query API returns all columns of the queried table. For link col
 
 For example, if you are only interested in the name and the city of the user, you can make a request like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 ```ts
 const users = await xata.db.Users
   .select(["name", "city"])
@@ -176,6 +219,14 @@ const users = await xata.db.Users
 
 {
   "columns": ["name", "city"]
+}
+```
+
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT name,city from \"Users\" LIMIT 20;"
 }
 ```
 
@@ -205,7 +256,7 @@ It's worth noting that the special columns [id](/docs/concepts/data-model#id), [
 The same syntax can be used to select columns from a linked table, therefore adding new columns to the response. For example, to query all the columns
 of the Teams table and also add all the columns of the owner user, you can use:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
@@ -218,11 +269,19 @@ const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
 }
 ```
 
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT *,\"Users\".* FROM \"Teams\" LEFT JOIN \"Users\" ON \"Teams\".owner=\"Users\".id;"
+}
+```
+
 </TabbedCode>
 
 You can do this transitively as well, for example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 ```ts
 const users = await xata.db.Posts.select([
   "title",
@@ -239,6 +298,14 @@ const users = await xata.db.Posts.select([
 }
 ```
 
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT title,\"Users\".*,\"Teams\".* FROM \"Posts\" LEFT JOIN \"Users\" ON \"Posts\".author=\"Users\".id LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id;"
+}
+```
+
 </TabbedCode>
 
 In this example, the `author` is a link column from `Posts` to `Users` and `team` is a link column from `Users` to `Teams`.
@@ -249,7 +316,7 @@ This section contains a few examples of how to use filtering. To find all suppor
 
 To filter the results, use the `filter` function/parameter. For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const users = await xata.db.Users.filter({ email: 'keanu@example.com' }).getMany();
@@ -265,33 +332,21 @@ const users = await xata.db.Users.filter({ email: 'keanu@example.com' }).getMany
 }
 ```
 
-</TabbedCode>
-
-Will return only the records with the given email address.
-
-To refer to nested columns, you can use either the dot notation:
-
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-
-```ts
-const users = await xata.db.Users.filter({ 'zipcode': 12345 }).getMany();
-```
-
-```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-  "filter": {
-    "zipcode": 12345
-  }
+    "query": "SELECT * FROM \"Users\" WHERE email='keanu@example.com' LIMIT 20;"
 }
 ```
 
 </TabbedCode>
 
+Will return only the records with the given email address.
+
 You can also refer to a linked column in filters, for example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const users = await xata.db.Users.filter({ 'team.name': 'Matrix' }).getMany();
@@ -304,6 +359,14 @@ const users = await xata.db.Users.filter({ 'team.name': 'Matrix' }).getMany();
   "filter": {
     "team.name": "Matrix"
   }
+}
+```
+
+```sql
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id WHERE \"Teams\".name='Matrix';"
 }
 ```
 
