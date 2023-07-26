@@ -13,9 +13,9 @@ The endpoint leverages up-to-date information from your Xata database, such as d
 
 At a high level, the `ask` endpoint works like this:
 
-- Run a text search against the database to find the records that are most relevant to the question asked by the user.
-- Take the most relevant results, and create a custom prompt for OpenAI.
-- Send the prompt to the ChatGPT API and let the model complete the answer.
+1. Run a text search against the database to find the records that are most relevant to the question asked by the user.
+1. Take the most relevant results, and create a custom prompt for OpenAI.
+1. Send the prompt to the ChatGPT API and let the model complete the answer.
 
 The `ask` endpoint can use either keyword or vector search to find records that are most relevant to the user's query. To learn more about keyword or vector searches, see our [blog the compares the two approaches](https://xata.io/blog/keyword-vs-semantic-search-chatgpt).
 
@@ -91,7 +91,7 @@ const result = await xata.db.Tutorial.ask('<question>', {
 
 The `ask` endpoint works at the table level. In the above snippet, the name of the table is called `Tutorial`, as a placeholder. Replace `Tutorial` with the name of your table name.
 
-The only mandatory parameter is the `question`, which is the question that the ask endpoint will attempt to answer.
+The only mandatory parameter is the `question`, which is the question that the `ask` endpoint will attempt to answer.
 The other options are:
 
 - `rules`: an array of strings with the rules for the model. The rules are passed as part of the prompt and control the
@@ -159,7 +159,7 @@ data: {"text":" an"}
 data: {"done":true,"records":["0415d654cc8dd113e9b9423f425697ae","91301cdc08524e6f6eef5d0b9d66e345","ae0c68966fc0f00cb913b3c209a7c5a1"]}
 ```
 
-You can find a full Next.js application using the ask endpoint with server-sent events in our [examples repository](https://github.com/xataio/examples/tree/main/apps/sample-chatgpt).
+You can find a full Next.js application using the `ask` endpoint with server-sent events in our [examples repository](https://github.com/xataio/examples/tree/main/apps/sample-chatgpt).
 
 ## Asking follow-up questions
 
@@ -434,4 +434,4 @@ To solve the issue, you typically need to add more text to the content column, m
 
 If you never use the `ask` endpoint, your data will **never** be sent to OpenAI.
 
-When you use the endpoint, Xata finds the most relevant fields matching your search query and sends them in fragments or in their entirety to OpenAI. This process is carried out on a per-request basis. Data is not synced on any kind of schedule. Only the data in the table you're searching for, and matching the parameters you provide, will be sent.
+When you use the endpoint, Xata finds the most relevant fields matching your search query and sends them in fragments or in their entirety to OpenAI. This process is carried on a per-request basis. Data is not synced to any kind of schedule. Only the data in the table you're searching for, and matching the parameters you provide, will be sent.
