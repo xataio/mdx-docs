@@ -106,7 +106,7 @@ resp = xata.search_and_filter().queryTable("Avengers", {
 assert resp.status_code == 200
 
 records = resp.json()
-print(data)
+print(data["records"])
 # [{"id": "spidey", "name": "Peter Parker", "job": "spiderman"}]
 # Note it will be an array, even if there is only one record matching the filters
 ```
