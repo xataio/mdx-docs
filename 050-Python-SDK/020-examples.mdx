@@ -24,6 +24,7 @@ Below are the parameters passed to the methods in the following examples:
 - `updateRecordWithID`: table name (string), record id (string), record (dictionary)
 - `upsertRecordWithID`: table name (string), record id (string), record (dictionary)
 - `getRecord`: table name (string), record id (string)
+- `search_and_filter().queryTable`: table name (string), object with "columns", "filter", and "sort"
 - `deleteRecord`: table name (string), record id (string)
 - `deleteRecord`: table name (string), record id (string)
 - `bulkInsertTableRecords`: table name (string), records (dictionary with records array)
@@ -88,6 +89,28 @@ batman = records.getRecord("Avengers", "bruce-wayne")
 print(batman.status_code)
 # 404
 ```
+
+## Query records from a table (using server-side filters and sorts)
+
+The following example shows how to query a table and apply filters and sorts. We will query the table `Avengers`, and apply some filters.
+
+```python
+from xata.client import XataClient
+
+resp = xata.search_and_filter().queryTable("Avengers", {
+  "columns": ["name", "thumbnail"],  # the columns we want returned
+  "filter": { "job": "spiderman" },  # optional filters to apply
+  "sort": { "name": "desc" }  # optional sorting key and order (asc/desc)
+})
+# queryTable returns status code = 200
+assert resp.status_code == 200
+
+records = resp.json()
+print(data["records"])
+# [{"id": "spidey", "name": "Peter Parker", "job": "spiderman"}]
+# Note it will be an array, even if there is only one record matching the filters
+```
+
 
 ## Delete a Record from a Table
 
