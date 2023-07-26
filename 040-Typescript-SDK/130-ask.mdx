@@ -172,7 +172,7 @@ Each session maintains its own cached set of your context, so changes to the und
 <TabbedCode tabs={['TypeScript', 'JSON']}>
 
 ```ts
-const result = await xata.db.Tutorial.askTableContinue('<session_id>', '<your follow-up message>');
+const result = await xata.db.Tutorial.ask('<your follow-up message>', { sessionId: '<session_id>' });
 ```
 
 ```jsonc
