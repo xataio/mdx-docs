@@ -8,8 +8,9 @@ published: false
 
 Xata uses PostgreSQL under the hood to store your data. You can work
 with your data using the well-known SQL and get the results in a
-regular Xata JSON response over HTTP. Query, insert, update and delete
-records as you wish.
+regular Xata JSON response over HTTP. When the Xata API does not
+support the query you need, you can access SQL directly to perform
+query, insert, update and delete records as you wish.
 
 Xata supports a subset of PostgreSQL language and functions.
 Supported functions include subquery, comparison, aggregate, window,
@@ -46,9 +47,14 @@ using the Xata API or SDK, otherwise Xata cannot check if the data
 inserted is valid or not. Thus, we suggest you do not write such
 column directly. Instead use the API we provide.
 
-## Endpoint
+### Table and column names
 
+Please note when you are working with names that include upper-case
+letters like `Users` or `zipCode`, you must quote those
+otherwise PostgreSQL treats it as a lowercase name.
 `POST https://{your-workspace-slug}.{region}.xata.sh/db/db_branch_name/sql`
+
+## Endpoint
 
 Available parameters:
 
@@ -144,6 +150,18 @@ records = xata.sql().query(
 ```
 </TabbedCode>
 
+### Delete record using a parameterized query
+
+```json
+  ```json
+  {
+	"query": "DELETE FROM  \"Users\" WHERE id=$1",
+	"params": ["my-record-id"]
+  }
+  ```
+```
+
+
 ## Limitations
 
 * `xata.*` internal fields are read-only.
@@ -152,4 +170,6 @@ records = xata.sql().query(
 * `CASE` keyword is not supported.
 * JSON formatter functions do not work as the endpoint already returns a JSON response.
 * Columns with the same name are overwritten by default. If you have multiple columns with the same name please use aliasing to rename at least one of them. For example: `SELECT address AS physical_address, address AS email FROM people, emails WHERE people.id=emails.id;`
-* `RETURNING *` is not supported, list all columns you want to be returned when inserting or updating records.
+* Xata does not support DDL commands like CREATE, DROP, ALTER and TRUNCATE.
+* Xata does not support DCL commands like GRANT or REVOKE.
+* Xata does not support TCL commands like COMMIT, ROLLBACK, SAVEPOINT, etc.
