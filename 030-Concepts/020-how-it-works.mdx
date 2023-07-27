@@ -50,17 +50,12 @@ A record in Xata can look something like this:
   "name": "John Doe",
   "email": "john@example.com",
   "age": 42,
-  "address": {
-    "street": "123 Main St",
-    "city": "New York"
-  },
+  "address": "123 Main St, New York",
   "labels": ["admin", "user"]
 }
 ```
 
-The above shows a column of type object (`address`) with two sub-keys (`street` and `city`). It also shows a column of type email and an array-like column (`labels` of type `multiple`).
-
-When this data is stored in PostgreSQL and Elasticsearch, the objects are flattened into columns identified by IDs. By using IDs for columns, instead of their user-visible names, we make some migrations simpler and we make it possible, for example, to track a column across branches even if it was renamed.
+The above shows a column of type email and an array-like column (`labels` of type `multiple`). When this data is stored in PostgreSQL and Elasticsearch, columns identified by IDs. By using IDs for columns, instead of their user-visible names, we make some migrations simpler and we make it possible, for example, to track a column across branches even if it was renamed.
 
 As a result, the underlying PostgreSQL table might look something like this:
 
@@ -186,7 +181,7 @@ The `/query` and `/summarize` API endpoints are served from the transactional st
 
 As you can see in the above examples, the filtering syntax is the same across the different types of stores, meaning that it’s easy to move queries from one to another.
 
-While we expect most users to use our high-level SDK clients, which make development easier, the REST API is meant to be also easy to understand and use directly. Because it is using JSON, it is more verbose than SQL, but on the other hand, it makes it easier to use with functionality that doesn’t cleanly map into SQL, like free-text-search, complex aggregations, nested objects, etc.
+While we expect most users to use our high-level SDK clients, which make development easier, the REST API is meant to be also easy to understand and use directly. Because it is using JSON, it is more verbose than SQL, but on the other hand, it makes it easier to use with functionality that doesn’t cleanly map into SQL, like free-text-search, complex aggregations, etc.
 
 At the moment, the Xata service doesn’t offer direct access to the PostgreSQL and Elasticsearch instances using their native protocols. The reasons for this might become more clear after reading the following sections, but in short: it allows us to control the underlying schema and what type of queries are possible, and therefore we can ultimately offer our users a new and safer developer experience. For the future, we do have plans to offer SQL support while still maintaining the advantages of mediating access to the underlying stores.
 

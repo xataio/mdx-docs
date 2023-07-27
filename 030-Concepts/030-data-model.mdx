@@ -7,7 +7,7 @@ slug: concepts/data-model
 published: true
 ---
 
-Xata has a relational data model, with a strict schema (schemaful) and with support for JSON-like objects. Records are grouped into tables, which are grouped into databases. Xata supports rich column types and relations between tables can be represented via link columns, which are similar to foreign keys.
+Xata has a relational data model, with a strict schema. Records are grouped into tables, which are grouped into databases. Xata supports rich column types and relations between tables can be represented via link columns, which are similar to foreign keys.
 
 Internally, we are storing the data both in a transactional database (OLTP) as well as in a search/analytics engine (OLAP). This is done transparently for you and the different stores are exposed via the same API. You can read more about how Xata works behind the scenes on the [How it Works](/docs/concepts/how-it-works) page.
 
@@ -26,10 +26,7 @@ The following is an example of a record that you can store natively in Xata:
   "name": "John Doe",
   "email": "john@example.com",
   "age": 42,
-  "address": {
-    "street": "123 Main St",
-    "city": "New York"
-  },
+  "address": "123 Main St, New York",
   "labels": ["admin", "user"]
 }
 ```
@@ -56,17 +53,7 @@ The keys in the JSON are the column names. The values are the data. The corespon
         },
         {
           "name": "address",
-          "type": "object",
-          "columns": [
-            {
-              "name": "street",
-              "type": "string"
-            },
-            {
-              "name": "city",
-              "type": "string"
-            }
-          ]
+          "type": "string"
         },
         {
           "name": "labels",
@@ -260,45 +247,9 @@ produced by any other machine learning model. Once you store the embeddings, you
 
 The `object` type represents a group of columns. Objects can also be nested multiple times by adding a column of type `object` inside the object. Set `unique` to make sure the objects you insert are unique.
 
-Example definition:
-
-```json
-{
-  "name": "address",
-  "type": "object",
-  "columns": [
-    {
-      "name": "street",
-      "type": "string"
-    },
-    {
-      "name": "city",
-      "type": "string"
-    }
-  ]
-}
-```
-
-To insert a value of type `object`, simply use a JSON map:
-
-```json
-{
-  "address": {
-    "street": "123 Main St",
-    "city": "New York"
-  }
-}
-```
-
-While the API supports the object type, the Web UI and CLI do not expose it as an option yet. There is still work in progress.
-
-In the Web UI, object fields can be created implicitly by creating columns with dotted names. For example columns "user.id" and "user.name" will result in a column "user" of type "object" with the fields "id" and "name" in it, while "user.details.address" will create a nested object "details" within the object "user".
-
-At the moment Xata does not provide automatic schema expansion from JSON objects. The object's structure must be explicitly defined with matching columns in the schema. In case an incoming record contains a JSON object that does not comply with the defined schema, the record will be rejected. Alternatively, JSON content can be stored in text columns.
-
 ### link
 
-The `link` type represents a link to another table. See the [links and relations](#links-and-relations) section for more information.
+The `link` type represents a link to another table. See the [links and relationships](#links-and-relationships) section for more information.
 
 Example definition:
 
@@ -361,6 +312,7 @@ At query time, you can easily include columns from the target table by specifyin
 
 Also, you can navigate the link in the opposite direction, from the target table to the source table. For example, if you have a `posts` table with an `author` column of type `link` that points to a `users` table. You are able to navigate the link from the `users` table to the `posts` table. At query time, you can get a list of the related posts in a single request by specifying the `<-posts.author` field. The arrow (`<-`) token indicates we are using a backwards relationship established by the `author` column (of type `link`) from `posts`. An example request that retrieves the name and related posts from the `users` table would look like this:
 
+<TabbedCode tabs={['JSON', 'Python']}>
 ```jsonc
 // POST /db/blogs:main/tables/users/query
 {
@@ -383,6 +335,28 @@ Also, you can navigate the link in the opposite direction, from the target table
   ]
 }
 ```
+```python
+users = self.client.data().query("Users", {
+  "table": "users",
+  "columns": [
+    "name",
+    {
+      "name": "<-posts.author",
+      "columns": ["title"],
+      "as": "posts",
+      "limit": 10,
+      "offset": 0,
+      "order": [
+        {
+          "column": "createdAt",
+          "order": "desc"
+        }
+      ]
+    }
+  ]
+})
+```
+</TabbedCode>
 
 The response would look like this (notice the nested `records` array under the `posts` field):
 
