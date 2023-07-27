@@ -33,6 +33,47 @@ Below are the parameters passed to the methods in the following examples:
 
 ## Insert or update new Record
 
+<TabbedCode tabs={['1.x', '0.x']}>
+```python
+from xata.client import XataClient
+
+client = XataClient(db_name="my_db")
+
+record = {
+    "name": "Peter Parker",
+    "job": "Spiderman",
+}
+
+# Insert record to table "Avengers" and let Xata generate a record Id
+resp = client.records().insert("Avengers", record)
+assert resp.is_success()
+print("Record Id: %s" % resp["id"])
+
+# Insert record to table "Avengers" with your own record Id "spidey-1"
+resp = client.records().insert_with_id("Avengers", "spidey-1", record)
+assert resp.is_success()
+
+# Update the record with Id "spidey-1" in table "Avengers"
+record["job"] = "your friendly neighborhood spider man"
+resp = client.records().update_with_id("Avengers", "spidey-1", record)
+assert resp.is_success()
+
+# Upsert: Update or Insert a record
+record = {
+    "name": "Bruce Banner",
+    "job": "Hulk",
+}
+resp = client.records().upsert_with_id("Avengers", "hulk-1", record)
+# On insert status code = 201
+assert resp.status_code == 201
+assert resp.is_success()
+
+record["job"] = "the incredible hulk"
+resp = client.records().upsert_with_id("Avengers", "spidey-1", record)
+# On update status code = 200
+assert resp.status_code == 200
+assert resp.is_success()
+```
 ```python
 from xata.client import XataClient
 
@@ -71,6 +112,7 @@ resp = client.records().upsertRecordWithID("Avengers", "spidey-1", record)
 # On update status code = 200
 assert resp.status_code == 200
 ```
+</TabbedCode>
 
 ## Get a record from a table
 
