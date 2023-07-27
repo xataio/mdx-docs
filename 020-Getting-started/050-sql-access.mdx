@@ -167,7 +167,6 @@ records = xata.sql().query(
 * `xata.*` internal fields are read-only.
 * You can only submit one statement per request.
 * Xata returns 1000 records at a time. Please access your data using `LIMIT` and `OFFSET` keywords to iterate over your data.
-* `CASE` keyword is not supported.
 * JSON formatter functions do not work as the endpoint already returns a JSON response.
 * Columns with the same name are overwritten by default. If you have multiple columns with the same name please use aliasing to rename at least one of them. For example: `SELECT address AS physical_address, address AS email FROM people, emails WHERE people.id=emails.id;`
 * Xata does not support DDL commands like CREATE, DROP, ALTER and TRUNCATE.
