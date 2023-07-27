@@ -46,13 +46,13 @@ The API surface was clunky with duplicate names, creating long function calls an
 Listing all databases in `0.x`
 
 ```python
-list = self.client.databases().getDatabaseList()
+list = xata.databases().getDatabaseList()
 ```
 
 changed to a more concise call in `1.x`:
 
 ```python
-list = self.client.databases().list()
+list = xata.databases().list()
 ```
 
 Continously the function arguments are also converted to the pep-8 standard, lowercased and separated by an underscore, `SessionId` becomes `session_id`.
