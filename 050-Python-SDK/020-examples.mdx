@@ -124,6 +124,8 @@ from xata.client import XataClient
 records = XataClient().records()
 
 spiderman = records.get("Avengers", "spidey")
+print(spiderman.is_success())
+# True
 print(spiderman)
 # {"id": "spidey", "name": "Peter Parker", "job": "spiderman"}
 
@@ -214,7 +216,7 @@ The Bulk Processor is a helpful tool for performing bulk operations using the Xa
 ```python
 from xata.client import XataClient
 
-client = XataClient(api_key="REDACTED_API_KEY", db_name="my_db", branch_name="feature-042")
+xata = XataClient(api_key="REDACTED_API_KEY", db_name="my_db", branch_name="feature-042")
 
 avengers = [
     {"name": "Peter Parker", "job": "Spiderman"},
@@ -222,7 +224,7 @@ avengers = [
     {"name": "Steve Rodgers Parker", "job": "Captain America"},
     {"name": "Tony Stark", "job": "Iron Man"},
 ]
-resp = client.records().bulk_insert("Avengers", {"records": avengers})
+resp = xata.records().bulk_insert("Avengers", {"records": avengers})
 assert resp.is_success()
 ```
 ```python
@@ -287,9 +289,9 @@ print("Records: %s" % resp.json()["records"])
 ```python
 from xata.client import XataClient
 
-client = XataClient()
+xata = XataClient()
 
-user = client.users().get()
+user = xata.users().get()
 print(user.status_code)
 # 200
 ```
