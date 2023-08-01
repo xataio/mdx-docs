@@ -109,8 +109,8 @@ The response contains the generated answer and the record IDs that were used as 
 
 ```jsonc
 {
-  "answer": /*< answer >*/,
-  "session_id": "cg52bk1eqh5rd5hndhq95jercs",
+  "answer": "< answer >",
+  "sessionId": "cg52bk1eqh5rd5hndhq95jercs",
   "records": [
     "b70d541d114ff54ad15915636450663f",
     "8ae4837002e21f013aa85c30a126ea1c",
@@ -156,7 +156,7 @@ data: {"text":" an"}
 
 ...
 
-data: {"done":true,"records":["0415d654cc8dd113e9b9423f425697ae","91301cdc08524e6f6eef5d0b9d66e345","ae0c68966fc0f00cb913b3c209a7c5a1"]}
+data: {"done":true, "sessionId": "cg52bk1eqh5rd5hndhq95jercs", "records":["0415d654cc8dd113e9b9423f425697ae","91301cdc08524e6f6eef5d0b9d66e345","ae0c68966fc0f00cb913b3c209a7c5a1"]}
 ```
 
 You can find a full Next.js application using the `ask` endpoint with server-sent events in our [examples repository](https://github.com/xataio/examples/tree/main/apps/sample-chatgpt).
@@ -172,11 +172,11 @@ Each session maintains its own cached set of your context, so changes to the und
 <TabbedCode tabs={['TypeScript', 'JSON']}>
 
 ```ts
-const result = await xata.db.Tutorial.ask('<your follow-up message>', { sessionId: '<session_id>' });
+const result = await xata.db.Tutorial.ask('<your follow-up message>', { sessionId: '<session id>' });
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask/<session_id>
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask/<session id>
 {
   "message": "<your follow-up message>"
 }
@@ -384,7 +384,7 @@ From here, you might receive the following response:
 ```json
 {
   "answer": "Summarize and aggregate both return similar results, but they differ in terms of the underlying store the data is served from. When using summarize, data is retrieved from PostgreSQL, which ensures consistent results. However, PostgreSQL storage is not optimized for these types of queries. On the other hand, the aggregate endpoint retrieves data from the column-store, which is optimized for larger tables and can handle more cardinality. This makes the aggregate endpoint faster and more suitable for workloads with eventual consistency. Please refer to the documentation for more information on the differences between summarize and aggregate.",
-  "session_id": "cg52bk1eqh5rd5hndhq95jercs",
+  "sessionId": "cg52bk1eqh5rd5hndhq95jercs",
   "records": ["rec_a", "rec_b", "rec_c"]
 }
 ```
