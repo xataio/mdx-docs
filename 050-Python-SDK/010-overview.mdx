@@ -60,11 +60,11 @@ XATA_DATABASE_URL="REDACTED_DB_URL"
 #### xatarc configuration file
 
 The `.xatarc` configuration file is the final source to retrieve the API key and the workspace.
-Please refer to the [authentication][0] page to learn more about the `.xatarc` file and best practices.
+Refer to the [authentication][0] page to learn more about the `.xatarc` file and best practices.
 
 #### Environment Variables
 
-If no parameters were passed, the client probes the following environment variables for authentication.
+If no parameters passed, the client probes the following environment variables for authentication.
 
 ```bash
 export XATA_API_KEY="REDACTED_API_KEY"
@@ -79,7 +79,7 @@ client = XataClient()
 
 #### Parameters
 
-Inject the API key and workspace `id` directly into the constructor as parameters:
+Inject the API key and workspace `id` directly into the constructor as a parameter:
 
 ```python
 from xata.client import XataClient
@@ -89,6 +89,6 @@ client = XataClient(api_key="REDACTED_API_KEY", db_url="REDACTED_DB_URL")
 
 ## Logging
 
-The SDK builds on the [requests](https://pypi.org/project/requests/) package and includes built-in logging support. By configuring the log level to DEBUG, you can view the URL and status code by default.
+The SDK builds on the [requests](https://pypi.org/project/requests/) package and includes built-in logging support. By configuring the log level to debug, you can view the URL and status code by default.
 
 [0]: /docs/getting-started/cli#authentication
