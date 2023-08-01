@@ -7,25 +7,27 @@ slug: python-sdk/overview
 published: true
 ---
 
-The Python SDK is available as a [PyPI package](https://pypi.org/project/xata/), uses type annotations and requires Python 3.8 or higher. The API reference is located at https://xata-py.readthedocs.io.
+The Python SDK is available as a [PyPI package](https://pypi.org/project/xata/). It uses type annotations and requires Python 3.8 or higher. The API reference is located at https://xata-py.readthedocs.io.
 
 ## Installation
 
-To install the library:
+To install the library enter the following command:
 
 ```bash
 pip install xata
 ```
 
-The xata package is a standalone SDK library that features the `XataClient`. By installing the package, you can import the SDK into your Python project and start building on top of Xata. Please note, that the Python SDK is different from the [Xata CLI](/docs/getting-started/installation#install-the-xata-cli) which can be used to manage your Xata databases from the command line or to import the [Typescript and Javascript client](/docs/typescript-client/overview).
+The `xata` package is a standalone SDK library that features `XataClient`. By installing the package, you can import the SDK into your Python project and start building on top of Xata. 
+
+The Python SDK is different from the [Xata CLI](/docs/getting-started/installation#install-the-xata-cli) which can be used to manage your Xata databases from the command line or import the [Typescript and Javascript client](/docs/typescript-client/overview).
 
 ## Configuration
 
 ### Workspace URL
 
-To bootstrap the SDK we advise to use the workspace URL. In the [Web UI](https://app.xata.io), please navigate to _Workspaces_ then _Configuration_ and you will see the workspace API base URL. Please copy the URL and use it to setup routing.
+To bootstrap the SDK we recommend you use the workspace URL. In the [Web UI](https://app.xata.io), navigate to **Workspaces** then **Configuration**. You will be directed to the workspace API base URL. Copy the URL and use it to configure routing.
 
-The URL can be passed to the client as parameter:
+The URL can be passed to the client as a parameter:
 
 ```py
 xata = XataClient(db_url="REDACTED_DB_URL")
@@ -37,7 +39,7 @@ The format of the database URL (`db_url`) parameter must follow the format of: `
 
 ### Authorization
 
-There are multiple options to pass your Xata credentials to the client. Xata will check following this order of precedence:
+There are multiple options to pass your Xata credentials to the client. Xata will check the following using this order of precedence:
 
 1. Parameters passed to the constructor
 1. Environment variables
