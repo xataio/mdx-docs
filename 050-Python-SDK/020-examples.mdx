@@ -18,17 +18,17 @@ More examples are available in the [GitHub repository of the SDK](https://github
 ## At a glance
 
 Below are the parameters passed to the methods in the following examples:
-
-- `insertRecord`: table name (string), record (dictionary)
-- `insertRecordWithID`: table name (string), record id (string), record (dictionary)
-- `updateRecordWithID`: table name (string), record id (string), record (dictionary)
-- `upsertRecordWithID`: table name (string), record id (string), record (dictionary)
-- `getRecord`: table name (string), record id (string)
-- `search_and_filter().queryTable`: table name (string), object with "columns", "filter", and "sort"
-- `deleteRecord`: table name (string), record id (string)
-- `deleteRecord`: table name (string), record id (string)
-- `bulkInsertTableRecords`: table name (string), records (dictionary with records array)
-- `users().getUser()`
+- `xata.records().insert()`: table name (str), record (dictionary)
+- `xata.records().insert_with_id()`: table name (str), record id (str), record (dictionary)
+- `xata.records().update_with_id()_`: table name (str), record id (str), record (dictionary)
+- `xata.records().upsert_with_id()`: table name (str), record id (str), record (dictionary)
+- `xata.records().get()`: table name (str), record id (str)
+- `xata.data().query()`: table name (str), object with "columns", "filter", and "sort"
+- `xata.records().delete()`: table name (str), record id (str)
+- `xata.records().bulk_insert()`: table name (str), records (dictionary with records array)
+- `xata.users().get()`
+- `xata.data().ask()`: table name (str), question (str)
+- `xata.data().ask_follow_up()`: table name (str), session id (str), question (str)
 - `to_rfc3339()`: dt (datetime), tz (timezone, default: utc)
 
 ## Insert or update new Record
@@ -37,7 +37,7 @@ Below are the parameters passed to the methods in the following examples:
 ```python
 from xata.client import XataClient
 
-client = XataClient(db_name="my_db")
+xata = XataClient(db_name="my_db")
 
 record = {
     "name": "Peter Parker",
@@ -45,17 +45,17 @@ record = {
 }
 
 # Insert record to table "Avengers" and let Xata generate a record Id
-resp = client.records().insert("Avengers", record)
+resp = xata.records().insert("Avengers", record)
 assert resp.is_success()
 print("Record Id: %s" % resp["id"])
 
 # Insert record to table "Avengers" with your own record Id "spidey-1"
-resp = client.records().insert_with_id("Avengers", "spidey-1", record)
+resp = xata.records().insert_with_id("Avengers", "spidey-1", record)
 assert resp.is_success()
 
 # Update the record with Id "spidey-1" in table "Avengers"
 record["job"] = "your friendly neighborhood spider man"
-resp = client.records().update_with_id("Avengers", "spidey-1", record)
+resp = xata.records().update_with_id("Avengers", "spidey-1", record)
 assert resp.is_success()
 
 # Upsert: Update or Insert a record
@@ -63,13 +63,13 @@ record = {
     "name": "Bruce Banner",
     "job": "Hulk",
 }
-resp = client.records().upsert_with_id("Avengers", "hulk-1", record)
+resp = xata.records().upsert_with_id("Avengers", "hulk-1", record)
 # On insert status code = 201
 assert resp.status_code == 201
 assert resp.is_success()
 
 record["job"] = "the incredible hulk"
-resp = client.records().upsert_with_id("Avengers", "spidey-1", record)
+resp = xata.records().upsert_with_id("Avengers", "spidey-1", record)
 # On update status code = 200
 assert resp.status_code == 200
 assert resp.is_success()
