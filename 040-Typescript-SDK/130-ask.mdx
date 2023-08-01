@@ -408,7 +408,7 @@ const result = await xata.db.TutorialaskContinue('cg52bk1eqh5rd5hndhq95jercs', '
 
 </TabbedCode>
 
-From which you will receive a response with the same structure as below.
+You will receive a response similar to the following:
 
 ```json
 {
@@ -436,4 +436,4 @@ To solve the issue, you typically need to add more text to the content column, m
 
 If you never use the `ask` endpoint, your data will **never** be sent to OpenAI.
 
-When you use the endpoint, Xata finds the most relevant fields matching your search query and sends them in fragments or in their entirety to OpenAI. This process is carried on a per-request basis. Data is not synced to any kind of schedule. Only the data in the table you're searching for, and matching the parameters you provide, will be sent.
+When you use the endpoint, Xata finds the most relevant fields matching your search query and sends them in fragments or in their entirety to OpenAI. This process is carried on a per-request basis. Data is not synced to any schedule. Only the data in the table you're searching for, and matching the parameters you provide, will be sent.
