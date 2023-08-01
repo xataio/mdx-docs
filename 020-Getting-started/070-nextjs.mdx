@@ -131,26 +131,19 @@ export default function PostsListPage() {
 }
 ```
 
-To fix the error we'll need to utilize the Xata client in Next.js's server-side mode. This can be done with the `getServerSideProps` function that Next.js provides. On save, you'll notice the page still errors.
+To fix the error we'll need to utilize the Xata client in Next.js's server-side mode. This can be done with the `getServerSideProps` function that Next.js provides.
 
-<Alert status="warning">
-  Error: Error serializing `.records[0].pubDate` returned from `getServerSideProps` in "/posts". Reason: `object`
-  ("\[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
-</Alert>
-
-```tsx {4-15}
-import { getXataClient, Posts } from '../xata';
+```tsx {4-13}
+import { getXataClient } from '../xata';
 const xata = getXataClient();
 
 // We will make the query to Xata on the server.
 // This will allow the query to read the API_KEY from the .env file
 export const getServerSideProps = async () => {
-  const records: Posts[] = await xata.db.Posts.getMany();
+  const records = await xata.db.Posts.getMany();
   return {
     props: {
-      records: records.map((record) => ({
-        ...record
-      }))
+      records
     }
   };
 };
@@ -164,43 +157,69 @@ export default function PostsListPage() {
 }
 ```
 
-This error is because Xata stores date fields as an object. To use it within this application we'll need to serialize it to a string before it can be used.
+On save, you'll notice the page still errors:
 
-```tsx {6}
-// ...
-records: records.map((record) => ({
-  ...record,
-  // We need to convert our date from an object to a string to use it here
-  // If you didn't set up your pubDate column as "not null" Typescript may complain, so we'll add ? after pubDate for this example
-  pubDate: record.pubDate?.toDateString(),
-})),
-// ...
-```
+<Alert status="warning">
+Error: Error serializing `.records[0].xata.createdAt` returned from `getServerSideProps` in "/posts".
+Reason: `object` ("[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
+</Alert>
 
-On save our page should contain no errors. The last thing to do is pass our newly created server-side props to the render so we can see the results on the page.
 
-```tsx {16-32}
-import { getXataClient, Posts } from '../xata';
+This error is because Xata stores date fields as an object. To solve this issue, the easiest is to use the `toSerializable` function that is provided by the SDK. This will convert the record into a JSON serializable object.
+
+```tsx {10}
+import { getXataClient } from '../xata';
 const xata = getXataClient();
 
+// We will make the query to Xata on the server.
+// This will allow the query to read the API_KEY from the .env file
 export const getServerSideProps = async () => {
-  const records: Posts[] = await xata.db.Posts.getMany();
+  const records = await xata.db.Posts.getMany();
   return {
     props: {
-      records: records.map((record) => ({
-        ...record,
-        pubDate: record.pubDate?.toDateString()
-      }))
+      records: records.map((record) => record.toSerializable()),
     }
   };
 };
 
-// Pass the props defined above to the page and map against it
-export default function PostsListPage({ records }: { records: Posts[] }) {
+export default function PostsListPage() {
   return (
     <>
       <h1>My xata posts</h1>
-      {records.map((record: Posts) => (
+    </>
+  );
+}
+```
+
+On save our page should contain no errors. The last thing to do is pass our newly created server-side props to the render so we can see the results on the page.
+
+```tsx {17-36}
+import { JSONData } from "@xata.io/client";
+import { getXataClient, PostsRecord } from "../xata";
+// We'll assign the client to xata to make it easier to call
+const xata = getXataClient();
+
+// We will make the query to Xata on the server.
+// This will allow the query to read the API_KEY from the .env file
+export const getServerSideProps = async () => {
+  const records = await xata.db.Posts.getMany();
+  return {
+    props: {
+      records: records.map((record) => record.toSerializable()),
+    },
+  };
+};
+
+// Pass the props defined above to the page and map against it
+export default function PostsListPage({
+  records,
+}: {
+  records: JSONData<PostsRecord>[];
+}) {
+  return (
+    <>
+      <h1>My xata posts</h1>
+      {records.map((record) => (
         <div key={record.id}>
           <h2>{record.title}</h2>
           <p>{record.id}</p>
