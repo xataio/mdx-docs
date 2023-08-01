@@ -56,7 +56,7 @@ To start lets create a Next.js application. Set it up with typescript support so
 npx create-next-app@latest --typescript my-xata-app
 ```
 
-For the purpose of this tutorial, we're going to assume you named this project `my-xata-app`. Move to that directory, and run `npm run` to see your website at http://localhost:3000
+For the purpose of this tutorial, we're going to assume you named this project `my-xata-app`. Move to that directory, and run `npm run dev` to see your website at http://localhost:3000
 
 ### Initialize Xata in your my-xata-app directory
 
@@ -92,7 +92,7 @@ The `src/xata.ts` includes generated code that typically you should never touch 
 
 ```bash
 # To update the contents of ~/project/src/.xatarc
-xata pull
+xata pull main
 ```
 
 ## Create a new page to output our posts
