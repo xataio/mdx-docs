@@ -37,7 +37,7 @@ Filter by one column having a particular value:
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -55,6 +55,14 @@ const records = await xata.db.Users.filter('name', 'Keanu Reave').getMany();
   "filter": {
     "name": "Keanu Reaves"
   }
+}
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' LIMIT 20;"
 }
 ```
 
@@ -90,7 +98,7 @@ const records = await xata.db.Users.filter('name', is('Keanu Reaves')).getMany()
 
 To combine multiple values using the OR logic, you can use the `$any` operator by providing an array of values:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -110,11 +118,19 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name IN ('Keanu Reeves','Carrie-Anne Moss') LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 When you include multiple columns within the same filter, they are logically combined using the AND operator:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -134,12 +150,20 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' AND city = 'New York' LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 The above matches if both conditions are met. You can be more explicit about it by using the `$all` and `$any`
 operators:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -163,11 +187,19 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' OR city = 'New York' LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 The $all and $any operators can also accept an array of objects, enabling the use of repeated column names:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 ```ts
 const records = await xata.db.Users.filter({
   $any: [{ name: "Keanu Reaves" }, { name: "Carrie-Anne Moss" }],
@@ -184,11 +216,19 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' OR name = 'Carrie-Anne Moss' LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 You can check for a value in a column being not-null with `$exists`:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -206,11 +246,19 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name IS NOT NULL LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 This can be combined with `$all` or `$any`:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -228,11 +276,19 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE (name IS NOT NULL) AND (address IS NOT NULL) LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 Or you can use the inverse operator `$notExists`:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -250,13 +306,21 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name IS NULL LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 ## Negations
 
 The `$not` operator can inverse any operation.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 ```ts
 const records = await xata.db.Users.filter({
   $not: {
@@ -274,6 +338,14 @@ const records = await xata.db.Users.filter({
       "name": "Keanu Reeves"
     }
   }
+}
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE NOT name = 'Keanu Reeves' LIMIT 20;"
 }
 ```
 
@@ -317,11 +389,19 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE NOT (name = 'Keanu Reeves' OR name = 'Laurence Fishburne') LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 The `$not: { $any: {}}` can be shorted using the `$none` operator:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -345,11 +425,19 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name NOT IN ('Keanu Reeves','Laurence Fishburne') LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 In addition, you can use operators like `$isNot` or `$notExists` to simplify expressions:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -369,6 +457,14 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE NOT name = 'Keanu Reeves' LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 ## Partial match
@@ -379,7 +475,7 @@ Xata supports several operators for partial matching, but you should consider us
 To match a value partially, you can use the `$contains` operator. Note that `$contains` operator can
 cause performance issues at scale, because indices cannot be used.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -402,11 +498,18 @@ const records = await xata.db.Users.filter('name', contains('Keanu')).getMany();
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name LIKE '%Keanu%' LIMIT 20;"
+}
+```
 </TabbedCode>
 
 Wildcards are supported via the `$pattern` operator:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -426,6 +529,14 @@ const records = await xata.db.Users.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name ~ 'K.*an.? R.*' LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 The `$pattern` operator accepts two wildcard characters:
@@ -438,7 +549,7 @@ escape a backslash by using another backslash.
 
 You can also use the `$startsWith` and `$endsWith` operators:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -447,7 +558,7 @@ const records = await xata.db.Users.filter({
 
 // or
 const records = await xata.db.Users.filter({
-  name: { $endsWith: 'Reave' }
+  name: { $endsWith: 'Reeves' }
 }).getMany();
 ```
 
@@ -460,6 +571,20 @@ const records = await xata.db.Users.filter({
       "$startsWith": "Keanu"
     }
   }
+}
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name ~ '^Keanu' LIMIT 20;"
+}
+
+// or
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE name ~ 'Reeves$' LIMIT 20;"
 }
 ```
 
@@ -476,7 +601,7 @@ The comparison operators are:
 
 These operators work on strings, numbers, and datetimes. For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Posts.filter({
@@ -496,11 +621,19 @@ const records = await xata.db.Posts.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE views > 5 LIMIT 20;"
+}
+```
+
 </TabbedCode>
 
 Example with date ranges, using the built-in [Xata timestamp columns](/docs/concepts/data-model#xata-createdat):
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Posts.filter({
@@ -533,6 +666,14 @@ const records = await xata.db.Posts.filter({
       }
     ]
   }
+}
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE \"xata.createdAt\"::timestamptz < '2022-10-25T02:00:00.000Z' AND \"xata.createdAt\"::timestamptz >= '2022-10-25T01:00:00.000Z' LIMIT 20;"
 }
 ```
 
@@ -573,7 +714,7 @@ const records = await xata.db.Posts.filter({
 The `$includes` operator accepts a custom predicate that will check if any
 array values matches the predicate.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Posts.filter({
@@ -592,6 +733,14 @@ const records = await xata.db.Posts.filter({
       }
     }
   }
+}
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE 'mat' = ANY (labels);"
 }
 ```
 
