@@ -50,13 +50,15 @@ apiKey=YOUR_API_KEY_HERE
 
 ## Create a new Astro app
 
-To start lets create a new Astro project. Set it up with typescript support so that we can utilize the SDK later in this tutorial. Move to that directory, and run `npm run` to see your website at http://localhost:3000
+To start lets create a new Astro project. Set it up with typescript support so that we can utilize the SDK later in this tutorial. 
 
 ```bash
 npm create astro@latest
 ```
 
-For the purpose of this tutorial, we're going to assume you named this project `my-xata-app` and choose to use TypeScript.
+Move to that directory, and run `npm run dev` to see your website at http://localhost:3000
+
+For the purpose of this tutorial, we're going to assume you named this project `my-xata-app` and choose to use TypeScript. Use the recommended settings for the rest of the questions.
 
 ### Initialize Xata in your my-xata-app directory
 
@@ -67,7 +69,7 @@ Xata needs a few things to communicate with the databases we set up. It needs to
 xata init
 ```
 
-This will prompt you to answer some questions about whether you are creating a new database or utilizing an existing one. If you followed the instructions above you should choose to use the existing `my-xata-app` database. Also choose to use `TypeScript codegen` to follow along with this tutorial. On completion the CLI will create `.env`, `.xatarc`, and `src/xata.ts` files within your project folder with the correct credentials to access your database.
+This will prompt you to answer some questions about whether you are creating a new database or utilizing an existing one. If you followed the instructions above you should choose to use the existing `my-xata-app` database. Also choose to use `TypeScript codegen` to follow along with this tutorial. Use the defaults for the rest of the questions. On completion the CLI will create `.env`, `.xatarc`, and `src/xata.ts` files within your project folder with the correct credentials to access your database.
 
 Your `.env` file should look something like this.
 
@@ -92,12 +94,12 @@ The `src/xata.ts` includes generated code that typically you should never touch 
 
 ```bash
 # To update the contents of ~/project/src/.xatarc
-xata pull
+xata pull main
 ```
 
 ## Edit the index.astro file
 
-Astro starts with a mininal setup on its `src/pages/index.astro` file. We'll keep it as is. It should look something like the below.
+Astro starts with a mininal setup on its `src/pages/index.astro` file. We'll keep it as is. It should look something like the below. If it doesn't, replace the content with the below.
 
 ```astro
 ---
@@ -165,7 +167,7 @@ const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
 
 After refreshing we'll notice we have no more errors. At this point it should be easy to query the `Posts` table.
 
-```astro {4,17-23}
+```astro {4,16-23}
 ---
 import { XataClient } from "../xata";
 const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
