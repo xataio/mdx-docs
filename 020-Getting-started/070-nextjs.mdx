@@ -160,10 +160,9 @@ export default function PostsListPage() {
 On save, you'll notice the page still errors:
 
 <Alert status="warning">
-Error: Error serializing `.records[0].xata.createdAt` returned from `getServerSideProps` in "/posts".
-Reason: `object` ("[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
+  Error: Error serializing `.records[0].xata.createdAt` returned from `getServerSideProps` in "/posts". Reason: `object`
+  ("[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
 </Alert>
-
 
 This error is because Xata stores date fields as an object. To solve this issue, the easiest is to use the `toSerializable` function that is provided by the SDK. This will convert the record into a JSON serializable object.
 
@@ -177,7 +176,7 @@ export const getServerSideProps = async () => {
   const records = await xata.db.Posts.getMany();
   return {
     props: {
-      records: records.map((record) => record.toSerializable()),
+      records: records.map((record) => record.toSerializable())
     }
   };
 };
@@ -194,8 +193,7 @@ export default function PostsListPage() {
 On save our page should contain no errors. The last thing to do is pass our newly created server-side props to the render so we can see the results on the page.
 
 ```tsx {17-36}
-import { JSONData } from "@xata.io/client";
-import { getXataClient, PostsRecord } from "../xata";
+import { getXataClient, PostsRecord } from '../xata';
 // We'll assign the client to xata to make it easier to call
 const xata = getXataClient();
 
@@ -205,17 +203,13 @@ export const getServerSideProps = async () => {
   const records = await xata.db.Posts.getMany();
   return {
     props: {
-      records: records.map((record) => record.toSerializable()),
-    },
+      records: records.map((record) => record.toSerializable())
+    }
   };
 };
 
 // Pass the props defined above to the page and map against it
-export default function PostsListPage({
-  records,
-}: {
-  records: JSONData<PostsRecord>[];
-}) {
+export default function PostsListPage({ records }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
       <h1>My xata posts</h1>
@@ -232,7 +226,9 @@ export default function PostsListPage({
 }
 ```
 
-Note that the type returned by `toSerializable()` is `JSONData<PostsRecord>`. This essentially means: has all the columns of the Posts table, but the values are JSON serializable. This means they can be passed to the browser while still keeping the end-to-end type safety of TypeScript.
+In Next.js, it is recommended to use the `InferGetServerSidePropsType` helper to infer the type of the props returned by `getServerSideProps`, so that types match the query results.
+
+Note that the type returned by `toSerializable()` is `JSONData<PostsRecord>`. This helper type converts all properties to JSON serializable. This means they can be passed client-side while still keeping the end-to-end type safety of TypeScript.
 
 At this point you should have a basic understanding of how to query Xata records from the Database with Next.js.
 
