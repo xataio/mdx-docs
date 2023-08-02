@@ -232,7 +232,7 @@ export default function PostsListPage({
 }
 ```
 
-Note that the type on returned by `toSerializable()` is `JSONData<PostsRecord>`. This essentially means: has all the columns of the Posts table, but the values are JSON serializable. This means they can be passed to the browser while still keeping the type safety of TypeScript.
+Note that the type returned by `toSerializable()` is `JSONData<PostsRecord>`. This essentially means: has all the columns of the Posts table, but the values are JSON serializable. This means they can be passed to the browser while still keeping the end-to-end type safety of TypeScript.
 
 At this point you should have a basic understanding of how to query Xata records from the Database with Next.js.
 
