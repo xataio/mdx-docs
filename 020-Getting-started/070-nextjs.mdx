@@ -164,7 +164,7 @@ On save, you'll notice the page still errors:
   ("[object Date]") cannot be serialized as JSON. Only return JSON serializable data types.
 </Alert>
 
-This error occurs because Xata stores date fields as an object. To resolve this issue, use the `toSerializable` function that is provided by the SDK. This will convert the record into a JSON serializable object.
+This error occurs because Xata stores date fields as an object. To resolve this issue, use the `toSerializable` function that is provided by the SDK. Note that the type returned by `toSerializable()` is `JSONData<PostsRecord>`. This helper type converts all properties to JSON serializable. This means they can be passed client-side while still keeping the end-to-end type safety of TypeScript.
 
 ```tsx {10}
 import { getXataClient } from '../xata';
@@ -227,8 +227,6 @@ export default function PostsListPage({ records }: InferGetServerSidePropsType<t
 ```
 
 In Next.js, it is recommended to use the `InferGetServerSidePropsType` helper to infer the type of the props returned by `getServerSideProps`, so that types match the query results.
-
-Note that the type returned by `toSerializable()` is `JSONData<PostsRecord>`. This helper type converts all properties to JSON serializable. This means they can be passed client-side while still keeping the end-to-end type safety of TypeScript.
 
 At this point you should have a basic understanding of how to query Xata records from the Database with Next.js.
 
