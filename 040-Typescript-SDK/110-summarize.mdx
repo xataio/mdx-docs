@@ -37,7 +37,7 @@ Referring to the table above; if I'd like to understand how my store has been go
 
 Here, the column is `product`. The `summary` - in it's two parts - will be `average` as the function, and `sale_price` as the column. In plain language, you might ask "give me the average sale price for each product". The request would look like:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
   const records = await xata.db.titles.summarize({
     filter: { product: 'basketball' },
@@ -59,6 +59,14 @@ Here, the column is `product`. The `summary` - in it's two parts - will be `aver
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT product,AVG(sale_price) FROM \"sales\" WHERE product = 'basketball' GROUP BY product;"
+}
+```
+
 </TabbedCode>
 
 Since we specified `product` in `columns`, we get one row for each unique product in our table. In the request above, we have a key `average_sale_price`. This is the name of your summary; you will see this appear in the result.
@@ -75,7 +83,7 @@ Let's try one more example to help clarify the concepts.
 
 Here, as above, the column is `product`. We will also want to run a calculation on `sale_price`, however, we want to add up each sale price rather than average them, so our `summary` equation will be `sum`. Our request looks like:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
   const records = await xata.db.titles.summarize({
     columns: ['product'],
@@ -92,6 +100,14 @@ Here, as above, the column is `product`. We will also want to run a calculation 
   "summaries": {
     "total_sales": { "sum": "sale_price" }
   }
+}
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query":  "SELECT product,SUM(sale_price) FROM \"sales\" GROUP BY product;"
 }
 ```
 
@@ -116,7 +132,7 @@ Before we get started, keep in mind that we keep reference material that can be 
 
 In its most basic form `summarize` can be used as a "distinct" method to get the unique values or value combinations of the summarized columns.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
     const records = await xata.db.titles.summarize({
       columns: ["username"],
@@ -129,6 +145,14 @@ In its most basic form `summarize` can be used as a "distinct" method to get the
 {
   "columns": ["username"],
   "summaries": {}
+}
+```
+
+```json
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT username,COUNT(username) FROM \"sales\" GROUP BY username;"
 }
 ```
 
@@ -222,7 +246,6 @@ You may submit explicit column names, use wildcards, and reference linked column
   ```ts
   const records = await xata.db.titles.summarize({
     columns: [
-      'settings.*', // group by all columns in the `settings` object
       'username', // group by the username field
       'user.hobbies.name' // group by a linked column
     ]
@@ -233,7 +256,6 @@ You may submit explicit column names, use wildcards, and reference linked column
 // POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/sales/summarize
 {
   "columns": [
-    "settings.*", // group by all columns in the `settings` object
     "username", // group by the username field
     "user.hobbies.name" // group by a linked column
   ]
@@ -254,7 +276,7 @@ Keep in mind: `filter` does **not** support filtering on the result of a summary
 
 Sort lets you decide how you'd like your results sorted. You may sort on `columns` you've explicitly referenced, as well as on `summaries` you've requested. When wanting to sort by a summary, you use the name you've chosen.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
   const records = await xata.db.titles.summarize({
     columns: {"store_name"},
@@ -283,6 +305,14 @@ Sort lets you decide how you'd like your results sorted. You may sort on `column
     // if total_sales is equal for two rows, order them by the store_name
     {"store_name": "asc"}
   ]
+}
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT store_name,COUNT(*) AS total_sales FROM \"sales\" GROUP BY store_name ORDER BY total_sales desc, store_name asc;"
 }
 ```
 
@@ -331,7 +361,7 @@ The key feature `summariesFilter` adds is the ability to take a summary and filt
 
 An example looks like:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
   const records = await xata.db.titles.summarize({
     columns: ['product_name'],
@@ -365,6 +395,14 @@ An example looks like:
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT product_name, SUM(price) AS revenue, COUNT(*) AS items_sold FROM \"titles\" GROUP BY product_name HAVING SUM(price) >= 100 AND COUNT(*) >= 1000;"
+}
+```
+
 </TabbedCode>
 
 ### consistency
@@ -375,7 +413,7 @@ The default value for the consistency option is `strong`, which retrieves data f
 
 It is recommended to use the Replica Store for summarize requests wherever possible, in order to get the best possible performance out of your branch's assigned units.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
   const records = await xata.db.titles.summarize({
     filter: { product: 'basketball' },
@@ -396,6 +434,15 @@ It is recommended to use the Replica Store for summarize requests wherever possi
     "average_sale_price": { "average": "sale_price" }
   },
   "consistency": "eventual"
+}
+```
+
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT product, AVG(sale_price) AS average_sale_price FROM \"sales\" WHERE product = 'basketball' GROUP BY product;",
+    "consistency": "eventual"
 }
 ```
 
