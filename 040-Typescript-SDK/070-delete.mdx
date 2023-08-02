@@ -9,7 +9,7 @@ published: true
 
 To delete a record you can execute, for example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const user = await xata.db.Users.delete('rec_cd8s3r8avc42pi67m13g');
@@ -22,9 +22,17 @@ user.delete();
 // DELETE https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/rec_cd8s3r8avc42pi67m13g
 ```
 
+```jsonc
+//POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "DELETE FROM \"Users\" WHERE id = 'rec_cd8s3r8avc42pi67m13g';"
+}
+```
+
 </TabbedCode>
 
-In case the record with the given ID doesn't exist, the REST API returns a 404 and the TypeScript SDK throws an exception.
+In case the record with the given ID doesn't exist, the Xata REST API returns a 404 and the TypeScript SDK throws an exception.
 
 Transactions are used when deleting multiple records:
 
@@ -51,6 +59,14 @@ const user = await xata.db.Users.delete(['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1
       }
     }
   ]
+}
+```
+
+```jsonc
+//POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "DELETE FROM \"Users\" WHERE id IN ('rec_cd8s3r8avc42pi67m13g','rec_cgh9o1oncchhigq95n2g');"
 }
 ```
 
