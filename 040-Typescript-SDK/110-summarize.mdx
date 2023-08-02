@@ -39,7 +39,7 @@ Here, the column is `product`. The `summary` - in it's two parts - will be `aver
 
 <TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
-  const records = await xata.db.titles.summarize({
+  const records = await xata.db.sales.summarize({
     filter: { product: 'basketball' },
     columns: ['product'],
     summaries: {
@@ -85,7 +85,7 @@ Here, as above, the column is `product`. We will also want to run a calculation 
 
 <TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
-  const records = await xata.db.titles.summarize({
+  const records = await xata.db.sales.summarize({
     columns: ['product'],
     summaries: {
       total_sales: { sum: 'sale_price' }
@@ -134,7 +134,7 @@ In its most basic form `summarize` can be used as a "distinct" method to get the
 
 <TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
-    const records = await xata.db.titles.summarize({
+    const records = await xata.db.sales.summarize({
       columns: ["username"],
       summaries: {},
     });
@@ -178,7 +178,7 @@ One can specify several summaries in the same request. As long as the names are 
 
 <TabbedCode tabs={['TypeScript', 'JSON']}>
   ```ts
-  const records = await xata.db.titles.summarize({
+  const records = await xata.db.sales.summarize({
     summaries: {
       // count all rows
       "all_sales": {"count": "*"},
@@ -244,7 +244,7 @@ You may submit explicit column names, use wildcards, and reference linked column
 
 <TabbedCode tabs={['TypeScript', 'JSON']}>
   ```ts
-  const records = await xata.db.titles.summarize({
+  const records = await xata.db.sales.summarize({
     columns: [
       'username', // group by the username field
       'user.hobbies.name' // group by a linked column
@@ -278,7 +278,7 @@ Sort lets you decide how you'd like your results sorted. You may sort on `column
 
 <TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
-  const records = await xata.db.titles.summarize({
+  const records = await xata.db.sales.summarize({
     columns: {"store_name"},
     summaries: {
       "total_sales": {"count": "*"}
@@ -330,7 +330,7 @@ An example of a page request looks like:
 
 <TabbedCode tabs={['TypeScript', 'JSON']}>
   ```ts
-  const records = await xata.db.titles.summarize({
+  const records = await xata.db.sales.summarize({
     pagination: {
       size: 50
     }
@@ -363,7 +363,7 @@ An example looks like:
 
 <TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
-  const records = await xata.db.titles.summarize({
+  const records = await xata.db.sales.summarize({
     columns: ['product_name'],
     summaries: {
       revenue: { sum: 'price' },
@@ -399,7 +399,7 @@ An example looks like:
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT product_name, SUM(price) AS revenue, COUNT(*) AS items_sold FROM \"titles\" GROUP BY product_name HAVING SUM(price) >= 100 AND COUNT(*) >= 1000;"
+    "query": "SELECT product_name, SUM(price) AS revenue, COUNT(*) AS items_sold FROM \"sales\" GROUP BY product_name HAVING SUM(price) >= 100 AND COUNT(*) >= 1000;"
 }
 ```
 
@@ -415,7 +415,7 @@ It is recommended to use the Replica Store for summarize requests wherever possi
 
 <TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
   ```ts
-  const records = await xata.db.titles.summarize({
+  const records = await xata.db.sales.summarize({
     filter: { product: 'basketball' },
     columns: ['product'],
     summaries: {
