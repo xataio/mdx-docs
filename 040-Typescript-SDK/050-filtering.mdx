@@ -690,7 +690,7 @@ This section applies to the `multiple` type, because it's currently the only arr
 
 To test that an array contains a value, use the `$includes` operator:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 ```ts
 const records = await xata.db.Posts.filter({
   labels: { $includes: "matrix" },
@@ -709,12 +709,20 @@ const records = await xata.db.Posts.filter({
 }
 ```
 
+```jsonc
+// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "query": "SELECT * FROM \"Users\" WHERE 'matrix' = ANY (labels);"
+}
+```
+
 </TabbedCode>
 
 The `$includes` operator accepts a custom predicate that will check if any
 array values matches the predicate.
 
-<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
+<TabbedCode tabs={['TypeScript', 'JSON']}>
 
 ```ts
 const records = await xata.db.Posts.filter({
@@ -733,14 +741,6 @@ const records = await xata.db.Posts.filter({
       }
     }
   }
-}
-```
-
-```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
-
-{
-    "query": "SELECT * FROM \"Users\" WHERE 'mat' = ANY (labels);"
 }
 ```
 
