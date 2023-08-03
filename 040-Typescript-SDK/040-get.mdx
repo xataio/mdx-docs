@@ -69,7 +69,7 @@ const teams = await xata.db.Teams.getMany();
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * from \"Teams\" LIMIT 20;"
+    "statement": "SELECT * from \"Teams\" LIMIT 20;"
 }
 ```
 
@@ -195,7 +195,7 @@ const user = await xata.db.Users.read("myid");
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * from \"Users\" WHERE id='myid';"
+    "statement": "SELECT * from \"Users\" WHERE id='myid';"
 }
 ```
 
@@ -226,7 +226,7 @@ const users = await xata.db.Users
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT name,city from \"Users\" LIMIT 20;"
+    "statement": "SELECT name,city from \"Users\" LIMIT 20;"
 }
 ```
 
@@ -273,7 +273,7 @@ const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT *,\"Users\".* FROM \"Teams\" LEFT JOIN \"Users\" ON \"Teams\".owner=\"Users\".id;"
+    "statement": "SELECT *,\"Users\".* FROM \"Teams\" LEFT JOIN \"Users\" ON \"Teams\".owner=\"Users\".id;"
 }
 ```
 
@@ -302,7 +302,7 @@ const users = await xata.db.Posts.select([
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT title,\"Users\".*,\"Teams\".* FROM \"Posts\" LEFT JOIN \"Users\" ON \"Posts\".author=\"Users\".id LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id;"
+    "statement": "SELECT title,\"Users\".*,\"Teams\".* FROM \"Posts\" LEFT JOIN \"Users\" ON \"Posts\".author=\"Users\".id LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id;"
 }
 ```
 
@@ -336,7 +336,7 @@ const users = await xata.db.Users.filter({ email: 'keanu@example.com' }).getMany
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE email='keanu@example.com' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE email='keanu@example.com' LIMIT 20;"
 }
 ```
 
@@ -366,7 +366,7 @@ const users = await xata.db.Users.filter({ 'team.name': 'Matrix' }).getMany();
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id WHERE \"Teams\".name='Matrix';"
+    "statement": "SELECT * FROM \"Users\" LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id WHERE \"Teams\".name='Matrix';"
 }
 ```
 
@@ -413,7 +413,7 @@ const users = await xata.db.Users
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE zipcode > 100 AND (name LIKE '%Keanu%' OR name LIKE '%Carrie%') LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE zipcode > 100 AND (name LIKE '%Keanu%' OR name LIKE '%Carrie%') LIMIT 20;"
 }
 ```
 
@@ -474,7 +474,7 @@ const users = await xata.db.Users
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" ORDER BY \"name\" asc LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" ORDER BY \"name\" asc LIMIT 20;"
 }
 ```
 
@@ -507,7 +507,7 @@ const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMa
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" ORDER BY \"city\" desc, \"name\" asc LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" ORDER BY \"city\" desc, \"name\" asc LIMIT 20;"
 }
 ```
 
@@ -535,7 +535,7 @@ const users = await xata.db.Users.sort('*', 'random').getMany();
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" ORDER BY RANDOM() LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" ORDER BY RANDOM() LIMIT 20;"
 }
 ```
 
@@ -681,7 +681,7 @@ const page = await xata.db.Users.getPaginated({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" LIMIT 10 OFFSET 10;"
+    "statement": "SELECT * FROM \"Users\" LIMIT 10 OFFSET 10;"
 }
 ```
 
@@ -728,7 +728,7 @@ records = xata.data().query("Users", {
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" LIMIT 20;",
+    "statement": "SELECT * FROM \"Users\" LIMIT 20;",
     "consistency": "eventual"
 }
 ```

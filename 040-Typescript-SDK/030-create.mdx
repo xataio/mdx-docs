@@ -31,7 +31,7 @@ const record = await xata.db.Users.create({
 //POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "INSERT INTO \"Users\" (email,name) VALUES ('keanu@example.com','Keanu Reeves') RETURNING *;"
+    "statement": "INSERT INTO \"Users\" (email,name) VALUES ('keanu@example.com','Keanu Reeves') RETURNING *;"
 }
 ```
 
@@ -110,7 +110,7 @@ const record = await xata.db.Users.create("myid", {
 //POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "INSERT INTO \"Users\" (id,email,name) VALUES ('myid','keanu@example.com','Keanu Reeves') RETURNING *;"
+    "statement": "INSERT INTO \"Users\" (id,email,name) VALUES ('myid','keanu@example.com','Keanu Reeves') RETURNING *;"
 }
 ```
 
@@ -143,7 +143,7 @@ const record = await xata.db.Posts.create({
 //POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "INSERT INTO \"Posts\" (title,author) VALUES ('Filming the Matrix','rec_cd8rqcoavc42pi67lgd0') RETURNING *;"
+    "statement": "INSERT INTO \"Posts\" (title,author) VALUES ('Filming the Matrix','rec_cd8rqcoavc42pi67lgd0') RETURNING *;"
 }
 ```
 
@@ -199,7 +199,7 @@ const users = await xata.db.Users.create([{
 //POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "INSERT INTO \"Users\" (email,name,team) VALUES ('laurence@example.com','Laurence Fishburne','rec_cd8s4kbo8dsvsjilo1ug'),('hugo@example.com','Hugo Weaving','rec_cd8s4kbo8dsvsjilo1ug'),('joe@example.com','Joe Pantoliano','rec_cd8s4kbo8dsvsjilo1ug') RETURNING *;"
+    "statement": "INSERT INTO \"Users\" (email,name,team) VALUES ('laurence@example.com','Laurence Fishburne','rec_cd8s4kbo8dsvsjilo1ug'),('hugo@example.com','Hugo Weaving','rec_cd8s4kbo8dsvsjilo1ug'),('joe@example.com','Joe Pantoliano','rec_cd8s4kbo8dsvsjilo1ug') RETURNING *;"
 }
 ```
 

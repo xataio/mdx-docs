@@ -62,7 +62,7 @@ const records = await xata.db.Users.filter('name', 'Keanu Reave').getMany();
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' LIMIT 20;"
 }
 ```
 
@@ -122,7 +122,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name IN ('Keanu Reeves','Carrie-Anne Moss') LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name IN ('Keanu Reeves','Carrie-Anne Moss') LIMIT 20;"
 }
 ```
 
@@ -154,7 +154,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' AND city = 'New York' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' AND city = 'New York' LIMIT 20;"
 }
 ```
 
@@ -191,7 +191,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' OR city = 'New York' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' OR city = 'New York' LIMIT 20;"
 }
 ```
 
@@ -220,7 +220,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' OR name = 'Carrie-Anne Moss' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' OR name = 'Carrie-Anne Moss' LIMIT 20;"
 }
 ```
 
@@ -250,7 +250,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name IS NOT NULL LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name IS NOT NULL LIMIT 20;"
 }
 ```
 
@@ -280,7 +280,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE (name IS NOT NULL) AND (address IS NOT NULL) LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE (name IS NOT NULL) AND (address IS NOT NULL) LIMIT 20;"
 }
 ```
 
@@ -310,7 +310,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name IS NULL LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name IS NULL LIMIT 20;"
 }
 ```
 
@@ -345,7 +345,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE NOT name = 'Keanu Reeves' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE NOT name = 'Keanu Reeves' LIMIT 20;"
 }
 ```
 
@@ -393,7 +393,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE NOT (name = 'Keanu Reeves' OR name = 'Laurence Fishburne') LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE NOT (name = 'Keanu Reeves' OR name = 'Laurence Fishburne') LIMIT 20;"
 }
 ```
 
@@ -429,7 +429,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name NOT IN ('Keanu Reeves','Laurence Fishburne') LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name NOT IN ('Keanu Reeves','Laurence Fishburne') LIMIT 20;"
 }
 ```
 
@@ -461,7 +461,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE NOT name = 'Keanu Reeves' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE NOT name = 'Keanu Reeves' LIMIT 20;"
 }
 ```
 
@@ -502,7 +502,7 @@ const records = await xata.db.Users.filter('name', contains('Keanu')).getMany();
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name LIKE '%Keanu%' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name LIKE '%Keanu%' LIMIT 20;"
 }
 ```
 </TabbedCode>
@@ -533,7 +533,7 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name ~ 'K.*an.? R.*' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name ~ 'K.*an.? R.*' LIMIT 20;"
 }
 ```
 
@@ -578,13 +578,13 @@ const records = await xata.db.Users.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name ~ '^Keanu' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name ~ '^Keanu' LIMIT 20;"
 }
 
 // or
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE name ~ 'Reeves$' LIMIT 20;"
+    "statement": "SELECT * FROM \"Users\" WHERE name ~ 'Reeves$' LIMIT 20;"
 }
 ```
 
@@ -625,7 +625,7 @@ const records = await xata.db.Posts.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE views > 5 LIMIT 20;"
+    "statement": "SELECT * FROM \"Posts\" WHERE views > 5 LIMIT 20;"
 }
 ```
 
@@ -673,7 +673,7 @@ const records = await xata.db.Posts.filter({
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "SELECT * FROM \"Users\" WHERE \"xata.createdAt\"::timestamptz < '2022-10-25T02:00:00.000Z' AND \"xata.createdAt\"::timestamptz >= '2022-10-25T01:00:00.000Z' LIMIT 20;"
+    "statement": "SELECT * FROM \"Posts\" WHERE \"xata.createdAt\"::timestamptz < '2022-10-25T02:00:00.000Z' AND \"xata.createdAt\"::timestamptz >= '2022-10-25T01:00:00.000Z' LIMIT 20;"
 }
 ```
 
@@ -712,8 +712,14 @@ const records = await xata.db.Posts.filter({
 ```jsonc
 // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
+// Single value
 {
-    "query": "SELECT * FROM \"Users\" WHERE 'matrix' = ANY (labels);"
+    "statement": "SELECT * FROM \"Posts\" WHERE 'matrix' = ANY (labels);"
+}
+
+// Multiple values
+{
+    "statement": "SELECT * FROM \"Posts\" WHERE ARRAY['matrix','lotr'] <@ labels;"
 }
 ```
 
@@ -722,7 +728,7 @@ const records = await xata.db.Posts.filter({
 The `$includes` operator accepts a custom predicate that will check if any
 array values matches the predicate.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 
 ```ts
 const records = await xata.db.Posts.filter({
@@ -741,6 +747,14 @@ const records = await xata.db.Posts.filter({
       }
     }
   }
+}
+```
+
+```jsonc
+//POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "statement": "SELECT * FROM \"Posts\" WHERE array_to_string(labels,'') LIKE '%mat%';"
 }
 ```
 
@@ -778,7 +792,7 @@ The above matches if all of the labels contain the string "mat".
 
 Finally, an `$includesNone` operator exists which matches if none of the values in the array match the predicate.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'SQL']}>
 ```ts
 const records = await xata.db.Posts.filter({
   labels: { $includesNone: [{ $contains: "act" }] },
@@ -796,6 +810,14 @@ const records = await xata.db.Posts.filter({
       }
     }
   }
+}
+```
+
+```jsonc
+//POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
+
+{
+    "statement": "SELECT * FROM \"Posts\" WHERE NOT array_to_string(labels,'') LIKE '%mat%';"
 }
 ```
 

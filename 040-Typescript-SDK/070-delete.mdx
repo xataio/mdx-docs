@@ -26,7 +26,7 @@ user.delete();
 //POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "DELETE FROM \"Users\" WHERE id = 'rec_cd8s3r8avc42pi67m13g';"
+    "statement": "DELETE FROM \"Users\" WHERE id = 'rec_cd8s3r8avc42pi67m13g';"
 }
 ```
 
@@ -66,7 +66,7 @@ const user = await xata.db.Users.delete(['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1
 //POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/sql
 
 {
-    "query": "DELETE FROM \"Users\" WHERE id IN ('rec_cd8s3r8avc42pi67m13g','rec_cgh9o1oncchhigq95n2g');"
+    "statement": "DELETE FROM \"Users\" WHERE id IN ('rec_cd8s3r8avc42pi67m13g','rec_cgh9o1oncchhigq95n2g');"
 }
 ```
 
