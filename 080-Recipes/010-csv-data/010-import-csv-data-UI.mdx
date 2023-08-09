@@ -1,0 +1,106 @@
+---
+title: Import CSV data
+navTitle: Import CSV data
+keywords: ['csv', 'import', 'migrate data']
+description: Import records from a local CSV file into a Xata database table
+slug: recipes/import-data
+published: true
+---
+
+## Overview
+
+A CSV file is a standard text file where data fields are typically divided by commas (,), and saved with the `.csv` extension.
+You can import and work with CSV file data in your Xata database.
+
+**NOTE:** While CSV files are explicity mentioned, Xata supports the import of various file formats, including tab-separated values (TSV), comma-separated values (CSV), delimiter-separated values (DSV), and plain text data. This covers a range of extensions including `.tsv`, `.csv`, `.dsv`, and `.txt` formats.
+
+You can import CSVs using the following methods:
+
+- Import a CSV file using the Xata UI (recommeneded)
+- Import a CSV file using the Xata CLI
+
+### Considerations
+
+- Decide if you are using the Xata UI (Workspace) or CLI to import CSV files. Using the UI is the recommended option, but you can use both to edit records after importing.
+- Ensure your file's accuracy before importing. Certain values may become uneditable after importing. For errors in the imported file, you'll need to delete, edit the CSV file, and try importing again.
+
+## Formatting data
+
+When importing CSV files into Xata, ensure the data aligns with the correct format for the database. You can add additional columns and specify data types after importing data.
+
+### Format types
+
+Choose a format that matches the data you're entering. Xata columns support the following formats:
+
+| Format Type   | Description                                               | Example                           |
+| ------------- | --------------------------------------------------------- | --------------------------------- |
+| String        | Basic textual information                                 | "Value"                           |
+| Text          | Longer pieces of textual content                          | "Hello world and welcome to Xata" |
+| Integer       | Whole numbers without decimal points                      | `42`                              |
+| Float         | Numbers with decimal points                               | `3.14`                            |
+| Boolean       | Represents true or false values                           | `true`                            |
+| Datetime      | Date and time information                                 | 2023-08-30T00:00:00               |
+| Link to Table | Creates relationships between tables                      | Table: Orders                     |
+| Email         | Email addresses                                           | `user@example.com`                |
+| Multiple      | Multiple values from a predefined set separated by commas | \["Red", "Green"]                 |
+| File          | Reference to an external file, attachment, or document    | `file.pdf`                        |
+
+### Filename formatting
+
+- Ensure that the imported filename/table name is limited to 64 characters or fewer.
+- The table name should consist of alphanumeric characters, hyphens (-), and underscores(\_). Special characters are not allowed.
+
+### Delimiter
+
+A delimiter acts as dividers and distinguish individual data fields within a CSV file. They are useful in structuring the data, allowing for accurate interpretation and parsing.
+
+- The comma (,) is applied as the default delimiter for the CSV import function.
+- The CSV import functionality supports common delimiters such as commas (,), semicolons (;), quotes ( ", ' ), braces ({}), pipes (|), or slashes ( / \ ). You can modify the delimiter in the UI, when importing the CSV file data.
+
+## Import a CSV file using the UI
+
+Xata offers an import tool directly within your dashboard Workspace. This tool enables seamless importing of existing files into the Xata database without causing any downtime. As an alternative, you also have the option to import CSV data using the CLI; however, it's worth noting that the UI method is the recommended approach.
+Importing the CSV file involves transfering data as well as establishing a schema. Once imported, the data in the CSV file will be accessible as a table in your workspace.
+
+1.  Log in to your Xata account and go to the desired Workspace and database. If you haven't created a Workspace as yet, click **Add a Workspace** to do so.
+2.  Choose the preferred branch for your work.
+3.  On the left-hand menu under "Tables," click **Add a table** > **Import a CSV file**.
+4.  Select **Browse Desktop** to choose a supported file to import. Ensure the filename adheres to the formatting recommendations.
+5.  Click **Begin import** to initiate the import.
+
+You'll have acces to partially imported records as the process completes.
+
+## View imported CSV table
+
+After importing CSV data into Xata, you can use sorting and filtering capabilities to enhance data organization and retrieval from your table.
+
+Xata allows you to sort your imported data based on specific columns. This can help you arrange information in ascending or descending order, making it easier to identify trends, patterns, or specific values within your dataset.
+To sort data after importing your CSV file, navigate to the relevant table and select the column header you want to sort by. Xata will arrange the data based on your choice.
+
+Filtering allows you to narrow down the data you're working with. To filter data, access the table containing your imported CSV data and select the filter options available for each column and format. You can apply filters based on conditions or values that you want to isolate.
+
+### Edit table
+
+Each row within the imported table is editable. To edit row values in your table:
+
+1.  Select the row you want to modify.
+2.  Click the edit icon at the end of the row.
+
+Note that certain system-generated attributes such as `xata.createdAt`, `xata.updatedAt`, and `xata.version` cannot be edited.
+
+#### Column type consistency
+
+Once you define the column type during the initial configuration, it cannot be changed afterward. This ensures data consistency and accuracy within your table.
+
+#### Add columns
+
+You can add more columns if you need to expand your table. Click the **+** icon located in the last column of the table and select the format type to add an additional column.
+
+#### Delete records
+
+For record deletion, you can either:
+
+- Select the row you want to delete directly in the table and click **Delete selected record**. You can select multiple rows and bulk delete records.
+- Alternatively, you can use a single deletion method by clicking the edit option for the record, then clicking the **More options** icon next to **Edit record** to delete.
+
+## Code Snippet
