@@ -1,7 +1,7 @@
 ---
 title: Next.js with Xata starter guide
 navTitle: Next.js
-keywords: ['nextjs']
+keywords: ['nextjs', 'full-text search']
 description: Get started with Next.js and Xata
 slug: getting-started/nextjs
 published: true
@@ -27,9 +27,9 @@ Install the Xata CLI:
 npm install -g @xata.io/cli
 ```
 
-And login to your Xata account with the Xata CLI. Running the following command will open a new browser window. If
-you're not already logged into Xata you can go through the login or signup process. Run the following command to begin
-the authentication workflow:
+And login to your Xata account with the Xata CLI. Running the following command will open a new browser window. If you
+have not already logged into Xata, you can go through the login or signup process to authenticate the CLI. Run the
+following command to begin the authentication workflow:
 
 ```sh
 xata auth login
@@ -181,7 +181,7 @@ TypeScript SDK. This will additionally be referenced in the `.xatarc` file as fo
 }
 ```
 
-The `src/xata.ts` includes generated code that typically you should never touch manually.
+The `src/xata.ts` file includes generated code you should typically never touch manually.
 
 ## Define the database schema and seed via CSV import
 
@@ -483,13 +483,143 @@ The single blog post page will look as follows:
 
 ## Search posts
 
+The last piece of functionality to be added to the application is full-text search of blog posts.
+
+When you insert data into a Xata database, it is automatically indexed for full-text search. So, we don't need to enable
+any additional configuration to enable search, we just need to use the
+[TypeScript SDK search feature](https://xata.io/docs/typescript-client/search).
+
+Let's add this functionality to the landing page:
+
+```tsx title="src/app/page.tsx"
+import { getXataClient } from '@/xata';
+
+const xata = getXataClient();
+
+// highlight-start
+export default async function Home({ searchParams }: { searchParams: { search: string } }) {
+  let records = null;
+  if (searchParams.search) {
+    records = await xata.db.Posts.search(searchParams.search, { fuzziness: 2 });
+  } else {
+    records = await xata.db.Posts.getAll();
+  }
+  // highlight-end
+
+  return (
+    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
+      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
+        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black">
+          <a href="/">Get started with Xata and Next.js</a>
+        </p>
+        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+          <a href="https://xata.io" className="w-20">
+            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+          </a>
+        </div>
+      </div>
+      {/* highlight-start */}
+      <div className="w-full max-w-5xl mt-16">
+        <form>
+          <input
+            name="search"
+            defaultValue={searchParams.search}
+            placeholder="Search..."
+            className="w-full rounded-lg p-2 dark:text-purple-950"
+          />
+        </form>
+      </div>
+      {/* highlight-end */}
+      ...
+    </main>
+  );
+}
+```
+
+Add search with three changes.
+
+First, update the main function to accept search parameters. This is achieved by having the function accept an object
+with a `searchParams` property. When a search has been performed this property will optionally have a `search` property
+access via `searchParams.search`.
+
+```tsx
+export default async function Home({ searchParams }: { searchParams: { search: string } }) {
+  ...
+}
+```
+
+Secondly, the landing page should list all blog posts if the `searchParams.search` property isn't present. However, if
+the property is present, a search is performed on the Posts table using the
+[`search` function](https://xata.io/docs/typescript-client/search#searching-in-a-single-table) exposed on the
+auto-generated `Posts` property. The value of `searchParams.search` is passed as the text value to search on, and a
+second options parameter is populated with `fuzziness` set to `2`, which instructs the search behavior to allow for two
+letters changed/added/removed. See
+[fuzziness and typo tolerance](https://xata.io/docs/typescript-client/search#fuzziness-and-typo-tolerance) for more
+details.
+
+```tsx
+export default async function Home({ searchParams }: { searchParams: { search: string } }) {
+  let records = null;
+  if (searchParams.search) {
+    records = await xata.db.Posts.search(searchParams.search, { fuzziness: 2 });
+  } else {
+    records = await xata.db.Posts.getAll();
+  }
+
+  ...
+}
+```
+
+The third and last change is to add a `<form>` to the page to allow a search value to be entered and submitted. The
+default behavior of a form is to submit a `GET` request to the current URL.
+
+```tsx
+<div className="w-full max-w-5xl mt-16">
+  <form>
+    <input
+      name="search"
+      defaultValue={searchParams.search}
+      placeholder="Search..."
+      className="w-full rounded-lg p-2 dark:text-purple-950"
+    />
+  </form>
+</div>
+```
+
+Since this is precisely the behavior we need, we've updated the page function to accept the object with a `searchParams`
+property already, everything is now in place.
+
+![Full-text fuzzy search](images/getting-started-blog-search.png)
+
+The application now supports listing posts, viewing single posts via a dynamic route, and full-text fuzzy search of
+posts.
+
 ## What you've learned
+
+In this guide, you've learned that Next.js App Router applications and Xata are a powerful combination. We created an
+application from scratch that lists blog posts, supports viewing a single blog post, and performs full-text fuzzy search
+on all posts.
+
+We walked through setting up the Xata CLI and using it to:
+
+- Create a new Xata project
+- Infer a database schema and seed a database from a CSV
+- Update the auto-generated code (in `src/xata.ts`) using `xata pull main` to reflect the updated schema
+
+We then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
+function. We also added the single post page making use of Next.js dynamic routes where a `slug` was passed and used
+with `xata.db.Posts.filter({ slug: params.slug }).getFirst()`.
+
+Finally, we added full-text fuzzy search functionality to the landing page, benefitting from Xata's automatic table
+indexing. The search used a `search` query string and the auto-generated `xata.db.Posts.search` function.
 
 ## Where next
 
 - Add pagination for the blog post listing
 - Add pagination for blog post search results
 - Handle single post view page not finding a result for a `slug`
+- Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
+  use that new field.
 
 [0]: https://app.xata.io
 [1]: https://app.xata.io/settings
