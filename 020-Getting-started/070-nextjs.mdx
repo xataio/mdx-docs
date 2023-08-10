@@ -7,46 +7,209 @@ slug: getting-started/nextjs
 published: true
 ---
 
-In this tutorial we'll create a new Xata database and query it using `getServerSideProps()` from [Next.js][2]. Before you begin you will need a user account. If you haven't done so already, please [sign up or log in][0].
+In this guide, we'll create a new [Next.js][2] application and walk through adding Xata database and search functionality to it. We'll build a basic blog application to demonstrate the funcationality, however you can apply these basics to other types of app.
 
-## Create a new database
+The completed [Next.js and Xata code](https://github.com/xataio/examples/tree/main/apps/nextjs-getting-started) for this guide is available via the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
 
-From the [Xata UI][0], create a new database called `my-xata-app`, assigning it to your closest region.
+## Before you begin
 
-Next create a basic `Posts` table with the following basic schema:
+Install the Xata CLI:
 
-- `title`: A `string` column.
-- `body`: A `long text` column.
-- `pubDate`: A `date` column
-
-Then use the `generate random data` button on the bottom of the screen to populate it with some random data. Your table should look like the screenshot below. This is all we need to do within the UI. The rest of this tutorial will cover the CLI and Next.js code we'll need to write to interact with the database we just set up.
-
-![Posts table](images/posts.png)
-
-## Install the Xata CLI
-
-Xata comes with a CLI (command line tool) to help connect your project code to Xata. It does this by setting up environment variables for your database location and API keys to securely fetch against your data. We recommend installing Xata globally to make this easier. The xata client is delivered through [npm](https://nodejs.dev/en/download/) which you'll need to have installed before this step.
-
-```bash
-# Installs the CLI globally
+```sh
 npm install -g @xata.io/cli
 ```
 
-### Authenticate the CLI to your account
+And login to your Xata account with the Xata CLI. Running the following command will open a new browser window. If you're not already logged into Xata you can go through the login or signup process. Run the following command to begin the authentication workflow:
 
-The CLI needs to know who is running it. This means authenticating it against our logged in user and generating an API key to use when we push, pull or create any databases we make. To set this up run:
-
-```bash
+```sh
 xata auth login
 ```
 
-This should open your browser and give a confirmation message. Remember to make sure you are logged in to Xata before performing this step. On completion this command will create a new API key for your user account which you should [see in account settings page within the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for each OS). It should look like this:
+On completion the command will create a new API key for your user account which you should [see in account settings page within the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for each OS). It looks like this:
 
 ```toml
 # .config/xata/credentials
 [default]
 apiKey=YOUR_API_KEY_HERE
 ```
+
+## Create a new Next.js app
+
+Let's begin by creating a new Next.js application:
+
+```sh
+npx create-next-app@latest --typescript xata-nextjs
+```
+
+<details>
+  <summary><code>npx create-next-app</code> output</summary>
+  $ npx create-next-app@latest --typescript xata-nextjs
+  Need to install the following packages:
+  create-next-app@13.4.13
+  Ok to proceed? (y)
+  ✔ Would you like to use ESLint? … No / Yes
+  ✔ Would you like to use Tailwind CSS? … No / Yes
+  ✔ Would you like to use `src/` directory? … No / Yes
+  ✔ Would you like to use App Router? (recommended) … No / Yes
+  ✔ Would you like to customize the default import alias? … No / Yes
+  Creating a new Next.js app in ./xata-nextjs.
+
+Using npm.
+
+Initializing project with template: app-tw
+
+Installing dependencies:
+
+- react
+- react-dom
+- next
+- typescript
+- @types/react
+- @types/node
+- @types/react-dom
+- tailwindcss
+- postcss
+- autoprefixer
+- eslint
+- eslint-config-next
+
+added 314 packages, and audited 315 packages in 22s
+
+107 packages are looking for funding
+run `npm fund` for details
+
+found 0 vulnerabilities
+Initialized a git repository.
+
+Success! Created xata-nextjs at ./xata-nextjs
+
+</details>
+
+Once the command has completed, move to the `xata-nextjs` directory and run the application:
+
+```sh
+cd xata-nextjs
+npm run dev
+```
+
+By default the application will run on `http://localhost:3000`.
+
+## Create a new database
+
+With the Xata CLI installed and logged in, and a new Next.js application in place, use the Xata CLI to create a new database. Accept all the prompt defaults for the following command:
+
+```sh
+xata init
+```
+
+<details>
+  <summary><code>xata init</code> output</summary>
+
+  <pre>
+    $ xata init\
+    🦋 Initializing project... We will ask you some questions.
+
+    You have a single workspace, using it by default: Phil-Leggetter-s-workspace-hc84d7
+    ✔ Select a database or create a new one › \<Create a new database>
+    ✔ New database name … xata-nextjs-run-through-1
+    ✔ Select a region › eu-west-1
+    ✔ Add .env to .gitignore? … yes
+    ✔ Generate code and types from your Xata database › TypeScript
+    ✔ Choose the output path for the generated code … src/xata.ts
+
+    Setting up Xata...
+
+    Created Xata config: .xatarc
+
+    Creating .env file
+    set XATA\*API\_KEY=xau\*\*\*\*\*\***\***\*\*\*\***\***\*\***\*\*\*\***\*\*\*\*
+    set XATA\_BRANCH=main
+
+    Added .env file to .gitignore
+
+    i Running npm install --save @xata.io/client
+
+    added 1 package, and audited 316 packages in 992ms
+
+    107 packages are looking for funding
+    run `npm fund` for details
+
+    found 0 vulnerabilities
+
+    No new migrations to pull from main branch
+    Generated Xata code to ./src/xata.ts
+
+    ✔ Project setup with Xata 🦋
+
+    i Setup tables and columns at https://app.xata.io/workspaces/xata-workspace-hc84d7/dbs/xata-nextjs:eu-west-1
+
+    i Use xata pull main to regenerate code and types from your Xata database
+  </pre>
+
+</details>
+
+On completion the CLI will create `.env`, `.xatarc`, and `src/xata.ts` files within your project folder with the correct credentials to access your database.
+
+Your `.env` file should look something like this:
+
+```bash title=".env"
+XATA_API_KEY=YOUR_API_KEY_HERE
+XATA_BRANCH=main
+```
+
+Since we selected TypeScript support it also created files that provide typings and functions to call using Xata's TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows:
+
+```json
+{
+  "databaseUrl": "https://xata-nextjs-database-url"
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}
+```
+
+The `src/xata.ts` includes generated code that typically you should never touch manually.
+
+## Define the datbase schema and seed via CSV import
+
+You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide we'll walk through using the Xata CLI and a CSV file to:
+
+1.  Auto generate a schema based on column headings for names and data types inferred from the column values
+2.  Seed the database with data
+
+**TODO: Update URL to CSV file**
+
+First, download the [example posts CSV file](https://raw.githubusercontent.com/leggetter/xata-examples/nextjs-getting-started/apps/getting-started-nextjs/seed/blog-posts.csv). You can either do this manually or by running the follow command:
+
+```sh
+curl https://raw.githubusercontent.com/leggetter/xata-examples/nextjs-getting-started/apps/getting-started-nextjs/seed/blog-posts.csv --create-dirs -o seed/blog-posts.csv
+```
+
+Next, import the CSV:
+
+```sh
+xata import csv seed/blog-posts.csv --table Posts --create
+```
+
+Now, if you open up the Xata UI and navigate to your database (you can also run `xata browse` to open up a browser window), you will see the **Posts** table:
+
+![Posts table](images/xata-table-posts.png)
+
+Click on the **Schema** link to see the schema definition with the interred data types:
+
+![Posts schema](images/xata-schema-posts.png)
+
+## Query and list the posts
+
+## Query and show a single posts
+
+## Search posts
+
+## What you've learned
+
+## Where next
+
+---
 
 ## Create a new Next.js app
 
@@ -161,7 +324,7 @@ On save, you'll notice the page still errors:
 
 <Alert status="warning">
   Error: Error serializing `.records[0].xata.createdAt` returned from `getServerSideProps` in "/posts". `object`
-  ("[object Date]") cannot be serialized as JSON. Only return JSON serializable data types.
+  ("\[object Date]") cannot be serialized as JSON. Only return JSON serializable data types.
 </Alert>
 
 This error occurs because Xata stores date fields as an object. To resolve this issue, use the `toSerializable` function that is provided by the SDK. Note that the type returned by `toSerializable()` is `JSONData<PostsRecord>`. This helper type converts all properties to JSON serializable. This means they can be passed client-side while still keeping the end-to-end type safety of TypeScript.
