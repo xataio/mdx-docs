@@ -1,5 +1,5 @@
 ---
-title: Next.js with Xata starter guide
+title: Get started with Next.js and Xata
 navTitle: Next.js
 keywords: ['nextjs', 'full-text search']
 description: Get started with Next.js and Xata
@@ -51,8 +51,6 @@ Let's begin by creating a new Next.js application:
 ```sh
 npx create-next-app@latest --typescript xata-nextjs
 ```
-
-<br />
 
 <details>
   <summary><code>npx create-next-app</code> output</summary>
@@ -117,18 +115,16 @@ database. Accept all the prompt defaults for the following command:
 xata init
 ```
 
-<br />
-
 <details>
   <summary><code>xata init</code> output</summary>
 
 ```sh
-$ xata init\
+$ xata init
 🦋 Initializing project... We will ask you some questions.
 
-You have a single workspace, using it by default: Phil-Leggetter-s-workspace-hc84d7
-✔ Select a database or create a new one › \<Create a new database>
-✔ New database name … xata-nextjs-run-through-1
+You have a single workspace, using it by default: your-workspace-hc84d7
+✔ Select a database or create a new one › <Create a new database>
+✔ New database name … xata-nextjs
 ✔ Select a region › eu-west-1
 ✔ Add .env to .gitignore? … yes
 ✔ Generate code and types from your Xata database › TypeScript
@@ -139,8 +135,8 @@ Setting up Xata...
 Created Xata config: .xatarc
 
 Creating .env file
-set XATA\*API\_KEY=xau\*\*\*\*\*\***\***\*\*\*\***\***\*\***\*\*\*\***\*\*\*\*
-set XATA\_BRANCH=main
+set XATA_API_KEY=xau**********************************
+set XATA_BRANCH=main
 
 Added .env file to .gitignore
 
@@ -191,7 +187,7 @@ The `src/xata.ts` file includes generated code you should typically never touch 
 
 ## Define the database schema and seed via CSV import
 
-You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide we'll walk through
+You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide, we'll walk through
 using the Xata CLI and a CSV file to:
 
 1.  Auto-generate a schema based on column headings for names and data types inferred from the column values
@@ -213,6 +209,17 @@ Next, import the CSV:
 xata import csv seed/blog-posts.csv --table Posts --create
 ```
 
+<details>
+  <summary><code>xata import csv</code> output</summary>
+
+```sh
+xata import csv seed/blog-posts.csv --table Posts --create
+i 45 rows successfully imported 0 errors. 100% complete
+✔ Completed
+```
+
+</details>
+
 Now, if you open up the Xata UI and navigate to your database (you can also run `xata browse` to open up a browser
 window), you will see the **Posts** table:
 
@@ -228,6 +235,18 @@ from our Next.js application. To do this, run:
 ```sh
 xata pull main
 ```
+
+<details>
+  <summary><code>xata pull main</code> output</summary>
+
+```sh
+xata pull main
+Successfully pulled 1 migrations from main branch
+Running codegen...
+Generated Xata code to ./src/xata.ts
+```
+
+</details>
 
 This updates the contents of `src/xata.ts` based on the schema defined on the `main` branch of our database. So, if you
 make any further changes to the schema, run `xata pull <branch>` to update the auto-generated code.
@@ -261,7 +280,7 @@ export default async function Home() {
 Next, import the auto-generated `getXataClient` function from `src/xata.ts`, get all the posts using the client, and
 list them within the page:
 
-```tsx title="src/app/page.tsx" {1-3,6,21-38}
+```tsx title="src/app/page.tsx" {1-3,6,21-41}
 import { getXataClient } from '@/xata';
 
 const xata = getXataClient();
@@ -321,7 +340,7 @@ const xata = getXataClient();
 
 Then, within the `Home` function, we use the `xata` client instance to get all the posts stored in the database. This is
 achieved via the auto-generated `Posts` property which exposes a number of helper functions. In this case, we use the
-[`getAll`](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) helper function to get
+[`getAll`](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) function to get
 all the Post records.
 
 ```tsx
@@ -367,7 +386,7 @@ This results in the page looking as follows:
 
 ![List of blog posts](images/getting-started-blog-listing.png)
 
-You'll notice that the post heading and "Read more \&arr;" text use the `slug` property to link to a page that doesn't
+You'll notice that the post heading and "Read more →" text use the `slug` property to link to a page that doesn't
 presently exist. That's the next step in this guide.
 
 ## Query and show a single posts
@@ -460,9 +479,9 @@ import { getXataClient } from '@/xata';
 const xata = getXataClient();
 ```
 
-The single post is retrieved from the database via the auto-generated `Posts` property, the
-[`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) where the
-value of `params.slug` is used as the filter value, and finally the
+The single post is retrieved from the database via the auto-generated `Posts` property. The
+[`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) is used to query
+the table for a row where the `slug` column equals the value of `params. slug`. Finally the
 [`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to return
 the first (and only) result for a post with this slug value.
 
@@ -478,7 +497,9 @@ Finally, the values, `title`, `pubDate`, and `description`, for the Post are add
 
 ```tsx
 <h1 className="text-3xl mb-2">{post?.title}</h1>
-<p className="text-sm mb-4 text-purple-950 dark:text-purple-200">{post?.pubDate?.toDateString()}</p>
+<p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
+  {post?.pubDate?.toDateString()}
+</p>
 <p className="text-xl">{post?.description}</p>
 ```
 
@@ -488,10 +509,10 @@ The single blog post page will look as follows:
 
 ## Search posts
 
-The last piece of functionality to be added to the application is full-text search of blog posts.
+The last piece of functionality to be added to the application is full-text fuzzy search of blog posts.
 
-When you insert data into a Xata database, it is automatically indexed for full-text search. So, we don't need to enable
-any additional configuration to enable search, we just need to use the
+When you insert data into a Xata database, it is automatically indexed for full-text search. So, we don't need to change
+any configuration to enable search, we just need to use the
 [TypeScript SDK search feature](https://xata.io/docs/typescript-client/search).
 
 Let's add this functionality to the landing page:
@@ -544,7 +565,7 @@ export default async function Home({
 Add search with three changes.
 
 First, update the main function to accept search parameters. This is achieved by having the function accept an object
-with a `searchParams` property. When a search has been performed this property will optionally have a `search` property
+with a `searchParams` property. When a search has been performed, `searchParams` will optionally have a `search` property
 access via `searchParams.search`.
 
 ```tsx
@@ -556,7 +577,7 @@ export default async function Home({ searchParams }: { searchParams: { search: s
 Secondly, the landing page should list all blog posts if the `searchParams.search` property isn't present. However, if
 the property is present, a search is performed on the Posts table using the
 [`search` function](https://xata.io/docs/typescript-client/search#searching-in-a-single-table) exposed on the
-auto-generated `Posts` property. The value of `searchParams.search` is passed as the text value to search on, and a
+auto-generated `Posts` property. The value of `searchParams.search` is passed as the text value to search for, and a
 second options parameter is populated with `fuzziness` set to `2`, which instructs the search behavior to allow for two
 letters changed/added/removed. See
 [fuzziness and typo tolerance](https://xata.io/docs/typescript-client/search#fuzziness-and-typo-tolerance) for more
@@ -576,7 +597,8 @@ export default async function Home({ searchParams }: { searchParams: { search: s
 ```
 
 The third and last change is to add a `<form>` to the page to allow a search value to be entered and submitted. The
-default behavior of a form is to submit a `GET` request to the current URL.
+default behavior of a form is to submit a `GET` request to the current URL. Since this is precisely the behavior
+we need, we've updated the page function to accept the object with a `searchParams` property already, everything is now in place.
 
 ```tsx
 <div className="w-full max-w-5xl mt-16">
@@ -590,9 +612,6 @@ default behavior of a form is to submit a `GET` request to the current URL.
   </form>
 </div>
 ```
-
-Since this is precisely the behavior we need, we've updated the page function to accept the object with a `searchParams`
-property already, everything is now in place.
 
 ![Full-text fuzzy search](images/getting-started-blog-search.png)
 
@@ -622,12 +641,12 @@ indexing. The search used a `search` query string and the auto-generated `xata.d
 
 If you enjoyed this guide, you could continue working on improving the application. Here are some suggestions:
 
-- Add pagination for the blog post listing
-- Add pagination for blog post search results
+- Add [pagination](https://xata.io/docs/typescript-client/get#paginating-results) for the blog post listing
+- Add [pagination](https://xata.io/docs/typescript-client/search#pagination) for blog post search results
 - Handle single post view page not finding a result for a `slug`
 - Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
   use that new field.
-- Move common code from the two pages into `src/app/layout.tsx`
+- Move common code from the two pages into `src/app/layout.tsx` or reusable components.
 
 You can also explore some of the features we've covered in more detail:
 
@@ -635,7 +654,7 @@ You can also explore some of the features we've covered in more detail:
 - [Filtering records](https://xata.io/docs/typescript-client/filtering)
 - [Searching records](https://xata.io/docs/typescript-client/search)
 
-Or dive into some of Xata's more advanced features such as:
+Or dive into some of Xata's more advanced features, such as:
 
 - [Aggregations](https://xata.io/docs/typescript-client/aggregate)
 - [Transations](https://xata.io/docs/typescript-client/transaction)
