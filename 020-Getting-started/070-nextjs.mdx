@@ -52,16 +52,51 @@ Let's begin by creating a new Next.js application:
 npx create-next-app@latest --typescript xata-nextjs
 ```
 
-{/* eslint-disable-next-line */}
-
-import CreateNextAppSnippet from './snippets/create-next-app.mdx';
-
 <details>
   <summary>
     <code>npx create-next-app</code> output
   </summary>
 
-  <CreateNextAppSnippet />
+```sh
+$ npx create-next-app@latest --typescript xata-nextjs
+Need to install the following packages:
+create-next-app@13.4.13
+Ok to proceed? (y)
+✔ Would you like to use ESLint? … No / Yes
+✔ Would you like to use Tailwind CSS? … No / Yes
+✔ Would you like to use `src/` directory? … No / Yes
+✔ Would you like to use App Router? (recommended) … No / Yes
+✔ Would you like to customize the default import alias? … No / Yes
+Creating a new Next.js app in ./xata-nextjs.
+
+Using npm.
+
+Initializing project with template: app-tw
+
+Installing dependencies:
+
+- react
+- react-dom
+- next
+- typescript
+- @types/react
+- @types/node
+- @types/react-dom
+- tailwindcss
+- postcss
+- autoprefixer
+- eslint
+- eslint-config-next
+
+added 314 packages, and audited 315 packages in 22s
+
+107 packages are looking for funding run `npm fund` for details
+
+found 0 vulnerabilities Initialized a git repository.
+
+Success! Created xata-nextjs at ./xata-nextjs
+```
+
 </details>
 
 Once the command has completed, move to the `xata-nextjs` directory and run the application:

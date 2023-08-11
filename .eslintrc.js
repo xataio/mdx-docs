@@ -11,13 +11,5 @@ module.exports = {
   ignorePatterns: ['node_modules/', 'package.json', 'pnpm-lock.yaml'],
   rules: {
     'react/jsx-no-undef': 'off'
-  },
-  overrides: [
-    {
-      files: ['*.mdx'],
-      rules: {
-        'no-unused-vars': 'warn'
-      }
-    }
-  ]
+  }
 };
