@@ -10,6 +10,7 @@ module.exports = {
   },
   ignorePatterns: ['node_modules/', 'package.json', 'pnpm-lock.yaml'],
   rules: {
-    'react/jsx-no-undef': 'off'
+    'react/jsx-no-undef': 'off',
+    'no-unused-vars': 'warn'
   }
 };

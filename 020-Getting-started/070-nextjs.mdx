@@ -8,13 +8,13 @@ published: true
 ---
 
 In this guide, we'll create a new [Next.js][2] application and walk through adding Xata database and search
-functionality. We'll build a basic blog application with the following functionality:
+functionality. We'll build the following basic blog application features:
 
 1.  Lists all posts
 2.  Retrieve and view a single post
 3.  Blog post full-text fuzzy search
 
-Although this application is a simple blog, you can apply these basics to other types of app.
+Although this application is a simple blog, you can apply these basics to other types of Next.js applications.
 
 The completed [Next.js and Xata code](https://github.com/xataio/examples/tree/main/apps/nextjs-getting-started) for this
 guide is available via the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
@@ -27,9 +27,8 @@ Install the Xata CLI:
 npm install -g @xata.io/cli
 ```
 
-And login to your Xata account with the Xata CLI. Running the following command will open a new browser window. If you
-have not already logged into Xata, you can go through the login or signup process to authenticate the CLI. Run the
-following command to begin the authentication workflow:
+Once installed, authenticate the Xata CLI with your Xata account. If you don't already have an account, you can use the
+same workflow to signup for a new account. Run the following command to begin the authentication workflow:
 
 ```sh
 xata auth login
@@ -53,46 +52,16 @@ Let's begin by creating a new Next.js application:
 npx create-next-app@latest --typescript xata-nextjs
 ```
 
+{/* eslint-disable-next-line */}
+
+import CreateNextAppSnippet from './snippets/create-next-app.mdx';
+
 <details>
-  <summary><code>npx create-next-app</code> output</summary>
-  $ npx create-next-app@latest --typescript xata-nextjs
-  Need to install the following packages:
-  create-next-app@13.4.13
-  Ok to proceed? (y)
-  ✔ Would you like to use ESLint? … No / Yes
-  ✔ Would you like to use Tailwind CSS? … No / Yes
-  ✔ Would you like to use `src/` directory? … No / Yes
-  ✔ Would you like to use App Router? (recommended) … No / Yes
-  ✔ Would you like to customize the default import alias? … No / Yes
-  Creating a new Next.js app in ./xata-nextjs.
+  <summary>
+    <code>npx create-next-app</code> output
+  </summary>
 
-Using npm.
-
-Initializing project with template: app-tw
-
-Installing dependencies:
-
-- react
-- react-dom
-- next
-- typescript
-- @types/react
-- @types/node
-- @types/react-dom
-- tailwindcss
-- postcss
-- autoprefixer
-- eslint
-- eslint-config-next
-
-added 314 packages, and audited 315 packages in 22s
-
-107 packages are looking for funding run `npm fund` for details
-
-found 0 vulnerabilities Initialized a git repository.
-
-Success! Created xata-nextjs at ./xata-nextjs
-
+  <CreateNextAppSnippet />
 </details>
 
 Once the command has completed, move to the `xata-nextjs` directory and run the application:
@@ -116,46 +85,46 @@ xata init
 <details>
   <summary><code>xata init</code> output</summary>
 
-  <pre>
-    $ xata init\
-    🦋 Initializing project... We will ask you some questions.
+```sh
+$ xata init\
+🦋 Initializing project... We will ask you some questions.
 
-    You have a single workspace, using it by default: Phil-Leggetter-s-workspace-hc84d7
-    ✔ Select a database or create a new one › \<Create a new database>
-    ✔ New database name … xata-nextjs-run-through-1
-    ✔ Select a region › eu-west-1
-    ✔ Add .env to .gitignore? … yes
-    ✔ Generate code and types from your Xata database › TypeScript
-    ✔ Choose the output path for the generated code … src/xata.ts
+You have a single workspace, using it by default: Phil-Leggetter-s-workspace-hc84d7
+✔ Select a database or create a new one › \<Create a new database>
+✔ New database name … xata-nextjs-run-through-1
+✔ Select a region › eu-west-1
+✔ Add .env to .gitignore? … yes
+✔ Generate code and types from your Xata database › TypeScript
+✔ Choose the output path for the generated code … src/xata.ts
 
-    Setting up Xata...
+Setting up Xata...
 
-    Created Xata config: .xatarc
+Created Xata config: .xatarc
 
-    Creating .env file
-    set XATA\*API\_KEY=xau\*\*\*\*\*\***\***\*\*\*\***\***\*\***\*\*\*\***\*\*\*\*
-    set XATA\_BRANCH=main
+Creating .env file
+set XATA\*API\_KEY=xau\*\*\*\*\*\***\***\*\*\*\***\***\*\***\*\*\*\***\*\*\*\*
+set XATA\_BRANCH=main
 
-    Added .env file to .gitignore
+Added .env file to .gitignore
 
-    i Running npm install --save @xata.io/client
+i Running npm install --save @xata.io/client
 
-    added 1 package, and audited 316 packages in 992ms
+added 1 package, and audited 316 packages in 992ms
 
-    107 packages are looking for funding
-    run `npm fund` for details
+107 packages are looking for funding
+run `npm fund` for details
 
-    found 0 vulnerabilities
+found 0 vulnerabilities
 
-    No new migrations to pull from main branch
-    Generated Xata code to ./src/xata.ts
+No new migrations to pull from main branch
+Generated Xata code to ./src/xata.ts
 
-    ✔ Project setup with Xata 🦋
+✔ Project setup with Xata 🦋
 
-    i Setup tables and columns at https://app.xata.io/workspaces/xata-workspace-hc84d7/dbs/xata-nextjs:eu-west-1
+i Setup tables and columns at https://app.xata.io/workspaces/xata-workspace-hc84d7/dbs/xata-nextjs:eu-west-1
 
-    i Use xata pull main to regenerate code and types from your Xata database
-  </pre>
+i Use xata pull main to regenerate code and types from your Xata database
+```
 
 </details>
 
