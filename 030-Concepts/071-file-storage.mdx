@@ -48,7 +48,7 @@ All the fields above are input fields and can be used in insert or update reques
 }
 ```
 
-When reading or querying a file object, Xata adds a set of read only fields which are populated on demand:
+When reading or querying a file object, Xata adds a set of read only fields:
 
 - `size` - the size of the file in bytes. Note that this is the size of the original file not the size of the base64 encoding.
 - `version` - counts the updates of the specific file.
@@ -56,7 +56,8 @@ When reading or querying a file object, Xata adds a set of read only fields whic
 - `signedUrl` - generated access URL which includes a signature. This URL allows access without a key, but expires after the duration configured in `signedUrlTimeout`.
 - `attributes` - JSON object storing key value properties specific to the file media type. For example, known image types will have height and width properties in the attributes. The known image formats are JPEG, PNG, and GIF.
 
-All read only fields can be requested in a record request like this:
+There are 2 fields that are returned only **on demand**, when they are explicitly added to the columns selection: `base64Content` and `signedUrl`. These fields impact performance and bandwidth and they should be retrieved only when needed.
+Using the dot notation a subset of fields can be selected for return like this:
 
 ```shell
 curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id?columns=photo.name,photo.mediaType,photo.size,photo.version,photo.url,photo.signedUrl,photo.attributes' \
