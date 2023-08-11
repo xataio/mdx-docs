@@ -506,10 +506,10 @@ Example with date ranges, using the built-in [Xata timestamp columns](/docs/conc
 const records = await xata.db.Posts.filter({
   $all: [
     {
-      xata.createdAt: { $ge: new Date("2022-10-25T01:00:00Z") },
+      "xata.createdAt": { $ge: new Date("2022-10-25T01:00:00Z") },
     },
     {
-      xata.createdAt: { $lt: new Date("2022-10-25T02:00:00Z") },
+      "xata.createdAt": { $lt: new Date("2022-10-25T02:00:00Z") },
     }
   ],
 }).getMany();
