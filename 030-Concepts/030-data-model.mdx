@@ -292,7 +292,7 @@ All the fields above are input fields and can be used in insert or update reques
 }
 ```
 
-When reading or querying a file object, Xata adds a set of read only fields which are populated on demand:
+When reading or querying a file object, Xata adds a set of read only fields:
 
 - `size` - represents the file's size in bytes. It's important to note that this size refers to the original file, not the size of the base64 encoding.
 - `version` - keeps track of the updates made to the specific file.
@@ -300,17 +300,18 @@ When reading or querying a file object, Xata adds a set of read only fields whic
 - `signedUrl` - an access URL generated with a signature. This URL allows access without a key but has an expiration time determined by the duration configured in `signedUrlTimeout`.
 - `attributes` - a JSON object that stores key-value properties specific to the file's media type. For instance, recognized image types will have properties like height and width stored within the attributes.
 
-When all read only fields are requested in a query, the returned file object will look like the following:
+When the file field is requested in a query, the returned file object will look like the following:
 
 ```json
 {
   "photo": {
     "name": "sample.png",
     "mediaType": "image/png",
+    "enablePublicUrl": true,
+    "signedUrlTimeout": 60,
     "size": 1885,
     "version": 1,
     "url": "https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk",
-    "signedUrl": "https://eu-west-1.xata.sh/file/01j62cjje9r4vhpo9vi9sj36gnbg8l8oucnvep3onqu8p8180fpm4c3p0hs62t31nj42n37o4l3dd19fe6vsh4plkn0ncj732roopcbcusb9e3qvk7eeccn8u5k4bede1915r6l6j7cri?verify=m4p8ep0000001ounphkob57vrn9il5egcq5vhu80g9s3d8dfsolduti6mtlh7aki",
     "attributes": {
       "height": 131,
       "width": 131
@@ -380,7 +381,7 @@ All file fields described above are available for file array items. The fields a
 
 Note that although the file fields can be queried, because the column value is an array it cannot be used in filters or summaries.
 
-The `file[]` column type does not support constraints like `not null` or `unique` or parameters like default value. The default value for a `file[]` column is empty array `{}`.
+The `file[]` column type does not support constraints like `not null` or `unique` or parameters like default value. The default value for a `file[]` column is empty array `[]`.
 
 ## Special Columns
 
