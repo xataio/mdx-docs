@@ -286,11 +286,15 @@ export default async function Home() {
         {records.length === 0 && <p>No blog posts found</p>}
         {records.map((record) => (
           <div key={record.id} className="mb-16">
-            <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">{record.pubDate?.toDateString()}</p>
+            <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
+              {record.pubDate?.toDateString()}
+            </p>
             <h2 className="text-2xl mb-2">
               <a href={`posts/${record.slug}`}>{record.title}</a>
             </h2>
-            <p className="text-purple-950 dark:text-purple-200 mb-5">{record.description}</p>
+            <p className="text-purple-950 dark:text-purple-200 mb-5">
+              {record.description}
+            </p>
             <a
               href={`posts/${record.slug}`}
               className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
@@ -339,11 +343,15 @@ the post, and `description` for the textual descript of the post:
   {records.length === 0 && <p>No blog posts found</p>}
   {records.map((record) => (
     <div key={record.id} className="mb-16">
-      <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">{record.pubDate?.toDateString()}</p>
+      <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
+        {record.pubDate?.toDateString()}
+      </p>
       <h2 className="text-2xl mb-2">
         <a href={`posts/${record.slug}`}>{record.title}</a>
       </h2>
-      <p className="text-purple-950 dark:text-purple-200 mb-5">{record.description}</p>
+      <p className="text-purple-950 dark:text-purple-200 mb-5">
+        {record.description}
+      </p>
       <a
         href={`posts/${record.slug}`}
         className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
@@ -404,15 +412,13 @@ value is passed into the function via a `params` parameter and accessed using `p
 
 Next, let's update the page to bring in the Xata client and use the slug value to fetch the post from the database:
 
-```tsx title="src/app/posts/[slug]/page.tsx"
-// highlight-start
+```tsx title="src/app/posts/[slug]/page.tsx" {1-6,28-32}
 import { getXataClient } from '@/xata';
 
 const xata = getXataClient();
 
 export default async function Post({ params }: { params: { slug: string } }) {
   const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
-  // highlight-end
 
   return (
     <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
@@ -433,11 +439,12 @@ export default async function Post({ params }: { params: { slug: string } }) {
             &larr; Back to blog
           </a>
         </p>
-        {/* highlight-start */}
+
         <h1 className="text-3xl mb-2">{post?.title}</h1>
-        <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">{post?.pubDate?.toDateString()}</p>
+        <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
+          {post?.pubDate?.toDateString()}
+        </p>
         <p className="text-xl">{post?.description}</p>
-        {/* highlight-end */}
       </div>
     </main>
   );
@@ -489,20 +496,22 @@ any additional configuration to enable search, we just need to use the
 
 Let's add this functionality to the landing page:
 
-```tsx title="src/app/page.tsx"
+```tsx title="src/app/page.tsx" {4-14,29-39}
 import { getXataClient } from '@/xata';
 
 const xata = getXataClient();
 
-// highlight-start
-export default async function Home({ searchParams }: { searchParams: { search: string } }) {
+export default async function Home({
+  searchParams
+}: {
+  searchParams: { search: string };
+}) {
   let records = null;
   if (searchParams.search) {
     records = await xata.db.Posts.search(searchParams.search, { fuzziness: 2 });
   } else {
     records = await xata.db.Posts.getAll();
   }
-  // highlight-end
 
   return (
     <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
@@ -516,7 +525,6 @@ export default async function Home({ searchParams }: { searchParams: { search: s
           </a>
         </div>
       </div>
-      {/* highlight-start */}
       <div className="w-full max-w-5xl mt-16">
         <form>
           <input
@@ -527,7 +535,6 @@ export default async function Home({ searchParams }: { searchParams: { search: s
           />
         </form>
       </div>
-      {/* highlight-end */}
       ...
     </main>
   );
