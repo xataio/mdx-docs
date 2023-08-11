@@ -338,7 +338,7 @@ import { getXataClient } from '@/xata';
 const xata = getXataClient();
 ```
 
-Then, within the `Home` function, we use the `xata` client instance to get all the posts stored in the database. This is
+Then, in the `Home` function, use the `xata` client instance to get all the posts stored in the database. This is
 achieved via the auto-generated `Posts` property which exposes a number of helper functions. In this case, we use the
 [`getAll`](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) function to get
 all the Post records.
