@@ -1,9 +1,9 @@
 ---
-title: Getting records with TypeScript
+title: Getting records
 navTitle: Getting records
-keywords: ['TypeScript', 'TypeScript client']
-description: Use the Xata SDK with TypeScript or JSON to get records
-slug: typescript-client/get
+keywords: ['get records']
+description: Use the Xata SDK to get records
+slug: actions/get
 published: true
 ---
 
@@ -274,7 +274,7 @@ To refer to nested columns, you can use either the dot notation:
 <TabbedCode tabs={['TypeScript', 'JSON']}>
 
 ```ts
-const users = await xata.db.Users.filter({ 'zipcode': 12345 }).getMany();
+const users = await xata.db.Users.filter({ zipcode: 12345 }).getMany();
 ```
 
 ```jsonc
