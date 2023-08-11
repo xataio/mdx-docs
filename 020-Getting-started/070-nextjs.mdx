@@ -52,10 +52,10 @@ Let's begin by creating a new Next.js application:
 npx create-next-app@latest --typescript xata-nextjs
 ```
 
+<br />
+
 <details>
-  <summary>
-    <code>npx create-next-app</code> output
-  </summary>
+  <summary><code>npx create-next-app</code> output</summary>
 
 ```sh
 $ npx create-next-app@latest --typescript xata-nextjs
@@ -116,6 +116,8 @@ database. Accept all the prompt defaults for the following command:
 ```sh
 xata init
 ```
+
+<br />
 
 <details>
   <summary><code>xata init</code> output</summary>
@@ -259,17 +261,13 @@ export default async function Home() {
 Next, import the auto-generated `getXataClient` function from `src/xata.ts`, get all the posts using the client, and
 list them within the page:
 
-```tsx title="src/app/page.tsx"
-// highlight-start
+```tsx title="src/app/page.tsx" {1-3,6,21-38}
 import { getXataClient } from '@/xata';
 
 const xata = getXataClient();
-// highlight-end
 
 export default async function Home() {
-  // highlight-start
   const records = await xata.db.Posts.getAll();
-  // highlight-end
 
   return (
     <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
@@ -283,7 +281,7 @@ export default async function Home() {
           </a>
         </div>
       </div>
-      {/* highlight-start */}
+
       <div className="w-full max-w-5xl mt-16">
         {records.length === 0 && <p>No blog posts found</p>}
         {records.map((record) => (
@@ -302,7 +300,6 @@ export default async function Home() {
           </div>
         ))}
       </div>
-      {/* highlight-end */}
     </main>
   );
 }
@@ -373,10 +370,8 @@ To handle the single posts identified by a `slug` we need to make use of Next.js
 Create a new file, `src/app/posts/[slug]/page.tsx`, where the Next.js framework uses the directory `[slug]` to capture
 the name of the slug:
 
-```tsx title="src/app/posts/[slug]/page.tsx"
-// highlight-start
+```tsx title="src/app/posts/[slug]/page.tsx" {1,22}
 export default async function Post({ params }: { params: { slug: string } }) {
-  // highlight-end
   return (
     <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
       <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
@@ -396,9 +391,8 @@ export default async function Post({ params }: { params: { slug: string } }) {
             &larr; Back to blog
           </a>
         </p>
-        {/* highlight-start */}
+
         <h1 className="text-3xl mb-2">{params.slug}</h1>
-        {/* highlight-end */}
       </div>
     </main>
   );
