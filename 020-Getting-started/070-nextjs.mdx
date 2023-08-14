@@ -97,7 +97,7 @@ Success! Created xata-nextjs at ./xata-nextjs
 
 </details>
 
-Once the command has completed, move to the `xata-nextjs` directory and run the application:
+Once the command has completed, go to the `xata-nextjs` directory and run the application:
 
 ```sh
 cd xata-nextjs
@@ -282,7 +282,7 @@ export default async function Home() {
 Next, import the auto-generated `getXataClient` function from `src/xata.ts`, get all the posts using the client, and
 list them within the page:
 
-```tsx title="src/app/page.tsx" {1-3,6,21-41}
+```tsx title="src/app/page.tsx" {1-3,6,21-42}
 import { getXataClient } from '@/xata';
 
 const xata = getXataClient();
@@ -393,7 +393,7 @@ the post, and `description` for the textual descript of the post:
 </div>
 ```
 
-This results in the page looking as follows:
+This results in the page looking like the following:
 
 ![List of blog posts](images/getting-started-blog-listing.png)
 
