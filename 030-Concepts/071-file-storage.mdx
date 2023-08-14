@@ -59,7 +59,7 @@ When reading or querying a file object, Xata adds a set of read only fields:
 There are 2 fields that are returned only **on demand**, when they are explicitly added to the columns selection: `base64Content` and `signedUrl`. These fields impact performance and bandwidth and they should be retrieved only when needed.
 Using the dot notation a subset of fields can be selected for return like this:
 
-```shell
+```sh
 curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id?columns=photo.name,photo.mediaType,photo.size,photo.version,photo.url,photo.signedUrl,photo.attributes' \
 --header 'authorization: Bearer xau_REDACTED'
 ```
@@ -85,10 +85,7 @@ The returned file object will look like the following:
 
 ### File item object
 
-The file item object is used to represent files in a file array column. This is the same as the file object, but it also includes an identifier so that files in the array can be referred by ID.
-The `id` is automatically generated if it is not passed at creation time.
-
-For example the following value can be used to create an array containing 2 files. The first file in the array gets a custom `id`, while the second will have an auto-generated `id`.
+The file item object is used to represent files in a file array column. This is the same as the file object, but it also includes an identifier so that files in the array can be referred by ID. The `id` is automatically generated if it is not passed at creation time. For example the following value can be used to create an array containing 2 files. The first file in the array gets a custom `id`, while the second will have an auto-generated `id`.
 
 ```jsonc
 // POST https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data
@@ -208,7 +205,7 @@ record = xata.records().updateRecordWithID("Users", "record_id", {
 user = xata.records().getRecord("Users", "record_id", columns=["photo.name", "photo.base64Content"])
 ```
 
-```shell
+```sh
 curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/record_id?columns=photo.name,photo.base64Content' \
 --header 'authorization: Bearer xau_REDACTED'
 ```
@@ -255,7 +252,7 @@ record = xata.records().updateRecordWithID("Users", "record_id", {"photo": None}
 
 ### Query files metadata
 
-For example retrieving access URLs for all files from photo column, that are `image/png`, sorted by file size can be achieved with the following query:
+Here is an example of retrieving access URLs for all files from the photo column, that are `image/png`, sorted by file size:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
   ```ts
@@ -304,7 +301,7 @@ Similar to the other Xata APIs the file APIs require the Authorization header an
 response = self.client.files().put("table_name", "record_id", "column_name", file_content)
 ```
 
-```shell
+```sh
 curl --request PUT 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file' \
 --header 'Content-Type: image/jpeg' \
 --header 'Authorization: Bearer xau_REDACTED' \
@@ -324,7 +321,7 @@ curl --request PUT 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{bran
 response = self.client.files().put_item("table_name", "record_id", "column_name", "file_id", file_content)
 ```
 
-```shell
+```sh
 curl --request PUT 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file/id' \
 --header 'Content-Type: image/jpeg' \
 --header 'Authorization: Bearer xau_REDACTED' \
@@ -342,11 +339,11 @@ curl --request PUT 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{bran
   const file = await xata.files.download({ table: 'table_name', column: 'column_name', record: 'record_id' });
   ```
 
-```python
+```sh
 file = self.client.files().get("table_name", "record_id", "column_name")
 ```
 
-```shell
+```sh
 curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file' \
 --header 'authorization: Bearer xau_REDACTED' \
 --output download.jpeg
@@ -370,7 +367,7 @@ curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/tab
 file = self.client.files().get_item("table_name", "record_id", "column_name", "file_id")
 ```
 
-```shell
+```sh
 curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file/id' \
 --header 'authorization: Bearer xau_REDACTED' \
 --output download.jpeg
@@ -387,13 +384,12 @@ There are 3 levels of access available:
 
 Requests for these URLs require the Xata API key to be present in the Authorization header.
 Authenticated URLs are retrieved by reading or querying the `url` field of a file object. The `enablePublicUrl` field must be set to `false` (default value) to retrieve an authenticated URL.
+
 This level is recommended for access patterns where the key is available to the client service and the service requires cached, high throughput, high concurrency download access.
 
 ### Public URL
 
-A Xata file can be configured for public access, resulting in an URL that is publicly available without the need of an api key or a signature. A public URL does not expire and offers access until the file is reconfigured to remove public access.
-The public access is configured per file by setting the file field `enablePublicUrl` to `true`.
-The recommeneded scenarios for public access are public websites and public content sharing.
+A Xata file can be configured for public access, resulting in an URL that is publicly available without the need of an api key or a signature. A public URL does not expire and offers access until the file is reconfigured to remove public access. The public access is configured per file by setting the file field `enablePublicUrl` to `true`. The recommended scenarios for public access are public websites and public content sharing.
 
 ### Signed URL
 
@@ -406,24 +402,20 @@ Signed URLs are recommended for scenarios where temporary access is needed witho
 ## CDN
 
 File storage support comes with an integrated content delivery network which minimizes access latency by using regional caches.
-Caching is enabled for all signed and public URLs. This is to avoid caching data that is secured by API key permissions.
-This feature is enabled by default and no configuration is necessary.
-Public access and signed URL content is cached for 4 hours.
+Caching is enabled for all signed and public URLs. This is to avoid caching data that is secured by API key permissions. This feature is enabled by default and no configuration is necessary. Public access and signed URL content is cached for 4 hours.
 
-As with all cache systems, the fundamental problem is cache invalidation. Namely getting the cache access performance, while responding to content updates and avoid returning stale entries.
-Xata's approach is to avoid the need of invalidation by design. The files content is presented as dynamic content similar to the data in the database. Therefore clients should dynamically retrieve the access URLs from the database rather than storing them in static resources. Urls become invalid when the target file updates so access will break if they are stored outside the database.\
+As with all cache systems, the fundamental problem is cache invalidation. Namely getting the cache access performance, while responding to content updates and avoid returning stale entries. Xata's approach is to avoid the need of invalidation by design. The files content is presented as dynamic content similar to the data in the database. Therefore clients should dynamically retrieve the access URLs from the database rather than storing them in static resources. Urls become invalid when the target file updates so access will break if they are stored outside the database.
+
 Having a new URL after every update makes it impossible to serve stale entries no matter the caches or proxies that may be found between client and the storage service. For the client application, this means there is no cache ttl or cache invalidation latency. When the URL is read from the database it is guaranteed to get the latest file version available.
 
 ## Image transformations
 
-For the very common case of storing images, Xata offers a set of transformations which can be applied on-the-fly when retrieving images through the access URLs (public and signed URLs support transformations).\
-Transformations are specified in the URL and their result is cached by the CDN.
-In the URL the transformation specification is a comma separated list of individual transformations following the /transform/ segment.
+For the very common case of storing images, Xata offers a set of transformations which can be applied on-the-fly when retrieving images through the access URLs (public and signed URLs support transformations). Transformations are specified in the URL and their result is cached by the CDN. In the URL the transformation specification is a comma separated list of individual transformations following the /transform/ segment.
 
-Original image URL:\
+Original image URL:
 [`https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk)
 
-Image URL with transformations:\
+Image URL with transformations:
 [`https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk)
 
 For example, retrieving an image scaled to 50 pixels height and converted to webp format will look like this:
@@ -436,7 +428,7 @@ For example, retrieving an image scaled to 50 pixels height and converted to web
   });
   ```
 
-```shell
+```sh
 curl 'https://eu-west-1.storage.xata.sh/transform/height=50,format=webp/nj42n37o4l3dd19fe6vsh4plkk' \
 --output download.webp
 ```
@@ -449,7 +441,7 @@ The following transformations are available:
 
 Used to remove animation frames from input files. Default is `true`. Setting it to `false` reduces animations to still images.
 
-```
+```txt
 /transform/anim=false
 ```
 
@@ -457,13 +449,13 @@ Used to remove animation frames from input files. Default is `true`. Setting it 
 
 Background color to add underneath the image. Applies to images with transparency. Accepts any CSS color, such as #RRGGBB and rgba(…).
 
-```
+```txt
 /transform/background=%23RRGGBB
 ```
 
 OR
 
-```
+```txt
 /transform/background=red
 ```
 
@@ -471,7 +463,7 @@ OR
 
 Blur radius between 1 (slight blur) and 250 (maximum).
 
-```
+```txt
 /transform/blur=50`
 ```
 
@@ -479,15 +471,15 @@ Blur radius between 1 (slight blur) and 250 (maximum).
 
 Increase brightness by a factor. A value of 1.0 equals no change, a value of 0.5 equals half brightness, and a value of 2.0 equals twice as bright. 0 is ignored.
 
-```
+```txt
 /transform/brightness=0.5
 ```
 
 ### compression
 
-The only option is `fast`. Slightly reduces latency on a cache miss by selecting a quickest-to-compress file format, at a cost of increased file size and lower image quality. It will usually override the format option and choose JPEG over WebP or AVIF.
+The only option is `fast`. This slightly reduces latency on a cache miss by selecting a quickest-to-compress file format, at a cost of increased file size and lower image quality. It will usually override the format option and choose JPEG over WebP or AVIF.
 
-```
+```txt
 /transform/compression=fast
 ```
 
@@ -495,7 +487,7 @@ The only option is `fast`. Slightly reduces latency on a cache miss by selecting
 
 Increase contrast by a factor. A value of 1.0 equals no change, a value of 0.5 equals low contrast, and a value of 2.0 equals high contrast. 0 is ignored.
 
-```
+```txt
 /transform/contrast=0.5
 ```
 
@@ -503,7 +495,7 @@ Increase contrast by a factor. A value of 1.0 equals no change, a value of 0.5 e
 
 Device Pixel Ratio. Default is 1. Multiplier for width/height that makes it easier to specify higher-DPI sizes in `img srcset`.
 
-```
+```txt
 /transform/dpr=1
 ```
 
@@ -522,7 +514,7 @@ Affects interpretation of width and height. All resizing modes preserve aspect r
 - `pad`
   Resizes to the maximum size that fits within the given width and height, and then fills the remaining area with a background color (white by default). This mode is not recommended, since you can achieve the same effect more efficiently with the contain mode and the CSS object-fit contain property.
 
-```
+```txt
 /transform/fit=contain
 ```
 
@@ -539,7 +531,7 @@ Converts format of the retrieved image.
 - `json`
   Instead of generating an image, outputs information about the image in JSON format. The JSON object will contain data such as image size (before and after resizing), source image’s MIME type, and file size.
 
-```
+```txt
 /transform/format=auto
 ```
 
@@ -547,7 +539,7 @@ Converts format of the retrieved image.
 
 Increase exposure by a factor. A value of 1.0 equals no change, a value of 0.5 darkens the image, and a value of 2.0 lightens the image. 0 is ignored.
 
-```
+```txt
 /transform/gamma=0.5
 ```
 
@@ -560,13 +552,13 @@ When cropping with fit: "cover" and fit: "crop", this parameter defines the side
 - `side`
   A side ("left", "right", "top", "bottom") or coordinates specified on a scale from 0.0 (top or left) to 1.0 (bottom or right), 0.5 being the center. The X and Y coordinates are separated by lowercase `x` in the URL format. For example, 0x1 means left and bottom, 0.5x0.5 is the center, 0.5x0.33 is a point in the top third of the image.
 
-```
+```txt
 /transform/gravity=auto
 ```
 
 OR
 
-```
+```txt
 /transform/gravity=0x1
 ```
 
@@ -574,7 +566,7 @@ OR
 
 Specifies maximum height of the image in pixels. Exact behavior depends on the `fit` mode.
 
-```
+```txt
 /transform/height=50
 ```
 
@@ -589,7 +581,7 @@ Controls amount of invisible metadata (EXIF data) that should be preserved. Colo
 - `none`
   Discard all invisible EXIF metadata. Currently, WebP and PNG output formats always discard metadata.
 
-```
+```txt
 /transform/metadata=keep
 ```
 
@@ -597,7 +589,7 @@ Controls amount of invisible metadata (EXIF data) that should be preserved. Colo
 
 Specifies quality for images in JPEG, WebP, and AVIF formats. The quality is in a 1-100 scale, but useful values are between 50 (low quality, small file size) and 90 (high quality, large file size). 85 is the default.
 
-```
+```txt
 /transform/quality=50
 ```
 
@@ -605,7 +597,7 @@ Specifies quality for images in JPEG, WebP, and AVIF formats. The quality is in 
 
 Number of degrees (90, 180, or 270) to rotate the image by. Width and Height options refer to axes after rotation.
 
-```
+```txt
 /transform/rotate=90
 ```
 
@@ -613,7 +605,7 @@ Number of degrees (90, 180, or 270) to rotate the image by. Width and Height opt
 
 Specifies strength of sharpening filter to apply to the image. The value is a floating-point number between 0 (no sharpening, default) and 10 (maximum). 1 is a recommended value for downscaled images.
 
-```
+```txt
 /transform/sharpen=2
 ```
 
@@ -621,7 +613,7 @@ Specifies strength of sharpening filter to apply to the image. The value is a fl
 
 Specifies a number of pixels to cut off on each side. Allows removal of borders or cutting out a specific fragment of an image. Trimming is performed before resizing or rotation. Takes `dpr` into account. The value must be four numbers in pixels separated by a semicolon, in the form of top;right;bottom;left.
 
-```
+```txt
 /transform/trim=20;30;20;0
 ```
 
@@ -629,6 +621,6 @@ Specifies a number of pixels to cut off on each side. Allows removal of borders 
 
 Specifies maximum width of the image in pixels. Exact behavior depends on the fit mode
 
-```
+```txt
 /transform/width=50
 ```
