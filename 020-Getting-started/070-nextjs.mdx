@@ -350,12 +350,12 @@ export default async function Home() {
 ```
 
 <Alert status="warning">
-`getAll()` returns all the records in the query results. This is dangerous on large tables (more than 10,000 records),
-as it will potentially load a lot of data into memory and create a lot of requests to the server.
-
-In most situations, you should use `getMany()` or `getPaginated()`. See the
-[querying documentation](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) for more information.
-
+  `getAll()` returns all the records in the query results. This is dangerous on
+  large tables (more than 10,000 records), as it will potentially load a lot of
+  data into memory and create a lot of requests to the server. In most
+  situations, you should use `getMany()` or `getPaginated()`. See the [querying
+  documentation](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying)
+  for more information.
 </Alert>
 
 Finally, we update the UI to display the result of the `getAll` call. If no records are present, we show a message
