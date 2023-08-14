@@ -109,7 +109,8 @@ By default, the application will run on `http://localhost:3000`.
 ## Create a new database
 
 With the Xata CLI installed and logged in and a new Next.js application in place, use the Xata CLI to create a new
-database. Accept all the prompt defaults for the following command:
+database. Accept all the prompt defaults for the following command except for the region selection where
+you should choose the region closest to your application users:
 
 ```sh
 xata init
@@ -193,14 +194,12 @@ using the Xata CLI and a CSV file to:
 1.  Auto-generate a schema based on column headings for names and data types inferred from the column values
 2.  Import data to the database
 
-**TODO: Update URL to CSV file**
-
 First, download the
-[example posts CSV file](https://raw.githubusercontent.com/leggetter/xata-examples/nextjs-getting-started/apps/getting-started-nextjs/seed/blog-posts.csv).
+[example posts CSV file](https://raw.githubusercontent.com/xataio/xata-examples/nextjs-getting-started/seed/blog-posts.csv).
 You can either do this manually or by running the following command:
 
 ```sh
-curl https://raw.githubusercontent.com/leggetter/xata-examples/nextjs-getting-started/apps/getting-started-nextjs/seed/blog-posts.csv --create-dirs -o seed/blog-posts.csv
+curl --create-dirs -o seed/blog-posts.csv https://raw.githubusercontent.com/xataio/xata-examples/nextjs-getting-started/seed/blog-posts.csv
 ```
 
 Next, import the CSV:
@@ -220,14 +219,17 @@ i 45 rows successfully imported 0 errors. 100% complete
 
 </details>
 
-Now, if you open up the Xata UI and navigate to your database (you can also run `xata browse` to open up a browser
-window), you will see the **Posts** table:
+Now, if you open up the [Xata UI][1] and navigate to your database, you will see the **Posts** table. Alternatively,
+you can run the command `xata browse` to open a browser window:
 
 ![Posts table](images/xata-table-posts.png)
 
-Click on the **Schema** link to see the schema definition with the interred data types:
+Click **Schema** to see the schema definition with the inferred data types:
 
 ![Posts schema](images/xata-schema-posts.png)
+
+You'll also see `xata.*` [special columns](https://xata.io/docs/concepts/data-model#special-columns) automatically
+created and maintained by Xata.
 
 With the database schema in place, the final step is to generate the code that allows us to access and query the data
 from our Next.js application. To do this, run:
@@ -330,7 +332,7 @@ export default async function Home() {
 
 Let's break down what's happening in the code above.
 
-First, we import the `getXataClient` function and assign the result of calling that function to a variable named `xata`:
+First, import the `getXataClient` function and assign the result of calling that function to a variable named `xata`:
 
 ```tsx
 import { getXataClient } from '@/xata';
@@ -350,6 +352,15 @@ export default async function Home() {
   ...
 }
 ```
+
+<Alert status="warning">
+`getAll()` returns all the records in the query results. This is dangerous on large tables (more than 10,000 records),
+as it will potentially load a lot of data into memory and create a lot of requests to the server.
+
+In most situations, you should use `getMany()` or `getPaginated()`. See the
+[querying documentation](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) for more information.
+
+</Alert>
 
 Finally, we update the UI to display the result of the `getAll` call. If no records are present, we show a message
 saying, "No blog posts found". Otherwise, we loop through the `posts` using `posts.map` and access the columns of
@@ -569,7 +580,11 @@ with a `searchParams` property. When a search has been performed, `searchParams`
 access via `searchParams.q`.
 
 ```tsx
-export default async function Home({ searchParams }: { searchParams: { q: string } }) {
+export default async function Home({
+  searchParams
+}: {
+  searchParams: { q: string };
+}) {
   ...
 }
 ```
@@ -636,10 +651,10 @@ We then updated the landing page to list all blog posts, making use of the auto-
 function. We also added the single post page making use of Next.js dynamic routes where a `slug` was passed and used
 with `xata.db.Posts.filter({ slug: params.slug }).getFirst()`.
 
-Finally, we added full-text fuzzy search functionality to the landing page, benefitting from Xata's automatic table
+Finally, we added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
 indexing. The search used a `q` query string and the auto-generated `xata.db.Posts.search` function.
 
-## Where next
+## Learn more
 
 If you enjoyed this guide, you could continue working on improving the application. Here are some suggestions:
 
