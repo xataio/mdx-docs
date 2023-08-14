@@ -52,8 +52,7 @@ Let's begin by creating a new Next.js application:
 npx create-next-app@latest --typescript xata-nextjs
 ```
 
-<details>
-  <summary><code>npx create-next-app</code> output</summary>
+<Expand title="npx create-next-app output">
 
 ```sh
 $ npx create-next-app@latest --typescript xata-nextjs
@@ -95,7 +94,7 @@ found 0 vulnerabilities Initialized a git repository.
 Success! Created xata-nextjs at ./xata-nextjs
 ```
 
-</details>
+</Expand>
 
 Once the command has completed, go to the `xata-nextjs` directory and run the application:
 
@@ -116,8 +115,7 @@ you should choose the region closest to your application users:
 xata init
 ```
 
-<details>
-  <summary><code>xata init</code> output</summary>
+<Expand title="xata init output">
 
 ```sh
 $ xata init
@@ -160,7 +158,7 @@ i Setup tables and columns at https://app.xata.io/workspaces/xata-workspace-hc84
 i Use xata pull main to regenerate code and types from your Xata database
 ```
 
-</details>
+</Expand>
 
 On completion, the CLI will create `.env`, `.xatarc`, and `src/xata.ts` files within your project folder with the
 correct credentials to access your database.
@@ -208,8 +206,7 @@ Next, import the CSV:
 xata import csv seed/blog-posts.csv --table Posts --create
 ```
 
-<details>
-  <summary><code>xata import csv</code> output</summary>
+<Expand title="xata import csv output">
 
 ```sh
 $ xata import csv seed/blog-posts.csv --table Posts --create
@@ -217,7 +214,7 @@ i 45 rows successfully imported 0 errors. 100% complete
 ✔ Completed
 ```
 
-</details>
+</Expand>
 
 Now, if you open up the [Xata UI][1] and navigate to your database, you will see the **Posts** table. Alternatively,
 you can run the command `xata browse` to open a browser window:
@@ -238,8 +235,7 @@ from our Next.js application. To do this, run:
 xata pull main
 ```
 
-<details>
-  <summary><code>xata pull main</code> output</summary>
+<Expand title="xata pull main output">
 
 ```sh
 $ xata pull main
@@ -248,7 +244,7 @@ Running codegen...
 Generated Xata code to ./src/xata.ts
 ```
 
-</details>
+</Expand>
 
 This updates the contents of `src/xata.ts` based on the schema defined on the `main` branch of our database. So, if you
 make any further changes to the schema, run `xata pull <branch>` to update the auto-generated code.
