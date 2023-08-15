@@ -460,111 +460,101 @@ This results in the page looking like the following:
 You'll notice that the post heading and "Read more →" text use the `slug` property to link to a page that doesn't
 presently exist. That's the next step in this guide.
 
-TODO: FROM HERE ------------------------------------------------>
-
 ## Query and show a single posts
 
-To handle the single posts identified by a `slug` we need to make use of Next.js
-[dynamic routes](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes).
+A single post is accessed via the `slug` value of the post in the application's URL. For example, `/posts/awesome-blog-post` where `awesome-blog-post` is the slug. To do this, we need to use Astro's
+[dynamic routes](https://docs.astro.build/en/core-concepts/routing/#dynamic-routes). You identify parameters within Astro dynamic routes by a name within square brackets within the file path. For example, `lang` and `version` within `src/pages/[lang]/[version]/info.astro`.
 
-Create a new file, `src/app/posts/[slug]/page.tsx`, where the Next.js framework uses the directory `[slug]` to capture
-the name of the slug:
+Astro is in [SSG (Static Site Generator) mode](https://docs.astro.build/en/core-concepts/routing/#static-ssg-mode) by default, meaning that all routes are identified within `getStaticPaths` function, and site content is generated at build time. Since all the blog posts and their `slug` are defined within a table, we can query the table for all posts and inform the framework about all possible routes and content.
 
-```tsx title="src/app/posts/[slug]/page.tsx" {1,22}
-export default async function Post({ params }: { params: { slug: string } }) {
-  return (
-    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
-      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-          <a href="/">Get started with Xata and Next.js</a>
-        </p>
-        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
-          </a>
-        </div>
-      </div>
+Create a new file, `src/pages/posts/[slug].astro` to enable access to a `slug` parameter:
 
-      <div className="w-full max-w-5xl mt-16">
-        <p className="mb-2">
-          <a href="/" className="text-purple-600">
-            &larr; Back to blog
-          </a>
-        </p>
+```tsx astro="src/pages/posts/[slug].astro" {2,4,6-18,20-40}
+---
+import MainLayout from '../../layouts/main.astro'
 
-        <h1 className="text-3xl mb-2">{params.slug}</h1>
-      </div>
-    </main>
-  );
+import { XataClient } from '../../xata';
+
+export async function getStaticPaths() {
+  const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
+  const posts = await xata.db.Posts.getAll();
+
+  const routes = posts.map(({ slug, title, description, pubDate }) => {
+    return {
+      params: { slug },
+      props: { title, description, pubDate },
+    };
+  });
+
+  return routes;
+}
+
+const post = Astro.props;
+---
+
+<MainLayout title={post.title}>
+
+  <div class="w-full max-w-5xl mt-16">
+    <p class="mb-2">
+      <a href="/" class="text-purple-600">
+        &larr; Back to blog
+      </a>
+    </p>
+
+    <h1 class="text-3xl mb-2">{post?.title}</h1>
+    <p class="text-sm mb-4 text-purple-950 dark:text-purple-200">
+      {post?.pubDate?.toDateString()}
+    </p>
+    <p class="text-xl">{post?.description}</p>
+
+  </div>
+
+</MainLayout>
+
+```
+
+As discussed, this defines all static pages and their content, and how to render the post details for a single blog post view. Let's break it down.
+
+From the code above, the `MainLayout` is imported to be used within the Astro Component Template:
+
+```tsx astro="src/pages/posts/[slug].astro" {2,4-18,20-40}
+---
+import MainLayout from '../../layouts/main.astro'
+```
+
+Next, the `XataClient` class definition is imported from the auto-generated `xata.ts` file to be used within `getStaticPaths`:
+
+```ts
+import { XataClient } from '../../xata';
+```
+
+TODO: FROM HERE ------------------------------------------------>
+
+The `getStaticPaths` function is then declared. First we .... then... then...
+
+```ts
+export async function getStaticPaths() {
+  const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
+  const posts = await xata.db.Posts.getAll();
+
+  const routes = posts.map(({ slug, title, description, pubDate }) => {
+    return {
+      params: { slug },
+      props: { title, description, pubDate }
+    };
+  });
+
+  return routes;
 }
 ```
 
-There's a lot more markup in this page than there is dynamic functionality. The important functionality is that the slug
-value is passed into the function via a `params` parameter and accessed using `params.slug`.
+<Alert status="info">
+  The `new XataClient` is instantiated within the `getStaticPaths` and not
+  within the top-level scope because only imports are available within the scope
+  of `getStaticPaths`.
+</Alert>
 
-Next, let's update the page to bring in the Xata client and use the slug value to fetch the post from the database:
-
-```tsx title="src/app/posts/[slug]/page.tsx" {1-6,28-32}
-import { getXataClient } from '@/xata';
-
-const xata = getXataClient();
-
-export default async function Post({ params }: { params: { slug: string } }) {
-  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
-
-  return (
-    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
-      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-          <a href="/">Get started with Xata and Next.js</a>
-        </p>
-        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
-          </a>
-        </div>
-      </div>
-
-      <div className="w-full max-w-5xl mt-16">
-        <p className="mb-2">
-          <a href="/" className="text-purple-600">
-            &larr; Back to blog
-          </a>
-        </p>
-
-        <h1 className="text-3xl mb-2">{post?.title}</h1>
-        <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
-          {post?.pubDate?.toDateString()}
-        </p>
-        <p className="text-xl">{post?.description}</p>
-      </div>
-    </main>
-  );
-}
-```
-
-The Xata client is imported and initialized in the same way as it is in the landing page via assigning the return value
-of `getXataClient` to a `xata` variable.
-
-```tsx
-import { getXataClient } from '@/xata';
-
-const xata = getXataClient();
-```
-
-The single post is retrieved from the database via the auto-generated `Posts` property. The
-[`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) is used to query
-the table for a row where the `slug` column equals the value of `params. slug`. Finally the
-[`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to return
-the first (and only) result for a post with this slug value.
-
-```tsx
-export default async function Post({ params }: { params: { slug: string } }) {
-  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
-
-  ...
-}
-```
+TODO: detail on `getStaticPaths` ^^^^^^^^^
 
 Finally, the values, `title`, `pubDate`, and `description`, for the Post are added to the UI:
 
