@@ -7,7 +7,7 @@ slug: getting-started/astro
 published: true
 ---
 
-In this guide, we'll create a new \[Astro]\[2] application and walk through adding Xata database and search
+In this guide, we'll create a new [Astro][2] application and walk through adding Xata database and search
 functionality. We'll build the following basic blog application features:
 
 1.  Lists all posts
@@ -39,8 +39,8 @@ same workflow to signup for a new account. Run the following command to begin th
 xata auth login
 ```
 
-On completion, the command will create a new API key for your user account, which you should see in the \[account
-settings page within the Xata UI]\[1]. That key will also be stored locally on your computer (the location might vary for
+On completion, the command will create a new API key for your user account, which you should see in the [account
+settings page within the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for
 each OS). It looks like this:
 
 ```toml
@@ -59,8 +59,9 @@ npm create astro@latest -- --template with-tailwindcss xata-astro
 ```
 
 <Expand title="npm create astro output">
-  ```sh
-  $ npm create astro@latest -- --template with-tailwindcss xata-astro
+
+```sh
+$ npm create astro@latest -- --template with-tailwindcss xata-astro
 
 ╭─────╮ Houston:
 │ ◠ ◡ ◠ Time to build a faster website.
@@ -98,8 +99,8 @@ astro v2.10.7 Launch sequence initiated.
 ╭─────╮ Houston:
 │ ◠ ◡ ◠ Good luck out there, astronaut! 🚀
 ╰─────╯
+```
 
-````
 </Expand>
 
 Once the command has completed, go to the `xata-astro` directory and run the application:
@@ -107,7 +108,7 @@ Once the command has completed, go to the `xata-astro` directory and run the app
 ```sh
 cd xata-astro
 npm run dev
-````
+```
 
 By default, the application will run on `http://localhost:3000`.
 
@@ -122,9 +123,10 @@ xata init
 ```
 
 <Expand title="xata init output">
-  ```sh
-  $ xata init
-  🦋 Initializing project... We will ask you some questions.
+
+```sh
+$ xata init
+🦋 Initializing project... We will ask you some questions.
 
 You have a single workspace, using it by default: Phil-Leggetter-s-workspace-hc84d7
 ✔ Select a database or create a new one › <Create a new database>
@@ -138,7 +140,7 @@ Setting up Xata...
 Created Xata config: .xatarc
 
 Creating .env file
-set XATA\*API_KEY=xau**\*\*\*\***\***\*\*\*\***\***\*\***\*\*\*\***\*\***
+set XATA_API_KEY=xau_**********************************
 set XATA_BRANCH=main
 
 i Running npm install --save @xata.io/client
@@ -159,7 +161,8 @@ i Setup tables and columns at https://app.xata.io/workspaces/xata-workspace-hc84
 
 i Use xata pull main to regenerate code and types from your Xata database
 
-````
+```
+
 </Expand>
 
 On completion, the CLI will create `.env`, `.xatarc`, and `src/xata.ts` files within your project folder with the
@@ -170,11 +173,11 @@ Your `.env` file should look something like this:
 ```bash title=".env"
 XATA_API_KEY=YOUR_API_KEY_HERE
 XATA_BRANCH=main
-````
+```
 
 To inform the TypeScript compiler about these new environment variables, update `src/env.d.ts` as follows:
 
-````ts title="src/env.d.ts"
+```ts title="src/env.d.ts"
 /// <reference types="astro/client" />
 
 interface ImportMetaEnv {
@@ -185,7 +188,6 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
-
 ```
 
 Since we selected TypeScript support, it also created files that provide typings and functions to call using Xata's
@@ -193,7 +195,7 @@ TypeScript SDK. This will additionally be referenced in the `.xatarc` file as fo
 
 ```json
 {
-  "databaseUrl": "https://xata-nextjs-database-url"
+  "databaseUrl": "https://xata-nextjs-database-url",
   "codegen": {
     "output": "src/xata.ts"
   }
@@ -348,10 +350,10 @@ import MainLayout from '../layouts/main.astro';
 </MainLayout>
 ```
 
-Next, import the auto-generated `getXataClient` function from `src/xata.ts`, get all the posts using the client, and
+Next, import the auto-generated `XataClient` class definition from `src/xata.ts`, get all the posts using the client, and
 list them within the page:
 
-```tsx title="src/pages/index.astro" {4-6,13-34}
+```astro title="src/pages/index.astro" {4-6,13-34}
 ---
 import MainLayout from '../layouts/main.astro';
 
@@ -409,7 +411,6 @@ all the Post records.
 
 ```tsx
 let posts = await xata.db.Posts.getAll();
----
 ```
 
 <Alert status="warning">
@@ -740,5 +741,4 @@ Or dive into some of Xata's more advanced features, such as:
 
 [0]: https://app.xata.io
 [1]: https://app.xata.io/settings
-[2]: https://nextjs.org/
-````
+[2]: https://astro.build/
