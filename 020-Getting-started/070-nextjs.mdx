@@ -306,19 +306,19 @@ export default async function Home() {
 
       <div className="w-full max-w-5xl mt-16">
         {posts.length === 0 && <p>No blog posts found</p>}
-        {posts.map((record) => (
-          <div key={record.id} className="mb-16">
+        {posts.map((post) => (
+          <div key={post.id} className="mb-16">
             <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
-              {record.pubDate?.toDateString()}
+              {post.pubDate?.toDateString()}
             </p>
             <h2 className="text-2xl mb-2">
-              <a href={`posts/${record.slug}`}>{record.title}</a>
+              <a href={`posts/${post.slug}`}>{post.title}</a>
             </h2>
             <p className="text-purple-950 dark:text-purple-200 mb-5">
-              {record.description}
+              {post.description}
             </p>
             <a
-              href={`posts/${record.slug}`}
+              href={`posts/${post.slug}`}
               className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
             >
               Read more &rarr;
@@ -363,7 +363,7 @@ export default async function Home() {
   for more information.
 </Alert>
 
-Finally, we update the UI to display the result of the `getAll` call. If no records are present, we show a message
+Finally, we update the UI to display the result of the `getAll` call. If no Post records are present (`posts.length === 0`), we show a message
 saying, "No blog posts found". Otherwise, we loop through the `posts` using `posts.map` and access the columns of
 each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
 the blog post was published, `slug` to link to individual blog posts (which we'll use later), `title` for the title of
@@ -372,19 +372,19 @@ the post, and `description` for the textual descript of the post:
 ```tsx
 <div className="w-full max-w-5xl mt-16">
   {posts.length === 0 && <p>No blog posts found</p>}
-  {posts.map((record) => (
-    <div key={record.id} className="mb-16">
+  {posts.map((post) => (
+    <div key={post.id} className="mb-16">
       <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
-        {record.pubDate?.toDateString()}
+        {post.pubDate?.toDateString()}
       </p>
       <h2 className="text-2xl mb-2">
-        <a href={`posts/${record.slug}`}>{record.title}</a>
+        <a href={`posts/${post.slug}`}>{post.title}</a>
       </h2>
       <p className="text-purple-950 dark:text-purple-200 mb-5">
-        {record.description}
+        {post.description}
       </p>
       <a
-        href={`posts/${record.slug}`}
+        href={`posts/${post.slug}`}
         className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
       >
         Read more &rarr;
