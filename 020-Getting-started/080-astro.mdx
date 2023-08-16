@@ -175,7 +175,7 @@ XATA_API_KEY=YOUR_API_KEY_HERE
 XATA_BRANCH=main
 ```
 
-To inform the TypeScript compiler about these new environment variables, update `src/env.d.ts` as follows:
+To inform the TypeScript typechecking about these new environment variables, update `src/env.d.ts` as follows:
 
 ```ts title="src/env.d.ts"
 /// <reference types="astro/client" />
@@ -191,7 +191,8 @@ interface ImportMeta {
 ```
 
 Since TypeScript support was selected, it also created files that provide typings and functions to call using Xata's
-TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows:
+[TypeScript SDK](https://xata.io/docs/typescript-client/overview). This will additionally be referenced in the `.xatarc`
+file as follows:
 
 ```json
 {
@@ -273,7 +274,7 @@ make any further changes to the schema, run `xata pull <branch>` to update the a
 
 Replace the contents of `src/layouts/main.astro` with the following:
 
-```astro title="src/layouts/main.astro" {2,49}
+```astro title="src/layouts/main.astro" {2,9,49}
 ---
 const { title } = Astro.props;
 ---
@@ -330,7 +331,7 @@ const { title } = Astro.props;
 
 The two main points to be aware of in this layout are:
 
-1. This layout has a `title` property that sets the page title.
+1. This layout has a `title` property that sets the page `<title />`.
 2. The contents of the pages that use this layout will appear where `<slot />` is defined.
 
 ## Query and list the posts
@@ -404,7 +405,7 @@ import { XataClient } from '../xata';
 const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
 ```
 
-Then, in the Component Script, use the `xata` client instance to get all the posts stored in the database. This is
+Then, in the Astro page Component Script (the section within `---`), use the `xata` client instance to get all the posts stored in the database. This is
 achieved via the auto-generated `Posts` property which exposes a number of helper functions. In this case, use the
 [`getAll`](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) function to get
 all the Post records.
@@ -462,10 +463,14 @@ presently exist. That's the next step in this guide.
 
 ## Generate the static paths for single posts
 
-A single post is accessed via the `slug` value of the post in the application's URL. For example, `/posts/awesome-blog-post` where `awesome-blog-post` is the slug. This is achieved using Astro's
-[dynamic routes](https://docs.astro.build/en/core-concepts/routing/#dynamic-routes). You identify parameters within Astro dynamic routes by a name within square brackets within the file path. For example, `lang` and `version` within `src/pages/[lang]/[version]/info.astro`.
+A single post is accessed via the `slug` value of the post in the application's URL. For example, `/posts/awesome-blog-post`
+where `awesome-blog-post` is the slug. This is achieved using Astro's
+[dynamic routes](https://docs.astro.build/en/core-concepts/routing/#dynamic-routes). You identify parameters within Astro
+dynamic routes by a name within square brackets in the file path. For example, `lang` and `version` within `src/pages/[lang]/[version]/info.astro`.
 
-Astro is in [SSG (Static Site Generator) mode](https://docs.astro.build/en/core-concepts/routing/#static-ssg-mode) by default, meaning that all routes are identified within `getStaticPaths` function, and site content is generated at build time. Since all the blog posts and their `slug` are defined within a table, you can query the table for all posts and inform the framework about all possible routes and content.
+Astro is in [SSG (Static Site Generator) mode](https://docs.astro.build/en/core-concepts/routing/#static-ssg-mode) by default, meaning that all
+routes are identified within the `getStaticPaths` function, and site content is generated at build time. Since all the blog posts and their
+`slug` are defined within the Posts table, you can query the table for all posts and inform the framework about all possible routes and content.
 
 Create a new file, `src/pages/posts/[slug].astro` to enable access to a `slug` parameter:
 
@@ -551,9 +556,13 @@ export async function getStaticPaths() {
   scope of `getStaticPaths`.
 </Alert>
 
-The last line within the Component Script section of `[slug].astro` pulls the properties returned from `getStaticPaths` for the current `slug` generated as part of the Astro Static Site Generate process. So, `post` represents a single post and contains properties for `title`, `description`, and `pubDate`.
+The last line within the Component Script section of `[slug].astro` pulls the properties returned
+from `getStaticPaths` for the current `slug` generated as part of the Astro Static Site Generate process.
+So, `post` represents a single post and contains properties for `title`, `description`, and `pubDate`.
 
-The Component Template uses the `MainLayout` component and passes the blog post title, `post.title`, so the page `<title>` contains the post title. Finally, the values for `post.title`, `post.description`, and `post.pubDate` are then used within the UI.
+The Component Template (the contents after the second `---`) uses the `MainLayout` component and passes
+the blog post title, `post.title`, used within `<title>`. Finally, the values
+for `post.title`, `post.description`, and `post.pubDate` are then used within the UI.
 
 ```tsx
 const post = Astro.props;
@@ -588,7 +597,7 @@ The single blog post page will look as follows:
 The last piece of functionality to add to the application is full-text fuzzy search of blog posts.
 
 When you insert data into a Xata database, it is automatically indexed for full-text search. So you don't need to change
-any configuration to enable search, you need to use the
+any configuration to enable search, you just need to use the
 [TypeScript SDK search feature](https://xata.io/docs/typescript-client/search).
 
 As mentioned earlier, by default, Astro is in [SSG Mode](https://docs.astro.build/en/core-concepts/routing/#static-ssg-mode).
@@ -676,8 +685,13 @@ if (search) {
 The third and last change is to add a `<form>` to the page to allow a search value to be entered and submitted. The
 default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
 string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
-a `GET`request in the format`?q={q-value}`. Since this is precisely the behavior required, and the page is already updated
-to get the value of `q` via `Astro.url.searchParams.get('q')`, everything is in place.
+a `GET`request in the format`?q={q-value}`.
+
+In addition to `posts` being dynamically populated based on the search result, the `search` value is also used within
+the `<input value={search} />` of the `<form />` to inform the user of the current search.
+
+Since this is precisely the behavior required, and the page is already updated
+to get the value of `q` via `Astro.url.searchParams.get('q')`, everything is now in place.
 
 ```tsx
 <div class="w-full max-w-5xl mt-16">
@@ -697,11 +711,16 @@ to get the value of `q` via `Astro.url.searchParams.get('q')`, everything is in 
 The application now supports listing posts, viewing single posts via a dynamic route, and full-text fuzzy search of
 posts.
 
+<ArticleVideo
+  platform="html"
+  src="https://github.com/xataio/mdx-docs/raw/main/020-Getting-started/videos/getting-started-app.mp4"
+/>
+
 ## What you've learned
 
-In this guide, you've learned that Astro with SSG and SSR, and Xata are a powerful combination. You created an
-application from scratch that lists blog posts, supports viewing a single blog post, and performs full-text fuzzy search
-on all posts.
+In this guide, you've learned Astro with SSG (Static Site Generation) and SSR (Server-Side Rendering),
+and Xata is a powerful combination. You created an application from scratch that lists blog posts,
+supports viewing a single blog post, and performs full-text fuzzy search on all posts.
 
 You walked through setting up the Xata CLI and using it to:
 
@@ -711,7 +730,7 @@ You walked through setting up the Xata CLI and using it to:
 
 You then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
 function. You also added the single post page using Astro SSG, where the `slug` Posts record column was used in combination
-with Astro's `getStaticPaths` to identify all possible routes and, thus, static files to be generated.
+with Astro's `getStaticPaths` to identify all possible routes and, thus, the static files to be generated.
 
 Finally, You added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
 indexing. To do this, you enabled Astro's hybrid mode to generate search results using SSR based on the search query passed
@@ -726,7 +745,6 @@ If you enjoyed this guide, you could continue working on improving the applicati
 - Handle single post view page not finding a result for a `slug`
 - Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
   use that new field.
-- Move common code from the two pages into `src/app/layout.tsx` or reusable components.
 
 You can also explore some of the features we've covered in more detail:
 
