@@ -9,13 +9,20 @@ published: true
 
 You can create a record like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const record = await xata.db.Users.create({
   email: 'keanu@example.com',
   name: 'Keanu Reeves'
 });
+```
+
+```python
+record = xata.records().insert("Users", {
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves"
+})
 ```
 
 ```jsonc
@@ -27,18 +34,11 @@ const record = await xata.db.Users.create({
 }
 ```
 
-```python
-record = xata.records().insert("Users", {
-  "email": "keanu@example.com",
-  "name": "Keanu Reeves"
-})
-```
-
 </TabbedCode>
 
 The TypeScript SDK returns the created record. The response looks like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
   ```ts
   {
     "email": "keanu@example.com",
@@ -49,7 +49,7 @@ The TypeScript SDK returns the created record. The response looks like this:
   }
 ```
 
-```json
+```python
 {
   "id": "rec_c8hnbch26un1nl0rthkg",
   "xata": {
@@ -60,7 +60,7 @@ The TypeScript SDK returns the created record. The response looks like this:
 }
 ```
 
-```python
+```json
 {
   "id": "rec_c8hnbch26un1nl0rthkg",
   "xata": {
@@ -82,12 +82,19 @@ In the above:
 
 If you want to specify your own ID, you can do it like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const record = await xata.db.Users.create("myid", {
   email: "keanu@example.com",
   name: "Keanu Reeves"
 });
+```
+
+```python
+record = xata.records().insert_with_id("Users", "myid" {
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves"
+})
 ```
 
 ```jsonc
@@ -98,13 +105,6 @@ const record = await xata.db.Users.create("myid", {
 }
 ```
 
-```python
-record = xata.records().insert_with_id("Users", "myid" {
-  "email": "keanu@example.com",
-  "name": "Keanu Reeves"
-})
-```
-
 </TabbedCode>
 
 In the REST API example, note the change from `POST` to `PUT`. The `createOnly` query parameter signals Xata to return an error in case a record with the given ID already exists.
@@ -113,12 +113,19 @@ In the REST API example, note the change from `POST` to `PUT`. The `createOnly` 
 
 In the schema that we chose, the `Posts` table has an `author` column of type `link` that links to the `Users` table. To insert a record with a linked field, use the ID of the target record in the link column. For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const record = await xata.db.Posts.create({
     title: "Filming the Matrix",
     author: "rec_cd8rqcoavc42pi67lgd0"
 });
+```
+
+```python
+record = xata.records().insert("Posts", {
+  "title": "Filming the Matrix",
+  "author": "rec_cd8rqcoavc42pi67lgd0"
+})
 ```
 
 ```jsonc
@@ -130,20 +137,13 @@ const record = await xata.db.Posts.create({
 }
 ```
 
-```python
-record = xata.records().insert("Posts", {
-  "title": "Filming the Matrix",
-  "author": "rec_cd8rqcoavc42pi67lgd0"
-})
-```
-
 </TabbedCode>
 
 ## Creating records in bulk
 
 If you have multiple records to insert, you can send them in a single request via the [`/bulk` endpoint](/docs/api-reference/db/db_branch_name/tables/table_name/bulk). For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const users = await xata.db.Users.create([{
     email: "laurence@example.com",
@@ -159,6 +159,28 @@ const users = await xata.db.Users.create([{
     team: "rec_cd8s4kbo8dsvsjilo1ug"
   }
 ]);
+```
+
+```python
+users = xata.records().bulk_insert("Users", {
+  "records": [
+    {
+      "email": "laurence@example.com",
+      "name": "Laurence Fishburne",
+      "team": "rec_cd8s4kbo8dsvsjilo1ug"
+    },
+    {
+      "email": "hugo@example.com",
+      "name": "Hugo Weaving",
+      "team": "rec_cd8s4kbo8dsvsjilo1ug"
+    },
+    {
+      "email": "joe@example.com",
+      "name": "Joe Pantoliano",
+      "team": "rec_cd8s4kbo8dsvsjilo1ug"
+    }
+  ]
+})
 ```
 
 ```jsonc
@@ -183,28 +205,6 @@ const users = await xata.db.Users.create([{
     }
   ]
 }
-```
-
-```python
-users = xata.records().bulk_insert("Users", {
-  "records": [
-    {
-      "email": "laurence@example.com",
-      "name": "Laurence Fishburne",
-      "team": "rec_cd8s4kbo8dsvsjilo1ug"
-    },
-    {
-      "email": "hugo@example.com",
-      "name": "Hugo Weaving",
-      "team": "rec_cd8s4kbo8dsvsjilo1ug"
-    },
-    {
-      "email": "joe@example.com",
-      "name": "Joe Pantoliano",
-      "team": "rec_cd8s4kbo8dsvsjilo1ug"
-    }
-  ]
-})
 ```
 
 </TabbedCode>
