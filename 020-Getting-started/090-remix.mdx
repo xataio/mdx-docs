@@ -486,125 +486,124 @@ This results in the page looking like the following:
 You'll notice that the post heading and "Read more →" text use the `slug` property to link to a page that doesn't
 presently exist. That's the next step in this guide.
 
-TODO: ---------------------------------> FROM HERE
-
 ## Query and show a single posts
 
-To handle the single posts identified by a `slug` we need to make use of Next.js
-[dynamic routes](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes).
+To handle the single posts identified by a `slug` we need to make use of Remix
+[dynamic segments](https://remix.run/docs/en/main/guides/routing#dynamic-segments).
 
-Create a new file, `src/app/posts/[slug]/page.tsx`, where the Next.js framework uses the directory `[slug]` to capture
+Create a new file, `app/routes/posts.$slug.tsx`, where the Remix framework uses the filename segment `$slug` to capture
 the name of the slug:
 
-```tsx title="src/app/posts/[slug]/page.tsx" {1,22}
-export default async function Post({ params }: { params: { slug: string } }) {
+```tsx title="app/routes/posts.$slug.tsx"
+import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import { getXataClient } from 'src/xata';
+
+export async function loader({ params }: LoaderArgs) {
+  const xata = getXataClient();
+
+  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
+
+  return json({
+    post
+  });
+}
+
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+  return [{ title: `${data?.post?.title} - Xata and Remix` }];
+};
+
+export default function Post() {
+  const { post } = useLoaderData<typeof loader>();
+
   return (
-    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
-      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-          <a href="/">Get started with Xata and Next.js</a>
-        </p>
-        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
-          </a>
-        </div>
-      </div>
-
-      <div className="w-full max-w-5xl mt-16">
-        <p className="mb-2">
-          <a href="/" className="text-purple-600">
-            &larr; Back to blog
-          </a>
-        </p>
-
-        <h1 className="text-3xl mb-2">{params.slug}</h1>
-      </div>
-    </main>
+    <div className="w-full max-w-5xl mt-16">
+      <p className="mb-2">
+        <a href="/" className="text-purple-600">
+          &larr; Back to blog
+        </a>
+      </p>
+      <h1 className="text-3xl mb-2">{post?.title}</h1>
+      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
+        {new Date(post?.pubDate ?? '').toDateString()}
+      </p>
+      <p className="text-xl">{post?.description}</p>
+    </div>
   );
 }
 ```
 
-There's a lot more markup in this page than there is dynamic functionality. The important functionality is that the slug
-value is passed into the function via a `params` parameter and accessed using `params.slug`.
+Let's walk through what this does.
 
-Next, let's update the page to bring in the Xata client and use the slug value to fetch the post from the database:
+The imports are mostly the same as the landing page with the addition of the `LoaderArgs` import:
 
-```tsx title="src/app/posts/[slug]/page.tsx" {1-6,28-32}
-import { getXataClient } from '@/xata';
+```tsx
+import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import { getXataClient } from 'src/xata';
+```
 
-const xata = getXataClient();
+The `loader` function does the same job as the landing page but is updated to take parameters of type `LoaderArgs`.
+The `params` property on the `LoaderArgs` gives us the slug value from the URL via `params.slug`.
 
-export default async function Post({ params }: { params: { slug: string } }) {
+Use the `getXataClient` function to get a Xata client instance, and then use the
+[`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) on the
+auto-generated `Posts` property to perform a query on the Posts table to find the
+record where the `slug` column equals the value of `params.slug`. Use the
+[`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to access
+the first (and only) Post result and return the post, again using the Remix `json` help function.
+
+```tsx
+export async function loader({ params }: LoaderArgs) {
+  const xata = getXataClient();
+
   const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
+
+  return json({
+    post
+  });
+}
+```
+
+Use the values returned from the `loader` within the `V2_MetaFunction` function to display the Post's title
+within the page's title. This function differs from the landing page version by taking a parameter containing a `data` property.
+The value in `data` is the payload returned from the `loader` function. So, the Post's `title` value can be extracted and used:
+
+```tsx
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+  return [{ title: `${data?.post?.title} - Xata and Remix` }];
+};
+```
+
+Finally, the main page function makes use of the `userLoaderData` hook to retrieve the single Post information and uses the values,
+`title`, `pubDate`, and `description`, for the Post are added to the UI:
+
+```tsx {2,11,13,15}
+export default function Post() {
+  const { post } = useLoaderData<typeof loader>();
 
   return (
-    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
-      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-          <a href="/">Get started with Xata and Next.js</a>
-        </p>
-        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
-          </a>
-        </div>
-      </div>
-
-      <div className="w-full max-w-5xl mt-16">
-        <p className="mb-2">
-          <a href="/" className="text-purple-600">
-            &larr; Back to blog
-          </a>
-        </p>
-
-        <h1 className="text-3xl mb-2">{post?.title}</h1>
-        <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
-          {post?.pubDate?.toDateString()}
-        </p>
-        <p className="text-xl">{post?.description}</p>
-      </div>
-    </main>
+    <div className="w-full max-w-5xl mt-16">
+      <p className="mb-2">
+        <a href="/" className="text-purple-600">
+          &larr; Back to blog
+        </a>
+      </p>
+      <h1 className="text-3xl mb-2">{post?.title}</h1>
+      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
+        {new Date(post?.pubDate ?? '').toDateString()}
+      </p>
+      <p className="text-xl">{post?.description}</p>
+    </div>
   );
 }
-```
-
-The Xata client is imported and initialized in the same way as it is in the landing page via assigning the return value
-of `getXataClient` to a `xata` variable.
-
-```tsx
-import { getXataClient } from '@/xata';
-
-const xata = getXataClient();
-```
-
-The single post is retrieved from the database via the auto-generated `Posts` property. The
-[`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) is used to query
-the table for a row where the `slug` column equals the value of `params. slug`. Finally the
-[`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to return
-the first (and only) result for a post with this slug value.
-
-```tsx
-export default async function Post({ params }: { params: { slug: string } }) {
-  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
-
-  ...
-}
-```
-
-Finally, the values, `title`, `pubDate`, and `description`, for the Post are added to the UI:
-
-```tsx
-<h1 className="text-3xl mb-2">{post?.title}</h1>
-<p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
-  {post?.pubDate?.toDateString()}
-</p>
-<p className="text-xl">{post?.description}</p>
 ```
 
 The single blog post page will look as follows:
 
 ![Single blog post](images/getting-started-blog-post.png)
+
+TODO ---------------------------> from here
 
 ## Search posts
 
