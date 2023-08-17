@@ -493,9 +493,9 @@ const xata = getXataClient();
 
 The single post is retrieved from the database via the auto-generated `Posts` property. The
 [`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) is used to query
-the table for a row where the `slug` column equals the value of `params. slug`. Finally the
+the table for a row where the `slug` column equals the value of `params.slug`. Finally, use the
 [`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to return
-the first (and only) result for a post with this slug value.
+the first (and only) Post result.
 
 ```tsx
 export default async function Post({ params }: { params: { slug: string } }) {
