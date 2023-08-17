@@ -9,13 +9,17 @@ published: true
 
 To delete a record you can execute, for example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.delete('rec_cd8s3r8avc42pi67m13g');
 
 // or, using the delete method on the record object:
 user.delete();
+```
+
+```python
+user = xata.records().delete("Users", "rec_cd8s3r8avc42pi67m13g")
 ```
 
 ```jsonc
@@ -28,10 +32,29 @@ In case the record with the given ID doesn't exist, the REST API returns a 404 a
 
 Transactions are used when deleting multiple records:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.delete(['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1oncchhigq95n2g']);
+const users = await xata.db.Users.delete(['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1oncchhigq95n2g']);
+```
+
+```python
+users = xata.records().transaction({
+  "operations": [
+    {
+      "delete": {
+        "table": "Users",
+        "id": "rec_cd8s3r8avc42pi67m13g"
+      }
+    },
+    {
+      "delete": {
+        "table": "Users",
+        "id": "rec_cgh9o1oncchhigq95n2g"
+      }
+    }
+  ]
+})
 ```
 
 ```jsonc

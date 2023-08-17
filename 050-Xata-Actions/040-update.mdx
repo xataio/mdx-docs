@@ -11,10 +11,16 @@ published: true
 
 You can overwrite a full record with a request like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.createOrReplace('myid', { name: 'Keanu Reeves' });
+```
+
+```python
+user = xata.records().upsert("Users", "myid" {
+  "name": "Keanu Reeves"
+})
 ```
 
 ```jsonc
@@ -33,7 +39,7 @@ Note that in the above example, the whole record was overwritten. If you want to
 
 In order to do a partial update to a record, you can use a request like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('myid', { email: 'newemail@example.com' });
@@ -41,6 +47,12 @@ const user = await xata.db.Users.update('myid', { email: 'newemail@example.com' 
 // or, using the `update` method on the record object:
 
 user.update({ email: 'newemail@example.com' });
+```
+
+```python
+user = xata.records().update("Users", "myid" {
+  "email": "newemail@example.com"
+})
 ```
 
 ```jsonc
@@ -55,10 +67,16 @@ user.update({ email: 'newemail@example.com' });
 
 It's also possible to update a record if it exists, or create it if it doesn't exist:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reaves' });
+```
+
+```python
+user = xata.records().upsert("Users", "myid" {
+  "name": "Keanu Reeves"
+})
 ```
 
 ```jsonc
@@ -83,10 +101,18 @@ The numeric types (int and float) support basic mathematical operations: additio
 
 Here is a simple example that increments a counter:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.update('myid', { counter: { $increment: 1 } });
+const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $increment: 1 } });
+```
+
+```python
+user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
+  "counter": {
+    "$increment": 1
+  }
+})
 ```
 
 ```jsonc
@@ -103,10 +129,18 @@ const user = await xata.db.Users.update('myid', { counter: { $increment: 1 } });
 
 And here is an example that adds 10 to the counter:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.update('myid', { counter: { $increment: 10 } });
+const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $increment: 10 } });
+```
+
+```python
+user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
+  "counter": {
+    "$increment": 10
+  }
+})
 ```
 
 ```jsonc
@@ -123,10 +157,18 @@ const user = await xata.db.Users.update('myid', { counter: { $increment: 10 } })
 
 And here is an example that divides the counter by 2:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.update('myid', { counter: { $divide: 2 } });
+const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $divide: 2 } });
+```
+
+```python
+user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
+  "counter": {
+    "$divide": 2
+  }
+})
 ```
 
 ```jsonc
@@ -165,11 +207,28 @@ Each call only writes to a single table, so columns to `update` should live in t
 
 After executing a request, you will notice that the version field of the record is incremented automatically. You can read the version in the special column `xata.version`.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 user.xata;
 // { version: 2, "createdAt": "2023-05-15T08:21:31.96526+01:00", "updatedAt": "2023-05-15T21:58:54.072595+01:00" }
+```
+
+```python
+{
+  "address": {
+    "street": "123 New St",
+    "zipcode": 12345
+  },
+  "email": "keanu@example.com",
+  "fname": "Keanu Reeves",
+  "id": "rec_c8hnbch26un1nl0rthkg",
+  "xata": {
+    "version": 2,
+    "updatedAt": "2023-05-15T21:58:54.072595+01:00",
+    "createdAt": "2023-05-15T08:21:31.96526+01:00"
+  }
+}
 ```
 
 ```json
@@ -195,11 +254,11 @@ The `version` field can be used to perform optimistic concurrency control, also 
 
 To prevent this, you can pass the `ifVersion` parameter to the PUT request. The value for `ifVersion` should be the value of `xata.version` from when you retrieved the record. For example, if you want to update the record only if the version is 0, you can send the following request:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const updatedUser = await xata.db.Users.update(
-  'myid1',
+  'rec_c8hnbch26un1nl0rthkg',
   {
     name: 'Keanu Reaves',
     email: 'keanu@xata.io'
@@ -208,6 +267,18 @@ const updatedUser = await xata.db.Users.update(
     ifVersion: 0
   }
 );
+```
+
+```python
+user = xata.records().update(
+  "Users", 
+  "rec_c8hnbch26un1nl0rthkg", 
+  {
+    "name": 'Keanu Reaves',
+    "email": 'keanu@xata.io'
+  },
+  if_version=0
+)
 ```
 
 ```jsonc
