@@ -18,7 +18,7 @@ An embedding is a vector of floating point numbers that represents the original 
 
 Vector search works at the table level and has the following format:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const results = await xata.db.Docs.vectorSearch(
@@ -32,8 +32,18 @@ const results = await xata.db.Docs.vectorSearch(
 );
 ```
 
+```python
+results = xata.data().vector_search("Docs", {
+  "queryVector": [0.1, 0.2],  # array of floats
+  "column": "embeddings",     # column name,
+  "similarityFunction": "l1", # space function
+  "size": 5,                  # number of results to return
+  "filter": {},               # filter expression
+})
+```
+
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/vectorSearch
+// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/Docs/vectorSearch
 {
     "queryVector": [/*<array of floats>*/],
     "column": /*<column name>*/,
@@ -58,14 +68,22 @@ Additionally you can customize the results with these optional parameters:
 
 Here is a simple example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const results = await xata.db.Docs.vectorSearch('embeddings', [0.1, 0.2, 0.3], { size: 5 });
 ```
 
+```python
+results = xata.data().vector_search("Docs", {
+  "queryVector": [0.1, 0.2, 0.3],
+  "column": "embeddings",
+  "size": 5
+})
+```
+
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/vectorSearch
+// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/Docs/vectorSearch
 {
   "queryVector": [0.1, 0.2, 0.3],
   "column": "embeddings",
