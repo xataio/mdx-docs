@@ -7,8 +7,8 @@ slug: getting-started/remix
 published: true
 ---
 
-In this guide, we'll create a new [Remix][2] application and walk through adding Xata database and search
-functionality. We'll build the following basic blog application features:
+In this guide, you'll learn how to add Xata database and search functionality to a [Remix][2] application.
+You'll build the following basic blog application features:
 
 1.  Lists all posts
 2.  Retrieve and view a single post
@@ -153,7 +153,7 @@ XATA_API_KEY=YOUR_API_KEY_HERE
 XATA_BRANCH=main
 ```
 
-Since we selected TypeScript support, it also created files that provide typings and functions to call using Xata's
+Since you selected TypeScript support, it also created files that provide typings and functions to call using Xata's
 TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows:
 
 ```json
@@ -169,8 +169,8 @@ The `src/xata.ts` file includes generated code you should typically never touch 
 
 ## Define the database schema and import CSV data
 
-You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide, we'll walk through
-using the Xata CLI and a CSV file to:
+You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide, you'll use
+the Xata CLI and a CSV file to:
 
 1.  Auto-generate a schema based on column headings for names and data types inferred from the column values
 2.  Import data to the database
@@ -321,7 +321,7 @@ Make sure the `<Outlet />` component is before the closing `</main>` element.
 
 ## Query and list the posts
 
-Now we're ready to integrate Xata into the Next.js codebase. Let's start by stripping back the landing page,
+Now we're ready to integrate Xata into the Remix codebase. Let's start by stripping back the landing page,
 `app/routes/_index.tsx`, to a bare template:
 
 ```tsx title="app/routes/_index.tsx"
@@ -406,11 +406,11 @@ import { useLoaderData } from '@remix-run/react';
 import { getXataClient } from 'src/xata';
 ```
 
-Next, a Remix framework [`loader`](https://remix.run/docs/en/main/route/loader) server-only function that provides
-data to the route when renderingis defined and exported. Within that function an instance of the `XataClient`
+Next, a Remix framework server-only [`loader`](https://remix.run/docs/en/main/route/loader) function is defined
+and exported. This function provides data to the route when rendering. Within that function, an instance of the `XataClient`
 is created using `getXataClient` and assigned to the `xata` variable. Then, use the `xata` client instance
 to get all the posts stored in the database. This is achieved via the auto-generated `Posts` property
-which exposes a number of helper functions. In this case, we use the
+which exposes a number of helper functions. In this case, use the
 [`getAll`](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) function to get
 all the Post records. Finally, return the posts making use of the imported Remix [`json`](https://remix.run/docs/en/main/utils/json)
 helper function.
@@ -439,8 +439,8 @@ export async function loader() {
 Finally, within the `Index` function, use the [`useLoaderData` Remix hook](https://remix.run/docs/en/main/hooks/use-loader-data)
 retrieve the `posts` data.
 
-Then, update the UI to display the results. If no records are present, we show a message
-saying, "No blog posts found". Otherwise, we loop through the `posts` using `posts.map` and access the columns of
+Then, update the UI to display the results. If no records are present, show a message
+saying, "No blog posts found". Otherwise, loop through the `posts` using `posts.map` and access the columns of
 each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
 the blog post was published, `slug` to link to individual blog posts (which will be used use later), `title` for the title of
 the post, and `description` for the textual descript of the post. Since `pubData` has been serialized to a string, convert
@@ -488,7 +488,7 @@ presently exist. That's the next step in this guide.
 
 ## Query and show a single posts
 
-To handle the single posts identified by a `slug` we need to make use of Remix
+To handle the single posts identified by a `slug`, make use of Remix
 [dynamic segments](https://remix.run/docs/en/main/guides/routing#dynamic-segments).
 
 Create a new file, `app/routes/posts.$slug.tsx`, where the Remix framework uses the filename segment `$slug` to capture
@@ -603,118 +603,147 @@ The single blog post page will look as follows:
 
 ![Single blog post](images/getting-started-blog-post.png)
 
-TODO ---------------------------> from here
-
 ## Search posts
 
-The last piece of functionality to be added to the application is full-text fuzzy search of blog posts.
+The last piece of functionality to add to the application is full-text fuzzy search of blog posts.
 
-When you insert data into a Xata database, it is automatically indexed for full-text search. So we don't need to change
-any configuration to enable search, we just need to use the
+When you insert data into a Xata database, it is automatically indexed for full-text search. So you don't need to change
+any configuration to enable search, just need to use the
 [TypeScript SDK search feature](https://xata.io/docs/typescript-client/search).
 
 Let's add this functionality to the landing page:
 
-```tsx title="src/app/page.tsx" {4-14,29-39}
-import { getXataClient } from '@/xata';
+```tsx title="app/routes/_index.tsx" {1,7-24,27,31-40}
+import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+import { getXataClient } from 'src/xata'
 
-const xata = getXataClient();
+...
 
-export default async function Home({
-  searchParams
-}: {
-  searchParams: { q: string };
-}) {
-  let posts = null;
-  if (searchParams.q) {
-    posts = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 });
+export async function loader({ request }: LoaderArgs) {
+  const xata = getXataClient()
+
+  const url = new URL(request.url)
+  const search = url.searchParams.get('q')
+
+  let posts = null
+  if (search) {
+    posts = await xata.db.Posts.search(search, { fuzziness: 2 })
   } else {
-    posts = await xata.db.Posts.getAll();
+    posts = await xata.db.Posts.getAll()
   }
 
+  return json({
+    posts,
+    search,
+  })
+}
+
+export default function Index() {
+  const { posts, search } = useLoaderData<typeof loader>()
+
   return (
-    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
-      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-          <a href="/">Get started with Xata and Next.js</a>
-        </p>
-        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
-          </a>
-        </div>
-      </div>
+    <>
       <div className="w-full max-w-5xl mt-16">
         <form>
           <input
             name="q"
-            defaultValue={searchParams.q}
+            defaultValue={search || ''}
             placeholder="Search..."
-            className="w-full rounded-lg p-2 dark:text-purple-950"
+            className="w-full rounded-lg p-2 border-2 dark:text-purple-950"
           />
         </form>
       </div>
+
       ...
-    </main>
-  );
+    </>
+  )
 }
 ```
 
-Add search with three changes.
+Add search with these changes.
 
-First, update the main function to accept search parameters. This is achieved by having the function accept an object
-with a `searchParams` property. When a search has been performed, `searchParams` will optionally have a `q` property
-access via `searchParams.q`.
+First, update the `@remix-run/node` import to include `LoaderArgs'. Then, update the `loader`function to accept
+the`request`property from the`LoaderArgs` parameter.
 
-```tsx
-export default async function Home({
-  searchParams
-}: {
-  searchParams: { q: string };
-}) {
+```tsx {1,7}
+import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+import { getXataClient } from 'src/xata'
+
+...
+
+export async function loader({ request }: LoaderArgs) {
   ...
 }
 ```
 
-Secondly, the landing page should list all blog posts if the `searchParams.q` property isn't present. However, if
-the property is present, a search is performed on the Posts table using the
+Next, update the `loader` function to conditionally perform a search based on the presence of search text within a `q` querystring parameter.
+Do this by creating a new `URL` instance and passing the `request.url` value. Then, get the `q` querystring using `url.searchParams.get('q')`
+and assign the result to a variable called `search`.
+
+The landing page should list all blog posts if `search` is an empty string. However, if
+the search has a non-empty string value, a search is performed on the Posts table using the
 [`search` function](https://xata.io/docs/typescript-client/search#searching-in-a-single-table) exposed on the
-auto-generated `Posts` property. The value of `searchParams.q` is passed as the text value to search for, and a
-second options parameter is populated with `fuzziness` set to `2`, which instructs the search behavior to allow for two
+auto-generated `Posts` property. Pass `search` as the text value to search for, and use a
+second options parameter with `fuzziness` set to `2`, which informs the search behavior to allow for two
 letters changed/added/removed. See
 [fuzziness and typo tolerance](https://xata.io/docs/typescript-client/search#fuzziness-and-typo-tolerance) for more
 details.
 
+Update the return value of `loader` to return both the `posts` and the value of `search`.
+
 ```tsx
-export default async function Home({ searchParams }: { searchParams: { q: string } }) {
+export async function loader({ request }: LoaderArgs) {
+  const xata = getXataClient();
+
+  const url = new URL(request.url);
+  const search = url.searchParams.get('q');
+
   let posts = null;
-  if (searchParams.q) {
-    posts = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 });
+  if (search) {
+    posts = await xata.db.Posts.search(search, { fuzziness: 2 });
   } else {
     posts = await xata.db.Posts.getAll();
   }
 
-  ...
+  return json({
+    posts,
+    search
+  });
 }
 ```
 
-The third and last change is to add a `<form>` to the page to allow a search value to be entered and submitted. The
+The last change enables the user to input and submit a search.
+
+Begin by retrieving both the `posts` and the `search` values using the Remix `userLoaderData` hook.
+
+Next, add a `<form>` to the page to allow a search value to be entered and submitted. The
 default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
 string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
-a `GET`request in the format`?q={q-value}`. Since this is precisely the behavior we need, and we've already updated
-the page function to accept the object with a`searchParams` property already, everything is in place.
+a `GET`request in the format`?q={q-value}`. Since this is precisely the behavior required, and the check for the `q`
+querystring search value has been implemented already, everything is in place.
 
 ```tsx
-<div className="w-full max-w-5xl mt-16">
-  <form>
-    <input
-      name="q"
-      defaultValue={searchParams.q}
-      placeholder="Search..."
-      className="w-full rounded-lg p-2 dark:text-purple-950"
-    />
-  </form>
-</div>
+export default function Index() {
+  const { posts, search } = useLoaderData<typeof loader>();
+
+  return (
+    <>
+      <div className="w-full max-w-5xl mt-16">
+        <form>
+          <input
+            name="q"
+            defaultValue={search || ''}
+            placeholder="Search..."
+            className="w-full rounded-lg p-2 border-2 dark:text-purple-950"
+          />
+        </form>
+      </div>
+      ...
+    </>
+  );
+}
 ```
 
 ![Full-text fuzzy search](images/getting-started-blog-search.png)
@@ -724,21 +753,21 @@ posts.
 
 ## What you've learned
 
-In this guide, you've learned that Next.js App Router applications and Xata are a powerful combination. You created an
+In this guide, you've learned that Remix applications and Xata are a powerful combination. You created an
 application from scratch that lists blog posts, supports viewing a single blog post, and performs full-text fuzzy search
 on all posts.
 
-We walked through setting up the Xata CLI and using it to:
+You walked through setting up the Xata CLI and using it to:
 
 - Create a new Xata project
 - Create a database schema and populate it with data from an imported CSV file
 - Update the auto-generated code (in `src/xata.ts`) using `xata pull main` to reflect the updated schema
 
-We then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
-function. We also added the single post page making use of Next.js dynamic routes where a `slug` was passed and used
+You then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
+function. You also added the single post page making use of Remix dynamic segments where a `slug` was passed and used
 with `xata.db.Posts.filter({ slug: params.slug }).getFirst()`.
 
-Finally, we added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
+Finally, you added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
 indexing. The search used a `q` query string and the auto-generated `xata.db.Posts.search` function.
 
 ## Learn more
@@ -750,7 +779,6 @@ If you enjoyed this guide, you could continue working on improving the applicati
 - Handle single post view page not finding a result for a `slug`
 - Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
   use that new field.
-- Move common code from the two pages into `src/app/layout.tsx` or reusable components.
 
 You can also explore some of the features we've covered in more detail:
 
