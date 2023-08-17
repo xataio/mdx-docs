@@ -395,16 +395,10 @@ const users = await xata.db.Users
 ```python
 users = xata.data().query("Users", {
   "filter": {
-    "zipcode": {
-      "$gt": 100
-    },
+    "zipcode": {"$gt": 100},
     "$any": [
-      {
-        "name": { "$contains": "Keanu" }
-      },
-      {
-        "name": { "$contains": "Carrie" }
-      }
+      {"name": { "$contains": "Keanu" }},
+      {"name": { "$contains": "Carrie" }}
     ]
   }
 })
@@ -415,16 +409,10 @@ users = xata.data().query("Users", {
 
 {
   "filter": {
-    "zipcode": {
-      "$gt": 100
-    },
+    "zipcode": {"$gt": 100},
     "$any": [
-      {
-        "name": { "$contains": "Keanu" }
-      },
-      {
-        "name": { "$contains": "Carrie" }
-      }
+      {"name": { "$contains": "Keanu" }},
+      {"name": { "$contains": "Carrie" }}
     ]
   }
 }
@@ -512,12 +500,8 @@ const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMa
 ```python
 users = xata.data().query("Users", {
   "sort": [
-    {
-      "city": "desc"
-    },
-    {
-      "name": "asc"
-    }
+    {"city": "desc"},
+    {"name": "asc"}
   ]
 })
 ```
