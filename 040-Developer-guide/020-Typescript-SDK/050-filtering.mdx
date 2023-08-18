@@ -7,8 +7,8 @@ slug: typescript-client/filtering
 published: true
 ---
 
-The same filtering syntax can be used in multiple places, including the [Query API](/docs/typescript-client/get),
-the [Search API](/docs/typescript-client/search), and the [Aggregate API](/docs/typescript-client/aggregate). By using the same
+The same filtering syntax can be used in multiple places, including the [Query API](/docs/developer-guide/typescript-client/get),
+the [Search API](/docs/developer-guide/typescript-client/search), and the [Aggregate API](/docs/developer-guide/typescript-client/aggregate). By using the same
 syntax, you can easily switch between the APIs that you need.
 
 We recommend that you use the web UI to build your filters, then use the **Get Code Snippet** functionality to get the
@@ -374,7 +374,7 @@ const records = await xata.db.Users.filter({
 ## Partial match
 
 Xata supports several operators for partial matching, but you should consider using the
-[Search API](/docs/typescript-client/search) for more powerful full-text-search.
+[Search API](/docs/developer-guide/typescript-client/search) for more powerful full-text-search.
 
 To match a value partially, you can use the `$contains` operator. Note that `$contains` operator can
 cause performance issues at scale, because indices cannot be used.
