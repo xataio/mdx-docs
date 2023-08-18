@@ -25,7 +25,7 @@ An example of a relatively complex visualization that can be created with the Ag
 and the Y axis represents the average rating of the movies in that genre, per year. This chart can be obtained with a single aggregation request, looking something
 like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const results = await xata.db.titles.aggregate({
@@ -50,6 +50,34 @@ const results = await xata.db.titles.aggregate({
       }
     }
   },
+})
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "movieGenres": {
+      "topValues": {
+        "column": "genre",
+        "size": 50,
+        "aggs": {
+          "byReleaseDate": {
+            "dateHistogram": {
+              "column": "releaseDate",
+              "calendarInterval": "year"
+            },
+            "aggs": {
+              "avgRating": {
+                "average": {
+                  "column": "rating"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 })
 ```
 
@@ -90,9 +118,9 @@ The code above combines three aggregations: `topValues`, `dateHistogram` and `av
 
 The `/aggregate` API can be combined with top-level filters using the syntax of the [filtering API](/typescript-client/filtering).
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
-  const results = await xata.db.titles.aggregate({
+const results = await xata.db.titles.aggregate({
   "movieGenres": {
     topValues: {
       column: "genre",
@@ -117,6 +145,37 @@ The `/aggregate` API can be combined with top-level filters using the syntax of 
 },
 {
   "director":"Peter Jackson"
+})
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "movieGenres": {
+      "topValues": {
+        "column": "genre",
+        "size": 50,
+        "aggs": {
+          "byReleaseDate": {
+            "dateHistogram": {
+              "column": "releaseDate",
+              "calendarInterval": "year"
+            },
+            "aggs": {
+              "avgRating": {
+                "average": {
+                  "column": "rating"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  "filter": {
+    "director":"Peter Jackson"
+  }
 })
 ```
 
@@ -146,11 +205,9 @@ The `/aggregate` API can be combined with top-level filters using the syntax of 
       }
     }
   }
-},
-{
-"filter": {
+  "filter": {
     "director":"Peter Jackson"
-    }
+  }
 }
 ```
 
@@ -218,7 +275,7 @@ The bucket aggregations (`movieGenres` of type `topValues` and `byReleaseDate` o
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Teams.aggregate({
@@ -228,6 +285,18 @@ const records = await xata.db.Teams.aggregate({
     }
   }
 });
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "topTeams": {
+      "topValues": {
+        "column": "name"
+      }
+    }
+  }
+})
 ```
 
 ```jsonc
@@ -261,7 +330,7 @@ Either `interval` or `calendarInterval` must be specified. The `calendarInterval
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const records = await xata.db.titles.aggregate({
   byReleaseDate: {
@@ -271,6 +340,19 @@ const records = await xata.db.titles.aggregate({
     },
   },
 });
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "byReleaseDate": {
+      "dateHistogram": {
+        "column": "releaseDate",
+        "calendarInterval": "year"
+      }
+    }
+  }
+})
 ```
 
 ```jsonc
@@ -302,7 +384,7 @@ const records = await xata.db.titles.aggregate({
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.titles.aggregate({
@@ -313,6 +395,19 @@ const records = await xata.db.titles.aggregate({
     }
   }
 });
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "viewsHistogram": {
+      "numericHistogram": {
+        "column": "views",
+        "interval": 100
+      }
+    }
+  }
+})
 ```
 
 ```jsonc
@@ -341,7 +436,7 @@ It accepts a `filter` setting to filter the records before counting. The filter 
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.titles.aggregate({
@@ -360,6 +455,27 @@ const records = await xata.db.titles.aggregate({
     }
   }
 });
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "ratingsAboveEight": {
+      "count": {
+        "filter": {
+          "rating": { "$gt": 8 }
+        }
+      }
+    },
+    "ratingsBelowEight": {
+      "count": {
+        "filter": {
+          "rating": { "$le": 8 }
+        }
+      }
+    }
+  }
+})
 ```
 
 ```jsonc
@@ -389,7 +505,7 @@ const records = await xata.db.titles.aggregate({
 
 If you don't need to specify any filter you can use the special `count: "*"` syntax:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.titles.aggregate({
@@ -397,6 +513,16 @@ const records = await xata.db.titles.aggregate({
     count: '*'
   }
 });
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "totalCount": {
+      "count": "*"
+    }
+  }
+})
 ```
 
 ```jsonc
@@ -428,7 +554,7 @@ It accepts the following parameters:
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const records = await xata.db.titles.aggregate({
   uniqueGenres: {
@@ -437,6 +563,18 @@ const records = await xata.db.titles.aggregate({
     },
   },
 });
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "uniqueGenres": {
+      "uniqueCount": {
+        "column": "genre"
+      }
+    }
+  }
+})
 ```
 
 ```jsonc
@@ -461,7 +599,7 @@ const records = await xata.db.titles.aggregate({
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.titles.aggregate({
@@ -471,6 +609,18 @@ const records = await xata.db.titles.aggregate({
     }
   }
 });
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "avgRating": {
+      "average": {
+        "column": "rating"
+      }
+    }
+  }
+})
 ```
 
 ```jsonc
@@ -494,7 +644,7 @@ const records = await xata.db.titles.aggregate({
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.titles.aggregate({
@@ -504,6 +654,18 @@ const records = await xata.db.titles.aggregate({
     }
   }
 });
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "maxRating": {
+      "max": {
+        "column": "rating"
+      }
+    }
+  }
+})
 ```
 
 ```jsonc
@@ -527,7 +689,7 @@ const records = await xata.db.titles.aggregate({
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.titles.aggregate({
@@ -537,6 +699,18 @@ const records = await xata.db.titles.aggregate({
     }
   }
 });
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "minRating": {
+      "min": {
+        "column": "rating"
+      }
+    }
+  }
+})
 ```
 
 ```json
@@ -560,7 +734,7 @@ const records = await xata.db.titles.aggregate({
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.titles.aggregate({
@@ -570,6 +744,18 @@ const records = await xata.db.titles.aggregate({
     }
   }
 });
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "sumRating": {
+      "sum": {
+        "column": "rating"
+      }
+    }
+  }
+})
 ```
 
 ```jsonc
