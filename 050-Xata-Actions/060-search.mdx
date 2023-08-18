@@ -15,7 +15,7 @@ The search index is updated asynchronously after each insert/update, meaning tha
 
 The format of a search request at the branch level (across tables) is as follows:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.search.all("<search phrase>", {
@@ -33,6 +33,23 @@ const records = await xata.search.all("<search phrase>", {
     prefix: "phrase",
     highlight: {...}
 });
+```
+
+```python
+records = xata.data().search_branch({
+  "query": "<search phrase>",
+  "tables": [{
+    "table": "...",
+    "filter": {...},
+    "target": [...],
+    "boosters": [...]
+  }, {
+    ...
+  }],
+  "fuzziness": 1,
+  "prefix": "phrase",
+  "highlight": {...}
+})
 ```
 
 ```jsonc
@@ -58,10 +75,14 @@ const records = await xata.search.all("<search phrase>", {
 
 A simple example, which searches across all tables with default relevancy settings, looks like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const results = await xata.search.all('new st');
+```
+
+```python
+results = xata.data().search_branch({"query": "new st"})
 ```
 
 ```jsonc
@@ -76,7 +97,7 @@ const results = await xata.search.all('new st');
 
 Which returns results in the following format:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 for (const res of results) {
@@ -113,6 +134,32 @@ for (const res of results) {
     "version": 0
   }
   */
+}
+```
+
+```python
+{
+  "records": [
+    {
+      "address": {
+        "street": "123 New St",
+        "zipcode": 12345
+      },
+      "email": "keanu@example.com",
+      "full_name": "Keanu Reeves",
+      "id": "rec_c8stghniqa4ckd0ao9q0",
+      "xata": {
+        "highlight": {
+          "address": {
+            "street": ["123 Main <em>St</em>"]
+          }
+        },
+        "score": 0.2876821,
+        "table": "Users",
+        "version": 0
+      }
+    }
+  ]
 }
 ```
 
@@ -157,7 +204,7 @@ The metadata includes:
 
 If you'd like to search only some of the tables in the database, you can specify the tables to search in the `tables` field of the request. It expects an array, for example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
   const results = await xata.search.all("new st", {
@@ -169,7 +216,24 @@ If you'd like to search only some of the tables in the database, you can specify
     tables: [
       { table: "Users" },
       { table: "Posts" }
+    ]
   })
+```
+
+```python
+results = xata.data().search_branch({
+  "query": "new st",
+  "tables": ["Users", "Posts"]
+})
+
+# equivalent to:
+results = xata.data().search_branch({
+  "query": "new st",
+  "tables": [
+    {"table": "Users"},
+    {"table": "Posts"}
+  ]
+})
 ```
 
 ```jsonc
@@ -196,7 +260,7 @@ If you'd like to search only some of the tables in the database, you can specify
 
 If you want to search in a single table, it's easier to use the table-level search API. It looks like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.search("<search phrase>", {
@@ -207,6 +271,18 @@ const records = await xata.db.Users.search("<search phrase>", {
   prefix: "phrase",
   highlight: {...}
 });
+```
+
+```python
+results = xata.data().search_table("Users", {
+  "query": "<search phrase>",
+  "filter": {...},
+  "target": [...],
+  "boosters": [...],
+  "fuzziness": 1,
+  "prefix": "phrase",
+  "highlight": {...}
+})
 ```
 
 ```jsonc
@@ -236,10 +312,14 @@ By default, Xata searches tolerate typos of one character. You can control this 
 
 For example, instead of `Keanu` you can search for `kaanu` (one letter replaced) or `kenu` (one letter missing) and still get the same result:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const results = await xata.search.all('kaanu');
+```
+
+```python
+results = xata.data().search_branch({"query": "kaanu"})
 ```
 
 ```jsonc
@@ -254,10 +334,17 @@ const results = await xata.search.all('kaanu');
 
 The above matches `Keanu`. You can disable this typo tolerance by setting the `fuzziness` field to 0:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const results = await xata.search.all('kaanu', { fuzziness: 0 });
+```
+
+```python
+results = xata.data().search_branch({
+  "query": "kaanu",
+  "fuzziness": 0
+})
 ```
 
 ```jsonc
@@ -275,10 +362,17 @@ The above won't match `Keanu`.
 
 You can also increase the `fuzziness` to accept two typos per word:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const results = await xata.search.all('kaano', { fuzziness: 2 });
+```
+
+```python
+results = xata.data().search_branch({
+  "query": "kaanu",
+  "fuzziness": 2
+})
 ```
 
 ```jsonc
@@ -300,7 +394,7 @@ Filtering allows you to filter out records before passing them through the searc
 
 The filtering is applied at the table level. For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const records = await xata.search.all("new st", {
 tables: [
@@ -312,6 +406,20 @@ tables: [
     },
   ],
 });
+```
+
+```python
+results = xata.data().search_branch({
+  "query": "kaanu",
+  "tables": [
+    {
+      "table": "Users",
+      "filter": {
+        "address.city": "New York"
+      }
+    }
+  ]
+})
 ```
 
 ```jsonc
@@ -336,7 +444,7 @@ tables: [
 
 By default, Xata searches across all columns from the selected tables. You can restrict the search to specific columns by using the `target` field.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.search.all('new st', {
@@ -347,6 +455,18 @@ const records = await xata.search.all('new st', {
     }
   ]
 });
+```
+
+```python
+records = xata.data().search_branch({
+  "query": "kaanu",
+  "tables": [
+    {
+      "table": "Users",
+      "target": ["name", "address.street"]
+    }
+  ]
+})
 ```
 
 ```jsonc
@@ -371,7 +491,7 @@ The search API provides a configurable page size and offset-based pagination. To
 
 For example, here we retrieve the second page of up to `10` search results:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.search.all('new st', {
@@ -386,6 +506,22 @@ const records = await xata.search.all('new st', {
     offset: 10
   }
 });
+```
+
+```python
+records = xata.data().search_branch({
+  "query": "new st",
+  "tables": [
+    {
+      "table": "Users",
+      "target": ["name", "address.street"]
+    }
+  ],
+  "page": {
+    "size": 10,
+    "offset": 10
+  }
+})
 ```
 
 ```jsonc
@@ -423,7 +559,7 @@ button to get the code to use in your app.
 
 You can assign an integer weight to each column. The default weight is 1. The higher the weight, the higher the relevancy score will be for matches in that column.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.search.all('matrix', {
@@ -434,6 +570,28 @@ const records = await xata.search.all('matrix', {
     }
   ]
 });
+```
+
+```python
+records = xata.data().search_branch({
+  "query": "matrix",
+  "tables": [
+    {
+      "table": "Posts",
+      "target": [
+        {
+          "column": "title",
+          "weight": 5
+        },
+        {
+          "column": "labels",
+          "weight": 2
+        },
+        "*"
+      ]
+    }
+  ]
+})
 ```
 
 ```jsonc
@@ -469,7 +627,7 @@ In the above example, all columns are still targeted (`*` is included in `target
 The numeric booster allows making use of numeric columns to influence the relevancy score. This is particularly useful when you have columns that
 contain metrics relevant for the relevancy, like "number of stars", or "number of views'.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.search.all('matrix', {
@@ -480,6 +638,25 @@ const records = await xata.search.all('matrix', {
     }
   ]
 });
+```
+
+```python
+records = xata.data().search_branch({
+  "query": "matrix",
+  "tables": [
+    {
+      "table": "Posts",
+      "boosters": [
+        {
+          "numericBooster": {
+            "column": "views",
+            "factor": 3
+          }
+        }
+      ]
+    }
+  ]
+})
 ```
 
 ```jsonc
@@ -522,7 +699,7 @@ The modifier parameter options are:
 - `sqrt`: take the square root of the value.
 - `reciprocal`: reciprocate the value (if the value is `x`, the reciprocal is `1/x`).
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.search.all('matrix', {
@@ -533,6 +710,26 @@ const records = await xata.search.all('matrix', {
     }
   ]
 });
+```
+
+```python
+records = xata.data().search_branch({
+  "query": "matrix",
+  "tables": [
+    {
+      "table": "Posts",
+      "boosters": [
+        {
+          "numericBooster": {
+            "column": "views",
+            "factor": 3,
+            "modifier": "square"
+          }
+        }
+      ]
+    }
+  ]
+})
 ```
 
 ```jsonc
@@ -566,7 +763,7 @@ In this example, the `views` column is multiplied with the factor of 3, the resu
 The exact value booster allows boosting the relevancy of records that have an exact value in a column. This can be useful to boost, for
 example, articles in a given category. Or you can use it to "pin" a particular result at the top of the results.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.search.all('matrix', {
@@ -577,6 +774,26 @@ const records = await xata.search.all('matrix', {
     }
   ]
 });
+```
+
+```python
+records = xata.data().search_branch({
+  "query": "matrix",
+  "tables": [
+    {
+      "table": "Posts",
+      "boosters": [
+        {
+          "valueBooster": {
+            "column": "labels",
+            "value": "movies",
+            "factor": 5
+          }
+        }
+      ]
+    }
+  ]
+})
 ```
 
 ```jsonc
@@ -610,7 +827,7 @@ In this example, records that have the label "movies" in the `labels` column wil
 The date booster allows boosting the relevancy of records that have a date in a column depending on the proximity of the date to a particular date. This can
 be used to boost, for example, more recent articles.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.search.all('matrix', {
@@ -630,6 +847,27 @@ const records = await xata.search.all('matrix', {
     }
   ]
 });
+```
+
+```python
+records = xata.data().search_branch({
+  "query": "matrix",
+  "tables": [
+    {
+      "table": "Posts",
+      "boosters": [
+        {
+          "dateBooster": {
+            "column": "xata.createdAt",
+            "decay": 0.5,
+            "scale": "30d",
+            "factor": 10
+          }
+        }
+      ]
+    }
+  ]
+})
 ```
 
 ```jsonc
