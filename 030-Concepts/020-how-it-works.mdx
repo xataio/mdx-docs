@@ -130,9 +130,9 @@ The version field for a record is stored in a special column, which is exposed i
 
 Another typical challenge with logical replication is that the number of events created can become quite large and overwhelm the PostgreSQL replication slot. For example, imagine running a statement `UPDATE foo` with no `WHERE` condition executed against a table with millions of rows. PostgreSQL executes that in a single transaction at the end of which all the rows in the table have been changed and need to be passed through the replication slot. Issues like this make it hard to rely on logical replication in the general case of arbitrary SQL access. Because we control the API, we can ensure that updates and deletes are done in transactions of reasonable size, which can be rate limited in order to protect the system from overload.
 
-## File storage
+## File attachments
 
-Xata offers general purpose file storage through the `file` column type. By integrating file support in the database, Xata aims to simplify the management of large binary content, by exposing it under the same API, same security model, same SDK. At the same time, the queries, filters, summaries, aggregations available can now be used on files metadata. The metadata (file name, media type, tags) is also indexed for search so it can be included in search results.
+Xata offers general purpose storage for file attachments through the `file` column type. By integrating file support in the database, Xata aims to simplify the management of large binary content, by exposing it under the same API, same security model, same SDK. At the same time, the queries, filters, summaries, aggregations available can now be used on files metadata. The metadata (file name, media type, tags) is also indexed for search so it can be included in search results.
 
 In order to offer both database benefits like queries and CRUD and storage service benefits like - high capacity, high throughput, high concurrency, regional caching - Xata stores the files' metadata in PostgreSQL and the actual binary content in a dedicated cloud storage service.
 
