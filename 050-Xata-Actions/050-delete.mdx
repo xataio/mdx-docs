@@ -23,7 +23,7 @@ user = xata.records().delete("Users", "rec_cd8s3r8avc42pi67m13g")
 ```
 
 ```jsonc
-// DELETE https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/rec_cd8s3r8avc42pi67m13g
+// DELETE https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
 ```
 
 </TabbedCode>
@@ -58,7 +58,7 @@ users = xata.records().transaction({
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/transaction
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
 {
   "operations": [
     {

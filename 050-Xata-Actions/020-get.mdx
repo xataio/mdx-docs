@@ -43,7 +43,7 @@ data = xata.data().query("{table_name}", {
 ```
 
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "columns": [...],
@@ -75,7 +75,7 @@ teams = xata.data().query("Teams")
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Teams/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 ```
 
 </TabbedCode>
@@ -201,7 +201,7 @@ user = xata.data().query("Users", "myid")
 ```
 
 ```jsonc
-// GET https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/myid
+// GET https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
 ```
 
 </TabbedCode>
@@ -226,7 +226,7 @@ users = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "columns": ["name", "city"]
@@ -272,7 +272,7 @@ users = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Teams/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 {
   "columns": ["*", "owner.*"]
 }
@@ -334,7 +334,7 @@ users = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -364,7 +364,7 @@ users = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -405,7 +405,7 @@ users = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -449,7 +449,7 @@ users = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "sort": {
@@ -478,7 +478,7 @@ users = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "sort": {
@@ -507,7 +507,7 @@ users = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "sort": [
@@ -536,7 +536,7 @@ users = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "sort": {
@@ -582,7 +582,7 @@ users = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "page": {
@@ -668,7 +668,7 @@ page_2 = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "page": {
@@ -706,7 +706,7 @@ page = xata.data().query("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "page": {
@@ -747,7 +747,7 @@ records = xata.data().query("Users", {
 ```
 
 ```jsonc
-//POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+//POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "columns": ["*"],

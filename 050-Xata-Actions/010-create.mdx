@@ -26,7 +26,7 @@ record = xata.records().insert("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
 
 {
   "email": "keanu@example.com",
@@ -98,7 +98,7 @@ record = xata.records().insert_with_id("Users", "myid" {
 ```
 
 ```jsonc
-// PUT https://tutorial-ng7s8c.xata.sh/db/tutorial:main/tables/Users/data/myid?createOnly=true
+// PUT https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?createOnly=true
 {
   "email": "keanu@example.com",
   "name": "Keanu Reeves"
@@ -129,7 +129,7 @@ record = xata.records().insert("Posts", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Posts/data
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
 
 {
   "title": "Filming the Matrix",
@@ -184,7 +184,7 @@ users = xata.records().bulk_insert("Users", {
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/bulk
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/bulk
 
 {
   "records": [

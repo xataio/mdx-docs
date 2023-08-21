@@ -61,7 +61,7 @@ result = xata.data().ask(
   "Tutorial",   # reference table
   "<question>", # question to ask
   [
-    #  array of strings with the rules for the model
+    # array of strings with the rules for the model
   ],
   options={
     "searchType": "keyword|vector",
@@ -90,7 +90,7 @@ result = xata.data().ask(
 ```
 
 ```jsonc
-   // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+   // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
    {
        "question": "<question>",
        "rules": [
@@ -215,7 +215,7 @@ result = xata.data().ask_follow_up("Tutorial", "<your follow-up question>", "<se
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask/<session id>
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask/<session id>
 {
   "message": "<your follow-up message>"
 }
@@ -242,7 +242,7 @@ result = xata.data().ask("Tutorial", "What is this tutorial about?")
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
 {
   "question": "What is this tutorial about?"
 }
@@ -313,7 +313,7 @@ result = xata.data().ask(
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
 {
   "question": "How do I retrieve a single record?",
   "rules": [
@@ -392,7 +392,7 @@ result = xata.data().ask(
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
 
 {
   "question": "What is Xata?",
@@ -478,7 +478,7 @@ result = xata.data().ask(
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
 {
   "question": "What's the difference between summarize and aggregate?",
   "rules": [
@@ -530,7 +530,7 @@ result = xata.data().ask_follow_up("Tutorial", "Can you show me an example of bo
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask/cg52bk1eqh5rd5hndhq95jercs
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask/cg52bk1eqh5rd5hndhq95jercs
 {
   "message": "Can you show me an example of both?"
 }

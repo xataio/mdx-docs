@@ -43,7 +43,7 @@ results = xata.data().vector_search("Docs", {
 ```
 
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/Docs/vectorSearch
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/vectorSearch
 {
     "queryVector": [/*<array of floats>*/],
     "column": /*<column name>*/,
@@ -83,7 +83,7 @@ results = xata.data().vector_search("Docs", {
 ```
 
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/Docs/vectorSearch
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/vectorSearch
 {
   "queryVector": [0.1, 0.2, 0.3],
   "column": "embeddings",

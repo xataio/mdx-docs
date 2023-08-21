@@ -64,7 +64,7 @@ result = xata.records().transactions({
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/transaction
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
 {
   "operations": [
     { "insert": { "table": "titles", "record": { "originalTitle": "A new film" } } },
@@ -156,7 +156,7 @@ result = xata.records().transactions({
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/transaction
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
 {
   "operations": [
     {

@@ -24,7 +24,7 @@ user = xata.records().upsert("Users", "myid" {
 ```
 
 ```jsonc
-// PUT https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/data/rec_c8hnbch26un1nl0rthkg
+// PUT https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/rec_c8hnbch26un1nl0rthkg
 
 {
   "name": "Keanu Reeves"
@@ -56,7 +56,7 @@ user = xata.records().update("Users", "myid" {
 ```
 
 ```jsonc
-// PATCH https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/myid
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/myid
 
 {
   "email": "newemail@example.com"
@@ -116,7 +116,7 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
 ```
 
 ```jsonc
-// PATCH https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/rec_c8hnbch26un1nl0rthkg
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/rec_c8hnbch26un1nl0rthkg
 
 {
   "counter": {
@@ -144,7 +144,7 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
 ```
 
 ```jsonc
-// PATCH https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/rec_c8hnbch26un1nl0rthkg
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/rec_c8hnbch26un1nl0rthkg
 
 {
   "counter": {
@@ -172,7 +172,7 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
 ```
 
 ```jsonc
-// PATCH https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/rec_c8hnbch26un1nl0rthkg
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/rec_c8hnbch26un1nl0rthkg
 
 {
   "counter": {
@@ -282,7 +282,7 @@ user = xata.records().update(
 ```
 
 ```jsonc
-// PUT https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/data/rec_c8hnbch26un1nl0rthkg?ifVersion=0
+// PUT https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?ifVersion=0
 
 {
   "email": "keanu@xata.io",

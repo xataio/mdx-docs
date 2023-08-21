@@ -59,7 +59,7 @@ records = xata.data().summarize("titles", {
 ```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/titles/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "filter": { "product": "basketball" },
   "columns": ["product"],
@@ -105,7 +105,7 @@ records = xata.data().summarize("titles", {
 ```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/titles/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "columns": ["product"],
   "summaries": {
@@ -151,7 +151,7 @@ records = xata.data().summarize("titles", {
 ```
 
 ```json
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/titles/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "columns": ["username"],
   "summaries": {}
@@ -234,7 +234,7 @@ records = xata.data().summarize("titles", {
 ```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/titles/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "summaries": {
     // count all rows
@@ -273,8 +273,8 @@ You may submit explicit column names, use wildcards, and reference linked column
 ```ts
 const records = await xata.db.titles.summarize({
   columns: [
-    'settings.*', // group by all columns in the `settings` object
-    'username', // group by the username field
+    'settings.*',       // group by all columns in the `settings` object
+    'username',         // group by the username field
     'user.hobbies.name' // group by a linked column
   ]
 });
@@ -291,11 +291,11 @@ records = xata.data().summarize("titles", {
 ```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/titles/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "columns": [
-    "settings.*", // group by all columns in the `settings` object
-    "username", // group by the username field
+    "settings.*",       // group by all columns in the `settings` object
+    "username",         // group by the username field
     "user.hobbies.name" // group by a linked column
   ]
 }
@@ -347,7 +347,7 @@ records = xata.data().summarize("titles", {
 ```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/titles/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "columns": {"store_name"},
   "summaries": {
@@ -393,7 +393,7 @@ records = xata.data().summarize("titles", {
 ```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/titles/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "page": {
     "size": 50 // return up to 50 results
@@ -450,7 +450,7 @@ records = xata.data().summarize("titles", {
 ```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/titles/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "columns": ["product_name"],
   "summaries": {
@@ -504,7 +504,7 @@ records = xata.data().summarize("titles", {
 ```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/titles/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "filter": { "product": "basketball" },
   "columns": ["product"],
