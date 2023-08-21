@@ -397,124 +397,83 @@ This results in the page looking like the following:
 You'll notice that the post heading and "Read more →" text use the `slug` property to link to a page that doesn't
 presently exist. That's the next step in this guide.
 
-**TODO: from here ------------------------------------>**
-
 ## Query and show a single posts
 
-To handle the single posts identified by a `slug`, make use of Remix
-[dynamic segments](https://remix.run/docs/en/main/guides/routing#dynamic-segments).
+To handle the single posts identified by a `slug`, make use of [SvelteKit page](https://kit.svelte.dev/docs/routing#page-page-js)
+parameters that are define and passed based on file and directory naming conventions for SvelteKit pages.
 
-Create a new file, `app/routes/posts.$slug.tsx`, where the Remix framework uses the filename segment `$slug` to capture
-the name of the slug:
+Create a new files, `src/routes/posts/[slug]/+page.server.ts` and `src/routes/posts/[slug]/+page.svelte`,
+where the SvelteKit framework uses the directory `[slug]` to capture the name of the slug.
 
-```tsx title="app/routes/posts.$slug.tsx"
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { getXataClient } from 'src/xata';
+As with the landing page, use `+page.server.ts` to load data on the server. In this case, use the `slug` value to retrieve the
+details for the single blog post:
 
-export async function loader({ params }: LoaderArgs) {
-  const xata = getXataClient();
+```tsx title="src/routes/posts/[slug]/+page.server.ts"
+import type { PageServerLoad } from './$types';
 
+import { XataClient } from '../../../xata';
+
+const xata = new XataClient({
+  apiKey: import.meta.env.VITE_XATA_API_KEY,
+  branch: import.meta.env.VITE_XATA_BRANCH
+});
+
+export const load: PageServerLoad = async ({ params }) => {
   const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
 
-  return json({
+  return {
     post
-  });
-}
-
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
-  return [{ title: `${data?.post?.title} - Xata and Remix` }];
+  };
 };
-
-export default function Post() {
-  const { post } = useLoaderData<typeof loader>();
-
-  return (
-    <div className="w-full max-w-5xl mt-16">
-      <p className="mb-2">
-        <a href="/" className="text-purple-600">
-          &larr; Back to blog
-        </a>
-      </p>
-      <h1 className="text-3xl mb-2">{post?.title}</h1>
-      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
-        {new Date(post?.pubDate ?? '').toDateString()}
-      </p>
-      <p className="text-xl">{post?.description}</p>
-    </div>
-  );
-}
 ```
 
-Let's walk through what this does.
-
-The imports are mostly the same as the landing page with the addition of the `LoaderArgs` import:
-
-```tsx
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { getXataClient } from 'src/xata';
-```
-
-The `loader` function does the same job as the landing page but is updated to take parameters of type `LoaderArgs`.
-The `params` property on `LoaderArgs` gives us the slug value from the URL via `params.slug`.
-
-Use the `getXataClient` function to get a Xata client instance, and then use the
+Create a new instance of the `XataClient` client, and then use the
 [`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) on the
 auto-generated `Posts` property to perform a query on the Posts table and find the
 record where the `slug` column equals the value of `params.slug`. Use the
 [`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to access
-the first (and only) Post result and return the post, again using the Remix `json` help function.
+the first (and only) Post result and return the `post` as a property on the return value.
 
-```tsx
-export async function loader({ params }: LoaderArgs) {
-  const xata = getXataClient();
+Next, update the contents of `src/routes/posts/[slug]/+page.svelte` as follows:
 
-  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
+```svelte title="src/routes/posts/[slug]/+page.svelte"
+<script lang="ts">
+  import type { PageData } from './$types';
 
-  return json({
-    post
-  });
-}
+  export let data: PageData;
+</script>
+
+<svelte:head>
+    <title>{data.post?.title}</title>
+</svelte:head>
+
+<div class="w-full max-w-5xl mt-16">
+  <p class="mb-2">
+    <a href="/" class="text-purple-600">
+      &larr; Back to blog
+    </a>
+  </p>
+  <h1 class="text-3xl mb-2">
+    {data.post?.title}
+  </h1>
+  <p class="text-sm mb-4 text-purple-950 dark:text-purple-200">
+    {data.post?.pubDate?.toDateString()}
+  </p>
+  <p class="text-xl">
+    {data.post?.description}
+  </p>
+</div>
 ```
 
-Use the values returned from the `loader` within the `V2_MetaFunction` function to display the Post's title
-within the page's title. This function differs from the landing page version by taking a parameter containing a `data` property.
-The value in `data` is the payload returned from the `loader` function. So, the Post's `title` value can be extracted and used:
-
-```tsx
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
-  return [{ title: `${data?.post?.title} - Xata and Remix` }];
-};
-```
-
-Finally, the main page function makes use of the `userLoaderData` hook to retrieve the single Post information and uses the values,
-`title`, `pubDate`, and `description`, for the Post are added to the UI:
-
-```tsx {2,11,13,15}
-export default function Post() {
-  const { post } = useLoaderData<typeof loader>();
-
-  return (
-    <div className="w-full max-w-5xl mt-16">
-      <p className="mb-2">
-        <a href="/" className="text-purple-600">
-          &larr; Back to blog
-        </a>
-      </p>
-      <h1 className="text-3xl mb-2">{post?.title}</h1>
-      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
-        {new Date(post?.pubDate ?? '').toDateString()}
-      </p>
-      <p className="text-xl">{post?.description}</p>
-    </div>
-  );
-}
-```
+In this page, first import the `PageData` type and `data` value is assigned by the framework. Then, use the value of
+`data.post?.title` to set the page title using the `<svelte:head>` element. Finally, the UI is updated to show the
+`title`, `pubDate`, and `description`.
 
 The single blog post page will look as follows:
 
 ![Single blog post](images/getting-started-blog-post.png)
+
+**TODO: from here ------------------------------------>**
 
 ## Search posts
 
@@ -527,51 +486,7 @@ any configuration to enable search, just need to use the
 Let's add this functionality to the landing page:
 
 ```tsx title="app/routes/_index.tsx" {1,7-24,27,31-40}
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
-import { getXataClient } from 'src/xata'
-
-...
-
-export async function loader({ request }: LoaderArgs) {
-  const xata = getXataClient()
-
-  const url = new URL(request.url)
-  const search = url.searchParams.get('q')
-
-  let posts = null
-  if (search) {
-    posts = await xata.db.Posts.search(search, { fuzziness: 2 })
-  } else {
-    posts = await xata.db.Posts.getAll()
-  }
-
-  return json({
-    posts,
-    search,
-  })
-}
-
-export default function Index() {
-  const { posts, search } = useLoaderData<typeof loader>()
-
-  return (
-    <>
-      <div className="w-full max-w-5xl mt-16">
-        <form>
-          <input
-            name="q"
-            defaultValue={search || ''}
-            placeholder="Search..."
-            className="w-full rounded-lg p-2 border-2 dark:text-purple-950"
-          />
-        </form>
-      </div>
-
-      ...
-    </>
-  )
-}
+TODO;
 ```
 
 Add search with these changes.
