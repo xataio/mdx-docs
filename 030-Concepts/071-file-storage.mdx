@@ -1,17 +1,17 @@
 ---
-title: File storage
-navTitle: File storage
-keywords: ['files', 'file storage']
+title: File attachments
+navTitle: File attachments
+keywords: ['files', 'file storage', 'file attachments']
 description: Xata effectively keeps track of files within a database
-slug: concepts/file-storage
+slug: concepts/file-attachments
 published: true
 ---
 
-Xata now offers general purpose file storage capabilities. In order to simplify the management of large binary objects and to improve the developer experience, Xata integrates the files support into the database service. The aim is to offer a unified, seamless experience by exposing file support under the same API, same security model, same SDK. Using this approach, the queries, filters, summaries, aggregations can now be used on files metadata. The metadata (file name, media type, tags) is also indexed for search so it can be included in search results.
+Xata now offers general purpose file attachment capabilities. In order to simplify the management of large binary objects and to improve the developer experience, Xata integrates the files support into the database service. The aim is to offer a unified, seamless experience by exposing file support under the same API, same security model, same SDK. Using this approach, the queries, filters, summaries, aggregations can now be used on files metadata. The metadata (file name, media type, tags) is also indexed for search so it can be included in search results.
 
 ## Schema
 
-To support file storage, Xata is introducing 2 new column types:
+To support file attachments, Xata is introducing 2 new column types:
 
 - `file` column type
   - The column stores file objects, which are JSON objects with a pre-defined schema.
@@ -401,7 +401,7 @@ Signed URLs are recommended for scenarios where temporary access is needed witho
 
 ## CDN
 
-File storage support comes with an integrated content delivery network which minimizes access latency by using regional caches.
+File attachment support comes with an integrated content delivery network which minimizes access latency by using regional caches.
 Caching is enabled for all signed and public URLs. This is to avoid caching data that is secured by API key permissions. This feature is enabled by default and no configuration is necessary. Public access and signed URL content is cached for 4 hours.
 
 As with all cache systems, the fundamental problem is cache invalidation. Namely getting the cache access performance, while responding to content updates and avoid returning stale entries. Xata's approach is to avoid the need of invalidation by design. The files content is presented as dynamic content similar to the data in the database. Therefore clients should dynamically retrieve the access URLs from the database rather than storing them in static resources. Urls become invalid when the target file updates so access will break if they are stored outside the database.
