@@ -229,7 +229,7 @@ Generated Xata code to ./src/xata.ts
 
 </Expand>
 
-This updates the contents of `src/xata.ts` based on the schema defined on the `main` branch of our database. So, if you
+This updates the contents of `src/xata.ts` based on the schema defined on the `main` branch of your database. So, if you
 make any further changes to the schema, run `xata pull <branch>` to update the auto-generated code.
 
 ## Basic styling and layout
@@ -237,7 +237,7 @@ make any further changes to the schema, run `xata pull <branch>` to update the a
 The first step to add some styling to the application is to add Tailwind CSS. To do that, follow the
 [official Remix and Tailwind CSS guide](https://remix.run/docs/en/1.19.3/guides/styling#tailwind-css).
 
-Once all the steps from the guide have been followed, updated `app/tailwind.css` with some additional rules:
+Once all the steps from the guide have been followed, update `app/tailwind.css` with some additional rules:
 
 ```css title="app/tailwind.css" {5-26}
 @tailwind base;
@@ -317,7 +317,7 @@ export default function App() {
 }
 ```
 
-Make sure the `<Outlet />` component is before the closing `</main>` element.
+Ensure the `<Outlet />` component is before the closing `</main>` element.
 
 ## Query and list the posts
 
@@ -340,7 +340,7 @@ export default function Index() {
 }
 ```
 
-Next, let's updated the page to get all the posts using Xata, and
+Next, let's update the page to get all the posts using Xata, and
 list them within the page:
 
 ```tsx title="app/routes/_index.tsx" {1-3,9-17,20,24-45}
@@ -396,7 +396,7 @@ export default function Index() {
 
 Let's break down what's happening in the code above.
 
-First, the existing import statement is updated to also bring in `json`, and a new import from
+First, update the `@remix-run/node` to also bring in `json`, and a new import from
 `@remix-run/react` is introduced to bring in `useLoaderData`. The details of how those are used
 will be covered shortly. The auto-generated `getXataClient` is also imported.
 
@@ -544,11 +544,11 @@ import { getXataClient } from 'src/xata';
 ```
 
 The `loader` function does the same job as the landing page but is updated to take parameters of type `LoaderArgs`.
-The `params` property on the `LoaderArgs` gives us the slug value from the URL via `params.slug`.
+The `params` property on `LoaderArgs` gives us the slug value from the URL via `params.slug`.
 
 Use the `getXataClient` function to get a Xata client instance, and then use the
 [`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) on the
-auto-generated `Posts` property to perform a query on the Posts table to find the
+auto-generated `Posts` property to perform a query on the Posts table and find the
 record where the `slug` column equals the value of `params.slug`. Use the
 [`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to access
 the first (and only) Post result and return the post, again using the Remix `json` help function.
@@ -663,8 +663,8 @@ export default function Index() {
 
 Add search with these changes.
 
-First, update the `@remix-run/node` import to include `LoaderArgs'. Then, update the `loader`function to accept
-the`request`property from the`LoaderArgs` parameter.
+First, update the `@remix-run/node` import to include `LoaderArgs`. Then, update the `loader` function to accept
+the `request` property from the `LoaderArgs` parameter.
 
 ```tsx {1,7}
 import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node'
@@ -686,12 +686,12 @@ The landing page should list all blog posts if `search` is an empty string. Howe
 the search has a non-empty string value, a search is performed on the Posts table using the
 [`search` function](https://xata.io/docs/typescript-client/search#searching-in-a-single-table) exposed on the
 auto-generated `Posts` property. Pass `search` as the text value to search for, and use a
-second options parameter with `fuzziness` set to `2`, which informs the search behavior to allow for two
+second options parameter with `fuzziness` set to `2`, which informs the fuzzy search behavior to allow for two
 letters changed/added/removed. See
 [fuzziness and typo tolerance](https://xata.io/docs/typescript-client/search#fuzziness-and-typo-tolerance) for more
 details.
 
-Update the return value of `loader` to return both the `posts` and the value of `search`.
+Update the return value of `loader` to return both `posts` and `search`.
 
 ```tsx
 export async function loader({ request }: LoaderArgs) {
@@ -716,12 +716,12 @@ export async function loader({ request }: LoaderArgs) {
 
 The last change enables the user to input and submit a search.
 
-Begin by retrieving both the `posts` and the `search` values using the Remix `userLoaderData` hook.
+Begin by retrieving the `posts` and the `search` values using the Remix `userLoaderData` hook.
 
 Next, add a `<form>` to the page to allow a search value to be entered and submitted. The
 default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
 string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
-a `GET`request in the format`?q={q-value}`. Since this is precisely the behavior required, and the check for the `q`
+a `GET` request in the format`?q={q-value}`. Since this is precisely the behavior required, and the check for the `q`
 querystring search value has been implemented already, everything is in place.
 
 ```tsx
@@ -748,7 +748,7 @@ export default function Index() {
 
 ![Full-text fuzzy search](images/getting-started-blog-search.png)
 
-The application now supports listing posts, viewing single posts via a dynamic route, and full-text fuzzy search of
+The application now supports listing posts, viewing single posts via a dynamic segment, and full-text fuzzy search of
 posts.
 
 ## What you've learned
