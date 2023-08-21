@@ -70,7 +70,7 @@ It's also possible to update a record if it exists, or create it if it doesn't e
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reaves' });
+const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reeves' });
 ```
 
 ```python
@@ -260,7 +260,7 @@ To prevent this, you can pass the `ifVersion` parameter to the PUT request. The 
 const updatedUser = await xata.db.Users.update(
   'rec_c8hnbch26un1nl0rthkg',
   {
-    name: 'Keanu Reaves',
+    name: 'Keanu Reeves',
     email: 'keanu@xata.io'
   },
   {
@@ -274,7 +274,7 @@ user = xata.records().update(
   "Users", 
   "rec_c8hnbch26un1nl0rthkg", 
   {
-    "name": 'Keanu Reaves',
+    "name": 'Keanu Reeves',
     "email": 'keanu@xata.io'
   },
   if_version=0

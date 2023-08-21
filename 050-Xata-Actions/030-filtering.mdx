@@ -41,7 +41,7 @@ Example:
 
 ```ts
 const records = await xata.db.Users.filter({
-  name: 'Keanu Reaves'
+  name: 'Keanu Reeves'
 }).getMany();
 
 // or
@@ -51,7 +51,7 @@ const records = await xata.db.Users.filter('name', 'Keanu Reave').getMany();
 ```python
 records = xata.data().query("Users", {
   "filter": {
-    "name": "Keanu Reaves"
+    "name": "Keanu Reeves"
   }
 })
 ```
@@ -61,7 +61,7 @@ records = xata.data().query("Users", {
 
 {
   "filter": {
-    "name": "Keanu Reaves"
+    "name": "Keanu Reeves"
   }
 }
 ```
@@ -74,18 +74,18 @@ This is equivalent to using the `$is` operator:
 
 ```ts
 const records = await xata.db.Users.filter({
-  name: { $is: 'Keanu Reaves' }
+  name: { $is: 'Keanu Reeves' }
 }).getMany();
 
 //or
 import { is } from '@xata.io/client';
-const records = await xata.db.Users.filter('name', is('Keanu Reaves')).getMany();
+const records = await xata.db.Users.filter('name', is('Keanu Reeves')).getMany();
 ```
 
 ```python
 records = xata.data().query("Users", {
   "filter": {
-    "name": { "$is": "Keanu Reaves" }
+    "name": { "$is": "Keanu Reeves" }
   }
 })
 ```
@@ -95,7 +95,7 @@ records = xata.data().query("Users", {
 
 {
   "filter": {
-    "name": { "$is": "Keanu Reaves" }
+    "name": { "$is": "Keanu Reeves" }
   }
 }
 ```
@@ -110,7 +110,7 @@ To combine multiple values using the OR logic, you can use the `$any` operator b
 
 ```ts
 const records = await xata.db.Users.filter({
-  name: { $any: ['Keanu Reaves', 'Carrie-Anne Moss'] }
+  name: { $any: ['Keanu Reeves', 'Carrie-Anne Moss'] }
 }).getMany();
 ```
 
@@ -118,7 +118,7 @@ const records = await xata.db.Users.filter({
 records = xata.data().query("Users", {
   "filter": {
     "name": {
-      "$any": ["Keanu Reaves", "Carrie-Anne Moss"]
+      "$any": ["Keanu Reeves", "Carrie-Anne Moss"]
     }
   }
 })
@@ -130,7 +130,7 @@ records = xata.data().query("Users", {
 {
   "filter": {
     "name": {
-      "$any": ["Keanu Reaves", "Carrie-Anne Moss"]
+      "$any": ["Keanu Reeves", "Carrie-Anne Moss"]
     }
   }
 }
@@ -144,7 +144,7 @@ When you include multiple columns within the same filter, they are logically com
 
 ```ts
 const records = await xata.db.Users.filter({
-  name: 'Keanu Reaves',
+  name: 'Keanu Reeves',
   city: 'New York'
 }).getMany();
 ```
@@ -152,7 +152,7 @@ const records = await xata.db.Users.filter({
 ```python
 records = xata.data().query("Users", {
   "filter": {
-    "name": "Keanu Reaves",
+    "name": "Keanu Reeves",
     "city": "New York"
   }
 })
@@ -163,7 +163,7 @@ records = xata.data().query("Users", {
 
 {
   "filter": {
-    "name": "Keanu Reaves",
+    "name": "Keanu Reeves",
     "city": "New York"
   }
 }
@@ -179,7 +179,7 @@ operators:
 ```ts
 const records = await xata.db.Users.filter({
   $any: {
-    name: 'Keanu Reaves',
+    name: 'Keanu Reeves',
     city: 'New York'
   }
 }).getMany();
@@ -189,7 +189,7 @@ const records = await xata.db.Users.filter({
 records = xata.data().query("Users", {
   "filter": {
     "$any": {
-      "name": "Keanu Reaves",
+      "name": "Keanu Reeves",
       "city": "New York"
     }
   }
@@ -202,7 +202,7 @@ records = xata.data().query("Users", {
 {
   "filter": {
     "$any": {
-      "name": "Keanu Reaves",
+      "name": "Keanu Reeves",
       "city": "New York"
     }
   }
@@ -216,14 +216,14 @@ The $all and $any operators can also accept an array of objects, enabling the us
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const records = await xata.db.Users.filter({
-  $any: [{ name: "Keanu Reaves" }, { name: "Carrie-Anne Moss" }],
+  $any: [{ name: "Keanu Reeves" }, { name: "Carrie-Anne Moss" }],
 }).getMany();
 ```
 
 ```python
 records = xata.data().query("Users", {
   "filter": {
-    "$any": [{ "name": "Keanu Reaves" }, { "name": "Carrie-Anne Moss" }]
+    "$any": [{ "name": "Keanu Reeves" }, { "name": "Carrie-Anne Moss" }]
   }
 })
 ```
@@ -233,7 +233,7 @@ records = xata.data().query("Users", {
 
 {
   "filter": {
-    "$any": [{ "name": "Keanu Reaves" }, { "name": "Carrie-Anne Moss" }]
+    "$any": [{ "name": "Keanu Reeves" }, { "name": "Carrie-Anne Moss" }]
   }
 }
 ```
