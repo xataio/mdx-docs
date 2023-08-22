@@ -459,7 +459,7 @@ export function routeData() {
   information.
 </Alert>
 
-Finally, within the `Home` function, use the `useRouteData` hook to retrieve the `posts` data.
+Finally, use the `useRouteData` hook within the `Home` function to retrieve the `posts` data.
 
 Then, update the UI to display the results. Make use of Solid's `Switch` control flow component in combination with `Match`;
 If no records are present, show a message saying, "No blog posts found". Otherwise, loop through the `posts` using `<For>`
@@ -513,117 +513,118 @@ This results in the page looking like the following:
 You'll notice that the post heading and "Read more →" text use the `slug` property to link to a page that doesn't
 presently exist. That's the next step in this guide.
 
-**TODO: from here ------------------------------------>**
-
 ## Query and show a single posts
 
-To handle the single posts identified by a `slug`, make use of Remix
-[dynamic segments](https://remix.run/docs/en/main/guides/routing#dynamic-segments).
+To handle the single posts identified by a `slug`, make use of SolidStart
+dynamic [routing](https://start.solidjs.com/core-concepts/routing).
 
-Create a new file, `app/routes/posts.$slug.tsx`, where the Remix framework uses the filename segment `$slug` to capture
+Create a new file, `src/routes/posts/[slug].tsx`, where the SolidStart framework uses the filename segment `[slug]` to capture
 the name of the slug:
 
-```tsx title="app/routes/posts.$slug.tsx"
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { getXataClient } from 'src/xata';
+```tsx title="src/routes/posts/[slug].tsx"
+import { Title } from 'solid-start';
+import { useParams, useRouteData } from 'solid-start';
+import { createServerData$ } from 'solid-start/server';
 
-export async function loader({ params }: LoaderArgs) {
-  const xata = getXataClient();
+import { XataClient } from '~/xata';
 
-  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
+export function routeData() {
+  return createServerData$(async () => {
+    const xata = new XataClient({
+      apiKey: import.meta.env.XATA_API_KEY,
+      branch: import.meta.env.XATA_BRANCH
+    });
 
-  return json({
-    post
+    const params = useParams();
+    return await xata.db.Posts.filter({ slug: params.slug }).getFirst();
   });
 }
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
-  return [{ title: `${data?.post?.title} - Xata and Remix` }];
-};
-
 export default function Post() {
-  const { post } = useLoaderData<typeof loader>();
+  const data = useRouteData<typeof routeData>();
+  const post = data();
 
   return (
-    <div className="w-full max-w-5xl mt-16">
-      <p className="mb-2">
-        <a href="/" className="text-purple-600">
-          &larr; Back to blog
-        </a>
-      </p>
-      <h1 className="text-3xl mb-2">{post?.title}</h1>
-      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
-        {new Date(post?.pubDate ?? '').toDateString()}
-      </p>
-      <p className="text-xl">{post?.description}</p>
-    </div>
+    <>
+      <Title>{post?.title}</Title>
+
+      <div class="w-full max-w-5xl mt-16">
+        <p class="mb-2">
+          <a href="/" class="text-purple-600">
+            &larr; Back to blog
+          </a>
+        </p>
+
+        <h1 class="text-3xl mb-2">{post?.title}</h1>
+        <p class="text-sm mb-4 text-purple-950 dark:text-purple-200">{post?.pubDate?.toDateString()}</p>
+        <p class="text-xl">{post?.description}</p>
+      </div>
+    </>
   );
 }
 ```
 
 Let's walk through what this does.
 
-The imports are mostly the same as the landing page with the addition of the `LoaderArgs` import:
+Import `useParams` to enable access to the value of the `slug`. Import `useRouteData` and `createServerData$` to enable
+data to be loaded.
 
 ```tsx
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { getXataClient } from 'src/xata';
+import { Title } from 'solid-start';
+import { useParams, useRouteData } from 'solid-start';
+import { createServerData$ } from 'solid-start/server';
 ```
 
-The `loader` function does the same job as the landing page but is updated to take parameters of type `LoaderArgs`.
-The `params` property on `LoaderArgs` gives us the slug value from the URL via `params.slug`.
+The `Title` component is imported from `solid-start` to allow the page title to bve set. The `routeData` and
+`createServerData$` functions do the same job as the landing page.
 
-Use the `getXataClient` function to get a Xata client instance, and then use the
+Instantiate a new `XataClient` instance, get the page parameters using the `useParams` hook, and then use the
 [`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) on the
 auto-generated `Posts` property to perform a query on the Posts table and find the
 record where the `slug` column equals the value of `params.slug`. Use the
 [`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to access
-the first (and only) Post result and return the post, again using the Remix `json` help function.
+the first (and only) Post result and return the post as the `createServerData$` return value.
 
 ```tsx
-export async function loader({ params }: LoaderArgs) {
-  const xata = getXataClient();
+import { XataClient } from '~/xata';
 
-  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
+export function routeData() {
+  return createServerData$(async () => {
+    const xata = new XataClient({
+      apiKey: import.meta.env.XATA_API_KEY,
+      branch: import.meta.env.XATA_BRANCH
+    });
 
-  return json({
-    post
+    const params = useParams();
+    return await xata.db.Posts.filter({ slug: params.slug }).getFirst();
   });
 }
 ```
 
-Use the values returned from the `loader` within the `V2_MetaFunction` function to display the Post's title
-within the page's title. This function differs from the landing page version by taking a parameter containing a `data` property.
-The value in `data` is the payload returned from the `loader` function. So, the Post's `title` value can be extracted and used:
+Finally, retrieve the `post` data using the `useLoaderData` hook. Then use the `post` data to set
+the page title via `<Title />` and update the rest of the page UI to contain all the information for the single Post:
 
 ```tsx
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
-  return [{ title: `${data?.post?.title} - Xata and Remix` }];
-};
-```
-
-Finally, the main page function makes use of the `userLoaderData` hook to retrieve the single Post information and uses the values,
-`title`, `pubDate`, and `description`, for the Post are added to the UI:
-
-```tsx {2,11,13,15}
 export default function Post() {
-  const { post } = useLoaderData<typeof loader>();
+  const data = useRouteData<typeof routeData>();
+  const post = data();
 
   return (
-    <div className="w-full max-w-5xl mt-16">
-      <p className="mb-2">
-        <a href="/" className="text-purple-600">
-          &larr; Back to blog
-        </a>
-      </p>
-      <h1 className="text-3xl mb-2">{post?.title}</h1>
-      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
-        {new Date(post?.pubDate ?? '').toDateString()}
-      </p>
-      <p className="text-xl">{post?.description}</p>
-    </div>
+    <>
+      <Title>{post?.title}</Title>
+
+      <div class="w-full max-w-5xl mt-16">
+        <p class="mb-2">
+          <a href="/" class="text-purple-600">
+            &larr; Back to blog
+          </a>
+        </p>
+
+        <h1 class="text-3xl mb-2">{post?.title}</h1>
+        <p class="text-sm mb-4 text-purple-950 dark:text-purple-200">{post?.pubDate?.toDateString()}</p>
+        <p class="text-xl">{post?.description}</p>
+      </div>
+    </>
   );
 }
 ```
@@ -642,74 +643,62 @@ any configuration to enable search, just need to use the
 
 Let's add this functionality to the landing page:
 
-```tsx title="app/routes/_index.tsx" {1,7-24,27,31-40}
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
-import { getXataClient } from 'src/xata'
+```tsx title="src/routes/posts/[slug].tsx" {1,15-24,32,36-45}
+import { useLocation } from '@solidjs/router';
+import { Match, Switch, For } from 'solid-js';
+import { useRouteData } from 'solid-start';
+import { createServerData$ } from 'solid-start/server';
 
-...
+import { XataClient } from '~/xata';
 
-export async function loader({ request }: LoaderArgs) {
-  const xata = getXataClient()
+export function routeData() {
+  return createServerData$(async () => {
+    const xata = new XataClient({
+      apiKey: import.meta.env.XATA_API_KEY,
+      branch: import.meta.env.XATA_BRANCH
+    });
 
-  const url = new URL(request.url)
-  const search = url.searchParams.get('q')
+    const location = useLocation();
+    const search = location.query.q;
 
-  let posts = null
-  if (search) {
-    posts = await xata.db.Posts.search(search, { fuzziness: 2 })
-  } else {
-    posts = await xata.db.Posts.getAll()
-  }
-
-  return json({
-    posts,
-    search,
-  })
+    let posts = null;
+    if (search) {
+      posts = await xata.db.Posts.search(search, { fuzziness: 2 });
+    } else {
+      posts = await xata.db.Posts.getAll();
+    }
+    return { posts, search };
+  });
 }
 
-export default function Index() {
-  const { posts, search } = useLoaderData<typeof loader>()
+export default function Home() {
+  const resource = useRouteData<typeof routeData>();
+  const data = resource();
+  const posts = data?.posts;
+  const search = data?.search || '';
 
   return (
     <>
-      <div className="w-full max-w-5xl mt-16">
-        <form>
+      <div class="w-full max-w-5xl mt-16">
+        <form action="/">
           <input
             name="q"
-            defaultValue={search || ''}
+            value={search}
             placeholder="Search..."
-            className="w-full rounded-lg p-2 border-2 dark:text-purple-950"
+            class="w-full rounded-lg border-2 p-2 dark:text-purple-950"
           />
         </form>
       </div>
-
       ...
     </>
-  )
+  );
 }
 ```
 
 Add search with these changes.
 
-First, update the `@remix-run/node` import to include `LoaderArgs`. Then, update the `loader` function to accept
-the `request` property from the `LoaderArgs` parameter.
-
-```tsx {1,7}
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
-import { getXataClient } from 'src/xata'
-
-...
-
-export async function loader({ request }: LoaderArgs) {
-  ...
-}
-```
-
-Next, update the `loader` function to conditionally perform a search based on the presence of search text within a `q` querystring parameter.
-Do this by creating a new `URL` instance and passing the `request.url` value. Then, get the `q` querystring using `url.searchParams.get('q')`
-and assign the result to a variable called `search`.
+First, import `useLocation` from `@solidjs/router` and use it within `createServerData$` to retrieve the
+value of a `q` querystring parameter, assigned to a variable named `search`.
 
 The landing page should list all blog posts if `search` is an empty string. However, if
 the search has a non-empty string value, a search is performed on the Posts table using the
@@ -720,52 +709,65 @@ letters changed/added/removed. See
 [fuzziness and typo tolerance](https://xata.io/docs/typescript-client/search#fuzziness-and-typo-tolerance) for more
 details.
 
-Update the return value of `loader` to return both `posts` and `search`.
+Update the return value to include the `search` value in addition to the `posts`.
 
-```tsx
-export async function loader({ request }: LoaderArgs) {
-  const xata = getXataClient();
+```tsx {1, 15-16,17-24}
+import { useLocation } from '@solidjs/router';
+import { Match, Switch, For } from 'solid-js';
+import { useRouteData } from 'solid-start';
+import { createServerData$ } from 'solid-start/server';
 
-  const url = new URL(request.url);
-  const search = url.searchParams.get('q');
+import { XataClient } from '~/xata';
 
-  let posts = null;
-  if (search) {
-    posts = await xata.db.Posts.search(search, { fuzziness: 2 });
-  } else {
-    posts = await xata.db.Posts.getAll();
-  }
+export function routeData() {
+  return createServerData$(async () => {
+    const xata = new XataClient({
+      apiKey: import.meta.env.XATA_API_KEY,
+      branch: import.meta.env.XATA_BRANCH
+    });
 
-  return json({
-    posts,
-    search
+    const location = useLocation();
+    const search = location.query.q;
+
+    let posts = null;
+    if (search) {
+      posts = await xata.db.Posts.search(search, { fuzziness: 2 });
+    } else {
+      posts = await xata.db.Posts.getAll();
+    }
+    return { posts, search };
   });
 }
 ```
 
 The last change enables the user to input and submit a search.
 
-Begin by retrieving the `posts` and the `search` values using the Remix `userLoaderData` hook.
+Begin by retrieving the `search` value from the `resource` returned via the `useRouteData` hook.
 
-Next, add a `<form>` to the page to allow a search value to be entered and submitted. The
-default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
+Next, add a `<form>` to the page to allow a search value to be entered and submitted. Set the `value` of the `<input name="q" />`
+to be the value of `search` so if there is an active search, the user has some feedback.
+
+The default submit behavior of a form is to perform a `GET` request to the current URL with any form inputs added to the query
 string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
 a `GET` request in the format`?q={q-value}`. Since this is precisely the behavior required, and the check for the `q`
 querystring search value has been implemented already, everything is in place.
 
-```tsx
-export default function Index() {
-  const { posts, search } = useLoaderData<typeof loader>();
+```tsx {5,9-18}
+export default function Home() {
+  const resource = useRouteData<typeof routeData>();
+  const data = resource();
+  const posts = data?.posts;
+  const search = data?.search || '';
 
   return (
     <>
-      <div className="w-full max-w-5xl mt-16">
-        <form>
+      <div class="w-full max-w-5xl mt-16">
+        <form action="/">
           <input
             name="q"
-            defaultValue={search || ''}
+            value={search}
             placeholder="Search..."
-            className="w-full rounded-lg p-2 border-2 dark:text-purple-950"
+            class="w-full rounded-lg border-2 p-2 dark:text-purple-950"
           />
         </form>
       </div>
@@ -774,6 +776,8 @@ export default function Index() {
   );
 }
 ```
+
+The result of the changes mean your landing page UI looks like this:
 
 ![Full-text fuzzy search](images/getting-started-blog-search.png)
 
@@ -793,7 +797,7 @@ You walked through setting up the Xata CLI and using it to:
 - Update the auto-generated code (in `src/xata.ts`) using `xata pull main` to reflect the updated schema
 
 You then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
-function. You also added the single post page making use of SolidStart dynamic segments where a `slug` was passed and used
+function. You also added the single post page making use of SolidStart dynamic routes where a `slug` was passed and used
 with `xata.db.Posts.filter({ slug: params.slug }).getFirst()`.
 
 Finally, you added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
