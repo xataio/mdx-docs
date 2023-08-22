@@ -294,8 +294,8 @@ const posts = await xata.db.Posts.select([
 ```python
 posts = xata.data().query("Posts", {
   "columns": [
-    "title", 
-    "author.*", 
+    "title",
+    "author.*",
     "author.team.*"
   ]
 })
@@ -409,11 +409,8 @@ users = xata.data().query("Users", {
 
 {
   "filter": {
-    "zipcode": {"$gt": 100},
-    "$any": [
-      {"name": { "$contains": "Keanu" }},
-      {"name": { "$contains": "Carrie" }}
-    ]
+    "zipcode": { "$gt": 100 },
+    "$any": [{ "name": { "$contains": "Keanu" } }, { "name": { "$contains": "Carrie" } }]
   }
 }
 ```
@@ -510,10 +507,7 @@ users = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
-  "sort": [
-    {"city": "desc"},
-    {"name": "asc"}
-  ]
+  "sort": [{ "city": "desc" }, { "name": "asc" }]
 }
 ```
 
