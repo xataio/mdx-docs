@@ -305,7 +305,7 @@ Now the SvelteKit app is ready to for Xata to be integrated into the codebase.
 
 Let's start by making use of
 [SvelteKit's loading data mechanism](https://kit.svelte.dev/docs/load) to retrieve all the blog posts from Xata
-and make them available within the landing page:
+and make them available within the landing page. Create `src/routes/+page.server.ts` with the following contents:
 
 ```ts title="src/routes/+page.server.ts"
 import type { PageServerLoad } from './$types';
@@ -434,7 +434,7 @@ record where the `slug` column equals the value of `params.slug`. Use the
 [`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to access
 the first (and only) Post result and return the `post` as a property on the return value.
 
-Next, update the contents of `src/routes/posts/[slug]/+page.svelte` as follows:
+Next, update the contents of `src/routes/posts/[slug]/+page.svelte` as follows to render the Post data within the UI:
 
 ```svelte title="src/routes/posts/[slug]/+page.svelte"
 <script lang="ts">
@@ -574,8 +574,9 @@ search.
 
 The default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
 string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
-a `GET` request in the format`?q={q-value}`. Since this is precisely the behavior required, and the check for the `q`
-querystring search value has been implemented already, everything is in place.
+a `GET` request in the format`?q={q-value}`. To allow this default browser behavior to take place, add the
+[`data-sveltekit-reload` attribute](https://kit.svelte.dev/docs/link-options#data-sveltekit-reload) to the `<form />` element.
+With the browser default behavior set, and the check for the `q` querystring search value has been already implemented, everything is in place.
 
 ![Full-text fuzzy search](images/getting-started-blog-search.png)
 
