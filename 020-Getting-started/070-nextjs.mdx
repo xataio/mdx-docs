@@ -308,11 +308,15 @@ export default async function Home() {
         {posts.length === 0 && <p>No blog posts found</p>}
         {posts.map((record) => (
           <div key={record.id} className="mb-16">
-            <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">{record.pubDate?.toDateString()}</p>
+            <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
+              {record.pubDate?.toDateString()}
+            </p>
             <h2 className="text-2xl mb-2">
               <a href={`posts/${record.slug}`}>{record.title}</a>
             </h2>
-            <p className="text-purple-950 dark:text-purple-200 mb-5">{record.description}</p>
+            <p className="text-purple-950 dark:text-purple-200 mb-5">
+              {record.description}
+            </p>
             <a
               href={`posts/${record.slug}`}
               className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
@@ -338,9 +342,7 @@ const xata = getXataClient();
 ```
 
 Then, in the `Home` function, use the `xata` client instance to get all the posts stored in the database. This is
-achieved via the auto-generated `Posts` property which exposes a number of helper functions. In this case, we use the
-[`getAll`](https://xata.io/docs/sdk/get#the-typescript-sdk-functions-for-querying) function to get
-all the Post records.
+achieved via the auto-generated `Posts` property which exposes a number of helper functions. In this case, we use the [`getAll`](https://xata.io/docs/sdk/get#the-typescript-sdk-functions-for-querying) function to get all the Post records.
 
 ```tsx
 export default async function Home() {
@@ -351,10 +353,12 @@ export default async function Home() {
 ```
 
 <Alert status="warning">
-  `getAll()` returns all the records in the query results. This is dangerous on large tables (more than 10,000 records),
-  as it will potentially load a lot of data into memory and create a lot of requests to the server. In most situations,
-  you should use `getMany()` or `getPaginated()`. See the [querying
-  documentation](https://xata.io/docs/sdk/get#the-typescript-sdk-functions-for-querying) for more information.
+  `getAll()` returns all the records in the query results. This is dangerous on
+  large tables (more than 10,000 records), as it will potentially load a lot of
+  data into memory and create a lot of requests to the server. In most
+  situations, you should use `getMany()` or `getPaginated()`. See the [querying
+  documentation](https://xata.io/docs/sdk/get#the-typescript-sdk-functions-for-querying)
+  for more information.
 </Alert>
 
 Finally, we update the UI to display the result of the `getAll` call. If no records are present, we show a message
@@ -368,11 +372,15 @@ the post, and `description` for the textual descript of the post:
   {posts.length === 0 && <p>No blog posts found</p>}
   {posts.map((record) => (
     <div key={record.id} className="mb-16">
-      <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">{record.pubDate?.toDateString()}</p>
+      <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
+        {record.pubDate?.toDateString()}
+      </p>
       <h2 className="text-2xl mb-2">
         <a href={`posts/${record.slug}`}>{record.title}</a>
       </h2>
-      <p className="text-purple-950 dark:text-purple-200 mb-5">{record.description}</p>
+      <p className="text-purple-950 dark:text-purple-200 mb-5">
+        {record.description}
+      </p>
       <a
         href={`posts/${record.slug}`}
         className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
@@ -462,7 +470,9 @@ export default async function Post({ params }: { params: { slug: string } }) {
         </p>
 
         <h1 className="text-3xl mb-2">{post?.title}</h1>
-        <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">{post?.pubDate?.toDateString()}</p>
+        <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
+          {post?.pubDate?.toDateString()}
+        </p>
         <p className="text-xl">{post?.description}</p>
       </div>
     </main>
@@ -479,8 +489,8 @@ import { getXataClient } from '@/xata';
 const xata = getXataClient();
 ```
 
-The single post is retrieved from the database via the auto-generated `Posts` property. The
-[`filter` function](https://xata.io/docs/sdk/get#the-typescript-sdk-functions-for-querying) is used to query
+The single post is retrieved from the database via the auto-generated `Posts` property. The 
+ [`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) is used to query
 the table for a row where the `slug` column equals the value of `params. slug`. Finally the
 [`getFirst` function](https://xata.io/docs/sdk/get#the-typescript-sdk-functions-for-querying) to return
 the first (and only) result for a post with this slug value.
@@ -512,8 +522,7 @@ The single blog post page will look as follows:
 The last piece of functionality to be added to the application is full-text fuzzy search of blog posts.
 
 When you insert data into a Xata database, it is automatically indexed for full-text search. So we don't need to change
-any configuration to enable search, we just need to use the
-[TypeScript SDK search feature](https://xata.io/docs/sdk/search).
+any configuration to enable search, we just need to use the [TypeScript SDK search feature](https://xata.io/docs/sdk/search).
 
 Let's add this functionality to the landing page:
 
@@ -576,7 +585,7 @@ export default async function Home({
 
 Secondly, the landing page should list all blog posts if the `searchParams.q` property isn't present. However, if
 the property is present, a search is performed on the Posts table using the
-[`search` function](https://xata.io/docs/sdk/search#searching-in-a-single-table) exposed on the
+[`search` function](https://xata.io/docs/typescript-client/search#searching-in-a-single-table) exposed on the
 auto-generated `Posts` property. The value of `searchParams.q` is passed as the text value to search for, and a
 second options parameter is populated with `fuzziness` set to `2`, which instructs the search behavior to allow for two
 letters changed/added/removed. See
