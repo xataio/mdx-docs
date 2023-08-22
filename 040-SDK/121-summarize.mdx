@@ -1,9 +1,9 @@
 ---
-title: Summarize with TypeScript
+title: Summarize
 navTitle: Summarize
-keywords: ['TypeScript', 'TypeScript client', 'summarize', 'calculations']
-description: Perform calculations and get insights on a set of records using the Xata SDK with TypeScript or JSON
-slug: typescript-client/summarize
+keywords: ['summarize', 'calculations']
+description: Perform calculations and get insights on a set of records using the Xata SDK
+slug: sdk/summarize
 published: true
 ---
 
@@ -37,19 +37,29 @@ Referring to the table above; if I'd like to understand how my store has been go
 
 Here, the column is `product`. The `summary` - in it's two parts - will be `average` as the function, and `sale_price` as the column. In plain language, you might ask "give me the average sale price for each product". The request would look like:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-  ```ts
-  const records = await xata.db.titles.summarize({
-    filter: { product: 'basketball' },
-    columns: ['product'],
-    summaries: {
-      average_sales_price: { average: 'sale_price' }
-    }
-  });
-  ```
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const records = await xata.db.titles.summarize({
+  filter: { product: 'basketball' },
+  columns: ['product'],
+  summaries: {
+    average_sales_price: { average: 'sale_price' }
+  }
+});
+```
+
+```python
+records = xata.data().summarize("titles", {
+  "filter": { "product": "basketball" },
+  "columns": ["product"],
+  "summaries": {
+    "average_sale_price": { "average": "sale_price" }
+  }
+})
+```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/sales/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "filter": { "product": "basketball" },
   "columns": ["product"],
@@ -75,18 +85,27 @@ Let's try one more example to help clarify the concepts.
 
 Here, as above, the column is `product`. We will also want to run a calculation on `sale_price`, however, we want to add up each sale price rather than average them, so our `summary` equation will be `sum`. Our request looks like:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-  ```ts
-  const records = await xata.db.titles.summarize({
-    columns: ['product'],
-    summaries: {
-      total_sales: { sum: 'sale_price' }
-    }
-  });
-  ```
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const records = await xata.db.titles.summarize({
+  columns: ['product'],
+  summaries: {
+    total_sales: { sum: 'sale_price' }
+  }
+});
+```
+
+```python
+records = xata.data().summarize("titles", {
+  "columns": ["product"],
+  "summaries": {
+    "total_sales": { "sum": "sale_price" }
+  }
+})
+```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/sales/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "columns": ["product"],
   "summaries": {
@@ -116,16 +135,23 @@ Before we get started, keep in mind that we keep reference material that can be 
 
 In its most basic form `summarize` can be used as a "distinct" method to get the unique values or value combinations of the summarized columns.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-  ```ts
-    const records = await xata.db.titles.summarize({
-      columns: ["username"],
-      summaries: {},
-    });
-  ```
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+  const records = await xata.db.titles.summarize({
+    columns: ["username"],
+    summaries: {},
+  });
+```
+
+```python
+records = xata.data().summarize("titles", {
+  "columns": ["username"],
+  "summaries": {}
+})
+```
 
 ```json
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/sales/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "columns": ["username"],
   "summaries": {}
@@ -152,38 +178,63 @@ All summaries support links. If you have a link set up, you specify it using the
 
 One can specify several summaries in the same request. As long as the names are unique, do not contain special characters, and do not conflict with columns on your table, you are free to set the names as you wish.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-  ```ts
-  const records = await xata.db.titles.summarize({
-    summaries: {
-      // count all rows
-      "all_sales": {"count": "*"},
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const records = await xata.db.titles.summarize({
+  summaries: {
+    // count all rows
+    "all_sales": {"count": "*"},
 
-      // count all rows where `store_id` is not null
-      "all_sales_from_store": {"count": "store_id"},
+    // count all rows where `store_id` is not null
+    "all_sales_from_store": {"count": "store_id"},
 
-      // sum the `profit` column
-      "total_profit": {"sum": "profit"},
+    // sum the `profit` column
+    "total_profit": {"sum": "profit"},
 
-      // average the `shipping.time_days` column
-      "average_shipping_time": {"average": "shipping.time_days"},
+    // average the `shipping.time_days` column
+    "average_shipping_time": {"average": "shipping.time_days"},
 
-      // count the total rows where `has_arrived` is not null
-      "total_has_arrived": {"count": "has_arrived"},
+    // count the total rows where `has_arrived` is not null
+    "total_has_arrived": {"count": "has_arrived"},
 
-      // retrieve the smallest value in the `package_volume` column
-      "smallest_package": {"min": "package_volume"}
+    // retrieve the smallest value in the `package_volume` column
+    "smallest_package": {"min": "package_volume"}
 
-      // retrieve the largest value in the `sale_price` column
-      "largest_sale_price": {"max": "sale_price"}
-    }
-
+    // retrieve the largest value in the `sale_price` column
+    "largest_sale_price": {"max": "sale_price"}
+  }
 })
+```
 
-````
+```python
+records = xata.data().summarize("titles", {
+  "summaries": {
+    # count all rows
+    "all_sales": { "count": "*" },
+
+    # count all rows where `store_id` is not null
+    "all_sales_from_store": { "count": "store_id" },
+
+    # sum the `profit` column
+    "total_profit": { "sum": "profit" },
+
+    # average the `shipping.time_days` column
+    "average_shipping_time": { "average": "shipping.time_days" },
+
+    # count the total rows where `has_arrived` is not null
+    "total_has_arrived": { "count": "has_arrived" },
+
+    # retrieve the smallest value in the `package_volume` column
+    "smallest_package": { "min": "package_volume" },
+
+    # retrieve the largest value in the `sale_price` column
+    "largest_sale_price": { "max": "sale_price" }
+  }
+})
+```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/sales/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "summaries": {
     // count all rows
@@ -208,7 +259,7 @@ One can specify several summaries in the same request. As long as the names are 
     "largest_sale_price": { "max": "sale_price" }
   }
 }
-````
+```
 
 </TabbedCode>
 
@@ -218,23 +269,33 @@ The `columns` key lets you specify how you'd like to group your data. Columns wo
 
 You may submit explicit column names, use wildcards, and reference linked columns as needed.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-  ```ts
-  const records = await xata.db.titles.summarize({
-    columns: [
-      'settings.*', // group by all columns in the `settings` object
-      'username', // group by the username field
-      'user.hobbies.name' // group by a linked column
-    ]
-  });
-  ```
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const records = await xata.db.titles.summarize({
+  columns: [
+    'settings.*',       // group by all columns in the `settings` object
+    'username',         // group by the username field
+    'user.hobbies.name' // group by a linked column
+  ]
+});
+```
+
+```python
+records = xata.data().summarize("titles", {
+  "columns": [
+    "settings.*",       # group by all columns in the `settings` object
+    "username",         # group by the username field
+    "user.hobbies.name" # group by a linked column
+  ]
+})
+```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/sales/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "columns": [
-    "settings.*", // group by all columns in the `settings` object
-    "username", // group by the username field
+    "settings.*",       // group by all columns in the `settings` object
+    "username",         // group by the username field
     "user.hobbies.name" // group by a linked column
   ]
 }
@@ -246,7 +307,7 @@ If you would like to see results with no groups, you may submit `columns` as an 
 
 ### filter
 
-Filter lets you filter data before grouping and summarizing. Check out our guide [here](/docs/typescript-client/filtering).
+Filter lets you filter data before grouping and summarizing. Check out our guide [here](/docs/sdk/filtering).
 
 Keep in mind: `filter` does **not** support filtering on the result of a summary. In order to filter on summaries, one must use `summariesFilter`.
 
@@ -254,24 +315,39 @@ Keep in mind: `filter` does **not** support filtering on the result of a summary
 
 Sort lets you decide how you'd like your results sorted. You may sort on `columns` you've explicitly referenced, as well as on `summaries` you've requested. When wanting to sort by a summary, you use the name you've chosen.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-  ```ts
-  const records = await xata.db.titles.summarize({
-    columns: {"store_name"},
-    summaries: {
-      "total_sales": {"count": "*"}
-    },
-    sort: [
-      // put the highest total_sales at the top
-      {"total_sales": "desc"},
-      // if total_sales is equal for two rows, order them by the store_name
-      {"store_name": "asc"}
-    ]
-  })
-  ```
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const records = await xata.db.titles.summarize({
+  columns: {"store_name"},
+  summaries: {
+    "total_sales": {"count": "*"}
+  },
+  sort: [
+    // put the highest total_sales at the top
+    {"total_sales": "desc"},
+    // if total_sales is equal for two rows, order them by the store_name
+    {"store_name": "asc"}
+  ]
+})
+```
+
+```python
+records = xata.data().summarize("titles", {
+  "columns": {"store_name"},
+  "summaries": {
+    "total_sales": {"count": "*"}
+  },
+  "sort": [
+    # put the highest total_sales at the top
+    {"total_sales": "desc"},
+    # if total_sales is equal for two rows, order them by the store_name
+    {"store_name": "asc"}
+  ]
+})
+```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/sales/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "columns": {"store_name"},
   "summaries": {
@@ -294,21 +370,30 @@ Page lets you determine how many results are returned. We currently only support
 
 The default setting for `size` , if not specified in the request, is 20 results. We allow you to set this between 1 and 1000.
 
-If this limitation is too small, we ask that you move your workload to the [aggregate](/docs/typescript-client/aggregate) endpoint which does not have such limitations.
+If this limitation is too small, we ask that you move your workload to the [aggregate](/docs/sdk/aggregate) endpoint which does not have such limitations.
 
 An example of a page request looks like:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-  ```ts
-  const records = await xata.db.titles.summarize({
-    pagination: {
-      size: 50
-    }
-  });
-  ```
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const records = await xata.db.titles.summarize({
+  pagination: {
+    size: 50
+  }
+});
+```
+
+```python
+records = xata.data().summarize("titles", {
+  "page": {
+    # return up to 50 results
+    "size": 50
+  }
+})
+```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/sales/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "page": {
     "size": 50 // return up to 50 results
@@ -331,25 +416,41 @@ The key feature `summariesFilter` adds is the ability to take a summary and filt
 
 An example looks like:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-  ```ts
-  const records = await xata.db.titles.summarize({
-    columns: ['product_name'],
-    summaries: {
-      revenue: { sum: 'price' },
-      items_sold: { count: '*' }
-    },
-    summariesFilter: {
-      // only return product names where the total revenue is >= 100 AND
-      // where sold >= 1000 of them
-      revenue: { $ge: 100.0 },
-      items_sold: { $ge: 1000 }
-    }
-  });
-  ```
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const records = await xata.db.titles.summarize({
+  columns: ['product_name'],
+  summaries: {
+    revenue: { sum: 'price' },
+    items_sold: { count: '*' }
+  },
+  summariesFilter: {
+    // only return product names where the total revenue is >= 100 AND
+    // where sold >= 1000 of them
+    revenue: { $ge: 100.0 },
+    items_sold: { $ge: 1000 }
+  }
+});
+```
+
+```python
+records = xata.data().summarize("titles", {
+  "columns": ["product_name"],
+  "summaries": {
+    "revenue": { "sum": "price" },
+    "items_sold": { "count": "*" }
+  },
+  "summariesFilter": {
+    # only return product names where the total revenue is >= 100 AND
+    # where sold >= 1000 of them
+    "revenue": { "$ge": 100.0 },
+    "items_sold": { "$ge": 1000 }
+  }
+})
+```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/sales/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "columns": ["product_name"],
   "summaries": {
@@ -375,20 +476,35 @@ The default value for the consistency option is `strong`, which retrieves data f
 
 It is recommended to use the Replica Store for summarize requests wherever possible, in order to get the best possible performance out of your branch's assigned units.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-  ```ts
-  const records = await xata.db.titles.summarize({
-    filter: { product: 'basketball' },
-    columns: ['product'],
-    summaries: {
-      average_sales_price: { average: 'sale_price' }
-    },
-    consistency: 'eventual'
-  });
-  ```
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const records = await xata.db.titles.summarize({
+  filter: { product: 'basketball' },
+  columns: ['product'],
+  summaries: {
+    average_sales_price: { average: 'sale_price' }
+  },
+  consistency: 'eventual'
+});
+```
+
+```python
+records = xata.data().summarize("titles", {
+  "filter": {
+    "product": "basketball"
+  },
+  "columns": ["product"],
+  "summaries": {
+    "average_sale_price": {
+      "average": "sale_price"
+    }
+  },
+  "consistency": "eventual"
+})
+```
 
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/sales/summarize
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
   "filter": { "product": "basketball" },
   "columns": ["product"],
@@ -429,12 +545,12 @@ Eventual consistency utilizes the dedicated concurrency connections of the Read 
 
 **Use the aggregate endpoint**
 
-The [aggregate](/docs/typescript-client/aggregate) endpoint will almost always perform better. It's quicker to handle larger tables, with more cardinality, and does not have a hard limit on the amount of results that one can request in a single request. See the below section "Summarize or Aggregate" to understand why.
+The [aggregate](/docs/sdk/aggregate) endpoint will almost always perform better. It's quicker to handle larger tables, with more cardinality, and does not have a hard limit on the amount of results that one can request in a single request. See the below section "Summarize or Aggregate" to understand why.
 
 ## Summarize or Aggregate?
 
-Summarize and [aggregate](/docs/typescript-client/aggregate) both return similar results. They differ in terms of the underlying store the data is served from. When using summarize, one retrieves data from PostgreSQL. This means that you will retrieve consistent results.
+Summarize and [aggregate](/docs/sdk/aggregate) both return similar results. They differ in terms of the underlying store the data is served from. When using summarize, one retrieves data from PostgreSQL. This means that you will retrieve consistent results.
 
 However, PostgreSQL storage is not optimized to work on these types of queries. Running these workloads will tend to be slower and consume for of your account's concurrency limits. For larger tables and for cases where eventual consistency is acceptable, we recommend using the aggregate endpoint. The aggregate endpoint services the same kinds of requests, but from our column-store rather than from Postgres. This results in far faster responses to your requests.
 
-Note: there are some minor differences to how the two endpoints function. Please see the [documentation for aggregate](/docs/typescript-client/aggregate) for more information.
+Note: there are some minor differences to how the two endpoints function. Please see the [documentation for aggregate](/docs/sdk/aggregate) for more information.

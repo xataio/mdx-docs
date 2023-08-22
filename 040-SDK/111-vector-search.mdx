@@ -1,9 +1,9 @@
 ---
-title: Similarity / vector search with TypeScript
+title: Similarity / vector search
 navTitle: Vector searching records
-keywords: ['TypeScript', 'TypeScript client', 'search', 'searching', 'vector search', 'similarity']
-description: Analyze records using Xata SDK with TypeScript or JSON for calculations and insights
-slug: typescript-client/vector-search
+keywords: ['search', 'searching', 'vector search', 'similarity']
+description: Analyze records using Xata SDK too perform calculations and get insights
+slug: sdk/vector-search
 published: true
 ---
 
@@ -18,7 +18,7 @@ An embedding is a vector of floating point numbers that represents the original 
 
 Vector search works at the table level and has the following format:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const results = await xata.db.Docs.vectorSearch(
@@ -32,8 +32,18 @@ const results = await xata.db.Docs.vectorSearch(
 );
 ```
 
+```python
+results = xata.data().vector_search("Docs", {
+  "queryVector": [0.1, 0.2],  # array of floats
+  "column": "embeddings",     # column name,
+  "similarityFunction": "l1", # space function
+  "size": 5,                  # number of results to return
+  "filter": {},               # filter expression
+})
+```
+
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/vectorSearch
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/vectorSearch
 {
     "queryVector": [/*<array of floats>*/],
     "column": /*<column name>*/,
@@ -54,18 +64,26 @@ Additionally you can customize the results with these optional parameters:
 
 - `similarityFunction` - the function used to measure the distance between two points. It can be one of the following: `cosineSimilarity`, `l1`, `l2`. The default is `cosineSimilarity` for which you can expect a score between 0 and 2. Because `cosineSimilarity` returns a value between -1 and 1, but relevance scores must not be below 0, we add 1 for the final score.
 - `size` - the number of results to return. The default is 10.
-- `filter` - a filter expression that can be used to filter before applying the search (pre-filter). See [Filtering](/docs/typescript-client/filtering) for more details.
+- `filter` - a filter expression that can be used to filter before applying the search (pre-filter). See [Filtering](/docs/sdk/filtering) for more details.
 
 Here is a simple example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const results = await xata.db.Docs.vectorSearch('embeddings', [0.1, 0.2, 0.3], { size: 5 });
 ```
 
+```python
+results = xata.data().vector_search("Docs", {
+  "queryVector": [0.1, 0.2, 0.3],
+  "column": "embeddings",
+  "size": 5
+})
+```
+
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/vectorSearch
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/vectorSearch
 {
   "queryVector": [0.1, 0.2, 0.3],
   "column": "embeddings",

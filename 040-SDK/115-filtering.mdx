@@ -1,14 +1,14 @@
 ---
-title: Filtering records with TypeScript
+title: Filtering records
 navTitle: Filtering records
-keywords: ['TypeScript', 'TypeScript client', 'filtering']
-description: Use the Xata SDK with TypeScript or JSON to filter across APIs for versatile functionality
-slug: typescript-client/filtering
+keywords: ['filtering']
+description: Use the Xata SDK to filter across APIs for versatile functionality
+slug: sdk/filtering
 published: true
 ---
 
-The same filtering syntax can be used in multiple places, including the [Query API](/docs/typescript-client/get),
-the [Search API](/docs/typescript-client/search), and the [Aggregate API](/docs/typescript-client/aggregate). By using the same
+The same filtering syntax can be used in multiple places, including the [Query API](/docs/sdk/get),
+the [Search API](/docs/sdk/search), and the [Aggregate API](/docs/sdk/aggregate). By using the same
 syntax, you can easily switch between the APIs that you need.
 
 We recommend that you use the web UI to build your filters, then use the **Get Code Snippet** functionality to get the
@@ -27,7 +27,7 @@ To distinguish operators from column names, operators are prefixed with a `$` sy
 
 Filter by one column having a particular value:
 
-```jsonc
+```json
 {
   "filter": {
     "<column_name>": "value"
@@ -37,23 +37,31 @@ Filter by one column having a particular value:
 
 Example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
-  name: 'Keanu Reaves'
+  name: 'Keanu Reeves'
 }).getMany();
 
 // or
 const records = await xata.db.Users.filter('name', 'Keanu Reave').getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "name": "Keanu Reeves"
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
-    "name": "Keanu Reaves"
+    "name": "Keanu Reeves"
   }
 }
 ```
@@ -62,24 +70,32 @@ const records = await xata.db.Users.filter('name', 'Keanu Reave').getMany();
 
 This is equivalent to using the `$is` operator:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
-  name: { $is: 'Keanu Reaves' }
+  name: { $is: 'Keanu Reeves' }
 }).getMany();
 
 //or
 import { is } from '@xata.io/client';
-const records = await xata.db.Users.filter('name', is('Keanu Reaves')).getMany();
+const records = await xata.db.Users.filter('name', is('Keanu Reeves')).getMany();
+```
+
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "name": { "$is": "Keanu Reeves" }
+  }
+})
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
-    "name": { "$is": "Keanu Reaves" }
+    "name": { "$is": "Keanu Reeves" }
   }
 }
 ```
@@ -90,21 +106,31 @@ const records = await xata.db.Users.filter('name', is('Keanu Reaves')).getMany()
 
 To combine multiple values using the OR logic, you can use the `$any` operator by providing an array of values:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
-  name: { $any: ['Keanu Reaves', 'Carrie-Anne Moss'] }
+  name: { $any: ['Keanu Reeves', 'Carrie-Anne Moss'] }
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "name": {
+      "$any": ["Keanu Reeves", "Carrie-Anne Moss"]
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
     "name": {
-      "$any": ["Keanu Reaves", "Carrie-Anne Moss"]
+      "$any": ["Keanu Reeves", "Carrie-Anne Moss"]
     }
   }
 }
@@ -114,21 +140,30 @@ const records = await xata.db.Users.filter({
 
 When you include multiple columns within the same filter, they are logically combined using the AND operator:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
-  name: 'Keanu Reaves',
-  'city': 'New York'
+  name: 'Keanu Reeves',
+  city: 'New York'
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "name": "Keanu Reeves",
+    "city": "New York"
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
-    "name": "Keanu Reaves",
+    "name": "Keanu Reeves",
     "city": "New York"
   }
 }
@@ -139,24 +174,35 @@ const records = await xata.db.Users.filter({
 The above matches if both conditions are met. You can be more explicit about it by using the `$all` and `$any`
 operators:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
   $any: {
-    name: 'Keanu Reaves',
-    'city': 'New York'
+    name: 'Keanu Reeves',
+    city: 'New York'
   }
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "$any": {
+      "name": "Keanu Reeves",
+      "city": "New York"
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
     "$any": {
-      "name": "Keanu Reaves",
+      "name": "Keanu Reeves",
       "city": "New York"
     }
   }
@@ -167,19 +213,27 @@ const records = await xata.db.Users.filter({
 
 The $all and $any operators can also accept an array of objects, enabling the use of repeated column names:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const records = await xata.db.Users.filter({
-  $any: [{ name: "Keanu Reaves" }, { name: "Carrie-Anne Moss" }],
+  $any: [{ name: "Keanu Reeves" }, { name: "Carrie-Anne Moss" }],
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "$any": [{ "name": "Keanu Reeves" }, { "name": "Carrie-Anne Moss" }]
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
-    "$any": [{ "name": "Keanu Reaves" }, { "name": "Carrie-Anne Moss" }]
+    "$any": [{ "name": "Keanu Reeves" }, { "name": "Carrie-Anne Moss" }]
   }
 }
 ```
@@ -188,7 +242,7 @@ const records = await xata.db.Users.filter({
 
 You can check for a value in a column being not-null with `$exists`:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -196,8 +250,16 @@ const records = await xata.db.Users.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "$exists": "name"
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -210,7 +272,7 @@ const records = await xata.db.Users.filter({
 
 This can be combined with `$all` or `$any`:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -218,8 +280,16 @@ const records = await xata.db.Users.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "$all": [{ "$exists": "name" }, { "$exists": "address" }]
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -232,7 +302,7 @@ const records = await xata.db.Users.filter({
 
 Or you can use the inverse operator `$notExists`:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -240,8 +310,16 @@ const records = await xata.db.Users.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "$notExists": "name"
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -256,7 +334,7 @@ const records = await xata.db.Users.filter({
 
 The `$not` operator can inverse any operation.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const records = await xata.db.Users.filter({
   $not: {
@@ -265,8 +343,18 @@ const records = await xata.db.Users.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "$not": {
+      "name": "Keanu Reeves"
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -281,7 +369,7 @@ const records = await xata.db.Users.filter({
 
 Or more complex:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -298,8 +386,25 @@ const records = await xata.db.Users.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "$not": {
+      "$any": [
+        {
+          "name": "Keany Reave"
+        },
+        {
+          "name": "Laurence Fishburne"
+        }
+      ]
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -321,19 +426,30 @@ const records = await xata.db.Users.filter({
 
 The `$not: { $any: {}}` can be shorted using the `$none` operator:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
   $none: {
     name: 'Keanu Reave',
-    'city': 'New York'
+    city: 'New York'
   }
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "$none": {
+      "name": "Keanu Reave",
+      "city": "New York"
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -349,7 +465,7 @@ const records = await xata.db.Users.filter({
 
 In addition, you can use operators like `$isNot` or `$notExists` to simplify expressions:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -357,8 +473,18 @@ const records = await xata.db.Users.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "name": {
+      "$isNot": "Keanu Reave"
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -374,12 +500,12 @@ const records = await xata.db.Users.filter({
 ## Partial match
 
 Xata supports several operators for partial matching, but you should consider using the
-[Search API](/docs/typescript-client/search) for more powerful full-text-search.
+[Search API](/docs/sdk/search) for more powerful full-text-search.
 
 To match a value partially, you can use the `$contains` operator. Note that `$contains` operator can
 cause performance issues at scale, because indices cannot be used.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -390,8 +516,18 @@ const records = await xata.db.Users.filter({
 const records = await xata.db.Users.filter('name', contains('Keanu')).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "name": {
+      "$contains": "Keanu"
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -406,7 +542,7 @@ const records = await xata.db.Users.filter('name', contains('Keanu')).getMany();
 
 Wildcards are supported via the `$pattern` operator:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -414,8 +550,18 @@ const records = await xata.db.Users.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "name": {
+      "$pattern": "K*an? R*"
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -438,7 +584,7 @@ escape a backslash by using another backslash.
 
 You can also use the `$startsWith` and `$endsWith` operators:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Users.filter({
@@ -451,8 +597,18 @@ const records = await xata.db.Users.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "name": {
+      "$startsWith": "Keanu"
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -476,7 +632,7 @@ The comparison operators are:
 
 These operators work on strings, numbers, and datetimes. For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Posts.filter({
@@ -484,8 +640,18 @@ const records = await xata.db.Posts.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Posts", {
+  "filter": {
+    "views": {
+      "$gt": 5
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Posts/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -500,23 +666,42 @@ const records = await xata.db.Posts.filter({
 
 Example with date ranges, using the built-in [Xata timestamp columns](/docs/concepts/data-model#xata-createdat):
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Posts.filter({
   $all: [
     {
-      "xata.createdAt": { $ge: new Date("2022-10-25T01:00:00Z") },
+      'xata.createdAt': { $ge: new Date('2022-10-25T01:00:00Z') }
     },
     {
-      "xata.createdAt": { $lt: new Date("2022-10-25T02:00:00Z") },
+      'xata.createdAt': { $lt: new Date('2022-10-25T02:00:00Z') }
     }
-  ],
+  ]
 }).getMany();
 ```
 
-```json
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Posts/query
+```python
+records = xata.data().query("Posts", {
+  "filter": {
+    "$all": [
+      {
+        "xata.createdAt": {
+          "$ge": "2022-10-25T01:00:00.000Z"
+        }
+      },
+      {
+        "xata.createdAt": {
+          "$lt": "2022-10-25T02:00:00.000Z"
+        }
+      }
+    ]
+  }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -549,15 +734,25 @@ This section applies to the `multiple` type, because it's currently the only arr
 
 To test that an array contains a value, use the `$includes` operator:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const records = await xata.db.Posts.filter({
   labels: { $includes: "matrix" },
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Posts", {
+  "filter": {
+    "labels": {
+      "$includes": "matrix"
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Posts/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -573,7 +768,7 @@ const records = await xata.db.Posts.filter({
 The `$includes` operator accepts a custom predicate that will check if any
 array values matches the predicate.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Posts.filter({
@@ -581,8 +776,20 @@ const records = await xata.db.Posts.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Posts", {
+  "filter": {
+    "labels": {
+      "$includes": {
+        "$contains": "mat"
+      }
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Posts/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -601,7 +808,7 @@ The above matches if any of the labels contain the string "mat". You can also ch
 the predicate,
 via the `$includesAll` operator:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const records = await xata.db.Posts.filter({
@@ -609,8 +816,20 @@ const records = await xata.db.Posts.filter({
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Posts", {
+  "filter": {
+    "labels": {
+      "$includesAll": {
+        "$contains": "mat"
+      }
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Posts/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -629,15 +848,27 @@ The above matches if all of the labels contain the string "mat".
 
 Finally, an `$includesNone` operator exists which matches if none of the values in the array match the predicate.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const records = await xata.db.Posts.filter({
   labels: { $includesNone: [{ $contains: "act" }] },
 }).getMany();
 ```
 
+```python
+records = xata.data().query("Posts", {
+  "filter": {
+    "labels": {
+      "$includesNone": {
+        "$contains": "act"
+      }
+    }
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ngs8c.us-east-1.xata.sh/db/tutorial:main/tables/Posts/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {

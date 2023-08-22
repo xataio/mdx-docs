@@ -1,9 +1,9 @@
 ---
-title: Asking questions of your data with AI using TypeScript
+title: Asking questions of your data with AI
 navTitle: Ask AI
-keywords: ['TypeScript', 'TypeScript client', 'AI', 'artificial intelligence', 'language model']
-description: Use TypeScript and AI to ask meaningful questions and extract valuable insights from your data
-slug: typescript-client/ask
+keywords: ['AI', 'artificial intelligence', 'language model']
+description: Use AI to ask meaningful questions and extract valuable insights from your data
+slug: sdk/ask
 published: true
 ---
 
@@ -25,7 +25,7 @@ When you use the `ask` endpoint, you can choose to continue any conversation you
 
 The `ask` endpoint has the following general form:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const result = await xata.db.Tutorial.ask('<question>', {
@@ -56,8 +56,41 @@ const result = await xata.db.Tutorial.ask('<question>', {
 });
 ```
 
+```python
+result = xata.data().ask(
+  "Tutorial",   # reference table
+  "<question>", # question to ask
+  [
+    # array of strings with the rules for the model
+  ],
+  options={
+    "searchType": "keyword|vector",
+    "search": {
+      "fuzziness": 0|1|2,
+      "prefix": "phrase|disabled",
+      "target": {
+         # ...search target options...
+      },
+      "filter": {
+        # ...search filter options...
+      },
+      "boosters": [
+        # ...search boosters options...
+      ]
+    },
+    "vectorSearch": {
+      "column": "<embedding column>",
+      "contentColumn": "<content column>",
+      "filter": {
+        # ...search filter options...
+      }
+    }
+  }
+)
+```
+
 ```jsonc
-   // POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+   // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
    {
        "question": "<question>",
        "rules": [
@@ -123,7 +156,7 @@ You can lookup the records by IDs in the database to get their contents.
 
 ### Keyword search options
 
-The options that you can pass under the `search` key mirror a subset of the options from the [search endpoint](/docs/typescript-client/search#searching-in-a-single-table). See that section of the guide for more details.
+The options that you can pass under the `search` key mirror a subset of the options from the [search endpoint](/docs/sdk/search#searching-in-a-single-table). See that section of the guide for more details.
 
 - `target` to select the columns to search in and to configure column weights.
 - `prefix` to configure the prefix matching behavior.
@@ -133,7 +166,7 @@ The options that you can pass under the `search` key mirror a subset of the opti
 
 ### Vector search options
 
-The options that you can pass under the `search` key mirror a subset of the options from the [vector search endpoint](/docs/typescript-client/vector-search). See that section of the guide for more details.
+The options that you can pass under the `search` key mirror a subset of the options from the [vector search endpoint](/docs/sdk/vector-search). See that section of the guide for more details.
 
 - `column` to select the column that contains the vector embeddings.
 - `contentColumn` to select the column that contains the text content that will be used as context.
@@ -163,7 +196,7 @@ You can find a full Next.js application using the `ask` endpoint with server-sen
 
 ## Asking follow-up questions
 
-Xata supports the functionality of asking follow-up questions (as in a conversational model), which allows you to create ChatGPT-style interfaces for your data. To achieve this, Xata introduces the concept of a **session**. 
+Xata supports the functionality of asking follow-up questions (as in a conversational model), which allows you to create ChatGPT-style interfaces for your data. To achieve this, Xata introduces the concept of a **session**.
 
 A session represents a single conversation between a user and the data in one of your Xata tables. Each session contains relevant data from your tables, known as **context**. The session preserves the rules you specified at its start, along with all the questions sent and answers received during the interaction.
 
@@ -171,14 +204,18 @@ When communicating with OpenAI, the `ask` endpoint ensures that your rules, your
 
 Each session maintains its own cached set of your context, so changes to the underlying data in your database will not affect ongoing conversations. All cached information: your context, rules, and all conversations are automatically removed after 7 days.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const result = await xata.db.Tutorial.ask('<your follow-up message>', { sessionId: '<session id>' });
 ```
 
+```python
+result = xata.data().ask_follow_up("Tutorial", "<your follow-up question>", "<session_id>")
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask/<session id>
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask/<session id>
 {
   "message": "<your follow-up message>"
 }
@@ -194,14 +231,18 @@ To index your custom data in Xata, you can use, for example, this [web crawler](
 
 The following is the simplest example of using the `ask` endpoint:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const result = await xata.db.Tutorial.ask('What is this tutorial about?');
 ```
 
+```python
+result = xata.data().ask("Tutorial", "What is this tutorial about?")
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
 {
   "question": "What is this tutorial about?"
 }
@@ -213,7 +254,7 @@ Because the search step is not specified, keyword search is being used with the 
 
 The following example tunes the rules and the search step, while still using keyword search:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const result = await xata.db.Tutorial.ask('How do I retrieve a single record?', {
@@ -241,8 +282,38 @@ const result = await xata.db.Tutorial.ask('How do I retrieve a single record?', 
 });
 ```
 
+```python
+result = xata.data().ask(
+  "Tutorial",
+  "How do I retrieve a single record?",
+  [
+    "Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
+    "When you give an example, this example must exist exactly in the context given.",
+    "Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with \"It doesn't look like I have enough information to answer that. Check the documentation or contact support.\"",
+    "Your name is DanGPT"
+  ],
+  options={
+    "searchType": "keyword",
+    "search": {
+      "fuzziness": 2,
+      "prefix": "phrase",
+      "target": ["slug", { "column": "title", "weight": 4 }, "content", "section", { "column": "keywords", "weight": 4 }],
+      "boosters": [
+        {
+          "valueBooster": {
+            "column": "section",
+            "value": "guide",
+            "factor": 18
+          }
+        }
+      ]
+    }
+  }
+)
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
 {
   "question": "How do I retrieve a single record?",
   "rules": [
@@ -273,7 +344,7 @@ const result = await xata.db.Tutorial.ask('How do I retrieve a single record?', 
 
 The following example uses vector search:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
  const result = await xata.db.Tutorial.ask("How do a retrieve a single record?", {
 	rules: [
@@ -295,8 +366,33 @@ The following example uses vector search:
  })
  ```
 
+```python
+result = xata.data().ask(
+  "Tutorial",
+  "What is Xata?",
+  [
+    "Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
+    "If the user asks a how-to question, provide a code snippet in the language they asked for with TypeScript as the default.",
+    "Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with \"It doesn't look like I have enough information to answer that. Check the documentation or contact support.\"",
+    "Results should be relevant to the context provided and match what is expected for a cloud database.",
+    "If the question doesn't appear to be answerable from the context provided, but seems to be a question about TypeScript, Javascript, or REST APIs, you may answer from outside of the provided context.",
+    "Your name is DanGPT"
+  ],
+  options={
+    "searchType": "vector",
+    "vectorSearch": {
+      "column": "embeddings",
+      "contentColumn": "content",
+      "filter": {
+        "section": "guide"
+      }
+    }
+  }
+)
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
 
 {
   "question": "What is Xata?",
@@ -323,7 +419,7 @@ The following example uses vector search:
 
 The following example shows a conversation.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const result = await xata.db.Tutorial.ask("What's the difference between summarize and aggregate?", {
@@ -351,8 +447,38 @@ const result = await xata.db.Tutorial.ask("What's the difference between summari
 });
 ```
 
+```python
+result = xata.data().ask(
+  "Tutorial",
+  "What's the difference between summarize and aggregate?",
+  [
+    "Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
+    "When you give an example, this example must exist exactly in the context given.",
+    "Only answer questions that are relate to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with \"It doesn't look like I have enough information to answer that. Check the documentation or contact support.\"",
+    "Your name is DanGPT"
+  ],
+  options={
+    "searchType": "keyword",
+    "search": {
+      "fuzziness": 2,
+      "prefix": "phrase",
+      "target": ["slug", { "column": "title", "weight": 4 }, "content", "section", { "column": "keywords", "weight": 4 }],
+      "boosters": [
+        {
+          "valueBooster": {
+            "column": "section",
+            "value": "guide",
+            "factor": 18
+          }
+        }
+      ]
+    }
+  }
+)
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
 {
   "question": "What's the difference between summarize and aggregate?",
   "rules": [
@@ -393,14 +519,18 @@ From here, you might receive the following response:
 
 Now, using the `session_id` key returned in the response, we're able to continue the dialogue.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const result = await xata.db.TutorialaskContinue('cg52bk1eqh5rd5hndhq95jercs', 'Can you show me an example of both?');
 ```
 
+```python
+result = xata.data().ask_follow_up("Tutorial", "Can you show me an example of both?", "cg52bk1eqh5rd5hndhq95jercs")
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Tutorial/ask/cg52bk1eqh5rd5hndhq95jercs
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask/cg52bk1eqh5rd5hndhq95jercs
 {
   "message": "Can you show me an example of both?"
 }

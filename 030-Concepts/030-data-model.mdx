@@ -234,7 +234,7 @@ be defined in the schema, and must be a number between 2 and 10,000. For example
 ```
 
 In the example above we set the dimension to 1536, which is the output dimension produced by the OpenAI embeddings API, however, you can store embeddings
-produced by any other machine learning model. Once you store the embeddings, you can use vector search for a number of use cases, see the [Similarity/Vector search](/docs/typescript-client/vector-search) section for more information.
+produced by any other machine learning model. Once you store the embeddings, you can use vector search for a number of use cases, see the [Similarity/Vector search](/docs/sdk/vector-search) section for more information.
 
 ### object
 
@@ -286,13 +286,13 @@ The `id` column contains the record ID. It is of type `string`, limited to 255 c
 - globally unique
 - sortable, with the newest record having the highest ID
 
-It is possible to use your own ID values, by using the [insert record with ID API](/docs/typescript-client/insert#creating-a-record-with-a-given-id).
+It is possible to use your own ID values, by using the [insert record with ID API](/docs/sdk/insert#creating-a-record-with-a-given-id).
 
 ### xata.version
 
 The `xata.version` column contains the current version of the record. It is of type `int` and it is automatically incremented any time the record is updated. A newly inserted record will have a version of 0.
 
-This column is meant to be use for optimistic concurrency control, see the [dedicated section](/docs/typescript-client/update#optimistic-concurrency-control) for more information.
+This column is meant to be use for optimistic concurrency control, see the [dedicated section](/docs/sdk/update#optimistic-concurrency-control) for more information.
 
 ### xata.createdAt
 
@@ -308,7 +308,7 @@ A column of type `link` describes a relationship between two entities that you c
 
 You can represent many-to-one relationships between tables by using columns of the `link` type. The value of the link column points to a record in the target table, referenced by the ID.
 
-At query time, you can easily include columns from the target table by specifying the `"columns"` field in the request. For an example, see [Selecting columns from the linked tables](/docs/typescript-client/get#selecting-columns-from-the-linked-tables).
+At query time, you can easily include columns from the target table by specifying the `"columns"` field in the request. For an example, see [Selecting columns from the linked tables](/docs/sdk/get#selecting-columns-from-the-linked-tables).
 
 Also, you can navigate the link in the opposite direction, from the target table to the source table. For example, if you have a `posts` table with an `author` column of type `link` that points to a `users` table. You are able to navigate the link from the `users` table to the `posts` table. At query time, you can get a list of the related posts in a single request by specifying the `<-posts.author` field. The arrow (`<-`) token indicates we are using a backwards relationship established by the `author` column (of type `link`) from `posts`. An example request that retrieves the name and related posts from the `users` table would look like this:
 
