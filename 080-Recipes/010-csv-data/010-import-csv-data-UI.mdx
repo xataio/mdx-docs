@@ -16,8 +16,8 @@ You can import and work with CSV file data in your Xata database.
 
 You can import CSVs using the following methods:
 
-- [Import a CSV file using the Xata UI](/recipes/csv-data/import-data-ui#import-a-csv-file-using-the-ui) (recommeneded)
-- [Import a CSV file using the Xata CLI](/recipes/csv-data/import-data-cli)
+- [Import a CSV file using the Xata UI](/docs/recipes/csv-data/import-data-ui#import-a-csv-file-using-the-ui) (recommeneded)
+- [Import a CSV file using the Xata CLI](/docs/recipes/csv-data/import-data-cli)
 
 ### Considerations
 
@@ -32,18 +32,19 @@ When importing CSV files into Xata, ensure the data aligns with the correct form
 
 Choose a format that matches the data you're entering. Xata columns support the following formats:
 
-| Format Type   | Description                                               | Example                           |
-| ------------- | --------------------------------------------------------- | --------------------------------- |
-| String        | Basic textual information                                 | "Value"                           |
-| Text          | Longer pieces of textual content                          | "Hello world and welcome to Xata" |
-| Integer       | Whole numbers without decimal points                      | `42`                              |
-| Float         | Numbers with decimal points                               | `3.14`                            |
-| Boolean       | Represents true or false values                           | `true`                            |
-| Datetime      | Date and time information                                 | 2023-08-30T00:00:00               |
-| Link to Table | Creates relationships between tables                      | Table: Orders                     |
-| Email         | Email addresses                                           | `user@example.com`                |
-| Multiple      | Multiple values from a predefined set separated by commas | \["Red", "Green"]                 |
-| File          | Reference to an external file, attachment, or document    | `file.pdf`                        |
+| Format Type   | Description                                                                            | Example formats                                                |
+| ------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| String        | Text with or without quotes, less than 180 characters.                                 | `"Value"` or `Value`                                           |
+| Text          | Text with or without quotes, longer than 180 characters.                               | `"Hello world and welcome to Xata"                             |
+| Integer       | Whole numbers without decimal points                                                   | `42`                                                           |
+| Float         | Numbers with decimal points                                                            | `3.14`                                                         |
+| Boolean       | Represents true or false values                                                        | `true`                                                         |
+| Datetime      | Date and time information. Our CSV importer will attempt to parse all common datetimes | `2023-08-30T00:00:00.000Z`or`26-02-88`or any other date format |
+| Link to Table | ID of a record in another table                                                        | `rec\_xyz`or`usr\_xyz`if using custom IDs                      |
+| Email         | Email addresses                                                                        | `user@example.com`                                             |
+| Multiple      | Multiple values seperated by a comma or a JSON array                                   | `Red,Green`or`\["Red", "Green"]\`                              |
+| File          | Not supported                                                                          |                                                                |
+| Vector        | Not supported                                                                          |                                                                |
 
 ### Filename formatting
 
@@ -65,9 +66,7 @@ Importing the CSV file involves transfering data as well as establishing a schem
 1.  Log in to your Xata account and go to the desired Workspace and database. If you haven't created a Workspace as yet, click **Add a Workspace** to do so.
 2.  Choose the preferred branch for your work.
 3.  The left-hand menu under "Tables," click **Add a table** > **Import a CSV file**.
-
-![Import CSV files](../images/import-csv-file.png)
-
+    ![Import CSV files](../images/import-csv-file.png)
 4.  Select **Browse Desktop** to choose a supported file to import. Ensure the filename adheres to the formatting recommendations.
 5.  Click **Begin import** to initiate the import. You'll have access to partially imported records as the process completes.
 
