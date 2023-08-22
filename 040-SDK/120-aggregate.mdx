@@ -12,7 +12,7 @@ published: true
   guarantee backwards compatibility until the functionality is GA.
 </Alert>
 
-The `/aggregate` API allows you to use the search/analytics engine to perform aggregations on your data. Similar to the [search API](/docs/typescript-client/search),
+The `/aggregate` API allows you to use the search/analytics engine to perform aggregations on your data. Similar to the [search API](/docs/sdk/search),
 it is important to understand that the Aggregation API is served from a different store, which means: it is eventually consistent with the main store,
 and it cannot access the linked fields from a table. If these limitations are not acceptable for your use case, you should use the Summarize API. The advantages of using the Aggregation API, over the Summarize API, are:
 
@@ -116,7 +116,7 @@ The code above combines three aggregations: `topValues`, `dateHistogram` and `av
 
 ## Filtering
 
-The `/aggregate` API can be combined with top-level filters using the syntax of the [filtering API](/typescript-client/filtering).
+The `/aggregate` API can be combined with top-level filters using the syntax of the [filtering API](/docs/sdk/filtering).
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts

@@ -124,7 +124,7 @@ We are using logical replication events today to replicate the data from Postgre
 
 One interesting challenge with processing replication events is that it’s generally hard to guarantee exactly-once delivery and the ordering of events. Solutions for delivery in order usually imply a single thread of processing. Instead, we have chosen to use version numbers for the records, which are incremented every time a record is updated or deleted. On the consumer side, these versions can be used to both identify duplicate events and to know in which order they are safe to apply.
 
-The version field for a record is stored in a special column, which is exposed in the Xata API because it is also useful for [optimistic concurrency control](/docs/typescript-client/update#optimistic-concurrency-control).
+The version field for a record is stored in a special column, which is exposed in the Xata API because it is also useful for [optimistic concurrency control](/docs/sdk/update#optimistic-concurrency-control).
 
 Another typical challenge with logical replication is that the number of events created can become quite large and overwhelm the PostgreSQL replication slot. For example, imagine running a statement `UPDATE foo` with no `WHERE` condition executed against a table with millions of rows. PostgreSQL executes that in a single transaction at the end of which all the rows in the table have been changed and need to be passed through the replication slot. Issues like this make it hard to rely on logical replication in the general case of arbitrary SQL access. Because we control the API, we can ensure that updates and deletes are done in transactions of reasonable size, which can be rate limited in order to protect the system from overload.
 

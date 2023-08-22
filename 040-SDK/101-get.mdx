@@ -315,7 +315,7 @@ In this example, the `author` is a link column from `Posts` to `Users` and `team
 
 ## Filtering Records
 
-This section contains a few examples of how to use filtering. To find all supported operators and examples for them, see the [Filtering](/docs/typescript-client/filtering) section of the API Guide.
+This section contains a few examples of how to use filtering. To find all supported operators and examples for them, see the [Filtering](/docs/sdk/filtering) section of the API Guide.
 
 To filter the results, use the `filter` function/parameter. For example:
 
@@ -428,7 +428,7 @@ The example above demonstrates several operators:
 - `$contains`: which can be applied to string columns, and does a substring match.
 - `$any`: which can be used to create OR conditions. The record matches if any of the conditions enclosed are true.
 
-To see the rest of the operators available, check out the [Filtering](/docs/typescript-client/filtering) guide.
+To see the rest of the operators available, check out the [Filtering](/docs/sdk/filtering) guide.
 
 ## Sorting the Results
 
@@ -552,7 +552,7 @@ Note that random sorting does not apply to a specific column, hence the special 
 ## Paginating Results
 
 This section doesn't apply to the TypeScript SDK, because it is offering a higher-level abstraction over the pagination mechanism. See the
-[query functions](/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) section. Only REST API examples are provided in this section.
+[query functions](/docs/sdk/get#the-typescript-sdk-functions-for-querying) section. Only REST API examples are provided in this section.
 
 Xata offers two types of pagination:
 
@@ -722,7 +722,7 @@ You can find more information about pagination in the [API reference](/docs/api-
 
 ## Next Steps
 
-Now that we can get retrieve data from a database, we might be interested in [creating more data](/docs/typescript-client/insert), [updating data](/docs/typescript-client/update) or [deleting data](/docs/typescript-client/delete). We've got guides for each of these operations.
+Now that we can get retrieve data from a database, we might be interested in [creating more data](/docs/sdk/insert), [updating data](/docs/sdk/update) or [deleting data](/docs/sdk/delete). We've got guides for each of these operations.
 
 ## Using the Replica Store
 
