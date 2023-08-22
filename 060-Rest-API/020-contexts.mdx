@@ -1,7 +1,7 @@
 ---
 title: REST API contexts
 navTitle: API contexts
-keywords: ['rest', 'api', 'context']
+keywords: ['rest', 'api', 'context', 'open-api']
 description: Terminology and rules for working with Xata
 slug: rest-api/contexts
 published: true
@@ -44,3 +44,32 @@ In the above:
 - `{dbname}` is the name of the database you are interacting with.
 
 You can find out your workspace domain by navigating to the **Configuration** tab in the Xata Web UI, or in the **Get Code Snippet** fly out under **Set up Xata Project**.
+
+## OpenAPI specifications
+
+To provide an easy way to use your favorite tools for exploring the Xata API, you can use the [OpenAPI](https://www.openapis.org/) specification:
+
+* [Core API spec](https://xata.io/api/openapi?scope=core)
+* [Workspace API spec](https://xata.io/api/openapi?scope=workspace)
+
+## Tool recommendations
+
+### Insomnia
+
+[Insomnia](https://insomnia.rest/) is a leading Open Source API Client, and collaborative API design platform for REST, SOAP, GraphQL, and GRPC.
+
+![Xata API in Insomnia](images/insomnia.png)
+
+### Postman
+
+[Postman](https://www.postman.com/) makes API development easy, offering tools to simplify each step of the API building process and streamlines collaboration so you can test APIs faster.
+
+![Xata API in Postman](images/postman.png)
+
+### OpenAPI Codegen
+
+With [OpenAPI Codegen](https://github.com/fabien0102/openapi-codegen) you an generate TypeScript fetcher functions or typed react-query hooks from your OpenAPI schema.
+
+> ⚠️ Using generated react-query components in this context will leak your API key! The REST API must always be called in a server-side environment!
+
+![Xata API with openapi-codegen](images/openapi-codegen.png)

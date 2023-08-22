@@ -1,9 +1,9 @@
 ---
-title: Python SDK examples
+title: Examples
 navTitle: Examples
 keywords: ['examples']
 description: Instance credentials, response, method parameters, examples, record operations
-slug: python-sdk/examples
+slug: sdk/python/examples
 published: true
 ---
 
@@ -18,6 +18,7 @@ More examples are available in the [GitHub repository of the SDK](https://github
 ## At a glance
 
 Below are the parameters passed to the methods in the following examples:
+
 - `xata.records().insert()`: table name (str), record (dictionary)
 - `xata.records().insert_with_id()`: table name (str), record id (str), record (dictionary)
 - `xata.records().update_with_id()_`: table name (str), record id (str), record (dictionary)
@@ -40,48 +41,57 @@ from xata.client import XataClient
 xata = XataClient(db_name="my_db")
 
 record = {
-    "name": "Peter Parker",
-    "job": "Spiderman",
+  "name": "Peter Parker",
+  "job": "Spiderman",
 }
 
 # Insert record to table "Avengers" and let Xata generate a record Id
+
 resp = xata.records().insert("Avengers", record)
 assert resp.is_success()
 print("Record Id: %s" % resp["id"])
 
 # Insert record to table "Avengers" with your own record Id "spidey-1"
+
 resp = xata.records().insert_with_id("Avengers", "spidey-1", record)
 assert resp.is_success()
 
 # Update the record with Id "spidey-1" in table "Avengers"
+
 record["job"] = "your friendly neighborhood spider man"
 resp = xata.records().update_with_id("Avengers", "spidey-1", record)
 assert resp.is_success()
 
 # Upsert: Update or Insert a record
+
 record = {
-    "name": "Bruce Banner",
-    "job": "Hulk",
+  "name": "Bruce Banner",
+  "job": "Hulk",
 }
 resp = xata.records().upsert_with_id("Avengers", "hulk-1", record)
+
 # On insert status code = 201
+
 assert resp.status_code == 201
 assert resp.is_success()
 
 record["job"] = "the incredible hulk"
 resp = xata.records().upsert_with_id("Avengers", "spidey-1", record)
+
 # On update status code = 200
+
 assert resp.status_code == 200
 assert resp.is_success()
 ```
+
 ```python
 from xata.client import XataClient
 
 client = XataClient(db_name="my_db")
 
 record = {
-    "name": "Peter Parker",
-    "job": "Spiderman",
+  "name": "Peter Parker",
+  "job": "Spiderman",
 }
 
 # Insert record to table "Avengers" and let Xata generate a record Id
@@ -112,6 +122,7 @@ resp = client.records().upsertRecordWithID("Avengers", "spidey-1", record)
 # On update status code = 200
 assert resp.status_code == 200
 ```
+
 </TabbedCode>
 
 ## Get a record from a table
@@ -124,18 +135,17 @@ from xata.client import XataClient
 records = XataClient().records()
 
 spiderman = records.get("Avengers", "spidey")
-print(spiderman.is_success())
-# True
+print(spiderman.is_success()) # True
+
 print(spiderman)
 # {"id": "spidey", "name": "Peter Parker", "job": "spiderman"}
 
 # If the record with the Id does not exist, the status code will be 404
 batman = records.get("Avengers", "bruce-wayne")
-print(batman.status_code)
-# 404
-print(batman.is_success())
-# False
+print(batman.status_code) # 404
+print(batman.is_success()) # False
 ```
+
 ```python
 from xata.client import XataClient
 records = XataClient().records()
@@ -149,6 +159,7 @@ batman = records.getRecord("Avengers", "bruce-wayne")
 print(batman.status_code)
 # 404
 ```
+
 </TabbedCode>
 
 ## Query records from a table (using server-side filters and sorts)
@@ -160,15 +171,17 @@ The following example shows how to query a table and apply filters and sorts. We
 from xata.client import XataClient
 
 resp = xata.data().query("Avengers", {
-  "columns": ["name", "thumbnail"],  # the columns we want returned
-  "filter": { "job": "spiderman" },  # optional filters to apply
-  "sort": { "name": "desc" }  # optional sorting key and order (asc/desc)
+  "columns": ["name", "thumbnail"], # the columns we want returned
+  "filter": { "job": "spiderman" }, # optional filters to apply
+  "sort": { "name": "desc" } # optional sorting key and order (asc/desc)
 })
 assert resp.is_success()
 print(resp["records"])
 # [{"id": "spidey", "name": "Peter Parker", "job": "spiderman"}]
+
 # Note it will be an array, even if there is only one record matching the filters
 ```
+
 ```python
 from xata.client import XataClient
 
@@ -185,6 +198,7 @@ print(data["records"])
 # [{"id": "spidey", "name": "Peter Parker", "job": "spiderman"}]
 # Note it will be an array, even if there is only one record matching the filters
 ```
+
 </TabbedCode>
 
 ## Delete a Record from a Table
@@ -195,17 +209,17 @@ from xata.client import XataClient
 records = XataClient().records()
 
 record = records.delete("Avengers", "captain-america")
-print(record.status_code)
-# 204
+print(record.status_code) # 204
 ```
+
 ```python
 from xata.client import XataClient
 records = XataClient().records()
 
 record = records.deleteRecord("Avengers", "captain-america")
-print(record.status_code)
-# 204
+print(record.status_code) # 204
 ```
+
 </TabbedCode>
 
 ## Insert records in bulk
@@ -219,14 +233,15 @@ from xata.client import XataClient
 xata = XataClient(api_key="REDACTED_API_KEY", db_name="my_db", branch_name="feature-042")
 
 avengers = [
-    {"name": "Peter Parker", "job": "Spiderman"},
-    {"name": "Bruce Banner", "job": "Hulk"},
-    {"name": "Steve Rodgers Parker", "job": "Captain America"},
-    {"name": "Tony Stark", "job": "Iron Man"},
+  {"name": "Peter Parker", "job": "Spiderman"},
+  {"name": "Bruce Banner", "job": "Hulk"},
+  {"name": "Steve Rodgers Parker", "job": "Captain America"},
+  {"name": "Tony Stark", "job": "Iron Man"},
 ]
 resp = xata.records().bulk_insert("Avengers", {"records": avengers})
 assert resp.is_success()
 ```
+
 ```python
 from xata.client import XataClient
 
@@ -241,31 +256,32 @@ avengers = [
 resp = client.records().bulkInsertTableRecords("Avengers", {"records": avengers})
 assert resp.status_code == 200
 ```
+
 </TabbedCode>
 
 ## Ask AI Endpoint with follow up
 
-The `ask` endpoint uses search or similarity search algorithms to find relevant information from your database. Please refer to [this page](/docs/typescript-client/ask) to get more information about the endpoint.
+The `ask` endpoint uses search or similarity search algorithms to find relevant information from your database. Please refer to [this page](/docs/sdk/ask) to get more information about the endpoint.
 
 <TabbedCode tabs={['1.x', '0.x']}>
 ```python
 xata = XataClient()
 
 answer = xata.data().ask("xata", "does xata have a python sdk")
-
 assert answer.is_success()
+
 print("Answer : %s" % answer["answer"])
 print("Records: %s" % answer["records"])
 print("Session: %s" % answer["sessionId"])
 
 # Ask a follow up question using the sessionId from the previous question
 follow_up = xata.data().ask_follow_up("xata", answer["sessionId"], "what is the best way to do bulk?")
-
 assert follow_up.is_success()
+
 print("Answer : %s" % follow_up["answer"])
 print("Records: %s" % follow_up["records"])
-
 ```
+
 ```python
 client = XataClient(api_key="REDACTED_API_KEY", workspace_id="REDACTED_WS_ID")
 client.set_db_and_branch_names("harry-potter", "main")
@@ -281,6 +297,7 @@ print("Records: %s" % resp.json()["records"])
 
 # follow up questions only available in 1.x version of the SDK
 ```
+
 </TabbedCode>
 
 ## Get the current User
@@ -292,18 +309,18 @@ from xata.client import XataClient
 xata = XataClient()
 
 user = xata.users().get()
-print(user.status_code)
-# 200
+print(user.status_code) # 200
 ```
+
 ```python
 from xata.client import XataClient
 
 client = XataClient()
 
 user = client.users().getUser()
-print(user.status_code)
-# 200
+print(user.status_code) # 200
 ```
+
 </TabbedCode>
 
 ## Handling RFC 3339 dates

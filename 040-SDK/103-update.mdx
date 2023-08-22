@@ -1,9 +1,9 @@
 ---
-title: Updating records with TypeScript
+title: Updating records
 navTitle: Updating records
-keywords: ['TypeScript', 'TypeScript client', 'update', 'updating']
-description: Use the Xata SDK with TypeScript or JSON to update records
-slug: typescript-client/update
+keywords: ['update', 'updating']
+description: Use the Xata SDK to update records
+slug: sdk/update
 published: true
 ---
 
@@ -11,14 +11,20 @@ published: true
 
 You can overwrite a full record with a request like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.createOrReplace('myid', { name: 'Keanu Reeves' });
 ```
 
+```python
+user = xata.records().upsert("Users", "myid" {
+  "name": "Keanu Reeves"
+})
+```
+
 ```jsonc
-// PUT https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/data/rec_c8hnbch26un1nl0rthkg
+// PUT https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
 
 {
   "name": "Keanu Reeves"
@@ -33,7 +39,7 @@ Note that in the above example, the whole record was overwritten. If you want to
 
 In order to do a partial update to a record, you can use a request like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('myid', { email: 'newemail@example.com' });
@@ -43,8 +49,14 @@ const user = await xata.db.Users.update('myid', { email: 'newemail@example.com' 
 user.update({ email: 'newemail@example.com' });
 ```
 
+```python
+user = xata.records().update("Users", "myid" {
+  "email": "newemail@example.com"
+})
+```
+
 ```jsonc
-// PATCH https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/myid
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
 
 {
   "email": "newemail@example.com"
@@ -55,14 +67,20 @@ user.update({ email: 'newemail@example.com' });
 
 It's also possible to update a record if it exists, or create it if it doesn't exist:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reaves' });
+const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reeves' });
+```
+
+```python
+user = xata.records().upsert("Users", "myid" {
+  "name": "Keanu Reeves"
+})
 ```
 
 ```jsonc
-// POST https://tutorial-ng7s8c.xata.sh/db/tutorial:main/tables/users/data/rec_c8hnbch26un1nl0rthkg
+// POST https://tutorial-ng7s8c.xata.sh/db/tutorial:main/tables/users/data/{record_id}
 
 {
   "email": "keanu@example.com",
@@ -83,14 +101,22 @@ The numeric types (int and float) support basic mathematical operations: additio
 
 Here is a simple example that increments a counter:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.update('myid', { counter: { $increment: 1 } });
+const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $increment: 1 } });
+```
+
+```python
+user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
+  "counter": {
+    "$increment": 1
+  }
+})
 ```
 
 ```jsonc
-// PATCH https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/rec_c8hnbch26un1nl0rthkg
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
 
 {
   "counter": {
@@ -103,14 +129,22 @@ const user = await xata.db.Users.update('myid', { counter: { $increment: 1 } });
 
 And here is an example that adds 10 to the counter:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.update('myid', { counter: { $increment: 10 } });
+const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $increment: 10 } });
+```
+
+```python
+user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
+  "counter": {
+    "$increment": 10
+  }
+})
 ```
 
 ```jsonc
-// PATCH https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/rec_c8hnbch26un1nl0rthkg
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
 
 {
   "counter": {
@@ -123,14 +157,22 @@ const user = await xata.db.Users.update('myid', { counter: { $increment: 10 } })
 
 And here is an example that divides the counter by 2:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.update('myid', { counter: { $divide: 2 } });
+const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $divide: 2 } });
+```
+
+```python
+user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
+  "counter": {
+    "$divide": 2
+  }
+})
 ```
 
 ```jsonc
-// PATCH https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/rec_c8hnbch26un1nl0rthkg
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
 
 {
   "counter": {
@@ -165,11 +207,32 @@ Each call only writes to a single table, so columns to `update` should live in t
 
 After executing a request, you will notice that the version field of the record is incremented automatically. You can read the version in the special column `xata.version`.
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 user.xata;
-// { version: 2, "createdAt": "2023-05-15T08:21:31.96526+01:00", "updatedAt": "2023-05-15T21:58:54.072595+01:00" }
+// { 
+//   "version": 2, 
+//   "createdAt": "2023-05-15T08:21:31.96526+01:00", 
+//   "updatedAt": "2023-05-15T21:58:54.072595+01:00" 
+// }
+```
+
+```python
+{
+  "address": {
+    "street": "123 New St",
+    "zipcode": 12345
+  },
+  "email": "keanu@example.com",
+  "fname": "Keanu Reeves",
+  "id": "rec_c8hnbch26un1nl0rthkg",
+  "xata": {
+    "version": 2,
+    "createdAt": "2023-05-15T08:21:31.96526+01:00",
+    "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+  }
+}
 ```
 
 ```json
@@ -183,8 +246,8 @@ user.xata;
   "id": "rec_c8hnbch26un1nl0rthkg",
   "xata": {
     "version": 2,
-    "updatedAt": "2023-05-15T21:58:54.072595+01:00",
-    "createdAt": "2023-05-15T08:21:31.96526+01:00"
+    "createdAt": "2023-05-15T08:21:31.96526+01:00",
+    "updatedAt": "2023-05-15T21:58:54.072595+01:00"
   }
 }
 ```
@@ -195,13 +258,13 @@ The `version` field can be used to perform optimistic concurrency control, also 
 
 To prevent this, you can pass the `ifVersion` parameter to the PUT request. The value for `ifVersion` should be the value of `xata.version` from when you retrieved the record. For example, if you want to update the record only if the version is 0, you can send the following request:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const updatedUser = await xata.db.Users.update(
-  'myid1',
+  'rec_c8hnbch26un1nl0rthkg',
   {
-    name: 'Keanu Reaves',
+    name: 'Keanu Reeves',
     email: 'keanu@xata.io'
   },
   {
@@ -210,8 +273,20 @@ const updatedUser = await xata.db.Users.update(
 );
 ```
 
+```python
+user = xata.records().update(
+  "Users", 
+  "rec_c8hnbch26un1nl0rthkg", 
+  {
+    "name": 'Keanu Reeves',
+    "email": 'keanu@xata.io'
+  },
+  if_version=0
+)
+```
+
 ```jsonc
-// PUT https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/data/rec_c8hnbch26un1nl0rthkg?ifVersion=0
+// PUT https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?ifVersion=0
 
 {
   "email": "keanu@xata.io",
@@ -236,8 +311,8 @@ The way to treat this error depends on your application. You might be able to re
 
 ## Updating multiple records
 
-Multiple record update operations can be performed in a single call using the [Transaction](/docs/typescript-client/transaction) API.
+Multiple record update operations can be performed in a single call using the [Transaction](/docs/sdk/transaction) API.
 
 ## Next Steps
 
-Great! We can now update data safely in our databases. Let's now explore how we [delete data](/docs/typescript-client/delete) from a database. Alternatively, we can also look into [inserting data](/docs/typescript-client/insert) or using [transactions](/docs/typescript-client/transaction) to perform multiple operations with a single call. We've got guides for each of these operations.
+Great! We can now update data safely in our databases. Let's now explore how we [delete data](/docs/sdk/delete) from a database. Alternatively, we can also look into [inserting data](/docs/sdk/insert) or using [transactions](/docs/sdk/transaction) to perform multiple operations with a single call. We've got guides for each of these operations.
