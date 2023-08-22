@@ -357,7 +357,7 @@ export default function Home() {
 Next, let's update the page to get all the posts using Xata, and
 list them within the page:
 
-```tsx title="app/routes/_index.tsx" {1-3,5-17,20,19-59}
+```tsx title="app/routes/_index.tsx" {1-3,5-17,19-54}
 import { Match, Switch, For } from 'solid-js';
 import { useRouteData } from 'solid-start';
 import { createServerData$ } from 'solid-start/server';
@@ -416,10 +416,10 @@ export default function Home() {
 
 Let's break down what's happening in the code above.
 
-Import [`Match` and `Switch`](https://www.solidjs.com/docs/latest/api#switchmatch), and [`For`](https://www.solidjs.com/docs/latest/api#for) from Solid to be used when rending the UI. Then import
-[`useRouteData`](https://start.solidjs.com/api/useRouteData) and the server-only [`createServerData$`](https://start.solidjs.com/api/createServerData) function to be used when retrieving data from Xata.
-
-**TODO: ----------------------------------> from here**
+Import [`Match` and `Switch`](https://www.solidjs.com/docs/latest/api#switchmatch), and
+[`For`](https://www.solidjs.com/docs/latest/api#for) from Solid to be used when rending the UI. Then import
+[`useRouteData`](https://start.solidjs.com/api/useRouteData) and the server-only
+[`createServerData$`](https://start.solidjs.com/api/createServerData) function to be used when retrieving data from Xata.
 
 ```tsx
 import { Match, Switch, For } from 'solid-js';
@@ -427,14 +427,13 @@ import { useRouteData } from 'solid-start';
 import { createServerData$ } from 'solid-start/server';
 ```
 
-Next, a Remix framework server-only [`loader`](https://remix.run/docs/en/main/route/loader) function is defined
-and exported. This function provides data to the route when rendering. Within that function, an instance of the `XataClient`
-is created using `getXataClient` and assigned to the `xata` variable. Then, use the `xata` client instance
-to get all the posts stored in the database. This is achieved via the auto-generated `Posts` property
+Next, define and export a `routeData` function. This returns a call to `createServerData$` which is a SolidStart function
+that exists specifically for accessing resources only available on the server like databases. This function provides data to the route when rendering.
+Within that function, create an instance of the `XataClient`, passing in the values stored in environment variables for `apiKey` and `branch`. Then,
+use the `xata` client instance to get all the posts stored in the database. This is achieved via the auto-generated `Posts` property
 which exposes a number of helper functions. In this case, use the
 [`getAll`](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) function to get
-all the Post records. Finally, return the posts making use of the imported Remix [`json`](https://remix.run/docs/en/main/utils/json)
-helper function.
+all the Post records. Finally, return the `posts` as the functions return value.
 
 ```tsx
 import { XataClient } from '~/xata';
@@ -460,17 +459,15 @@ export function routeData() {
   information.
 </Alert>
 
-Finally, within the `Index` function, use the [`useLoaderData` Remix hook](https://remix.run/docs/en/main/hooks/use-loader-data)
-retrieve the `posts` data.
+Finally, within the `Home` function, use the `useRouteData` hook to retrieve the `posts` data.
 
-Then, update the UI to display the results. If no records are present, show a message
-saying, "No blog posts found". Otherwise, loop through the `posts` using `posts.map` and access the columns of
-each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
-the blog post was published, `slug` to link to individual blog posts (which will be used use later), `title` for the title of
-the post, and `description` for the textual descript of the post. Since `pubData` has been serialized to a string, convert
-it back into a `Date` and then use `.toDateString()` to get a slightly nicer formatted date representation for the UI:
+Then, update the UI to display the results. Make use of Solid's `Switch` control flow component in combination with `Match`;
+If no records are present, show a message saying, "No blog posts found". Otherwise, loop through the `posts` using `<For>`
+and access the columns of each Post record using their properties: `pubDate` to show the date the blog post was published,
+`slug` to link to individual blog posts (which will be used use later), `title` for the title of
+the post, and `description` for the textual description of the post:
 
-```tsx {2,6-27}
+```tsx
 export default function Home() {
   const resource = useRouteData<typeof routeData>();
   const data = resource();
@@ -515,6 +512,8 @@ This results in the page looking like the following:
 
 You'll notice that the post heading and "Read more →" text use the `slug` property to link to a page that doesn't
 presently exist. That's the next step in this guide.
+
+**TODO: from here ------------------------------------>**
 
 ## Query and show a single posts
 
