@@ -51,6 +51,16 @@ jobs:
         run: |
           echo "URL=$(cat deploy_url.txt)" >> $GITHUB_OUTPUT
 
+      - name: Wait for vercel deploy
+        uses: UnlyEd/github-action-await-vercel@v1
+        id: await-vercel
+        with:
+          deployment-url: steps.get-url.outputs.URL
+          timeout: 240
+          poll-interval: 10
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
       - name: Find Comment
         uses: peter-evans/find-comment@v2
         if: github.event_name == 'pull_request'
