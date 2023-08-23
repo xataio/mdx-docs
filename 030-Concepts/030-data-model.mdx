@@ -31,7 +31,7 @@ The following is an example of a record that you can store natively in Xata:
 }
 ```
 
-The keys in the JSON are the column names. The values are the data. The corresponding [schema file](/docs/concepts/schema) for the above record looks like the following:
+The keys in the JSON are the column names. The values are the data. The corresponding [schema file](/docs/concepts/schema) for the above record, looks like the following:
 
 ```json
 {
@@ -87,7 +87,7 @@ Example definition:
 
 ### text
 
-The `text` type represents a long-form text. The difference to `string` is that the values of the `text` columns are indexed and optimised for free-text search, but not for exact matching. Set `notNull` to require a value.
+The `text` type represents a long-form text. Unlike the `string type`, `text` column values are indexed and optimized for efficient free-text searches, rather than exact matches. If a value must be provided, you can use the `notNull` setting to enforce this requirement.
 
 Example definition:
 
@@ -100,7 +100,7 @@ Example definition:
 
 ### int
 
-The `int` type represents an integer. Internally it's represented as a 64-bit signed integer. This means the minimum value is `-9223372036854775808` and the maximum value is `9223372036854775807`. Set `unique` to make sure the integers you insert are unique. Set `notNull` to require a value.
+The `int` type represents an integer. Internally, it's represented as a 64-bit signed integer. This means the minimum value is `-9223372036854775808` and the maximum value is `9223372036854775807`. Set to `unique` to ensure the integers you insert are unique. Set `notNull` to require a value.
 
 Example definition:
 
@@ -270,7 +270,7 @@ To insert the value for a `link` column, use the target record ID as the value. 
 
 ### file
 
-The `file` type is the representation of a file in the Xata database. For every file, the column stores a JSON objects with a predefined schema. The file object is used to upload a file, retrieve its content, as well as update or query its metadata.
+The `file` type is the representation of a file in the Xata database. For every file, the column stores JSON objects with a predefined schema. The file object is used to upload a file, retrieve its content, as well as update or query its metadata.
 
 The object consists of the following fields:
 
@@ -326,11 +326,11 @@ The `file` column type does not support constraints like `not null` or `unique` 
 
 ### file[]
 
-The `file[]` (file array) type represents a collection of files stored in the same table cell. Every array item is a JSON object similar to the file object, with the addition of an `id` field, which is used to refer the item in the collection.
+The `file[]` (file array) type represents a collection of files stored in the same table cell. Every array item is a JSON object similar to the file object, with the addition of an `id` field, which is used to refer to the item.
 
 The `id` is automatically generated if it is not passed during the time of creation.
 
-Example of adding multiple files in a single column value:
+The folloiwing is an example of adding multiple files in a single column value:
 
 ```json
 {
@@ -381,7 +381,7 @@ All file fields described above are available for file array items. The fields a
 
 Note that although the file fields can be queried, because the column value is an array it cannot be used in filters or summaries.
 
-The `file[]` column type does not support constraints like `not null` or `unique` or parameters like default value. The default value for a `file[]` column is empty array `[]`.
+The `file[]` column type does not support constraints like `not null` or `unique` or parameters like default values. The default value for a `file[]` column is an empty array `[]`.
 
 ## Special Columns
 
@@ -402,7 +402,7 @@ It is possible to use your own ID values, by using the [insert record with ID AP
 
 The `xata.version` column contains the current version of the record. It is of type `int` and it is automatically incremented any time the record is updated. A newly inserted record will have a version of 0.
 
-This column is meant to be use for optimistic concurrency control, see the [dedicated section](/docs/sdk/update#optimistic-concurrency-control) for more information.
+This column is meant to be used for optimistic concurrency control. For more information, see the [docs](/docs/sdk/update#optimistic-concurrency-control).
 
 ### xata.createdAt
 
@@ -566,7 +566,7 @@ You can represent many-to-many relationships between two tables by using a third
 }
 ```
 
-In the above, you have links to the `mentors` and `mentees` tables, but you can also add other columns that are specific for the relationship. In the SQL world, this is called an associative or a [junction table](https://en.wikipedia.org/wiki/Associative_entity).
+In the above, you have links to the `mentors` and `mentees` tables, but you can also add other columns that are specific for the relationship. In the SQL world, this is called an associative table or a [junction table](https://en.wikipedia.org/wiki/Associative_entity).
 
 ## Default values
 
