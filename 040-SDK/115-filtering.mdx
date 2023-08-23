@@ -976,7 +976,7 @@ records = xata.data().query("Posts", {
 
 The above matches if any of the labels contain the string "mat". You can also check that all values in the array match the predicate, via the `$includesAll` operator:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const records = await xata.db.Posts.filter({
@@ -994,6 +994,14 @@ records = xata.data().query("Posts", {
     }
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+    "statement": "SELECT * FROM \"Posts\" WHERE cardinality(\"labels\") = (SELECT sum((label LIKE '%mat%') :: int) FROM unnest(labels) AS label);"
+}
 ```
 
 ```jsonc
