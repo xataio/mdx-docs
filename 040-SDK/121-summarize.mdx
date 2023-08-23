@@ -37,9 +37,9 @@ Referring to the table above; if I'd like to understand how my store has been go
 
 Here, the column is `product`. The `summary` - in it's two parts - will be `average` as the function, and `sale_price` as the column. In plain language, you might ask "give me the average sale price for each product". The request would look like:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 ```ts
-const records = await xata.db.titles.summarize({
+const records = await xata.db.sales.summarize({
   filter: { product: 'basketball' },
   columns: ['product'],
   summaries: {
@@ -49,13 +49,21 @@ const records = await xata.db.titles.summarize({
 ```
 
 ```python
-records = xata.data().summarize("titles", {
+records = xata.data().summarize("sales", {
   "filter": { "product": "basketball" },
   "columns": ["product"],
   "summaries": {
     "average_sale_price": { "average": "sale_price" }
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT product,AVG(sale_price) FROM \"sales\" WHERE product = 'basketball' GROUP BY product;"
+}
 ```
 
 ```jsonc
@@ -85,9 +93,9 @@ Let's try one more example to help clarify the concepts.
 
 Here, as above, the column is `product`. We will also want to run a calculation on `sale_price`, however, we want to add up each sale price rather than average them, so our `summary` equation will be `sum`. Our request looks like:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 ```ts
-const records = await xata.db.titles.summarize({
+const records = await xata.db.sales.summarize({
   columns: ['product'],
   summaries: {
     total_sales: { sum: 'sale_price' }
@@ -96,12 +104,20 @@ const records = await xata.db.titles.summarize({
 ```
 
 ```python
-records = xata.data().summarize("titles", {
+records = xata.data().summarize("sales", {
   "columns": ["product"],
   "summaries": {
     "total_sales": { "sum": "sale_price" }
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement":  "SELECT product,SUM(sale_price) FROM \"sales\" GROUP BY product;"
+}
 ```
 
 ```jsonc
@@ -135,19 +151,28 @@ Before we get started, keep in mind that we keep reference material that can be 
 
 In its most basic form `summarize` can be used as a "distinct" method to get the unique values or value combinations of the summarized columns.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
 ```ts
-  const records = await xata.db.titles.summarize({
+  const records = await xata.db.sales.summarize({
     columns: ["username"],
     summaries: {},
   });
 ```
 
 ```python
-records = xata.data().summarize("titles", {
+records = xata.data().summarize("sales", {
   "columns": ["username"],
   "summaries": {}
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT username,COUNT(username) FROM \"sales\" GROUP BY username;"
+}
 ```
 
 ```json
@@ -180,7 +205,7 @@ One can specify several summaries in the same request. As long as the names are 
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
-const records = await xata.db.titles.summarize({
+const records = await xata.db.sales.summarize({
   summaries: {
     // count all rows
     "all_sales": {"count": "*"},
@@ -207,7 +232,7 @@ const records = await xata.db.titles.summarize({
 ```
 
 ```python
-records = xata.data().summarize("titles", {
+records = xata.data().summarize("sales", {
   "summaries": {
     # count all rows
     "all_sales": { "count": "*" },
@@ -271,7 +296,7 @@ You may submit explicit column names, use wildcards, and reference linked column
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
-const records = await xata.db.titles.summarize({
+const records = await xata.db.sales.summarize({
   columns: [
     'settings.*',       // group by all columns in the `settings` object
     'username',         // group by the username field
@@ -281,7 +306,7 @@ const records = await xata.db.titles.summarize({
 ```
 
 ```python
-records = xata.data().summarize("titles", {
+records = xata.data().summarize("sales", {
   "columns": [
     "settings.*",       # group by all columns in the `settings` object
     "username",         # group by the username field
@@ -315,9 +340,10 @@ Keep in mind: `filter` does **not** support filtering on the result of a summary
 
 Sort lets you decide how you'd like your results sorted. You may sort on `columns` you've explicitly referenced, as well as on `summaries` you've requested. When wanting to sort by a summary, you use the name you've chosen.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
 ```ts
-const records = await xata.db.titles.summarize({
+const records = await xata.db.sales.summarize({
   columns: {"store_name"},
   summaries: {
     "total_sales": {"count": "*"}
@@ -332,7 +358,7 @@ const records = await xata.db.titles.summarize({
 ```
 
 ```python
-records = xata.data().summarize("titles", {
+records = xata.data().summarize("sales", {
   "columns": {"store_name"},
   "summaries": {
     "total_sales": {"count": "*"}
@@ -344,6 +370,14 @@ records = xata.data().summarize("titles", {
     {"store_name": "asc"}
   ]
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT store_name,COUNT(*) AS total_sales FROM \"sales\" GROUP BY store_name ORDER BY total_sales desc, store_name asc;"
+}
 ```
 
 ```jsonc
@@ -375,19 +409,19 @@ If this limitation is too small, we ask that you move your workload to the [aggr
 An example of a page request looks like:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
 ```ts
-const records = await xata.db.titles.summarize({
+const records = await xata.db.sales.summarize({
   pagination: {
-    size: 50
+    size: 50  // return up to 50 results
   }
 });
 ```
 
 ```python
-records = xata.data().summarize("titles", {
+records = xata.data().summarize("sales", {
   "page": {
-    # return up to 50 results
-    "size": 50
+    "size": 50  # return up to 50 results
   }
 })
 ```
@@ -416,9 +450,10 @@ The key feature `summariesFilter` adds is the ability to take a summary and filt
 
 An example looks like:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
 ```ts
-const records = await xata.db.titles.summarize({
+const records = await xata.db.sales.summarize({
   columns: ['product_name'],
   summaries: {
     revenue: { sum: 'price' },
@@ -434,7 +469,7 @@ const records = await xata.db.titles.summarize({
 ```
 
 ```python
-records = xata.data().summarize("titles", {
+records = xata.data().summarize("sales", {
   "columns": ["product_name"],
   "summaries": {
     "revenue": { "sum": "price" },
@@ -447,6 +482,14 @@ records = xata.data().summarize("titles", {
     "items_sold": { "$ge": 1000 }
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT product_name, SUM(price) AS revenue, COUNT(*) AS items_sold FROM \"sales\" GROUP BY product_name HAVING SUM(price) >= 100 AND COUNT(*) >= 1000;"
+}
 ```
 
 ```jsonc
@@ -476,9 +519,10 @@ The default value for the consistency option is `strong`, which retrieves data f
 
 It is recommended to use the Replica Store for summarize requests wherever possible, in order to get the best possible performance out of your branch's assigned units.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
 ```ts
-const records = await xata.db.titles.summarize({
+const records = await xata.db.sales.summarize({
   filter: { product: 'basketball' },
   columns: ['product'],
   summaries: {
@@ -489,7 +533,7 @@ const records = await xata.db.titles.summarize({
 ```
 
 ```python
-records = xata.data().summarize("titles", {
+records = xata.data().summarize("sales", {
   "filter": {
     "product": "basketball"
   },
@@ -501,6 +545,15 @@ records = xata.data().summarize("titles", {
   },
   "consistency": "eventual"
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT product, AVG(sale_price) AS average_sale_price FROM \"sales\" WHERE product = 'basketball' GROUP BY product;",
+  "consistency": "eventual"
+}
 ```
 
 ```jsonc
