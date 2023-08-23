@@ -33,7 +33,7 @@ npm install -g @xata.io/cli
 ```
 
 Once installed, authenticate the Xata CLI with your Xata account. If you don't already have an account, you can use the
-same workflow to signup for a new account. Run the following command to begin the authentication workflow:
+same workflow to sign up for a new account. Run the following command to begin the authentication workflow:
 
 ```sh
 xata auth login
@@ -301,7 +301,7 @@ Ensure the `<slot />` component is before the closing `</main>` element.
 
 ## Query and list the posts
 
-Now the SvelteKit app is ready to for Xata to be integrated into the codebase.
+Now the SvelteKit app is ready for Xata to be integrated into the codebase.
 
 Let's start by making use of
 [SvelteKit's loading data mechanism](https://kit.svelte.dev/docs/load) to retrieve all the blog posts from Xata
@@ -326,7 +326,7 @@ export const load: PageServerLoad = async () => {
 };
 ```
 
-Begin by importing the `PageServierLoad` type definition from the SvelteKit generated `$types` module.
+Begin by importing the `PageServerLoad` type definition from the SvelteKit generated `$types` module.
 
 Then, import `XataClient` from the auto-generated `src/xata.ts` and create a new instance, passing in
 the updated environment variables, `VITE_XATA_API_KEY` and `VITE_XATA_BRANCH`.
@@ -387,7 +387,7 @@ variable is automatically assigned by the framework.
 Next, the UI is rendered. If no records are present, show a message saying, "No blog posts found". Otherwise, loop through the
 `data.posts` using Svelte's [each logic block](https://svelte.dev/docs/logic-blocks#each) and access the columns of
 each Post record using their properties: `pubDate` to show the date the blog post was published, `slug` to link to individual
-blog posts (which will be used use later), `title` for the title of the post, and `description` for the textual descript of
+blog posts (which will be used use later), `title` for the title of the post, and `description` for the textual description of
 the post.
 
 This results in the page looking like the following:
@@ -511,7 +511,7 @@ export const load: PageServerLoad = async ({ request }) => {
 };
 ```
 
-Update the `load` function to take an argument, and deconstruct the `request` property from that argument.
+Update the `load` function to take an argument and deconstruct the `request` property from that argument.
 Create a new `URL` instance and get the `q` query string from the URL using `url.searchParams.get('q')`, assigning
 the result to a variable named `search`.
 
