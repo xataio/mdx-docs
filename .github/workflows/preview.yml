@@ -40,6 +40,7 @@ jobs:
             --env XATA_PREVIEW=none \
             --build-env XATA_BRANCH=main \
             --env XATA_BRANCH=main \
+            --no-wait \
             > deploy_url.txt
         env:
           VERCEL_ORG_ID: team_lMj2cFnO13wwm6LWz3X5kulx
