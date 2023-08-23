@@ -1,15 +1,15 @@
 ---
-title: Getting records with TypeScript
+title: Getting records
 navTitle: Getting records
-keywords: ['TypeScript', 'TypeScript client']
-description: Use the Xata SDK with TypeScript or JSON to get records
-slug: typescript-client/get
+keywords: ['get records']
+description: Use the Xata SDK to get records
+slug: sdk/get
 published: true
 ---
 
 The general form of a query is:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 import { getXataClient } from "./xata";
@@ -22,11 +22,28 @@ const data = await client
 .sort({ ... })
 .page({ ... })
 .getMany();
+```
 
+```python
+from xata.client import XataClient
+
+xata = XataClient()
+
+data = xata.data().query("{table_name}", {
+  "columns": [...],
+  "filter": {
+    ...
+  },
+  "sort": {
+    ...
+  },
+  "page": {
+  }
+})
 ```
 
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db_branch_name}/tables/{table_name}/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "columns": [...],
@@ -47,21 +64,25 @@ For the REST API example, note that a POST request is used, even though the data
 
 All the requests are optional, so the simplest query request looks like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const teams = await xata.db.Teams.getMany();
 ```
 
+```python
+teams = xata.data().query("Teams")
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Teams/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 ```
 
 </TabbedCode>
 
 The response looks like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 [
   {
@@ -72,6 +93,29 @@ The response looks like this:
     }
   }
 ]
+```
+
+```python
+  "records": [
+    {
+      "id": "rec_c8hng2h26un90p8sr7k0",
+      "name": "Matrix",
+      "owner": {
+        "id": "myid"
+      },
+      "xata": {
+        "version": 0,
+        "createdAt": "2023-05-15T08:21:31.96526+01:00",
+        "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+      }
+    }
+  ],
+  "meta": {
+    "page": {
+      "cursor": "jMq7DcIwEIDhnjH-2sWRAsItAT2KkOU8bAgB3Zkqyu6IDei_",
+      "more": false
+    }
+  }
 ```
 
 ```json
@@ -147,13 +191,17 @@ Unless you have a specific reason to prefer another method, we generally recomme
 
 You can retrieve a record with a given ID using a request like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const user = await xata.db.Users.read("myid");
 ```
 
+```python
+user = xata.data().query("Users", "myid")
+```
+
 ```jsonc
-// GET https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/data/myid
+// GET https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
 ```
 
 </TabbedCode>
@@ -164,15 +212,21 @@ By default, the Query API returns all columns of the queried table. For link col
 
 For example, if you are only interested in the name and the city of the user, you can make a request like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const users = await xata.db.Users
   .select(["name", "city"])
   .getMany();
 ```
 
+```python
+users = xata.data().query("Users", {
+  "columns": ["name", "city"]
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "columns": ["name", "city"]
@@ -189,7 +243,7 @@ A sample response will look like this:
     "city": "New York"
   },
   "id": "myid",
-  "name": "Keanu Reave",
+  "name": "Keanu Reeves",
   "xata": {
     "version": 1,
     "createdAt": "2023-05-15T08:21:31.96526+01:00",
@@ -205,14 +259,20 @@ It's worth noting that the special columns [id](/docs/concepts/data-model#id), [
 The same syntax can be used to select columns from a linked table, therefore adding new columns to the response. For example, to query all the columns
 of the Teams table and also add all the columns of the owner user, you can use:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
 ```
 
+```python
+users = xata.data().query("Users", {
+  "columns": ["*", "owner.*"]
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Teams/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 {
   "columns": ["*", "owner.*"]
 }
@@ -222,13 +282,23 @@ const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
 
 You can do this transitively as well, for example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
-const users = await xata.db.Posts.select([
+const posts = await xata.db.Posts.select([
   "title",
   "author.*",
   "author.team.*",
 ]).getMany();
+```
+
+```python
+posts = xata.data().query("Posts", {
+  "columns": [
+    "title", 
+    "author.*", 
+    "author.team.*"
+  ]
+})
 ```
 
 ```jsonc
@@ -245,18 +315,26 @@ In this example, the `author` is a link column from `Posts` to `Users` and `team
 
 ## Filtering Records
 
-This section contains a few examples of how to use filtering. To find all supported operators and examples for them, see the [Filtering](/docs/typescript-client/filtering) section of the API Guide.
+This section contains a few examples of how to use filtering. To find all supported operators and examples for them, see the [Filtering](/docs/sdk/filtering) section of the API Guide.
 
 To filter the results, use the `filter` function/parameter. For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.filter({ email: 'keanu@example.com' }).getMany();
 ```
 
+```python
+users = xata.data().query("Users", {
+  "filter": {
+    "email": "keanu@example.com"
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -269,36 +347,24 @@ const users = await xata.db.Users.filter({ email: 'keanu@example.com' }).getMany
 
 Will return only the records with the given email address.
 
-To refer to nested columns, you can use either the dot notation:
-
-<TabbedCode tabs={['TypeScript', 'JSON']}>
-
-```ts
-const users = await xata.db.Users.filter({ 'zipcode': 12345 }).getMany();
-```
-
-```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
-
-{
-  "filter": {
-    "zipcode": 12345
-  }
-}
-```
-
-</TabbedCode>
-
 You can also refer to a linked column in filters, for example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.filter({ 'team.name': 'Matrix' }).getMany();
 ```
 
+```python
+users = xata.data().query("Users", {
+  "filter": {
+    "team.name": "Matrix"
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
@@ -313,7 +379,7 @@ Note that in the above, `name` is a column in the `Teams` table, and we can refe
 
 To give a more complex filtering example, consider the following:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const users = await xata.db.Users
   .filter({
@@ -326,21 +392,27 @@ const users = await xata.db.Users
   .getMany();
 ```
 
+```python
+users = xata.data().query("Users", {
+  "filter": {
+    "zipcode": {"$gt": 100},
+    "$any": [
+      {"name": { "$contains": "Keanu" }},
+      {"name": { "$contains": "Carrie" }}
+    ]
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "filter": {
-    "zipcode": {
-      "$gt": 100
-    },
+    "zipcode": {"$gt": 100},
     "$any": [
-      {
-        "name": { "$contains": "Keanu" }
-      },
-      {
-        "name": { "$contains": "Carrie" }
-      }
+      {"name": { "$contains": "Keanu" }},
+      {"name": { "$contains": "Carrie" }}
     ]
   }
 }
@@ -356,20 +428,28 @@ The example above demonstrates several operators:
 - `$contains`: which can be applied to string columns, and does a substring match.
 - `$any`: which can be used to create OR conditions. The record matches if any of the conditions enclosed are true.
 
-To see the rest of the operators available, check out the [Filtering](/docs/typescript-client/filtering) guide.
+To see the rest of the operators available, check out the [Filtering](/docs/sdk/filtering) guide.
 
 ## Sorting the Results
 
 To sort the results, use the `sort` function/parameter. For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.sort('name', 'asc').getMany();
 ```
 
+```python
+users = xata.data().query("Users", {
+  "sort": {
+    "name": "asc"
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "sort": {
@@ -382,15 +462,23 @@ const users = await xata.db.Users.sort('name', 'asc').getMany();
 
 To sort descending, use `desc` instead of `asc`:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const users = await xata.db.Users
   .sort("name", "desc")
   .getMany();
 ```
 
+```python
+users = xata.data().query("Users", {
+  "sort": {
+    "name": "desc"
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "sort": {
@@ -403,23 +491,28 @@ const users = await xata.db.Users
 
 It is also possible to have secondary sort criteria. For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMany();
 ```
 
+```python
+users = xata.data().query("Users", {
+  "sort": [
+    {"city": "desc"},
+    {"name": "asc"}
+  ]
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "sort": [
-    {
-      "city": "desc"
-    },
-    {
-      "name": "asc"
-    }
+    {"city": "desc"},
+    {"name": "asc"}
   ]
 }
 ```
@@ -428,14 +521,22 @@ const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMa
 
 To sort results in random order, use `random` instead of `desc` or `asc`:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.sort('*', 'random').getMany();
 ```
 
+```python
+users = xata.data().query("Users", {
+  "sort": {
+    "*": "random"
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "sort": {
@@ -451,7 +552,7 @@ Note that random sorting does not apply to a specific column, hence the special 
 ## Paginating Results
 
 This section doesn't apply to the TypeScript SDK, because it is offering a higher-level abstraction over the pagination mechanism. See the
-[query functions](/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) section. Only REST API examples are provided in this section.
+[query functions](/docs/sdk/get#the-typescript-sdk-functions-for-querying) section. Only REST API examples are provided in this section.
 
 Xata offers two types of pagination:
 
@@ -464,7 +565,7 @@ The depth of cursor-based pagination is unrestricted. When running a query, you 
 
 For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const page = await xata.db.Users.getPaginated({
@@ -472,8 +573,16 @@ const page = await xata.db.Users.getPaginated({
 });
 ```
 
+```python
+users = xata.data().query("Users", {
+  "page": {
+    "size": 2
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "page": {
@@ -532,7 +641,7 @@ Returns only the first two records:
 
 In this case, notice that the `meta.page` objects contains `"more": true`. This is an indication that there are more records available. The `"cursor"` key is a pointer to the current page. To retrieve the next page of results, you can make a request like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const page1 = await xata.db.Users.getPaginated({
@@ -542,8 +651,24 @@ const page1 = await xata.db.Users.getPaginated({
 const page2 = await page1.nextPage();
 ```
 
+```python
+page_1 = xata.data().query("Users", {
+  "page": {
+    "size": 2
+  }
+})
+
+# if page_1.has_more_results()
+page_2 = xata.data().query("Users", {
+  "page": {
+    "size": 2,
+    "after": page_1.get_cursor()
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "page": {
@@ -563,7 +688,7 @@ The offset-page pagination is limited to querying up to 1000 records and is reco
 
 An example of offset based pagination:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const page = await xata.db.Users.getPaginated({
@@ -571,8 +696,17 @@ const page = await xata.db.Users.getPaginated({
 });
 ```
 
+```python
+page = xata.data().query("Users", {
+  "page": {
+    "size": 10,
+    "offset": 10
+  }
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "page": {
@@ -588,7 +722,7 @@ You can find more information about pagination in the [API reference](/docs/api-
 
 ## Next Steps
 
-Now that we can get retrieve data from a database, we might be interested in [creating more data](/docs/typescript-client/insert), [updating data](/docs/typescript-client/update) or [deleting data](/docs/typescript-client/delete). We've got guides for each of these operations.
+Now that we can get retrieve data from a database, we might be interested in [creating more data](/docs/sdk/insert), [updating data](/docs/sdk/update) or [deleting data](/docs/sdk/delete). We've got guides for each of these operations.
 
 ## Using the Replica Store
 
@@ -613,7 +747,7 @@ records = xata.data().query("Users", {
 ```
 
 ```jsonc
-//POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Users/query
+//POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "columns": ["*"],

@@ -1,0 +1,88 @@
+---
+title: Deleting records
+navTitle: Deleting records
+keywords: ['delete', 'deleting', 'remove']
+description: Remove records using the Xata SDK
+slug: sdk/delete
+published: true
+---
+
+To delete a record you can execute, for example:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
+```ts
+const user = await xata.db.Users.delete('rec_cd8s3r8avc42pi67m13g');
+
+// or, using the delete method on the record object:
+user.delete();
+```
+
+```python
+user = xata.records().delete("Users", "rec_cd8s3r8avc42pi67m13g")
+```
+
+```jsonc
+// DELETE https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
+```
+
+</TabbedCode>
+
+In case the record with the given ID doesn't exist, the REST API returns a 404 and the TypeScript SDK throws an exception.
+
+Transactions are used when deleting multiple records:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
+```ts
+const users = await xata.db.Users.delete(['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1oncchhigq95n2g']);
+```
+
+```python
+users = xata.records().transaction({
+  "operations": [
+    {
+      "delete": {
+        "table": "Users",
+        "id": "rec_cd8s3r8avc42pi67m13g"
+      }
+    },
+    {
+      "delete": {
+        "table": "Users",
+        "id": "rec_cgh9o1oncchhigq95n2g"
+      }
+    }
+  ]
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
+{
+  "operations": [
+    {
+      "delete": {
+        "table": "Users",
+        "id": "rec_cd8s3r8avc42pi67m13g"
+      }
+    },
+    {
+      "delete": {
+        "table": "Users",
+        "id": "rec_cgh9o1oncchhigq95n2g"
+      }
+    }
+  ]
+}
+```
+
+</TabbedCode>
+
+[Transactions](/docs/sdk/transaction) will not fail a delete operation if no record is found. All operations in a transaction must succeed otherwise it is rolled back.
+
+## Next Steps
+
+Now that you have seen how to do the basic create, remove, update, and delete operations, you can check out the docs on using the [free text search API](/docs/sdk/search), which is a new super power that Xata gives you.
+
+You can also review the pages on [getting data](/docs/sdk/get), [updating data](/docs/sdk/update), [inserting data](/docs/sdk/insert). We've got guides for each of these operations.

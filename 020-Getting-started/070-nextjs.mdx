@@ -1,46 +1,47 @@
 ---
-title: Next.js with Xata starter guide
+title: Get started with Next.js and Xata
 navTitle: Next.js
-keywords: ['nextjs']
+keywords: ['nextjs', 'full-text search']
 description: Get started with Next.js and Xata
 slug: getting-started/nextjs
 published: true
 ---
 
-In this tutorial we'll create a new Xata database and query it using `getServerSideProps()` from [Next.js][2]. Before you begin you will need a user account. If you haven't done so already, please [sign up or log in][0].
+In this guide, we'll create a new [Next.js][2] application and walk through adding Xata database and search
+functionality. We'll build the following basic blog application features:
 
-## Create a new database
+1.  Lists all posts
+2.  Retrieve and view a single post
+3.  Blog post full-text fuzzy search
 
-From the [Xata UI][0], create a new database called `my-xata-app`, assigning it to your closest region.
+Although this application is a simple blog, you can apply these basics to other types of Next.js applications.
 
-Next create a basic `Posts` table with the following basic schema:
+<ArticleVideo
+  platform="html"
+  src="https://github.com/xataio/mdx-docs/raw/main/020-Getting-started/videos/getting-started-app.mp4"
+/>
 
-- `title`: A `string` column.
-- `body`: A `long text` column.
-- `pubDate`: A `date` column
+The completed [Next.js and Xata code](https://github.com/xataio/examples/tree/main/apps/nextjs-getting-started) for this
+guide is available via the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
 
-Then use the `generate random data` button on the bottom of the screen to populate it with some random data. Your table should look like the screenshot below. This is all we need to do within the UI. The rest of this tutorial will cover the CLI and Next.js code we'll need to write to interact with the database we just set up.
+## Before you begin
 
-![Posts table](images/posts.png)
+Install the Xata CLI:
 
-## Install the Xata CLI
-
-Xata comes with a CLI (command line tool) to help connect your project code to Xata. It does this by setting up environment variables for your database location and API keys to securely fetch against your data. We recommend installing Xata globally to make this easier. The xata client is delivered through [npm](https://nodejs.dev/en/download/) which you'll need to have installed before this step.
-
-```bash
-# Installs the CLI globally
+```sh
 npm install -g @xata.io/cli
 ```
 
-### Authenticate the CLI to your account
+Once installed, authenticate the Xata CLI with your Xata account. If you don't already have an account, you can use the
+same workflow to signup for a new account. Run the following command to begin the authentication workflow:
 
-The CLI needs to know who is running it. This means authenticating it against our logged in user and generating an API key to use when we push, pull or create any databases we make. To set this up run:
-
-```bash
+```sh
 xata auth login
 ```
 
-This should open your browser and give a confirmation message. Remember to make sure you are logged in to Xata before performing this step. On completion this command will create a new API key for your user account which you should [see in account settings page within the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for each OS). It should look like this:
+On completion, the command will create a new API key for your user account, which you should see in the [account
+settings page within the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for
+each OS). It looks like this:
 
 ```toml
 # .config/xata/credentials
@@ -50,170 +51,625 @@ apiKey=YOUR_API_KEY_HERE
 
 ## Create a new Next.js app
 
-To start lets create a Next.js application. Set it up with typescript support so that we can utilize the SDK later in this tutorial.
+Let's begin by creating a new Next.js application:
 
-```bash
-npx create-next-app@latest --typescript my-xata-app
+```sh
+npx create-next-app@latest --typescript xata-nextjs
 ```
 
-For the purpose of this tutorial, we're going to assume you named this project `my-xata-app`. Move to that directory, and run `npm run` to see your website at http://localhost:3000
+<Expand title="npx create-next-app output">
 
-### Initialize Xata in your my-xata-app directory
+```sh
+$ npx create-next-app@latest --typescript xata-nextjs
+Need to install the following packages:
+create-next-app@13.4.13
+Ok to proceed? (y)
+✔ Would you like to use ESLint? … No / Yes
+✔ Would you like to use Tailwind CSS? … No / Yes
+✔ Would you like to use `src/` directory? … No / Yes
+✔ Would you like to use App Router? (recommended) … No / Yes
+✔ Would you like to customize the default import alias? … No / Yes
+Creating a new Next.js app in ./xata-nextjs.
 
-Xata needs a few things to communicate with the databases we set up. It needs to know the location of the database, along with the API key it can use to request data from that location. These are stored in the project root directory within `.env` and `.xatarc` respectively. We can use the newly installed CLI to initialize any project with these details.
+Using npm.
 
-```bash
-# cd into /path-to/my-xata-app
+Initializing project with template: app-tw
+
+Installing dependencies:
+
+- react
+- react-dom
+- next
+- typescript
+- @types/react
+- @types/node
+- @types/react-dom
+- tailwindcss
+- postcss
+- autoprefixer
+- eslint
+- eslint-config-next
+
+added 314 packages, and audited 315 packages in 22s
+
+107 packages are looking for funding run `npm fund` for details
+
+found 0 vulnerabilities Initialized a git repository.
+
+Success! Created xata-nextjs at ./xata-nextjs
+```
+
+</Expand>
+
+Once the command has completed, go to the `xata-nextjs` directory and run the application:
+
+```sh
+cd xata-nextjs
+npm run dev
+```
+
+By default, the application will run on `http://localhost:3000`.
+
+## Create a new database
+
+With the Xata CLI installed and logged in and a new Next.js application in place, use the Xata CLI to create a new
+database. Accept all the prompt defaults for the following command except for the region selection where
+you should choose the region closest to your application users:
+
+```sh
 xata init
 ```
 
-This will prompt you to answer some questions about whether you are creating a new database or utilizing an existing one. If you followed the instructions above you should choose to use the existing `my-xata-app` database. Also choose to use `TypeScript codegen` to follow along with this tutorial. On completion the CLI will create `.env`, `.xatarc`, and `src/xata.ts` files within your project folder with the correct credentials to access your database.
+<Expand title="xata init output">
 
-Your `.env` file should look something like this.
+```sh
+$ xata init
+🦋 Initializing project... We will ask you some questions.
 
-```bash
-# You should now have a ~/my-xata-project/.env file
+You have a single workspace, using it by default: your-workspace-hc84d7
+✔ Select a database or create a new one › <Create a new database>
+✔ New database name … xata-nextjs
+✔ Select a region › eu-west-1
+✔ Add .env to .gitignore? … yes
+✔ Generate code and types from your Xata database › TypeScript
+✔ Choose the output path for the generated code … src/xata.ts
+
+Setting up Xata...
+
+Created Xata config: .xatarc
+
+Creating .env file
+set XATA_API_KEY=xau**********************************
+set XATA_BRANCH=main
+
+Added .env file to .gitignore
+
+i Running npm install --save @xata.io/client
+
+added 1 package, and audited 316 packages in 992ms
+
+107 packages are looking for funding
+run `npm fund` for details
+
+found 0 vulnerabilities
+
+No new migrations to pull from main branch
+Generated Xata code to ./src/xata.ts
+
+✔ Project setup with Xata 🦋
+
+i Setup tables and columns at https://app.xata.io/workspaces/xata-workspace-hc84d7/dbs/xata-nextjs:eu-west-1
+
+i Use xata pull main to regenerate code and types from your Xata database
+```
+
+</Expand>
+
+On completion, the CLI will create `.env`, `.xatarc`, and `src/xata.ts` files within your project folder with the
+correct credentials to access your database.
+
+Your `.env` file should look something like this:
+
+```bash title=".env"
 XATA_API_KEY=YOUR_API_KEY_HERE
 XATA_BRANCH=main
 ```
 
-Since we asked for TypeScript support it also created files that provide typings and functions to call using Xata's TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows.
+Since we selected TypeScript support, it also created files that provide typings and functions to call using Xata's
+TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows:
 
 ```json
 {
-  "databaseUrl": "https://my-xata-app-database-url"
+  "databaseUrl": "https://xata-nextjs-database-url"
   "codegen": {
     "output": "src/xata.ts"
   }
 }
 ```
 
-The `src/xata.ts` includes generated code that typically you should never touch manually. If you change the schema of your `my-xata-app` database, like adding a column to `Posts`, you'll want to run `xata pull` to update the typings within that file.
+The `src/xata.ts` file includes generated code you should typically never touch manually.
 
-```bash
-# To update the contents of ~/project/src/.xatarc
-xata pull
+## Define the database schema and import CSV data
+
+You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide, we'll walk through
+using the Xata CLI and a CSV file to:
+
+1.  Auto-generate a schema based on column headings for names and data types inferred from the column values
+2.  Import data to the database
+
+First, download the
+[example blog posts CSV file](https://raw.githubusercontent.com/xataio/examples/main/seed/blog-posts.csv).
+You can either do this manually or by running the following command:
+
+```sh
+curl --create-dirs -o seed/blog-posts.csv https://raw.githubusercontent.com/xataio/examples/main/seed/blog-posts.csv
 ```
 
-## Create a new page to output our posts
+Next, import the CSV:
 
-Create a new file at `src/pages/posts.tsx` and start with a typical Hello World output. Next JS will render and pages added to the `pages` directory as distinct URL. This means we can find our new page at https://localhost:3000/posts
+```sh
+xata import csv seed/blog-posts.csv --table Posts --create
+```
+
+<Expand title="xata import csv output">
+
+```sh
+$ xata import csv seed/blog-posts.csv --table Posts --create
+i 45 rows successfully imported 0 errors. 100% complete
+✔ Completed
+```
+
+</Expand>
+
+Now, if you open up the [Xata UI][1] and navigate to your database, you will see the **Posts** table. Alternatively,
+you can run the command `xata browse` to open a browser window:
+
+![Posts table](images/xata-table-posts.png)
+
+Click **Schema** to see the schema definition with the inferred data types:
+
+![Posts schema](images/xata-schema-posts.png)
+
+You'll also see `xata.*` [special columns](https://xata.io/docs/concepts/data-model#special-columns) automatically
+created and maintained by Xata.
+
+With the database schema in place, the final step is to generate the code that allows us to access and query the data
+from our Next.js application. To do this, run:
+
+```sh
+xata pull main
+```
+
+<Expand title="xata pull main output">
+
+```sh
+$ xata pull main
+Successfully pulled 1 migrations from main branch
+Running codegen...
+Generated Xata code to ./src/xata.ts
+```
+
+</Expand>
+
+This updates the contents of `src/xata.ts` based on the schema defined on the `main` branch of our database. So, if you
+make any further changes to the schema, run `xata pull <branch>` to update the auto-generated code.
+
+## Query and list the posts
+
+Now we're ready to integrate Xata into the Next.js codebase. Let's start by stripping back the landing page,
+`src/app/page.tsx`, to a bare template:
+
+```tsx title="src/app/page.tsx"
+export default async function Home() {
+  return (
+    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
+      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
+        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
+          <a href="/">Get started with Xata and Next.js</a>
+        </p>
+        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+          <a href="https://xata.io" className="w-20">
+            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+          </a>
+        </div>
+      </div>
+
+      <div className="w-full max-w-5xl mt-16"></div>
+    </main>
+  );
+}
+```
+
+Next, import the auto-generated `getXataClient` function from `src/xata.ts`, get all the posts using the client, and
+list them within the page:
+
+```tsx title="src/app/page.tsx" {1-3,6,21-42}
+import { getXataClient } from '@/xata';
+
+const xata = getXataClient();
+
+export default async function Home() {
+  const posts = await xata.db.Posts.getAll();
+
+  return (
+    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
+      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
+        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
+          <a href="/">Get started with Xata and Next.js</a>
+        </p>
+        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+          <a href="https://xata.io" className="w-20">
+            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+          </a>
+        </div>
+      </div>
+
+      <div className="w-full max-w-5xl mt-16">
+        {posts.length === 0 && <p>No blog posts found</p>}
+        {posts.map((record) => (
+          <div key={record.id} className="mb-16">
+            <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
+              {record.pubDate?.toDateString()}
+            </p>
+            <h2 className="text-2xl mb-2">
+              <a href={`posts/${record.slug}`}>{record.title}</a>
+            </h2>
+            <p className="text-purple-950 dark:text-purple-200 mb-5">
+              {record.description}
+            </p>
+            <a
+              href={`posts/${record.slug}`}
+              className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
+            >
+              Read more &rarr;
+            </a>
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}
+```
+
+Let's break down what's happening in the code above.
+
+First, import the `getXataClient` function and assign the result of calling that function to a variable named `xata`:
 
 ```tsx
-export default function PostsListsPage() {
-  return (
-    <>
-      <h1>My xata posts</h1>
-    </>
-  );
-}
+import { getXataClient } from '@/xata';
+
+const xata = getXataClient();
 ```
 
-Next let's import the `getXataClient` function which was provided to us by the `xata init` command that was run earlier. It should have placed the file in `src/xata.ts`. You'll notice that if we save this file, Next.js will error out with the following message.
+Then, in the `Home` function, use the `xata` client instance to get all the posts stored in the database. This is
+achieved via the auto-generated `Posts` property which exposes a number of helper functions. In this case, we use the [`getAll`](https://xata.io/docs/sdk/get#the-typescript-sdk-functions-for-querying) function to get all the Post records.
+
+```tsx
+export default async function Home() {
+  const posts = await xata.db.Posts.getAll();
+
+  ...
+}
+```
 
 <Alert status="warning">
-  Error: You are trying to use Xata from the browser, which is potentially a non-secure environment. If you understand
-  the security concerns, such as leaking your credentials, pass `enableBrowser: true` to the client options to remove
-  this error.
+  `getAll()` returns all the records in the query results. This is dangerous on
+  large tables (more than 10,000 records), as it will potentially load a lot of
+  data into memory and create a lot of requests to the server. In most
+  situations, you should use `getMany()` or `getPaginated()`. See the [querying
+  documentation](https://xata.io/docs/sdk/get#the-typescript-sdk-functions-for-querying)
+  for more information.
 </Alert>
 
-```tsx {1-3}
-import { getXataClient } from '../xata';
-// We'll assign the client to xata to make it easier to call
-const xata = getXataClient();
+Finally, we update the UI to display the result of the `getAll` call. If no records are present, we show a message
+saying, "No blog posts found". Otherwise, we loop through the `posts` using `posts.map` and access the columns of
+each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
+the blog post was published, `slug` to link to individual blog posts (which we'll use later), `title` for the title of
+the post, and `description` for the textual descript of the post:
 
-export default function PostsListPage() {
-  return (
-    <>
-      <h1>My xata posts</h1>
-    </>
-  );
-}
+```tsx
+<div className="w-full max-w-5xl mt-16">
+  {posts.length === 0 && <p>No blog posts found</p>}
+  {posts.map((record) => (
+    <div key={record.id} className="mb-16">
+      <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
+        {record.pubDate?.toDateString()}
+      </p>
+      <h2 className="text-2xl mb-2">
+        <a href={`posts/${record.slug}`}>{record.title}</a>
+      </h2>
+      <p className="text-purple-950 dark:text-purple-200 mb-5">
+        {record.description}
+      </p>
+      <a
+        href={`posts/${record.slug}`}
+        className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
+      >
+        Read more &rarr;
+      </a>
+    </div>
+  ))}
+</div>
 ```
 
-To fix the error we'll need to utilize the Xata client in Next.js's server-side mode. This can be done with the `getServerSideProps` function that Next.js provides. On save, you'll notice the page still errors.
+This results in the page looking like the following:
 
-<Alert status="warning">
-  Error: Error serializing `.records[0].pubDate` returned from `getServerSideProps` in "/posts". Reason: `object`
-  ("\[object Date]") cannot be serialized as JSON. Please only return JSON serializable data types.
-</Alert>
+![List of blog posts](images/getting-started-blog-listing.png)
 
-```tsx {4-15}
-import { getXataClient, Posts } from '../xata';
-const xata = getXataClient();
+You'll notice that the post heading and "Read more →" text use the `slug` property to link to a page that doesn't
+presently exist. That's the next step in this guide.
 
-// We will make the query to Xata on the server.
-// This will allow the query to read the API_KEY from the .env file
-export const getServerSideProps = async () => {
-  const records: Posts[] = await xata.db.Posts.getMany();
-  return {
-    props: {
-      records: records.map((record) => ({
-        ...record
-      }))
-    }
-  };
-};
+## Query and show a single posts
 
-export default function PostsListPage() {
+To handle the single posts identified by a `slug` we need to make use of Next.js
+[dynamic routes](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes).
+
+Create a new file, `src/app/posts/[slug]/page.tsx`, where the Next.js framework uses the directory `[slug]` to capture
+the name of the slug:
+
+```tsx title="src/app/posts/[slug]/page.tsx" {1,22}
+export default async function Post({ params }: { params: { slug: string } }) {
   return (
-    <>
-      <h1>My xata posts</h1>
-    </>
-  );
-}
-```
-
-This error is because Xata stores date fields as an object. To use it within this application we'll need to serialize it to a string before it can be used.
-
-```tsx {6}
-// ...
-records: records.map((record) => ({
-  ...record,
-  // We need to convert our date from an object to a string to use it here
-  // If you didn't set up your pubDate column as "not null" Typescript may complain, so we'll add ? after pubDate for this example
-  pubDate: record.pubDate?.toDateString(),
-})),
-// ...
-```
-
-On save our page should contain no errors. The last thing to do is pass our newly created server-side props to the render so we can see the results on the page.
-
-```tsx {16-32}
-import { getXataClient, Posts } from '../xata';
-const xata = getXataClient();
-
-export const getServerSideProps = async () => {
-  const records: Posts[] = await xata.db.Posts.getMany();
-  return {
-    props: {
-      records: records.map((record) => ({
-        ...record,
-        pubDate: record.pubDate?.toDateString()
-      }))
-    }
-  };
-};
-
-// Pass the props defined above to the page and map against it
-export default function PostsListPage({ records }: { records: Posts[] }) {
-  return (
-    <>
-      <h1>My xata posts</h1>
-      {records.map((record: Posts) => (
-        <div key={record.id}>
-          <h2>{record.title}</h2>
-          <p>{record.id}</p>
-          <p>{record.body}</p>
-          <p>{record.pubDate}</p>
+    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
+      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
+        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
+          <a href="/">Get started with Xata and Next.js</a>
+        </p>
+        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+          <a href="https://xata.io" className="w-20">
+            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+          </a>
         </div>
-      ))}
-    </>
+      </div>
+
+      <div className="w-full max-w-5xl mt-16">
+        <p className="mb-2">
+          <a href="/" className="text-purple-600">
+            &larr; Back to blog
+          </a>
+        </p>
+
+        <h1 className="text-3xl mb-2">{params.slug}</h1>
+      </div>
+    </main>
   );
 }
 ```
 
-At this point you should have a basic understanding of how to query Xata records from the Database with Next.js.
+There's a lot more markup in this page than there is dynamic functionality. The important functionality is that the slug
+value is passed into the function via a `params` parameter and accessed using `params.slug`.
+
+Next, let's update the page to bring in the Xata client and use the slug value to fetch the post from the database:
+
+```tsx title="src/app/posts/[slug]/page.tsx" {1-6,28-32}
+import { getXataClient } from '@/xata';
+
+const xata = getXataClient();
+
+export default async function Post({ params }: { params: { slug: string } }) {
+  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
+
+  return (
+    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
+      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
+        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
+          <a href="/">Get started with Xata and Next.js</a>
+        </p>
+        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+          <a href="https://xata.io" className="w-20">
+            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+          </a>
+        </div>
+      </div>
+
+      <div className="w-full max-w-5xl mt-16">
+        <p className="mb-2">
+          <a href="/" className="text-purple-600">
+            &larr; Back to blog
+          </a>
+        </p>
+
+        <h1 className="text-3xl mb-2">{post?.title}</h1>
+        <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
+          {post?.pubDate?.toDateString()}
+        </p>
+        <p className="text-xl">{post?.description}</p>
+      </div>
+    </main>
+  );
+}
+```
+
+The Xata client is imported and initialized in the same way as it is in the landing page via assigning the return value
+of `getXataClient` to a `xata` variable.
+
+```tsx
+import { getXataClient } from '@/xata';
+
+const xata = getXataClient();
+```
+
+The single post is retrieved from the database via the auto-generated `Posts` property. The 
+ [`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) is used to query
+the table for a row where the `slug` column equals the value of `params. slug`. Finally the
+[`getFirst` function](https://xata.io/docs/sdk/get#the-typescript-sdk-functions-for-querying) to return
+the first (and only) result for a post with this slug value.
+
+```tsx
+export default async function Post({ params }: { params: { slug: string } }) {
+  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
+
+  ...
+}
+```
+
+Finally, the values, `title`, `pubDate`, and `description`, for the Post are added to the UI:
+
+```tsx
+<h1 className="text-3xl mb-2">{post?.title}</h1>
+<p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
+  {post?.pubDate?.toDateString()}
+</p>
+<p className="text-xl">{post?.description}</p>
+```
+
+The single blog post page will look as follows:
+
+![Single blog post](images/getting-started-blog-post.png)
+
+## Search posts
+
+The last piece of functionality to be added to the application is full-text fuzzy search of blog posts.
+
+When you insert data into a Xata database, it is automatically indexed for full-text search. So we don't need to change
+any configuration to enable search, we just need to use the [TypeScript SDK search feature](https://xata.io/docs/sdk/search).
+
+Let's add this functionality to the landing page:
+
+```tsx title="src/app/page.tsx" {4-14,29-39}
+import { getXataClient } from '@/xata';
+
+const xata = getXataClient();
+
+export default async function Home({ searchParams }: { searchParams: { q: string } }) {
+  let posts = null;
+  if (searchParams.q) {
+    posts = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 });
+  } else {
+    posts = await xata.db.Posts.getAll();
+  }
+
+  return (
+    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
+      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
+        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
+          <a href="/">Get started with Xata and Next.js</a>
+        </p>
+        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+          <a href="https://xata.io" className="w-20">
+            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+          </a>
+        </div>
+      </div>
+      <div className="w-full max-w-5xl mt-16">
+        <form>
+          <input
+            name="q"
+            defaultValue={searchParams.q}
+            placeholder="Search..."
+            className="w-full rounded-lg p-2 dark:text-purple-950"
+          />
+        </form>
+      </div>
+      ...
+    </main>
+  );
+}
+```
+
+Add search with three changes.
+
+First, update the main function to accept search parameters. This is achieved by having the function accept an object
+with a `searchParams` property. When a search has been performed, `searchParams` will optionally have a `q` property
+access via `searchParams.q`.
+
+```tsx
+export default async function Home({
+  searchParams
+}: {
+  searchParams: { q: string };
+}) {
+  ...
+}
+```
+
+Secondly, the landing page should list all blog posts if the `searchParams.q` property isn't present. However, if
+the property is present, a search is performed on the Posts table using the
+[`search` function](https://xata.io/docs/typescript-client/search#searching-in-a-single-table) exposed on the
+auto-generated `Posts` property. The value of `searchParams.q` is passed as the text value to search for, and a
+second options parameter is populated with `fuzziness` set to `2`, which instructs the search behavior to allow for two
+letters changed/added/removed. See
+[fuzziness and typo tolerance](https://xata.io/docs/sdk/search#fuzziness-and-typo-tolerance) for more
+details.
+
+```tsx
+export default async function Home({ searchParams }: { searchParams: { q: string } }) {
+  let posts = null;
+  if (searchParams.q) {
+    posts = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 });
+  } else {
+    posts = await xata.db.Posts.getAll();
+  }
+
+  ...
+}
+```
+
+The third and last change is to add a `<form>` to the page to allow a search value to be entered and submitted. The
+default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
+string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
+a `GET`request in the format`?q={q-value}`. Since this is precisely the behavior we need, and we've already updated
+the page function to accept the object with a`searchParams` property already, everything is in place.
+
+```tsx
+<div className="w-full max-w-5xl mt-16">
+  <form>
+    <input
+      name="q"
+      defaultValue={searchParams.q}
+      placeholder="Search..."
+      className="w-full rounded-lg p-2 dark:text-purple-950"
+    />
+  </form>
+</div>
+```
+
+![Full-text fuzzy search](images/getting-started-blog-search.png)
+
+The application now supports listing posts, viewing single posts via a dynamic route, and full-text fuzzy search of
+posts.
+
+## What you've learned
+
+In this guide, you've learned that Next.js App Router applications and Xata are a powerful combination. You created an
+application from scratch that lists blog posts, supports viewing a single blog post, and performs full-text fuzzy search
+on all posts.
+
+We walked through setting up the Xata CLI and using it to:
+
+- Create a new Xata project
+- Create a database schema and populate it with data from an imported CSV file
+- Update the auto-generated code (in `src/xata.ts`) using `xata pull main` to reflect the updated schema
+
+We then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
+function. We also added the single post page making use of Next.js dynamic routes where a `slug` was passed and used
+with `xata.db.Posts.filter({ slug: params.slug }).getFirst()`.
+
+Finally, we added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
+indexing. The search used a `q` query string and the auto-generated `xata.db.Posts.search` function.
+
+## Learn more
+
+If you enjoyed this guide, you could continue working on improving the application. Here are some suggestions:
+
+- Add [pagination](https://xata.io/docs/sdk/get#paginating-results) for the blog post listing
+- Add [pagination](https://xata.io/docs/sdk/search#pagination) for blog post search results
+- Handle single post view page not finding a result for a `slug`
+- Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
+  use that new field.
+- Move common code from the two pages into `src/app/layout.tsx` or reusable components.
+
+You can also explore some of the features we've covered in more detail:
+
+- [Getting records](https://xata.io/docs/sdk/get)
+- [Filtering records](https://xata.io/docs/sdk/filtering)
+- [Searching records](https://xata.io/docs/sdk/search)
+
+Or dive into some of Xata's more advanced features, such as:
+
+- [Aggregations](https://xata.io/docs/sdk/aggregate)
+- [Transactions](https://xata.io/docs/sdk/transaction)
+- [Vector search](https://xata.io/docs/sdk/vector-search)
 
 [0]: https://app.xata.io
 [1]: https://app.xata.io/settings

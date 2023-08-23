@@ -1,15 +1,15 @@
 ---
-title: Creating records with TypeScript
+title: Creating records
 navTitle: Creating records
-keywords: ['TypeScript', 'TypeScript client', 'insert']
-description: Use the Xata SDK with TypeScript or JSON to create records
-slug: typescript-client/insert
+keywords: ['insert']
+description: Use the Xata SDK to create records
+slug: sdk/insert
 published: true
 ---
 
 You can create a record like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
 const record = await xata.db.Users.create({
@@ -18,8 +18,15 @@ const record = await xata.db.Users.create({
 });
 ```
 
+```python
+record = xata.records().insert("Users", {
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves"
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/data
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
 
 {
   "email": "keanu@example.com",
@@ -31,7 +38,7 @@ const record = await xata.db.Users.create({
 
 The TypeScript SDK returns the created record. The response looks like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
   ```ts
   {
     "email": "keanu@example.com",
@@ -40,6 +47,17 @@ The TypeScript SDK returns the created record. The response looks like this:
     "bio": NULL,
     "address": NULL,
   }
+```
+
+```python
+{
+  "id": "rec_c8hnbch26un1nl0rthkg",
+  "xata": {
+    "version": 0,
+    "createdAt": "2023-05-15T08:21:31.96526+01:00",
+    "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+  }
+}
 ```
 
 ```json
@@ -64,7 +82,7 @@ In the above:
 
 If you want to specify your own ID, you can do it like this:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const record = await xata.db.Users.create("myid", {
   email: "keanu@example.com",
@@ -72,8 +90,15 @@ const record = await xata.db.Users.create("myid", {
 });
 ```
 
+```python
+record = xata.records().insert_with_id("Users", "myid" {
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves"
+})
+```
+
 ```jsonc
-// PUT https://tutorial-ng7s8c.xata.sh/db/tutorial:main/tables/users/data/myid?createOnly=true
+// PUT https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?createOnly=true
 {
   "email": "keanu@example.com",
   "name": "Keanu Reeves"
@@ -88,7 +113,7 @@ In the REST API example, note the change from `POST` to `PUT`. The `createOnly` 
 
 In the schema that we chose, the `Posts` table has an `author` column of type `link` that links to the `Users` table. To insert a record with a linked field, use the ID of the target record in the link column. For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const record = await xata.db.Posts.create({
     title: "Filming the Matrix",
@@ -96,8 +121,15 @@ const record = await xata.db.Posts.create({
 });
 ```
 
+```python
+record = xata.records().insert("Posts", {
+  "title": "Filming the Matrix",
+  "author": "rec_cd8rqcoavc42pi67lgd0"
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/Posts/data
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
 
 {
   "title": "Filming the Matrix",
@@ -111,7 +143,7 @@ const record = await xata.db.Posts.create({
 
 If you have multiple records to insert, you can send them in a single request via the [`/bulk` endpoint](/docs/api-reference/db/db_branch_name/tables/table_name/bulk). For example:
 
-<TabbedCode tabs={['TypeScript', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const users = await xata.db.Users.create([{
     email: "laurence@example.com",
@@ -129,8 +161,30 @@ const users = await xata.db.Users.create([{
 ]);
 ```
 
+```python
+users = xata.records().bulk_insert("Users", {
+  "records": [
+    {
+      "email": "laurence@example.com",
+      "name": "Laurence Fishburne",
+      "team": "rec_cd8s4kbo8dsvsjilo1ug"
+    },
+    {
+      "email": "hugo@example.com",
+      "name": "Hugo Weaving",
+      "team": "rec_cd8s4kbo8dsvsjilo1ug"
+    },
+    {
+      "email": "joe@example.com",
+      "name": "Joe Pantoliano",
+      "team": "rec_cd8s4kbo8dsvsjilo1ug"
+    }
+  ]
+})
+```
+
 ```jsonc
-// POST https://tutorial-ng7s8c.us-east-1.xata.sh/db/tutorial:main/tables/users/bulk
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/bulk
 
 {
   "records": [
@@ -159,4 +213,4 @@ It is possible to provide IDs for each of the records. If records with the same 
 
 ## Next Steps
 
-Great! We can insert data into our databases. Let's now explore how we [get data](/docs/typescript-client/get) from a database. Alternatively, we can also look into [updating data](/docs/typescript-client/update) or [deleting data](/docs/typescript-client/delete). We've got guides for each of these operations.
+Great! We can insert data into our databases. Let's now explore how we [get data](/docs/sdk/get) from a database. Alternatively, we can also look into [updating data](/docs/sdk/update) or [deleting data](/docs/sdk/delete). We've got guides for each of these operations.

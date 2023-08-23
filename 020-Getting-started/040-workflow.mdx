@@ -94,7 +94,7 @@ package = "@xata.io/netlify"
 With the GitHub and Vercel or Netlify integrations installed, you can now follow a typical code-based PR workflow to migrate your database through code and provide previews during PRs. At a summary level, you'll find yourself performing the following workflow loop to branch, review and merge your changes. We'll go through each step individually.
 
 1. Create and checkout a new code branch with `git branch my_feature` for your feature.
-1. Create a new Xata branch with `xata branch my_feature`, then update your `.env` file to point to the `my_feature` branch.
+1. Create a new Xata branch with `xata branch create my_feature`, then update your `.env` file to point to the `my_feature` branch.
 1. Perform a `xata pull my_feature` command in your local project to pull in the changes, generating the necessary `client` and `migration` code files.
 1. Continue to edit your code and database as needed
 1. Commit the migration files (along with any other code) and create a new GitHub PR.

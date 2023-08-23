@@ -1,0 +1,87 @@
+---
+title: Migrating from 0.x to 1.x
+navTitle: Migration guide
+keywords: ['sdk', 'python']
+description: Reference for upgrading Python SDK version
+slug: sdk/python/migration-guide
+published: true
+---
+
+If you are currently a user of a `0.x` version of the Python SDK, and intend to upgrade the SDK version to `1.x`, please consider the following breaking changes. We documented all changes to promoted the SDK to GA in the ticket [xataio/xata-py#24](https://github.com/xataio/xata-py/issues/24).
+
+## New API Response type
+
+Status: `future breaking` [xataio/xata-py#101](https://github.com/xataio/xata-py/issues/101)
+
+The response of an API used to of type `requests.Response`, this changed in favour of a custom class called [`ApiResponse`](https://github.com/xataio/xata-py/blob/main/xata/api_response.py). This class inherits the build in `dict` data type and hence allows to drop the previously needed `.json()` method to get access to data. The method `.json()` is still available, for a non-breaking upgrade, but pronounced deprecated and will be removed with the next major release. The properties `status_code` and `headers` are replicated. For further convenience you don't need to check the status code anymore, you can simply use the method `is_success()` to check if the request was successful.
+
+In `0.x` getting a record required the `.json()` to access the data.
+
+```python
+post = xata.records().getRecord("Posts", "12345")
+print(post.json()) # {"record": {"id": "12345", "title": "a blog post"}}
+```
+
+In `1.0.0` the response is implied to be a `dict` and ready to be used.
+
+```python
+post = xata.records().get("Posts", "12345")
+print(post) # {"record": {"id": "12345", "title": "a blog post"}}
+
+# alternatively, the legacy way using .json()
+post = xata.records().get("Posts", "12345")
+print(post.json()) # {"record": {"id": "12345", "title": "a blog post"}}
+```
+
+## Change of API surface
+
+Status: `breaking` [xataio/xata-py#93](https://github.com/xataio/xata-py/issues/93)
+
+The API surface was clunky with duplicate names, creating long function calls and did not comply with [pep-8](https://peps.python.org/pep-0008/#function-and-variable-names) function names.
+
+Listing all databases in `0.x`
+
+```python
+list = xata.databases().getDatabaseList()
+```
+
+changed to a more concise call in `1.x`:
+
+```python
+list = xata.databases().list()
+```
+
+Continously the function arguments are also converted to the pep-8 standard, lowercased and separated by an underscore, `SessionId` becomes `session_id`.
+
+## Error Handling
+
+### Renamed Exceptions
+
+Status: `breaking`
+
+In order to align with the [pep-8](https://peps.python.org/pep-0008/#exception-names) standard that defines the naming to exceptions, the following classes were renamed:
+
+- `UnauthorizedException` to `UnauthorizedError`
+- `RateLimitException` to `RateLimitError`
+- `ServerErrorException` to `XataServerError`
+
+### Throwing errors on failed requests
+
+If a requests results in a HTTP status code not in the `2xx` range, an error will be raised. The errors depend on the status code:
+
+- `401`: `UnauthorizedError`
+- `429`: `RateLimitError`
+- `500`: `XataServerError`
+
+## Removed deprecated methods
+
+Status: `breaking` [xataio/xata-py#17](https://github.com/xataio/xata-py/issues/17)
+
+The following methods were pronounced deprecated with the `0.7.0` release of the SDK and were removed with the `1.0.0` major version:
+
+- `client.get()`
+- `client.post()`
+- `client.put()`
+- `client.patch()`
+- `client.delete()`
+- `client.request()`
