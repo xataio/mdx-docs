@@ -39,7 +39,7 @@ Note that in the above example, the whole record was overwritten. If you want to
 
 In order to do a partial update to a record, you can use a request like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('myid', { email: 'newemail@example.com' });
@@ -56,6 +56,14 @@ user = xata.records().update("Users", "myid" {
 ```
 
 ```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "UPDATE \"Users\" SET email = 'newemail@example.com' WHERE id = 'myid' RETURNING *;"
+}
+```
+
+```jsonc
 // PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
 
 {
@@ -67,7 +75,7 @@ user = xata.records().update("Users", "myid" {
 
 It's also possible to update a record if it exists, or create it if it doesn't exist:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reeves' });
@@ -77,6 +85,16 @@ const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reeves' }
 user = xata.records().upsert("Users", "myid" {
   "name": "Keanu Reeves"
 })
+```
+
+```jsonc
+// This method is currently unsupported in the SQL endpoint, the example is included for reference.
+// The ON CONFLICT clause will be allowed in a future iteration.
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "INSERT INTO \"Users\" (id, name) VALUES ('rec_c8hnbch26un1nl0rthkg', 'susan') ON CONFLICT (id) DO UPDATE SET name = 'Keanu Reeves' RETURNING *;"
+}
 ```
 
 ```jsonc
@@ -101,7 +119,7 @@ The numeric types (int and float) support basic mathematical operations: additio
 
 Here is a simple example that increments a counter:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $increment: 1 } });
@@ -113,6 +131,14 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
     "$increment": 1
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "UPDATE \"Users\" SET counter = counter + 1 WHERE id = 'rec_c8hnbch26un1nl0rthkg' RETURNING *;"
+}
 ```
 
 ```jsonc
@@ -129,7 +155,7 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
 
 And here is an example that adds 10 to the counter:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $increment: 10 } });
@@ -141,6 +167,14 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
     "$increment": 10
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "UPDATE \"Users\" SET counter = counter + 10 WHERE id = 'rec_c8hnbch26un1nl0rthkg' RETURNING *;"
+}
 ```
 
 ```jsonc
@@ -157,7 +191,7 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
 
 And here is an example that divides the counter by 2:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $divide: 2 } });
@@ -169,6 +203,14 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
     "$divide": 2
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "UPDATE \"Users\" SET counter = counter / 2 WHERE id = 'rec_c8hnbch26un1nl0rthkg' RETURNING *;"
+}
 ```
 
 ```jsonc
@@ -258,7 +300,7 @@ The `version` field can be used to perform optimistic concurrency control, also 
 
 To prevent this, you can pass the `ifVersion` parameter to the PUT request. The value for `ifVersion` should be the value of `xata.version` from when you retrieved the record. For example, if you want to update the record only if the version is 0, you can send the following request:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const updatedUser = await xata.db.Users.update(
@@ -283,6 +325,14 @@ user = xata.records().update(
   },
   if_version=0
 )
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "UPDATE \"Users\" SET email = 'keanu@xata.io', name = 'Keanu Reeves' WHERE id = 'rec_c8hnbch26un1nl0rthkg' AND \"xata.version\" = 0 RETURNING *;"
+}
 ```
 
 ```jsonc
