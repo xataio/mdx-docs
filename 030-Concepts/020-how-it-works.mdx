@@ -39,7 +39,7 @@ Besides the cells, the regions contain other services:
 - Several other supporting regional services, including regional control plane services and a service for running long-running tasks.
 - A global control plane layer responsible for maintaining users, workspaces, and API keys.
 
-The control plane information (users, workspaces, API keys) are stored in a single central region and then replicated in near real-time to all other regions. This way, we can offer minimal latencies in each geographical area while still maintaining the convenience of a global service.
+The control plane information (users, workspaces, API keys) is stored in a single central region and then replicated in near real-time to all other regions. This way, we can offer minimal latencies in each geographical area while still maintaining the convenience of a global service.
 
 ## Data model representation
 
@@ -57,7 +57,7 @@ A record in Xata can look something like this:
 }
 ```
 
-The above shows a column of type email and an array-like column (`labels` of type `multiple`). When this data is stored in PostgreSQL and Elasticsearch, columns identified by IDs. By using IDs for columns, instead of their user-visible names, we make some migrations simpler and we make it possible, for example, to track a column across branches even if it was renamed.
+The above shows a column of type `email` and an array-like column (`labels` of type `multiple`). When this data is stored in PostgreSQL and Elasticsearch, columns are identified by IDs. By using IDs for columns, instead of their user-visible names, we make some migrations simpler and we make it possible, for example, to track a column across branches even if it was renamed.
 
 As a result, the underlying PostgreSQL table might look something like this:
 
@@ -95,7 +95,7 @@ A database in Xata can have multiple branches, which are first-class citizens in
 
 For each branch, we record the schema history in a list of “commits”. These commits contain operations like “add a column”, “rename a column”, “add a new table”, “delete a table”, and more. We also record which branch is created from which. This history information, together with the fact that each table and column are identified by IDs, allows us to create the correct migration diffs and perform the minimum set of operations required for a migration.
 
-There are multiple benefits to having database branches, which is why they are being lately adopted by multiple database products:
+There are multiple benefits to having database branches, which is why lately they are being adopted by multiple database products:
 
 - enable development workflows that match Git workflows, for example having a branch for development, one for staging, one for production, etc.
 - enable development previews on platforms like Vercel and Netlify.
@@ -111,7 +111,7 @@ Because we have control over the data model and because Xata has native concepts
 
 At the moment the set of migrations supported in Xata is limited to operations that are safely supported by PostgreSQL, but we are growing it to include long-running migrations. For example, if you need to change a column’s type from `string` to `int` that requires a costly data migration, and errors can be discovered at execution time. Because we separate the visible schema from the underlying PostgreSQL schema, we can approach it like this:
 
-- add a new `int` column with a new internal id, but don’t expose it in the user schema yet.
+- add a new `int` column with a new internal ID , but don’t expose it in the user schema yet.
 - start a long-running task that converts the data in batches from `string` to `int` and write the results to the new column.
 - for new writes to the table, we write to both the `string` and the `int` columns.
 - when the long-running task is finished, we can swap the two columns atomically in the user schema.
@@ -209,15 +209,15 @@ Xata has official SDKs for TypeScript/Javascript and Python, and the REST API is
 
 It uses code generation to generate the models from your schema, so using it is similar to using an ORM.
 
-For example the following :
+For example, consider the following command:
 
 ```tsx
 const user = await xata.db.users.filter('email', 'foo@example.com').getFirst();
 ```
 
-gets the first record from the `users` table that matches the filter. The `user` variable has the type `UsersRecord`, which is automatically generated and which has all the columns defined as properties, plus methods like `update()` and `delete()` to work with it. This means that you get type safety out of the box and the editor or IDE will be able to auto-complete table and column names, making writing code easy and fast.
+The command gets the first record from the `users` table that matches the filter. The `user` variable has the type `UsersRecord`, which is automatically generated and which has all the columns defined as properties, plus methods like `update()` and `delete()` to work with it. This means that you get type safety out of the box and the editor or IDE will be able to auto-complete table and column names, making writing code easy and fast.
 
-To update the record in the DB you can do:
+To update the record in the DB you can do the following:
 
 ```tsx
 await user.update({
@@ -231,13 +231,14 @@ and to delete it you can do:
 await user.delete();
 ```
 
-In usage, using the Xata TypeScript SDK is similar to using a typescript ORM, for example, [Prisma](https://www.prisma.io/). It is generally easy to port applications that use Xata to Prisma and the other way around, because while not 100% compatible, the two are fairly similar.
+In usage, using the Xata TypeScript SDK is similar to using a Typescript ORM, for example, [Prisma](https://www.prisma.io/). It is generally easy to port applications that use Xata to Prisma and the other way around, because while not 100% compatible, the two are fairly similar.
 
 Under the hood, however, the Xata SDK is implemented a bit differently and makes use of recent TypeScript additions to generate the types at run-time. It also has a somewhat simpler problem to solve, because it only needs to talk with the Xata API, not generate SQL. The result of this is that the Xata SDK is very lightweight and has zero dependencies, so it can be used in many JavaScript runtimes including Node.js, Cloudflare Workers, Deno, Electron, etc.
 
-## Edge Caching and Edge Functions (Private Beta)
+## Edge caching and edge functions (Private Beta)
 
-Another interesting aspect of the TypeScript SDK is that it has the notion of plugins. The SDK plugins extend the base functionality and are allowed to use dependencies. It is possible to use such a plugin, for example, to cache the query results in the edge function memory, or even better, in Cloudflare Durable Objects. This makes it easy and cheap for applications to scale reads globally and provide very small latencies at the same time.
+Another interesting aspect of the TypeScript SDK is that it has plugins. 
+The SDK plugins enhance the core functionality and can use dependencies. It is possible to use such a plugin, for example, to cache the query results in the edge function memory, or even better, in Cloudflare Durable Objects. This makes it easy and cheap for applications to scale reads globally and provide very small latencies at the same time.
 
 ```tsx
 return await xata.db.products.sort('popularity', 'desc').getMany({
@@ -272,7 +273,7 @@ export const Home = () => {
 };
 ```
 
-Behind the scenes, we’re using [Cloudflare Workers for Platforms](https://blog.cloudflare.com/workers-for-platforms/), but you don’t need a Cloudflare account - it works automatically with your Xata account. The Xata Edge Functions are currently in private beta. If you are interested in trying them out, reach out to us.
+Behind the scenes, we’re using [Cloudflare Workers for Platforms](https://blog.cloudflare.com/workers-for-platforms/), but you don’t need a Cloudflare account - it works automatically with your Xata account. The Xata Edge Functions are currently in private beta. [Contact us](https://support.xata.io/hc/en-us), if you are interested in trying them out.
 
 ## Data safety
 
