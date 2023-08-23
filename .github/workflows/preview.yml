@@ -56,7 +56,7 @@ jobs:
         id: await-vercel
         with:
           deployment-url: steps.get-url.outputs.URL
-          timeout: 240
+          timeout: 1000
           poll-interval: 10
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
