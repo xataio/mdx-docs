@@ -399,18 +399,21 @@ The signed URL timeout can be configured per file by setting the `signedUrlTimeo
 A file's signed URL can be retrieved by reading or querying the `signedUrl` field of a file object.
 Signed URLs are recommended for scenarios where temporary access is needed without sharing the API key. For example rendering an image, without giving away a permanent image URL.
 
-## CDN
+## Content delivery detwork (CDN)
 
-File attachment support comes with an integrated content delivery network which minimizes access latency by using regional caches.
-Caching is enabled for all signed and public URLs. This is to avoid caching data that is secured by API key permissions. This feature is enabled by default and no configuration is necessary. Public access and signed URL content is cached for 4 hours.
+File attachment support comes with an integrated content delivery network (CDN) which minimizes access latency by using regional caches.
 
-As with all cache systems, the fundamental problem is cache invalidation. Namely getting the cache access performance, while responding to content updates and avoid returning stale entries. Xata's approach is to avoid the need of invalidation by design. The files content is presented as dynamic content similar to the data in the database. Therefore clients should dynamically retrieve the access URLs from the database rather than storing them in static resources. Urls become invalid when the target file updates so access will break if they are stored outside the database.
+Caching is enabled for all signed and public URLs. This is to avoid caching data that is secured by API key permissions. This feature is enabled by default and doesn't require any configuration. Content from publicly accessible and signed URLs is cached for a duration of 4 hours.
 
-Having a new URL after every update makes it impossible to serve stale entries no matter the caches or proxies that may be found between client and the storage service. For the client application, this means there is no cache ttl or cache invalidation latency. When the URL is read from the database it is guaranteed to get the latest file version available.
+As with all cache systems, the fundamental problem is cache invalidation - maintaining cache access performance while ensuring updated content and preventing outdated entries. In its architectural approach, Xata addresses the issue of cache invalidation by treating file content as dynamic - analogous to data within a database. 
+
+Consequently, it's recommended that clients dynamically obtain access URLs from the database, rather than persisting them in static resources. When the target file is modified, URLs can become invalid, resulting in access disruptions if stored externally to the database.
+
+Through the process of generating a new URL after each update, the system prevents the delivery of outdated and stale content, regardless of any caches or proxies between the client and storage service. For the client application, this translates to no need for cache time-to-live (TTL) or waiting for cache invalidation. When the URL is fetched directly from the database, it is guaranteed to retrieve the most recent version of the file available.
 
 ## Image transformations
 
-For the very common case of storing images, Xata offers a set of transformations which can be applied on-the-fly when retrieving images through the access URLs (public and signed URLs support transformations). Transformations are specified in the URL and their result is cached by the CDN. In the URL the transformation specification is a comma separated list of individual transformations following the /transform/ segment.
+For the very common case of storing images, Xata offers a set of transformations that can be applied in real-time while retrieving images through access URLs.  Transformations are specified in the URL and their result is cached by the CDN. Both public and signed URLs support transformations. In the URL the transformation specification is a comma separated list of individual transformations following the `/transform/` segment.
 
 Original image URL:
 [`https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk)
@@ -439,7 +442,7 @@ The following transformations are available:
 
 ### anim
 
-Used to remove animation frames from input files. Default is `true`. Setting it to `false` reduces animations to still images.
+Use to remove animation frames from input files. Default is set to `true`. Setting it to `false` reduces animations to still images.
 
 ```txt
 /transform/anim=false
@@ -447,7 +450,7 @@ Used to remove animation frames from input files. Default is `true`. Setting it 
 
 ### background
 
-Background color to add underneath the image. Applies to images with transparency. Accepts any CSS color, such as #RRGGBB and rgba(…).
+Use this to introduce a background color beneath the image. Applies to images with transparency. Accepts any CSS color, such as #RRGGBB and rgba(…).
 
 ```txt
 /transform/background=%23RRGGBB
@@ -461,7 +464,7 @@ OR
 
 ### blur
 
-Blur radius between 1 (slight blur) and 250 (maximum).
+Adds a blur radius between 1 (slight blur) and 250 (maximum).
 
 ```txt
 /transform/blur=50`
@@ -469,7 +472,7 @@ Blur radius between 1 (slight blur) and 250 (maximum).
 
 ### brightness
 
-Increase brightness by a factor. A value of 1.0 equals no change, a value of 0.5 equals half brightness, and a value of 2.0 equals twice as bright. 0 is ignored.
+Increase brightness by a factor. A value of `1.0` equals no change, a value of `0.5` equals half brightness, and a value of `2.0` equals twice as bright. `0` is ignored.
 
 ```txt
 /transform/brightness=0.5
@@ -477,7 +480,7 @@ Increase brightness by a factor. A value of 1.0 equals no change, a value of 0.5
 
 ### compression
 
-The only option is `fast`. This slightly reduces latency on a cache miss by selecting a quickest-to-compress file format, at a cost of increased file size and lower image quality. It will usually override the format option and choose JPEG over WebP or AVIF.
+This marginally reduces latency in case of a cache miss, by selecting the fastest-compressing file format. However, this comes at the expense of larger file sizes and diminished image quality. The only option is `fast`. It will usually override the format option and choose JPEG over WebP or AVIF.
 
 ```txt
 /transform/compression=fast
@@ -493,7 +496,7 @@ Increase contrast by a factor. A value of 1.0 equals no change, a value of 0.5 e
 
 ### dpr
 
-Device Pixel Ratio. Default is 1. Multiplier for width/height that makes it easier to specify higher-DPI sizes in `img srcset`.
+This refers to the Device Pixel Ratio (DPR). The default is 1. This ia multiplier for width/height that makes it easier to specify higher-DPI sizes in `img srcset`.
 
 ```txt
 /transform/dpr=1
@@ -595,7 +598,7 @@ Specifies quality for images in JPEG, WebP, and AVIF formats. The quality is in 
 
 ### rotate
 
-Number of degrees (90, 180, or 270) to rotate the image by. Width and Height options refer to axes after rotation.
+Specifies number of degrees (90, 180, or 270) to rotate the image by. Width and height options refer to axes after rotation.
 
 ```txt
 /transform/rotate=90
@@ -611,7 +614,7 @@ Specifies strength of sharpening filter to apply to the image. The value is a fl
 
 ### trim
 
-Specifies a number of pixels to cut off on each side. Allows removal of borders or cutting out a specific fragment of an image. Trimming is performed before resizing or rotation. Takes `dpr` into account. The value must be four numbers in pixels separated by a semicolon, in the form of top;right;bottom;left.
+Specifies the number of pixels to cut off on each side. Allows removal of borders or cutting out a specific fragment of an image. Trimming is performed before resizing or rotation. Takes `dpr` into account. The value must be four numbers in pixels separated by a semicolon, in the form of top;right;bottom;left.
 
 ```txt
 /transform/trim=20;30;20;0
