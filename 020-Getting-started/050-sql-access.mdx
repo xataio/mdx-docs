@@ -39,8 +39,11 @@ are mapped to PostgreSQL types with additional constraints.
 Database tables are stored in PostgreSQL. Linked columns are foreign
 keys pointing to the linked table. If you want to access a linked
 column, use JOINs or WHERE conditions to find the corresponding
-records.  Example: `SELECT "Users".email, address.city FROM "Users"
-LEFT JOIN address ON "Users".id=address.id `.
+records. Example: 
+```sql
+SELECT "Users".email, address.city FROM "Users"
+LEFT JOIN address ON "Users".id=address.id;
+```
 
 Other special Xata datatypes like `email` require you to insert it
 using the Xata API or SDK, otherwise Xata cannot check if the data
@@ -52,15 +55,16 @@ column directly. Instead use the API we provide.
 Please note when you are working with names that include upper-case
 letters like `Users` or `zipCode`, you must quote those
 otherwise PostgreSQL treats it as a lowercase name.
-`POST https://{your-workspace-slug}.{region}.xata.sh/db/db_branch_name/sql`
 
 ## Endpoint
 
-Available parameters:
+URL: `https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql`
+Method: `POST`
 
-* `statement`: required, your SQL statement.
+Parameters:
+* `statement`: your SQL statement (required).
 * `params`: list of parameters when submitting a parameterized statement.
-*  `consistency`:  consistency  when   executing  a  statement.  Available options: `strong`, `eventual`. Default: `strong`.
+* `consistency`: consistency when executing a statement. Available options: `strong`, `eventual`. Default: `strong`.
 
 ## Examples
 
