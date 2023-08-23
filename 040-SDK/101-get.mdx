@@ -621,7 +621,7 @@ users = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" ORDER BY RANDOM() LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" ORDER BY \"city\" desc, \"name\" asc LIMIT 20;"
 }
 ```
 
@@ -640,7 +640,7 @@ users = xata.data().query("Users", {
 
 To sort results in random order, use `random` instead of `desc` or `asc`:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.sort('*', 'random').getMany();
@@ -652,6 +652,14 @@ users = xata.data().query("Users", {
     "*": "random"
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" ORDER BY RANDOM() LIMIT 20;"
+}
 ```
 
 ```jsonc
