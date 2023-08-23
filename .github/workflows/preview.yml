@@ -40,7 +40,6 @@ jobs:
             --env XATA_PREVIEW=none \
             --build-env XATA_BRANCH=main \
             --env XATA_BRANCH=main \
-            --no-wait \
             > deploy_url.txt
         env:
           VERCEL_ORG_ID: team_lMj2cFnO13wwm6LWz3X5kulx
@@ -51,16 +50,6 @@ jobs:
         run: |
           cat deploy_url.txt
           echo "URL=$(cat deploy_url.txt)" >> $GITHUB_OUTPUT
-
-      - name: Wait for vercel deploy
-        uses: UnlyEd/github-action-await-vercel@v1
-        id: await-vercel
-        with:
-          deployment-url: steps.get-url.outputs.URL
-          timeout: 900
-          poll-interval: 10
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
       - name: Find Comment
         uses: peter-evans/find-comment@v2
