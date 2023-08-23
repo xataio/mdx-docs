@@ -31,7 +31,7 @@ The following is an example of a record that you can store natively in Xata:
 }
 ```
 
-The keys in the JSON are the column names. The values are the data. The coresponding [schema file](/docs/concepts/schema) for the above record looks like the following:
+The keys in the JSON are the column names. The values are the data. The corresponding [schema file](/docs/concepts/schema) for the above record, looks like the following:
 
 ```json
 {
@@ -68,13 +68,13 @@ The keys in the JSON are the column names. The values are the data. The corespon
 In the above, it's worth noting:
 
 - Each column has a well-defined type. Xata has a strongly typed schema, as opposed to a schemaless model.
-- Some of the Xata data types are higher level than what is typically in a database. For example, the "email" type performs automatic validation of email addresses.
+- Some of the Xata data types are higher level than what is typically in a database. For example, the `email` type performs automatic validation of email addresses.
 
 ## Column types
 
 ### string
 
-The `string` type represents a simple string. The values of this type are indexed both for quick exact matching and for full-text search. Set `unique` to make sure the strings you insert are unique. Set `notNull` to require a value.
+The `string` type represents a simple string. The values of this type are indexed both for quick exact matching and for full-text search. Set `unique` to ensure the strings you insert are unique. Set `notNull` to require a value.
 
 Example definition:
 
@@ -87,7 +87,7 @@ Example definition:
 
 ### text
 
-The `text` type represents a long-form text. The difference to `string` is that the values of the `text` columns are indexed and optimised for free-text search, but not for exact matching. Set `notNull` to require a value.
+The `text` type represents a long-form text. Unlike the `string type`, `text` column values are indexed and optimized for efficient free-text searches, rather than exact matches. If a value must be provided, you can use the `notNull` setting to enforce this requirement.
 
 Example definition:
 
@@ -100,7 +100,7 @@ Example definition:
 
 ### int
 
-The `int` type represents an integer. Internally it's represented as a 64-bit signed integer. This means the minimum value is `-9223372036854775808` and the maximum value is `9223372036854775807`. Set `unique` to make sure the integers you insert are unique. Set `notNull` to require a value.
+The `int` type represents an integer. Internally, it's represented as a 64-bit signed integer. This means the minimum value is `-9223372036854775808` and the maximum value is `9223372036854775807`. Set to `unique` to ensure the integers you insert are unique. Set `notNull` to require a value.
 
 Example definition:
 
@@ -172,7 +172,7 @@ Example definition:
 
 The `email` type represents an email address. Valid email addresses are not longer than 254 characters and respect this regular expression:
 
-```bash
+```json
 ^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@
 [a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?
 (?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$
@@ -238,12 +238,7 @@ produced by any other machine learning model. Once you store the embeddings, you
 
 ### object
 
-<Alert>
-  The `object` type will be [deprecated](#what-is-the-deprecation-period) from June 14th, 2023 and will no longer be
-  available after December 13th, 2023. If you are using the `object` type in your workspace, we strongly encourage you
-  to review your implementations and update them accordingly, replacing the `object` type with suitable alternatives as
-  recommended in our [migration options](#object-type-migration) documentation.
-</Alert>
+> **Warning**: The `object` type will be [deprecated](#what-is-the-deprecation-period) from June 14th, 2023 and will no longer be available after December 13th, 2023. If you are using the `object` type in your workspace, we strongly encourage you to review your implementations and update them accordingly, replacing the `object` type with suitable alternatives as recommended in our [migration options](#object-type-migration) documentation.
 
 The `object` type represents a group of columns. Objects can also be nested multiple times by adding a column of type `object` inside the object. Set `unique` to make sure the objects you insert are unique.
 
@@ -273,11 +268,126 @@ To insert the value for a `link` column, use the target record ID as the value. 
 }
 ```
 
-## Special columns
+### file
+
+The `file` type is the representation of a file in the Xata database. For every file, the column stores JSON objects with a predefined schema. The file object is used to upload a file, retrieve its content, as well as update or query its metadata.
+
+The object consists of the following fields:
+
+- `name` refers to the file name.
+- `mediaType` follows the definition provided by RFC 6838. Xata may utilize it as a hint, but it does not validate the content against the declared media type. If the value is missing, the default is set to `application/octet-stream`.
+- `base64Content` represents the file content encoded using base64 encoding.
+- `enablePublicUrl` is an optional boolean field that indicates whether Xata should generate a public access URL for this file. The default value is false.
+- `signedUrlTimeout` is an optional integer field that sets the time to live for a signed URL. The value is measured in seconds and the default is set to 1 minute.
+
+All the fields above are input fields and can be used in insert or update requests. For example:
+
+```json
+{
+  "photo": {
+    "name": "sample.png",
+    "mediaType": "image/png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+When reading or querying a file object, Xata adds a set of read only fields:
+
+- `size` - represents the file's size in bytes. It's important to note that this size refers to the original file, not the size of the base64 encoding.
+- `version` - keeps track of the updates made to the specific file.
+- `url` - a generated URL that provides direct access to the file. Depending on the `enablePublicUrl` flag, this URL can either be accessible to the public or require the Xata API key for access.
+- `signedUrl` - an access URL generated with a signature. This URL allows access without a key but has an expiration time determined by the duration configured in `signedUrlTimeout`.
+- `attributes` - a JSON object that stores key-value properties specific to the file's media type. For instance, recognized image types will have properties like height and width stored within the attributes.
+
+When the file field is requested in a query, the returned file object will look like the following:
+
+```json
+{
+  "photo": {
+    "name": "sample.png",
+    "mediaType": "image/png",
+    "enablePublicUrl": true,
+    "signedUrlTimeout": 60,
+    "size": 1885,
+    "version": 1,
+    "url": "https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk",
+    "attributes": {
+      "height": 131,
+      "width": 131
+    }
+  }
+}
+```
+
+The object fields, with the exception of `base64Content`, `url` and `signedUrl`, can be used in query filers and summaries.
+
+The `file` column type does not support constraints like `not null` or `unique` or parameters like default value. The default value for a `file` column is `null`.
+
+### file[]
+
+The `file[]` (file array) type represents a collection of files stored in the same table cell. Every array item is a JSON object similar to the file object, with the addition of an `id` field, which is used to refer to the item.
+
+The `id` is automatically generated if it is not passed during the time of creation.
+
+The folloiwing is an example of adding multiple files in a single column value:
+
+```json
+{
+  "images": [
+    {
+      "id": "i1",
+      "name": "image1.png",
+      "mediaType": "image/png",
+      "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+    },
+    {
+      "name": "image2.png",
+      "mediaType": "image/png",
+      "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+    }
+  ]
+}
+```
+
+All file fields described above are available for file array items. The fields are returned if selected in the query. For example selecting `images.id`, `images.name`, `images.mediaType`, `images.size`, `images.attributes` will return the following:
+
+```json
+{
+  "images": [
+    {
+      "id": "i1",
+      "name": "image1.png",
+      "mediaType": "image/png",
+      "size": 75,
+      "attributes": {
+        "height": 2,
+        "width": 2
+      }
+    },
+    {
+      "id": "c9tr9u8g317pl42jd0lgbs0qh4",
+      "name": "image2.png",
+      "mediaType": "image/png",
+      "size": 75,
+      "attributes": {
+        "height": 2,
+        "width": 2
+      }
+    }
+  ]
+}
+```
+
+Note that although the file fields can be queried, because the column value is an array it cannot be used in filters or summaries.
+
+The `file[]` column type does not support constraints like `not null` or `unique` or parameters like default values. The default value for a `file[]` column is an empty array `[]`.
+
+## Special Columns
 
 Xata maintains a special set of columns that don't have to be defined in the schema. The `id` and the `xata.*` columns names are reserved and you cannot create your own columns with these names. No other column names are reserved.
 
-The `id` and `xata.*` are not explicitely represented in the \[schema]/docs/concepts/schema) file, because they are present for all tables and maintained by Xata.
+The `id` and `xata.*` are not explicitely represented in the [schema](/docs/concepts/schema) file, because they are present for all tables and maintained by Xata.
 
 ### id
 
@@ -292,7 +402,7 @@ It is possible to use your own ID values, by using the [insert record with ID AP
 
 The `xata.version` column contains the current version of the record. It is of type `int` and it is automatically incremented any time the record is updated. A newly inserted record will have a version of 0.
 
-This column is meant to be use for optimistic concurrency control, see the [dedicated section](/docs/sdk/update#optimistic-concurrency-control) for more information.
+This column is meant to be used for optimistic concurrency control. For more information, see the [docs](/docs/sdk/update#optimistic-concurrency-control).
 
 ### xata.createdAt
 
@@ -425,9 +535,8 @@ The response would look like this (notice the nested `records` array under the `
   ]
 }
 ```
-<Alert>
-    Support for backwards link navigation in our SDK and UI is currently in development and will be available to users in the near future.
-</Alert>
+
+It is also possible to use `link` columns that target the same table. For example, you can have a `parent` column that points to the parent record of the current record.
 
 You can represent many-to-many relationships between two tables by using a third table dedicated to storing the relationships between the two entities. For example, you have a `mentors` table and a `mentee` table, and you want to represent an N:M relationship where a mentor can have multiple mentees and a mentee can have multiple mentors. You can create a `relationships` table with a schema looking like this:
 
@@ -457,7 +566,7 @@ You can represent many-to-many relationships between two tables by using a third
 }
 ```
 
-In the above, you have links to the `mentors` and `mentees` tables, but you can also add other columns that are specific for the relationship. In the SQL world, this is called an associative or a [junction table](https://en.wikipedia.org/wiki/Associative_entity).
+In the above, you have links to the `mentors` and `mentees` tables, but you can also add other columns that are specific for the relationship. In the SQL world, this is called an associative table or a [junction table](https://en.wikipedia.org/wiki/Associative_entity).
 
 ## Default values
 
@@ -484,35 +593,33 @@ This allows the available concurrency slots in the Primary Store to serve write 
 
 In order to change the consistency level from `strong` to `eventual`, you must add the property `consistency: eventual` to your `/query` or `/summarize` request. For example:
 
-<TabbedCode tabs={['TypeScript', 'CURL', 'Python']}>
+````ts|json|python
   ```ts
   const result = await xata.db.Companies.summarize({
     columns: ['exchange', 'ceo'],
     consistency: 'eventual'
   });
   ```
+  ```json
+  curl -X POST "https://REDACTED.us-east-1.xata.sh/db/mydb:main/tables/Companies/summarize" \
+    -H "content-type: application/json" \
+    -H "authorization: Bearer xau_REDACTED" \
+    -d '{"columns": ["exchange", "ceo"], "consistency": "eventual"}'
 
-```bash
-curl -X POST "https://REDACTED.us-east-1.xata.sh/db/mydb:main/tables/Companies/summarize" \
-  -H "content-type: application/json" \
-  -H "authorization: Bearer xau_REDACTED" \
-  -d '{"columns": ["exchange", "ceo"], "consistency": "eventual"}'
-```
-
-```python
-resp = self.xata.data().summarizeTable("Companies", {
-  "columns": ["exchange", "ceo"],
-  "consistency": "eventual"
-})
-```
-
-</TabbedCode>
+  ```
+  ```python
+  resp = self.xata.data().summarizeTable("Companies", {
+    "columns": ["exchange", "ceo"],
+    "consistency": "eventual"
+  });
+  ```
+````
 
 Using `consistency: eventual` is beneficial if you are not bound to real time data. In the given example, you are running a report from yesterday's data. With the delay it is not possible to guarantee consistency or ensure that a record inserted less than 100 milliseconds ago will be part of the result set. By using leveraging `consistency: eventual` for read requests, you are doubling your [concurrency limits](/docs/rest-api/limits).
 
 ## Conclusion
 
-This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/docs/concepts/schema).
+This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/concepts/schema).
 
 ## Object type migration
 
@@ -628,7 +735,7 @@ Link the `profiles` table in the original `social_content` table:
 
 ### Option 3: Store as raw JSON
 
-As indicated [our roadmap](https://xata.io/roadmap), we are working on introducing support for a dedicated JSON type. As an interim solution, we suggest storing the data from an object column as serialized JSON in a column of type `text`.
+As indicated in [our roadmap](https://xata.io/roadmap), we are working on introducing support for a dedicated JSON type. As an interim solution, we suggest storing the data from an object column as serialized JSON in a column of type `text`.
 
 ```json
 {
