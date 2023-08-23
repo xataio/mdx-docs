@@ -48,7 +48,6 @@ jobs:
       - name: Get deployment URL
         id: get-url
         run: |
-          cat deploy_url.txt
           echo "URL=$(cat deploy_url.txt)" >> $GITHUB_OUTPUT
 
       - name: Find Comment
