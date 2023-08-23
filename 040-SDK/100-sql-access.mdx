@@ -1,45 +1,40 @@
 ---
 title: SQL access
-keywords: ['sql', 'access', 'rest']
 description: How to access Xata using SQL directly
+keywords: ['sql', 'access', 'rest']
 slug: getting-started/sql-access
 published: false
 ---
 
-Xata uses PostgreSQL under the hood to store your data. You can work
-with your data using the well-known SQL and get the results in a
-regular Xata JSON response over HTTP. When the Xata API does not
-support the query you need, you can access SQL directly to perform
-query, insert, update and delete records as you wish.
+Xata uses PostgreSQL under the hood to store your data. You can use SQL to work with your data. The results come back in a typical Xata JSON response mechanism over HTTP. If the [Xata API]() doesn't cover the query you need, you can use SQL directly to do queries, insert data, update information, and delete records.
 
-Xata supports a subset of PostgreSQL language and functions.
-Supported functions include subquery, comparison, aggregate, window,
-range, json, string, datetime and array functions. All other functions
-are forbidden.
+Xata offers support for a subset of PostgreSQL functions. This includes functions such as subquery, comparison, aggregate, window, range, json, string, datetime, and array functions. Functions beyond these are not permitted.
 
 ## Data model
 
-Database tables are stored in PostgreSQL as tables. Xata datatypes
-are mapped to PostgreSQL types with additional constraints.
+Database tables are stored in PostgreSQL as tables. Xata data types are mapped to PostgreSQL types with additional constraints.
 
-| Xata datatype | PostgreSQL datatype | Notes |
-| ------------- | ------------------- | ----- |
-| string | text | |
-| text | text | with constaint on maximum length |
-| int | bigint | |
-| float | double precision | |
-| datetime | timestamptz | |
-| bool | boolean | |
-| email | text | validated by Xata |
-| multiple | text[] | validated by Xata |
-| file | jsonb | validated by Xata |
-| filearray | jsonb | validated by Xata |
-| link | foreign key | |
+| Xata data type | PostgreSQL data type | Notes |
+| ------------- | -------------------   | ----- |
+| string        | text                  |       |
+| text          | text                  | With constraints on maximum length |
+| int           | bigint                |       |
+| float         | double precision      |       |
+| datetime      | timestamptz           |       |
+| bool          | boolean               |       |
+| email         | text                  | Validated by Xata |
+| multiple      | text[]                | Validated by Xata |
+| file          | jsonb                 | Validated by Xata |
+| filearray     | jsonb                 | Validated by Xata |
+| link          | foreign key           |       |
 
 Database tables are stored in PostgreSQL. Linked columns are foreign
 keys pointing to the linked table. If you want to access a linked
 column, use JOINs or WHERE conditions to find the corresponding
-records. Example: 
+records. 
+
+Example: 
+
 ```sql
 SELECT "Users".email, address.city FROM "Users"
 LEFT JOIN address ON "Users".id=address.id;
