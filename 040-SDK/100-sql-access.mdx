@@ -64,7 +64,7 @@ otherwise PostgreSQL treats it as a lowercase name.
 
 ## Examples
 
-The following are instances of working with data, including retrieving, selecting, inserting, and deleting records, using SQL within the Xata platform.
+The following are instances of working with data, including retrieving, selecting, inserting, and deleting records, using SQL in the Xata platform.
 
 ### Fetch all records
 
@@ -180,7 +180,7 @@ records = xata.sql().query(
 
 ## Limitations
 
-When using SQL in Xata, there are a few constraints that can impact how you manage your data.
+When using SQL in Xata, there are a few constraints to keep in mind.
 
 ### Data retrieval 
 
@@ -205,21 +205,10 @@ By assigning aliases, you can distinguish between columns with similar names and
 
 ### Unsupported commands
 
-Certain commands fall outside of Xata's supported range:
+Certain commands are not supported in Xata:
 
-* Data definition language (DDL) commands, such as the following, are not supported:
-  * `CREATE ` 
-  * `DROP`
-  * `ALTER` 
-  * `TRUNCATE`
+* Data definition language (DDL) commands such as `CREATE`, `DROP`, `ALTER` and `TRUNCATE` are not supported.
 
-* Data control language (DCL) commands, such as the following, are not supported: 
-  * `GRANT 
-  * `REVOKE`
+* Data control language (DCL) commands such as `GRANT` and `REVOKE` are not supported. 
 
-* Transaction control language (TCL) commands, such as the following, are not supported:
-  * `COMMIT`
-  * `ROLLBACK`
-  * `SAVEPOINT`
-  * `ROLLBACK TO SAVEPOINT`
-  * `SET TRANSACTION` 
+* Transaction control language (TCL) commands such as `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ROLLBACK TO SAVEPOINT`, and `SET TRANSACTION` are not supported.
