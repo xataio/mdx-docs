@@ -1,5 +1,10 @@
 name: Docs preview
 
+# https://stackoverflow.com/a/72408109
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
   workflow_dispatch:
@@ -14,6 +19,10 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      VERCEL_ORG_ID: team_lMj2cFnO13wwm6LWz3X5kulx
+      VERCEL_PROJECT_ID: prj_7fENPf4qHhMCnz6j2IGYWDUkJ9wU
+
     steps:
       - name: Checkout website repo
         uses: actions/checkout@v3
@@ -41,9 +50,6 @@ jobs:
             --build-env XATA_BRANCH=main \
             --env XATA_BRANCH=main \
             > deploy_url.txt
-        env:
-          VERCEL_ORG_ID: team_lMj2cFnO13wwm6LWz3X5kulx
-          VERCEL_PROJECT_ID: prj_7fENPf4qHhMCnz6j2IGYWDUkJ9wU
 
       - name: Get deployment URL
         id: get-url
@@ -76,3 +82,13 @@ jobs:
         #  cmd_params: '--exclude=(github.com|twitter.com|localhost:3000) --buffer-size=8192 --max-connections=10 --color=always --rate-limit=10 --header="User-Agent:curl/7.54.0"'
         #  debug: true
       #  - name: Check links
+
+      - name: If job cancelled
+        if: ${{ cancelled() }}
+        run: |
+          vercel remove \
+            --token ${{ secrets.VERCEL_TOKEN }} \
+            --scope $VERCEL_ORG_ID \
+            --safe \
+            --yes \
+            $(cat deploy_url.txt)
