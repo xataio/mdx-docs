@@ -28,26 +28,21 @@ Database tables are stored in PostgreSQL as tables. Xata data types are mapped t
 | filearray     | jsonb                 | Validated by Xata |
 | link          | foreign key           |       |
 
-Database tables are stored in PostgreSQL. Linked columns are foreign
-keys pointing to the linked table. If you want to access a linked
-column, use JOINs or WHERE conditions to find the corresponding
-records. 
 
-Example: 
+In PostgreSQL, tables are used to store and organize data. Linked columns serve as foreign keys, establishing connections to other tables. To access data from a linked column, use JOIN operations or apply WHERE conditions to locate the related records.
+
+For example, the following query showcases how to retrieve email addresses and corresponding cities using a LEFT JOIN operation between the "Users" and "address" tables.: 
 
 ```sql
 SELECT "Users".email, address.city FROM "Users"
 LEFT JOIN address ON "Users".id=address.id;
 ```
 
-Other special Xata datatypes like `email` require you to insert it
-using the Xata API or SDK, otherwise Xata cannot check if the data
-inserted is valid or not. Thus, we suggest you do not write such
-column directly. Instead use the API we provide.
+For specific Xata data types like email, it is required you use the Xata API or SDK for insertion. This ensures that Xata can validate the inserted data's accuracy. We recommend refraining from directly writing to columns of this type and instead using the provided API for better results.
 
 ### Table and column names
 
-Please note when you are working with names that include upper-case
+Note when you are working with names that include upper-case
 letters like `Users` or `zipCode`, you must quote those
 otherwise PostgreSQL treats it as a lowercase name.
 
@@ -55,12 +50,17 @@ otherwise PostgreSQL treats it as a lowercase name.
 
 URL: `https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql`
 
+This URL represents the endpoint for making SQL queries within the Xata platform. It's designed for interacting with a database in a specified Workspace and region.
+
 Method: `POST`
+
+The HTTP method used to interact with the provided URL is `POST`. This means you'll be sending data to the server, specifically your SQL statement and any additional parameters. 
 
 Parameters:
 * `statement`: your SQL statement (required).
 * `params`: list of parameters when submitting a parameterized statement.
 * `consistency`: consistency when executing a statement. Available options: `strong`, `eventual`. Default: `strong`.
+
 
 ## Examples
 
@@ -178,21 +178,42 @@ records = xata.sql().query(
 
 ## Limitations
 
+### Data retrieval 
+
 * `xata.*` internal fields are read-only.
 * You can only submit one statement per request.
-* Xata returns 1000 records at a time. Please access your data using `LIMIT` and `OFFSET` keywords to iterate over your data.
+* Xata returns 1000 records at a time. Access your data using `LIMIT` and `OFFSET` to iterate and work through your data.
 * JSON formatter functions do not work as the endpoint already returns a JSON response.
 
 
-Columns with the same name are overwritten by default. If you have multiple columns with the same name please use aliasing to rename at least one of them. For example: 
+### Column names
+
+Columns with matching names overwrite each other by default. To address this, especially when dealing with multiple columns that have the same name, you can use column aliasing as a solution. For instance:
+
 ```sql
 SELECT address AS physical_address, address AS email 
 FROM people, emails 
 WHERE people.id=emails.id;
 ```
 
+By assigning aliases, you can differentiate between columns with similar names and manage them effectively.
 
-Xata does not support:
-* DDL commands like CREATE, DROP, ALTER and TRUNCATE.
-* DCL commands like GRANT or REVOKE.
-* TCL commands like COMMIT, ROLLBACK, SAVEPOINT, etc.
+
+### Unsupported commands
+
+* Data definition language (DDL) commands, such as the following, are not supported:
+  * `CREATE ` 
+  * `DROP`
+  * `ALTER` 
+  * `TRUNCATE`
+
+* Data control language (DCL) commands, such as the following, are not supported: 
+  * `GRANT 
+  * `REVOKE`
+
+* Transaction control language (TCL) commands, such as the following, are not supported:
+  * `COMMIT`
+  * `ROLLBACK`
+  * `SAVEPOINT`
+  * `ROLLBACK TO SAVEPOINT`
+  * `SET TRANSACTION` 
