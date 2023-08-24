@@ -21,8 +21,8 @@ Below are the parameters passed to the methods in the following examples:
 
 - `xata.records().insert()`: table name (str), record (dictionary)
 - `xata.records().insert_with_id()`: table name (str), record id (str), record (dictionary)
-- `xata.records().update_with_id()_`: table name (str), record id (str), record (dictionary)
-- `xata.records().upsert_with_id()`: table name (str), record id (str), record (dictionary)
+- `xata.records().update()_`: table name (str), record id (str), record (dictionary)
+- `xata.records().upsert()`: table name (str), record id (str), record (dictionary)
 - `xata.records().get()`: table name (str), record id (str)
 - `xata.data().query()`: table name (str), object with "columns", "filter", and "sort"
 - `xata.records().delete()`: table name (str), record id (str)
@@ -59,7 +59,7 @@ assert resp.is_success()
 # Update the record with Id "spidey-1" in table "Avengers"
 
 record["job"] = "your friendly neighborhood spider man"
-resp = xata.records().update_with_id("Avengers", "spidey-1", record)
+resp = xata.records().update("Avengers", "spidey-1", record)
 assert resp.is_success()
 
 # Upsert: Update or Insert a record
@@ -68,7 +68,7 @@ record = {
   "name": "Bruce Banner",
   "job": "Hulk",
 }
-resp = xata.records().upsert_with_id("Avengers", "hulk-1", record)
+resp = xata.records().upsert("Avengers", "hulk-1", record)
 
 # On insert status code = 201
 
@@ -76,7 +76,7 @@ assert resp.status_code == 201
 assert resp.is_success()
 
 record["job"] = "the incredible hulk"
-resp = xata.records().upsert_with_id("Avengers", "spidey-1", record)
+resp = xata.records().upsert("Avengers", "spidey-1", record)
 
 # On update status code = 200
 
@@ -199,6 +199,61 @@ print(data["records"])
 # Note it will be an array, even if there is only one record matching the filters
 ```
 
+</TabbedCode>
+
+## Pagination
+
+The following example will show you how to paginate through your data, and introduce you to two new convenience methods, `response.has_more_results()` and `response.get_cursor()` introduced in `1.x`. 
+We want to limit the records per call to 25, and assume the `people` table has a total amount of records is > 25. 
+So we need to make multiple calls to page through our data.
+
+<TabbedCode tabs={['1.x', '0.x']}>
+```python
+from xata.client import XataClient
+
+records = xata.data().query("people", {
+  "page": {
+    "size": 25 # limit result set to 25 records
+  }
+})
+# do something with the data ..
+
+# are more pages available ? If yes keep looping 
+# through until we reached the last page
+while records.has_more_results():
+  # fetch the next page ..
+  records = self.xata.data().query("people", {
+    "page": {
+      "after": records.get_cursor() # get the next cursor
+    }
+  })
+  # do something with the data ..
+```
+
+```python
+from xata.client import XataClient
+
+records = xata.data().queryTable("people", {
+  "page": {
+    "size": 25 # limit result set to 25 records
+  }
+})
+# do something with the data ..
+
+# are more pages available ? If yes keep looping 
+# through until we reached the last page
+more = records.json()["meta"]["page"]["more"]
+while more:
+  # fetch the next page ..
+  records = self.xata.data().query("people", {
+    "page": {
+      "after": records..json()["meta"]["page"]["cursor"] # next cursor
+    }
+  })
+  # do something with the data ..
+
+  more = records.json()["meta"]["page"]["more"]
+```
 </TabbedCode>
 
 ## Delete a Record from a Table
