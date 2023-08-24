@@ -9,7 +9,7 @@ published: true
 
 To delete a record you can execute, for example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.delete('rec_cd8s3r8avc42pi67m13g');
@@ -23,6 +23,14 @@ user = xata.records().delete("Users", "rec_cd8s3r8avc42pi67m13g")
 ```
 
 ```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "DELETE FROM \"Users\" WHERE id = 'rec_cd8s3r8avc42pi67m13g';"
+}
+```
+
+```jsonc
 // DELETE https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
 ```
 
@@ -32,7 +40,7 @@ In case the record with the given ID doesn't exist, the REST API returns a 404 a
 
 Transactions are used when deleting multiple records:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.delete(['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1oncchhigq95n2g']);
@@ -55,6 +63,14 @@ users = xata.records().transaction({
     }
   ]
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "DELETE FROM \"Users\" WHERE id IN ('rec_cd8s3r8avc42pi67m13g','rec_cgh9o1oncchhigq95n2g');"
+}
 ```
 
 ```jsonc
