@@ -182,12 +182,17 @@ records = xata.sql().query(
 * You can only submit one statement per request.
 * Xata returns 1000 records at a time. Please access your data using `LIMIT` and `OFFSET` keywords to iterate over your data.
 * JSON formatter functions do not work as the endpoint already returns a JSON response.
-* Columns with the same name are overwritten by default. If you have multiple columns with the same name please use aliasing to rename at least one of them. For example: 
-  ```sql
-  SELECT address AS physical_address, address AS email 
-  FROM people, emails 
-  WHERE people.id=emails.id;
-  ```
-* Xata does not support DDL commands like CREATE, DROP, ALTER and TRUNCATE.
-* Xata does not support DCL commands like GRANT or REVOKE.
-* Xata does not support TCL commands like COMMIT, ROLLBACK, SAVEPOINT, etc.
+
+
+Columns with the same name are overwritten by default. If you have multiple columns with the same name please use aliasing to rename at least one of them. For example: 
+```sql
+SELECT address AS physical_address, address AS email 
+FROM people, emails 
+WHERE people.id=emails.id;
+```
+
+
+Xata does not support:
+* DDL commands like CREATE, DROP, ALTER and TRUNCATE.
+* DCL commands like GRANT or REVOKE.
+* TCL commands like COMMIT, ROLLBACK, SAVEPOINT, etc.
