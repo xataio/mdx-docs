@@ -1,0 +1,629 @@
+---
+title: File attachments
+navTitle: File attachments
+keywords: ['files', 'file storage', 'file attachments']
+description: Xata effectively keeps track of files within a database
+slug: concepts/file-attachments
+published: true
+---
+
+Xata now offers general purpose file attachment capabilities. In order to simplify the management of large binary objects and to improve the developer experience, Xata integrates the files support into the database service. The aim is to offer a unified, seamless experience by exposing file support under the same API, same security model, same SDK. Using this approach, the queries, filters, summaries, aggregations can now be used on files metadata. The metadata (file name, media type, tags) is also indexed for search so it can be included in search results.
+
+## Schema
+
+To support file attachments, Xata is introducing 2 new column types:
+
+- `file` column type
+  - The column stores file objects, which are JSON objects with a pre-defined schema.
+  - Since the column stores a single file object, the file metadata fields can be used in query filters or in summary queries.
+  - Files stored in this column type do not get a file id assigned, as they can be referenced by the record id and column name.
+- `file[]` (file array) column type
+  - The column stores an array of file item objects.
+  - As the column may store an arbitrary number of files, this content cannot be used in query filters or in summary queries.
+  - Files stored in this array column type carry a file id so they can be referenced in endpoints such as the binary File API.
+
+## File object
+
+The file object is the representation of a file in the Xata database. It is used to upload a file and update or read its metadata through Record APIs.
+
+The object consists of the following fields:
+
+- `name` refers to the file name.
+- `mediaType` follows the definition provided by [RFC 6838](https://datatracker.ietf.org/doc/html/rfc6838). Xata may use it as a hint, but does not validate the content against the declared media type. Defaults to `application/octet-stream` if the value is missing.
+- `base64Content` refers to the file content encoded using base64 encoding.
+- `enablePublicUrl` is an optional boolean field indicating whether Xata should generate a public access URL for this file. Defaults to false.
+- `signedUrlTimeout` is an optional integer field setting the time to live for a signed URL. The value is in seconds and it defaults to 1 minute.
+
+All the fields above are input fields and can be used in insert or update requests. For example:
+
+```jsonc
+// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data
+
+{
+  "photo": {
+    "name": "sample.png",
+    "mediaType": "image/png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+When reading or querying a file object, Xata adds a set of read only fields:
+
+- `size` - the size of the file in bytes. Note that this is the size of the original file not the size of the base64 encoding.
+- `version` - counts the updates of the specific file.
+- `url` - generated URL for direct access to the file. Depending on the `enablePublicUrl` flag, this URL can be public or can require the Xata API key.
+- `signedUrl` - generated access URL which includes a signature. This URL allows access without a key, but expires after the duration configured in `signedUrlTimeout`.
+- `attributes` - JSON object storing key value properties specific to the file media type. For example, known image types will have height and width properties in the attributes. The known image formats are JPEG, PNG, and GIF.
+
+There are 2 fields that are returned only **on demand**, when they are explicitly added to the columns selection: `base64Content` and `signedUrl`. These fields impact performance and bandwidth and they should be retrieved only when needed.
+Using the dot notation a subset of fields can be selected for return like this:
+
+```sh
+curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id?columns=photo.name,photo.mediaType,photo.size,photo.version,photo.url,photo.signedUrl,photo.attributes' \
+--header 'authorization: Bearer xau_REDACTED'
+```
+
+The returned file object will look like the following:
+
+```json
+{
+  "photo": {
+    "name": "sample.png",
+    "mediaType": "image/png",
+    "size": 1885,
+    "version": 1,
+    "url": "https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk",
+    "signedUrl": "https://eu-west-1.xata.sh/file/01j62cjje9r4vhpo9vi9sj36gnbg8l8oucnvep3onqu8p8180fpm4c3p0hs62t31nj42n37o4l3dd19fe6vsh4plkn0ncj732roopcbcusb9e3qvk7eeccn8u5k4bede1915r6l6j7cri?verify=m4p8ep0000001ounphkob57vrn9il5egcq5vhu80g9s3d8dfsolduti6mtlh7aki",
+    "attributes": {
+      "height": 131,
+      "width": 131
+    }
+  }
+}
+```
+
+### File item object
+
+The file item object is used to represent files in a file array column. This is the same as the file object, but it also includes an identifier so that files in the array can be referred by ID. The `id` is automatically generated if it is not passed at creation time. For example the following value can be used to create an array containing 2 files. The first file in the array gets a custom `id`, while the second will have an auto-generated `id`.
+
+```jsonc
+// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data
+
+{
+  "images": [
+    {
+      "id": "i1",
+      "name": "image1.png",
+      "mediaType": "image/png",
+      "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+    },
+    {
+      "name": "image2.png",
+      "mediaType": "image/png",
+      "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+    }
+  ]
+}
+```
+
+## Record APIs
+
+All Xata record APIs can be used to create, read, update, delete and query files.
+
+### Upload a file through inserting a new record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+  ```ts
+  const record = await xata.db.Users.create({
+    name: 'Keanu',
+    photo: {
+      name: 'file.png',
+      mediaType: 'image/png',
+      base64Content:
+        'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+    }
+  });
+  ```
+
+```python
+record = xata.records().insertRecord("Users", {
+  "name": "Keanu",
+  "photo": {
+    "name": "file.png",
+    "mediaType": "image/png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC",
+  }
+});
+```
+
+```jsonc
+// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data
+
+{
+  "name": "Keanu",
+  "photo": {
+    "name": "file.png",
+    "mediaType": "image/png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+</TabbedCode>
+
+### Update a file through updating a record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+  ```ts
+  const user = await xata.db.Users.update('record_id', {
+    photo: {
+      base64Content:
+        'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+    }
+  });
+
+// or, using the `update` method on the record object:
+
+user.update({
+photo: {
+base64Content:
+'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+}
+});
+
+````
+
+```python
+record = xata.records().updateRecordWithID("Users", "record_id", {
+  "photo": {
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+})
+````
+
+```jsonc
+// PATCH https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/record_id
+
+{
+  "photo": {
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+</TabbedCode>
+
+### Download a file through reading a record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+  ```ts
+  const user = await xata.db.Users.read('record_id', ['photo.name', 'photo.base64Content']);
+  ```
+
+```python
+user = xata.records().getRecord("Users", "record_id", columns=["photo.name", "photo.base64Content"])
+```
+
+```sh
+curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/record_id?columns=photo.name,photo.base64Content' \
+--header 'authorization: Bearer xau_REDACTED'
+```
+
+</TabbedCode>
+
+Response:
+
+```json
+{
+  "id": "record_id",
+  "photo": {
+    "name": "file.png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+### Delete a file through updating a record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+  ```ts
+  const user = await xata.db.Users.update('record_id', { photo: null });
+
+// or, using the `update` method on the record object:
+
+await user.update({ photo: null });
+
+````
+
+```python
+record = xata.records().updateRecordWithID("Users", "record_id", {"photo": None})
+````
+
+```jsonc
+// PATCH https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/record_id
+
+{
+  "photo": null
+}
+```
+
+</TabbedCode>
+
+### Query files metadata
+
+Here is an example of retrieving access URLs for all files from the photo column, that are `image/png`, sorted by file size:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+  ```ts
+  const photos = await xata.db.Users.select(['name', 'photo.url', 'photo.size'])
+    .filter({ 'photo.mediaType': 'image/png' })
+    .sort('photo.size', 'desc')
+    .getMany();
+  ```
+
+```python
+photos = xata.search_and_filter().queryTable("Users", {
+  "columns": ["name", "photo.url", "photo.size"],
+  "filter": { "photo.mediaType": "image/png" },
+  "sort": { "photo.size": "desc" }
+})
+```
+
+```jsonc
+// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query
+
+{
+  "columns": ["name", "photo.url", "photo.size"],
+  "filter": { "photo.mediaType": "image/png" },
+  "sort": { "photo.size": "desc" }
+}
+```
+
+</TabbedCode>
+
+## File (binary) APIs
+
+Since all Record APIs use json for both request and response body, the file content needs to be encoded. For reasons like performance or data size on the wire, encoding the content might not be desired.
+To work directly with binary file content, Xata introduces new file APIs.\
+Similar to the other Xata APIs the file APIs require the Authorization header and a valid API key.
+
+### Upload a file using File APIs
+
+`file` column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+  ```ts
+  await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id' }, file);
+  ```
+
+```python
+response = self.client.files().put("table_name", "record_id", "column_name", file_content)
+```
+
+```sh
+curl --request PUT 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file' \
+--header 'Content-Type: image/jpeg' \
+--header 'Authorization: Bearer xau_REDACTED' \
+--data-binary '@/path/to/file'
+```
+
+</TabbedCode>
+
+`file[]` (file array) column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+  ```ts
+  await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id', fileId: 'id' }, file);
+  ```
+
+```python
+response = self.client.files().put_item("table_name", "record_id", "column_name", "file_id", file_content)
+```
+
+```sh
+curl --request PUT 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file/id' \
+--header 'Content-Type: image/jpeg' \
+--header 'Authorization: Bearer xau_REDACTED' \
+--data-binary '@/path/to/file'
+```
+
+</TabbedCode>
+
+### Download a file using File APIs
+
+`file` column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+  ```ts
+  const file = await xata.files.download({ table: 'table_name', column: 'column_name', record: 'record_id' });
+  ```
+
+```sh
+file = self.client.files().get("table_name", "record_id", "column_name")
+```
+
+```sh
+curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file' \
+--header 'authorization: Bearer xau_REDACTED' \
+--output download.jpeg
+```
+
+</TabbedCode>
+
+`file[]` (file array) column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+  ```ts
+  const file = await xata.files.download({
+    table: 'table_name',
+    column: 'column_name',
+    record: 'record_id',
+    fileId: 'file_id'
+  });
+  ```
+
+```python
+file = self.client.files().get_item("table_name", "record_id", "column_name", "file_id")
+```
+
+```sh
+curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file/id' \
+--header 'authorization: Bearer xau_REDACTED' \
+--output download.jpeg
+```
+
+</TabbedCode>
+
+## File access URLs
+
+For scenarios like web applications, web sites, content sharing, Xata offers direct access URLs for the stored files.
+There are 3 levels of access available:
+
+### Authenticated URL
+
+Requests for these URLs require the Xata API key to be present in the Authorization header.
+Authenticated URLs are retrieved by reading or querying the `url` field of a file object. The `enablePublicUrl` field must be set to `false` (default value) to retrieve an authenticated URL.
+
+This level is recommended for access patterns where the key is available to the client service and the service requires cached, high throughput, high concurrency download access.
+
+### Public URL
+
+A Xata file can be configured for public access, resulting in an URL that is publicly available without the need of an api key or a signature. A public URL does not expire and offers access until the file is reconfigured to remove public access. The public access is configured per file by setting the file field `enablePublicUrl` to `true`. The recommended scenarios for public access are public websites and public content sharing.
+
+### Signed URL
+
+A signed URL, offers authenticated access to a file without the need of an API Key. The key (signature) is in the URL itself, so anyone holding the URL can get access to the file.
+The signed URL has a configurable time to live after which the access URL expires. In order to avoid permanent public access, the time to live can be set to maximum 24h.
+The signed URL timeout can be configured per file by setting the `signedUrlTimeout` field in the file object. The default value is 1 minute.
+A file's signed URL can be retrieved by reading or querying the `signedUrl` field of a file object.
+Signed URLs are recommended for scenarios where temporary access is needed without sharing the API key. For example rendering an image, without giving away a permanent image URL.
+
+## Content delivery detwork (CDN)
+
+File attachment support comes with an integrated content delivery network (CDN) which minimizes access latency by using regional caches.
+
+Caching is enabled for all signed and public URLs. This is to avoid caching data that is secured by API key permissions. This feature is enabled by default and doesn't require any configuration. Content from publicly accessible and signed URLs is cached for a duration of 4 hours.
+
+As with all cache systems, the fundamental problem is cache invalidation - maintaining cache access performance while ensuring updated content and preventing outdated entries. In its architectural approach, Xata addresses the issue of cache invalidation by treating file content as dynamic - analogous to data within a database. 
+
+Consequently, it's recommended that clients dynamically obtain access URLs from the database, rather than persisting them in static resources. When the target file is modified, URLs can become invalid, resulting in access disruptions if stored externally to the database.
+
+Through the process of generating a new URL after each update, the system prevents the delivery of outdated and stale content, regardless of any caches or proxies between the client and storage service. For the client application, this translates to no need for cache time-to-live (TTL) or waiting for cache invalidation. When the URL is fetched directly from the database, it is guaranteed to retrieve the most recent version of the file available.
+
+## Image transformations
+
+For the very common case of storing images, Xata offers a set of transformations that can be applied in real-time while retrieving images through access URLs.  Transformations are specified in the URL and their result is cached by the CDN. Both public and signed URLs support transformations. In the URL the transformation specification is a comma separated list of individual transformations following the `/transform/` segment.
+
+Original image URL:
+[`https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk)
+
+Image URL with transformations:
+[`https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk)
+
+For example, retrieving an image scaled to 50 pixels height and converted to webp format will look like this:
+
+<TabbedCode tabs={['TypeScript', 'CURL']}>
+  ```ts
+  const { url, signedUrl } = file.transform({
+    height: 50,
+    format: 'webp'
+  });
+  ```
+
+```sh
+curl 'https://eu-west-1.storage.xata.sh/transform/height=50,format=webp/nj42n37o4l3dd19fe6vsh4plkk' \
+--output download.webp
+```
+
+</TabbedCode>
+
+The following transformations are available:
+
+### anim
+
+Use to remove animation frames from input files. Default is set to `true`. Setting it to `false` reduces animations to still images.
+
+```txt
+/transform/anim=false
+```
+
+### background
+
+Use this to introduce a background color beneath the image. Applies to images with transparency. Accepts any CSS color, such as #RRGGBB and rgba(…).
+
+```txt
+/transform/background=%23RRGGBB
+```
+
+OR
+
+```txt
+/transform/background=red
+```
+
+### blur
+
+Adds a blur radius between 1 (slight blur) and 250 (maximum).
+
+```txt
+/transform/blur=50`
+```
+
+### brightness
+
+Increase brightness by a factor. A value of `1.0` equals no change, a value of `0.5` equals half brightness, and a value of `2.0` equals twice as bright. `0` is ignored.
+
+```txt
+/transform/brightness=0.5
+```
+
+### compression
+
+This marginally reduces latency in case of a cache miss, by selecting the fastest-compressing file format. However, this comes at the expense of larger file sizes and diminished image quality. The only option is `fast`. It will usually override the format option and choose JPEG over WebP or AVIF.
+
+```txt
+/transform/compression=fast
+```
+
+### contrast
+
+Increase contrast by a factor. A value of 1.0 equals no change, a value of 0.5 equals low contrast, and a value of 2.0 equals high contrast. 0 is ignored.
+
+```txt
+/transform/contrast=0.5
+```
+
+### dpr
+
+This refers to the Device Pixel Ratio (DPR). The default is 1. This ia multiplier for width/height that makes it easier to specify higher-DPI sizes in `img srcset`.
+
+```txt
+/transform/dpr=1
+```
+
+### fit
+
+Affects interpretation of width and height. All resizing modes preserve aspect ratio.
+
+- `contain`
+  Image will be resized (shrunk or enlarged) to be as large as possible within the given width or height while preserving the aspect ratio. If you only provide a single dimension (for example, only width), the image will be shrunk or enlarged to exactly match that dimension.
+- `scale-down`
+  Similar to contain, but the image is never enlarged. If the image is larger than given width or height, it will be resized. Otherwise its original size will be kept.
+- `cover`
+  Resizes (shrinks or enlarges) to fill the entire area of width and height. If the image has an aspect ratio different from the ratio of width and height, it will be cropped to fit.
+- `crop`
+  Image will be shrunk and cropped to fit within the area specified by width and height. The image will not be enlarged. For images smaller than the given dimensions, it is the same as scale-down. For images larger than the given dimensions, it is the same as cover.
+- `pad`
+  Resizes to the maximum size that fits within the given width and height, and then fills the remaining area with a background color (white by default). This mode is not recommended, since you can achieve the same effect more efficiently with the contain mode and the CSS object-fit contain property.
+
+```txt
+/transform/fit=contain
+```
+
+### format
+
+Converts format of the retrieved image.
+
+- `auto`
+  Will serve the WebP or AVIF format to browsers that support it. If this option is not specified, a standard format like JPEG or PNG will be used.
+- `avif`
+  Generate images in AVIF format if possible (with WebP as a fallback).
+- `webp`
+  Generate images in Google WebP format. Set the quality to 100 to get the WebP lossless format.
+- `json`
+  Instead of generating an image, outputs information about the image in JSON format. The JSON object will contain data such as image size (before and after resizing), source image’s MIME type, and file size.
+
+```txt
+/transform/format=auto
+```
+
+### gamma
+
+Increase exposure by a factor. A value of 1.0 equals no change, a value of 0.5 darkens the image, and a value of 2.0 lightens the image. 0 is ignored.
+
+```txt
+/transform/gamma=0.5
+```
+
+### gravity
+
+When cropping with fit: "cover" and fit: "crop", this parameter defines the side or point that should not be cropped. Available options are:
+
+- `auto`
+  Selects focal point based on saliency detection (using maximum symmetric surround algorithm).
+- `side`
+  A side ("left", "right", "top", "bottom") or coordinates specified on a scale from 0.0 (top or left) to 1.0 (bottom or right), 0.5 being the center. The X and Y coordinates are separated by lowercase `x` in the URL format. For example, 0x1 means left and bottom, 0.5x0.5 is the center, 0.5x0.33 is a point in the top third of the image.
+
+```txt
+/transform/gravity=auto
+```
+
+OR
+
+```txt
+/transform/gravity=0x1
+```
+
+### height
+
+Specifies maximum height of the image in pixels. Exact behavior depends on the `fit` mode.
+
+```txt
+/transform/height=50
+```
+
+### metadata
+
+Controls amount of invisible metadata (EXIF data) that should be preserved. Color profiles and EXIF rotation are applied to the image even if the metadata is discarded. Note that if the Polish feature is enabled, all metadata may have been removed already and this option will have no effect. Options are:
+
+- `keep`
+  Preserves most of EXIF metadata, including GPS location if present.
+- `copyright`
+  Discard all metadata except EXIF copyright tag. This is the default behavior for JPEG images.
+- `none`
+  Discard all invisible EXIF metadata. Currently, WebP and PNG output formats always discard metadata.
+
+```txt
+/transform/metadata=keep
+```
+
+### quality
+
+Specifies quality for images in JPEG, WebP, and AVIF formats. The quality is in a 1-100 scale, but useful values are between 50 (low quality, small file size) and 90 (high quality, large file size). 85 is the default.
+
+```txt
+/transform/quality=50
+```
+
+### rotate
+
+Specifies number of degrees (90, 180, or 270) to rotate the image by. Width and height options refer to axes after rotation.
+
+```txt
+/transform/rotate=90
+```
+
+### sharpen
+
+Specifies strength of sharpening filter to apply to the image. The value is a floating-point number between 0 (no sharpening, default) and 10 (maximum). 1 is a recommended value for downscaled images.
+
+```txt
+/transform/sharpen=2
+```
+
+### trim
+
+Specifies the number of pixels to cut off on each side. Allows removal of borders or cutting out a specific fragment of an image. Trimming is performed before resizing or rotation. Takes `dpr` into account. The value must be four numbers in pixels separated by a semicolon, in the form of top;right;bottom;left.
+
+```txt
+/transform/trim=20;30;20;0
+```
+
+### width
+
+Specifies maximum width of the image in pixels. Exact behavior depends on the fit mode
+
+```txt
+/transform/width=50
+```

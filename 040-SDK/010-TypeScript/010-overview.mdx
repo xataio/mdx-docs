@@ -3,7 +3,7 @@ title: Xata SDK for TypeScript and JavaScript
 navTitle: SDK overview
 keywords: ['TypeScript', 'TypeScript client']
 description: Use the SDK as a schema-based, schema-less or an API client
-slug: typescript-client/overview
+slug: sdk/typescript/overview
 published: true
 ---
 
@@ -24,3 +24,30 @@ There are three ways to use the SDK:
 - Schema-generated Client: SDK to create/read/update/delete records in a given database following a schema file (with type-safety).
 - Schema-less Client: SDK to create/read/update/delete records in any database without schema validation (with partial type-safety).
 - API Client: SDK to interact with the whole Xata API and all its endpoints.
+
+## Helper methods
+
+The TypeScript SDK provides helper methods for creating types based off of Xata client-generated types.
+The following are exported on the `@xata.io/client` package:
+
+- `SelectableColumn` provides a type with the valid columns for a Record.
+- `SelectedPick` returns a subtype of the Record with the requested fields.
+- `EditableData` removes built-in Record methods and reserved fields.
+
+In the example below we create the type `myUser` with a selection of fields from the client-generated UserRecord:
+
+```ts
+import { getXataClient } from "./xata";
+import { SelectedPick, SelectableColumn, EditableData } from "@xata.io/client";
+import { UserRecord } from "./xata";
+
+const xata = getXataClient();
+
+const fields: SelectableColumn<UserRecord>[] = [
+  "id",
+  "name",
+  "address",
+];
+
+type myUser = EditableData<SelectedPick<UserRecord, typeof fields>>;
+```
