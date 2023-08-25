@@ -353,13 +353,16 @@ import MainLayout from '../layouts/main.astro';
 Next, import the auto-generated `XataClient` class definition from `src/xata.ts`, get all the posts using the client, and
 list them within the page:
 
-```astro title="src/pages/index.astro" {4-6,13-34}
+```astro title="src/pages/index.astro" {4-9,11,16-37}
 ---
 import MainLayout from '../layouts/main.astro';
 
 import { XataClient } from '../xata';
 
-const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
+const xata = new XataClient({
+  apiKey: import.meta.env.XATA_API_KEY,
+  branch: import.meta.env.XATA_BRANCH
+});
 
 let posts = await xata.db.Posts.getAll();
 ---
@@ -390,18 +393,21 @@ let posts = await xata.db.Posts.getAll();
   </div>
 
 </MainLayout>
-
 ```
 
 Here's a breakdown of what's happening in the code above.
 
-First, import the `XataClient` constructor and create a new instance, passing in the `apiKey` with the value set via the `XATA_API_KEY` environment variable.
+First, import the `XataClient` constructor and create a new instance, passing in the `apiKey` and `branch` with
+the values set via the `XATA_API_KEY` and `XATA_XATA_BRANCH` environment variables, respectively.
 Then assign the `XataClient` instance to a variable named `xata`:
 
 ```tsx
 import { XataClient } from '../xata';
 
-const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
+const xata = new XataClient({
+  apiKey: import.meta.env.XATA_API_KEY,
+  branch: import.meta.env.XATA_BRANCH
+});
 ```
 
 Then, in the Astro page Component Script (the section within `---`), use the `xata` client instance to get all the posts stored in the database. This is
@@ -468,14 +474,17 @@ routes are identified within the `getStaticPaths` function, and site content is 
 
 Create a new file, `src/pages/posts/[slug].astro` to enable access to a `slug` parameter:
 
-```tsx astro="src/pages/posts/[slug].astro" {2,4,6-18,20-40}
+```tsx astro="src/pages/posts/[slug].astro" {2,4,6-21,23-43}
 ---
 import MainLayout from '../../layouts/main.astro'
 
 import { XataClient } from '../../xata';
 
 export async function getStaticPaths() {
-  const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
+  const xata = new XataClient({
+    apiKey: import.meta.env.XATA_API_KEY,
+    branch: import.meta.env.XATA_BRANCH
+  });
   const posts = await xata.db.Posts.getAll();
 
   const routes = posts.map(({ slug, title, description, pubDate }) => {
@@ -530,7 +539,10 @@ The `getStaticPaths` Astro framework function is then declared. First, instantia
 
 ```ts
 export async function getStaticPaths() {
-  const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
+  const xata = new XataClient({
+    apiKey: import.meta.env.XATA_API_KEY,
+    branch: import.meta.env.XATA_BRANCH
+  });
   const posts = await xata.db.Posts.getAll();
 
   const routes = posts.map(({ slug, title, description, pubDate }) => {
@@ -617,13 +629,16 @@ With `output` set to `hybrid`, static pages continue to work as they did previou
 
 Adding search is as simple as updating the landing page as follows:
 
-```astro title="src/app/page.tsx" {8, 10-15,19-28}
+```astro title="src/app/page.tsx" {11,13-18,22-31}
 ---
 import MainLayout from '../layouts/main.astro';
 
 import { XataClient } from '../xata';
 
-const xata = new XataClient({ apiKey: import.meta.env.XATA_API_KEY });
+const xata = new XataClient({
+  apiKey: import.meta.env.XATA_API_KEY,
+  branch: import.meta.env.XATA_BRANCH
+});
 
 const search = Astro.url.searchParams.get('q')! || '';
 
