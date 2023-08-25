@@ -666,7 +666,7 @@ If the query string parameter is not present, set the value to an empty string.
 const search = Astro.url.searchParams.get('q')! || '';
 ```
 
-Secondly, the landing page should list all blog posts if `search` is an empty string. However, if
+Second, the landing page should list all blog posts if `search` is an empty string. However, if
 the `search` contains a value, a search is performed on the Posts table using the
 [`search` function](https://xata.io/docs/typescript-client/search#searching-in-a-single-table) exposed on the
 auto-generated `Posts` property. The value of `search` is passed as the text value to search for, and a
