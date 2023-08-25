@@ -180,7 +180,7 @@ TypeScript SDK. This will additionally be referenced in the `.xatarc` file as fo
 
 ```json
 {
-  "databaseUrl": "https://xata-nextjs-database-url"
+  "databaseUrl": "https://my-xata-app-database-url",
   "codegen": {
     "output": "src/xata.ts"
   }
@@ -269,12 +269,12 @@ export default async function Home() {
         </p>
         <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+            <img src="https://raw.githubusercontent.com/xataio/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
           </a>
         </div>
       </div>
 
-      <div className="w-full max-w-5xl mt-16"></div>
+      <div className="w-full max-w-5xl mt-16">No posts</div>
     </main>
   );
 }
@@ -299,26 +299,26 @@ export default async function Home() {
         </p>
         <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+            <img src="https://raw.githubusercontent.com/xataio/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
           </a>
         </div>
       </div>
 
       <div className="w-full max-w-5xl mt-16">
         {posts.length === 0 && <p>No blog posts found</p>}
-        {posts.map((record) => (
-          <div key={record.id} className="mb-16">
+        {posts.map((post) => (
+          <div key={post.id} className="mb-16">
             <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
-              {record.pubDate?.toDateString()}
+              {post.pubDate?.toDateString()}
             </p>
             <h2 className="text-2xl mb-2">
-              <a href={`posts/${record.slug}`}>{record.title}</a>
+              <a href={`posts/${post.slug}`}>{post.title}</a>
             </h2>
             <p className="text-purple-950 dark:text-purple-200 mb-5">
-              {record.description}
+              {post.description}
             </p>
             <a
-              href={`posts/${record.slug}`}
+              href={`posts/${post.slug}`}
               className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
             >
               Read more &rarr;
@@ -361,7 +361,7 @@ export default async function Home() {
   for more information.
 </Alert>
 
-Finally, we update the UI to display the result of the `getAll` call. If no records are present, we show a message
+Finally, we update the UI to display the result of the `getAll` call. If no Post records are present (`posts.length === 0`), we show a message
 saying, "No blog posts found". Otherwise, we loop through the `posts` using `posts.map` and access the columns of
 each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
 the blog post was published, `slug` to link to individual blog posts (which we'll use later), `title` for the title of
@@ -370,19 +370,19 @@ the post, and `description` for the textual descript of the post:
 ```tsx
 <div className="w-full max-w-5xl mt-16">
   {posts.length === 0 && <p>No blog posts found</p>}
-  {posts.map((record) => (
-    <div key={record.id} className="mb-16">
+  {posts.map((post) => (
+    <div key={post.id} className="mb-16">
       <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
-        {record.pubDate?.toDateString()}
+        {post.pubDate?.toDateString()}
       </p>
       <h2 className="text-2xl mb-2">
-        <a href={`posts/${record.slug}`}>{record.title}</a>
+        <a href={`posts/${post.slug}`}>{post.title}</a>
       </h2>
       <p className="text-purple-950 dark:text-purple-200 mb-5">
-        {record.description}
+        {post.description}
       </p>
       <a
-        href={`posts/${record.slug}`}
+        href={`posts/${post.slug}`}
         className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
       >
         Read more &rarr;
@@ -417,7 +417,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
         </p>
         <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+            <img src="https://raw.githubusercontent.com/xataio/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
           </a>
         </div>
       </div>
@@ -457,7 +457,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
         </p>
         <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+            <img src="https://raw.githubusercontent.com/xataio/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
           </a>
         </div>
       </div>
@@ -547,7 +547,7 @@ export default async function Home({ searchParams }: { searchParams: { q: string
         </p>
         <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+            <img src="https://raw.githubusercontent.com/xataio/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
           </a>
         </div>
       </div>
@@ -628,6 +628,11 @@ the page function to accept the object with a`searchParams` property already, ev
 
 The application now supports listing posts, viewing single posts via a dynamic route, and full-text fuzzy search of
 posts.
+
+<ArticleVideo
+  platform="html"
+  src="https://github.com/xataio/mdx-docs/raw/main/020-Getting-started/videos/getting-started-app.mp4"
+/>
 
 ## What you've learned
 
