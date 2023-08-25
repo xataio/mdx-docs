@@ -432,7 +432,7 @@ Finally, update the UI to display the result of the `getAll` call. If no Post re
 saying, "No blog posts found". Otherwise, loop through the `posts` using `posts.map` and access the columns of
 each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
 the blog post was published, `slug` to link to individual blog posts (which we'll use later), `title` for the title of
-the post, and `description` for the textual descript of the post:
+the post, and `description` for the textual description of the post:
 
 ```tsx
 <div class="w-full max-w-5xl mt-16">
@@ -468,8 +468,8 @@ presently exist. That's the next step in this guide.
 
 ## Generate the static paths for single posts
 
-A single post is accessed via the `slug` value of the post in the application's URL. For example, `/posts/awesome-blog-post`
-where `awesome-blog-post` is the slug. This is achieved using Astro's
+You access a single post via the `slug` value of the Post in the application's URL. For example, `/posts/awesome-blog-post`
+where `awesome-blog-post` is the slug. You achieve this using Astro's
 [dynamic routes](https://docs.astro.build/en/core-concepts/routing/#dynamic-routes). You identify parameters within Astro
 dynamic routes by a name within square brackets in the file path. For example, `lang` and `version` within `src/pages/[lang]/[version]/info.astro`.
 
@@ -534,7 +534,7 @@ From the code above, the `MainLayout` is imported to be used within the Astro Co
 import MainLayout from '../../layouts/main.astro';
 ```
 
-Next, the `XataClient` class definition is imported from the auto-generated `xata.ts` file to be used within `getStaticPaths`:
+Next, import the `XataClient` class definition from the auto-generated `xata.ts` file to be used within `getStaticPaths`:
 
 ```ts
 import { XataClient } from '../../xata';
@@ -683,8 +683,8 @@ const search = Astro.url.searchParams.get('q')! || '';
 Second, the landing page should list all blog posts if `search` is an empty string. However, if
 the `search` contains a value, a search is performed on the Posts table using the
 [`search` function](/docs/sdk/search#searching-in-a-single-table) exposed on the
-auto-generated `Posts` property. The value of `search` is passed as the text value to search for, and a
-second options parameter is populated with `fuzziness` set to `2`, which instructs the search behavior to allow for two
+auto-generated `Posts` property. Pass `search` as the text value to search for, and use a
+second options parameter with `fuzziness` set to `2`, which informs the fuzzy search behavior to allow for two
 letters changed/added/removed. See
 [fuzziness and typo tolerance](/docs/sdk/search#fuzziness-and-typo-tolerance) for more
 details.
