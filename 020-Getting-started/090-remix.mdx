@@ -443,7 +443,7 @@ Then, update the UI to display the results. If no records are present, show a me
 saying, "No blog posts found". Otherwise, loop through the `posts` using `posts.map` and access the columns of
 each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
 the blog post was published, `slug` to link to individual blog posts (which will be used use later), `title` for the title of
-the post, and `description` for the textual descript of the post. Since `pubData` has been serialized to a string, convert
+the post, and `description` for the textual description of the post. Since `pubData` has been serialized to a string, convert
 it back into a `Date` and then use `.toDateString()` to get a slightly nicer formatted date representation for the UI:
 
 ```tsx {2,6-27}
