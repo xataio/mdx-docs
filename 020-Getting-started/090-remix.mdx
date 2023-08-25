@@ -10,9 +10,9 @@ published: true
 In this guide, you'll learn how to add Xata database and search functionality to a [Remix][2] application.
 You'll build the following basic blog application features:
 
-1.  Lists all posts
-2.  Retrieve and view a single post
-3.  Blog post full-text fuzzy search
+1.  List all blog posts
+2.  Retrieve and view a single blog post
+3.  Full-text fuzzy search of blog posts
 
 Although this application is a simple blog, you can apply these basics to other types of Remix applications.
 
@@ -33,7 +33,7 @@ npm install -g @xata.io/cli
 ```
 
 Once installed, authenticate the Xata CLI with your Xata account. If you don't already have an account, you can use the
-same workflow to signup for a new account. Run the following command to begin the authentication workflow:
+same workflow to sign up for a new account. Run the following command to begin the authentication workflow:
 
 ```sh
 xata auth login
@@ -51,7 +51,7 @@ apiKey=YOUR_API_KEY_HERE
 
 ## Create a new Remix app
 
-Let's begin by creating a new Remix application, accepting the default prompt options:
+Begin by creating a new Remix application, accepting the default prompt options:
 
 ```sh
 npx create-remix@latest xata-remix
@@ -211,7 +211,7 @@ Click **Schema** to see the schema definition with the inferred data types:
 You'll also see `xata.*` [special columns](https://xata.io/docs/concepts/data-model#special-columns) automatically
 created and maintained by Xata.
 
-With the database schema in place, the final step is to generate the code that allows us to access and query the data
+With the database schema in place, the final step is to generate the code that allows you to access and query the data
 from our Remix application. To do this, run:
 
 ```sh
@@ -321,7 +321,7 @@ Ensure the `<Outlet />` component is before the closing `</main>` element.
 
 ## Query and list the posts
 
-Now we're ready to integrate Xata into the Remix codebase. Let's start by stripping back the landing page,
+Now you're ready to integrate Xata into the Remix codebase. Let's start by stripping back the landing page,
 `app/routes/_index.tsx`, to a bare template:
 
 ```tsx title="app/routes/_index.tsx"
@@ -544,7 +544,7 @@ import { getXataClient } from 'src/xata';
 ```
 
 The `loader` function does the same job as the landing page but is updated to take parameters of type `LoaderArgs`.
-The `params` property on `LoaderArgs` gives us the slug value from the URL via `params.slug`.
+The `params` property on `LoaderArgs` gives you the slug value from the URL via `params.slug`.
 
 Use the `getXataClient` function to get a Xata client instance, and then use the
 [`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) on the
@@ -780,7 +780,7 @@ If you enjoyed this guide, you could continue working on improving the applicati
 - Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
   use that new field.
 
-You can also explore some of the features we've covered in more detail:
+You can also explore some of the features covered in more detail:
 
 - [Getting records](https://xata.io/docs/typescript-client/get)
 - [Filtering records](https://xata.io/docs/typescript-client/filtering)
