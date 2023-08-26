@@ -191,7 +191,7 @@ interface ImportMeta {
 ```
 
 Since TypeScript support was selected, it also created files that provide typings and functions to call using Xata's
-[TypeScript SDK](https://xata.io/docs/typescript-client/overview). This will additionally be referenced in the `.xatarc`
+[TypeScript SDK](/docs/sdk/overview). This will additionally be referenced in the `.xatarc`
 file as follows:
 
 ```json
@@ -245,7 +245,7 @@ Click **Schema** to see the schema definition with the inferred data types:
 
 ![Posts schema](images/xata-schema-posts.png)
 
-You'll also see `xata.*` [special columns](https://xata.io/docs/concepts/data-model#special-columns) automatically
+You'll also see `xata.*` [special columns](/docs/concepts/data-model#special-columns) automatically
 created and maintained by Xata.
 
 With the database schema in place, the final step is to generate the code to access and query the data
@@ -411,8 +411,8 @@ const xata = new XataClient({
 ```
 
 Then, in the Astro page Component Script (the section within `---`), use the `xata` client instance to get all the posts stored in the database. This is
-achieved via the auto-generated `Posts` property which exposes a number of helper functions. In this case, use the
-[`getAll`](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) function to get
+achieved via the auto-generated `Posts` property, which exposes a number of helper functions. In this case, use the
+[`getAll`](/docs/sdk/get#the-typescript-sdk-functions-for-querying) function to get
 all the Post records.
 
 ```tsx
@@ -420,29 +420,34 @@ let posts = await xata.db.Posts.getAll();
 ```
 
 <Alert status="warning">
-  `getAll()` returns all the records in the query results. This is dangerous on large tables (more than 10,000 records),
-  as it will potentially load a lot of data into memory and create a lot of requests to the server. In most situations,
-  you should use `getMany()` or `getPaginated()`. See the [querying
-  documentation](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) for more
-  information.
+  `getAll()` returns all the records in the query results. This is dangerous on
+  large tables (more than 10,000 records), as it will potentially load a lot of
+  data into memory and create a lot of requests to the server. In most
+  situations, you should use `getMany()` or `getPaginated()`. See the [querying
+  documentation](/docs/sdk/get#the-typescript-sdk-functions-for-querying) for
+  more information.
 </Alert>
 
 Finally, update the UI to display the result of the `getAll` call. If no Post records are present (`posts.length === 0`), show a message
 saying, "No blog posts found". Otherwise, loop through the `posts` using `posts.map` and access the columns of
 each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
 the blog post was published, `slug` to link to individual blog posts (which we'll use later), `title` for the title of
-the post, and `description` for the textual descript of the post:
+the post, and `description` for the textual description of the post:
 
 ```tsx
 <div class="w-full max-w-5xl mt-16">
   {posts.length === 0 && <p>No blog posts found</p>}
   {posts.map((posts) => (
     <div class="mb-16">
-      <p class="text-xs mb-2 text-purple-950 dark:text-purple-200">{posts.pubDate?.toDateString()}</p>
+      <p class="text-xs mb-2 text-purple-950 dark:text-purple-200">
+        {posts.pubDate?.toDateString()}
+      </p>
       <h2 class="text-2xl mb-2">
         <a href={`posts/${posts.slug}`}>{posts.title}</a>
       </h2>
-      <p class="text-purple-950 dark:text-purple-200 mb-5">{posts.description}</p>
+      <p class="text-purple-950 dark:text-purple-200 mb-5">
+        {posts.description}
+      </p>
       <a
         href={`posts/${posts.slug}`}
         class="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
@@ -463,8 +468,8 @@ presently exist. That's the next step in this guide.
 
 ## Generate the static paths for single posts
 
-A single post is accessed via the `slug` value of the post in the application's URL. For example, `/posts/awesome-blog-post`
-where `awesome-blog-post` is the slug. This is achieved using Astro's
+You access a single post via the `slug` value of the Post in the application's URL. For example, `/posts/awesome-blog-post`
+where `awesome-blog-post` is the slug. You achieve this using Astro's
 [dynamic routes](https://docs.astro.build/en/core-concepts/routing/#dynamic-routes). You identify parameters within Astro
 dynamic routes by a name within square brackets in the file path. For example, `lang` and `version` within `src/pages/[lang]/[version]/info.astro`.
 
@@ -529,7 +534,7 @@ From the code above, the `MainLayout` is imported to be used within the Astro Co
 import MainLayout from '../../layouts/main.astro';
 ```
 
-Next, the `XataClient` class definition is imported from the auto-generated `xata.ts` file to be used within `getStaticPaths`:
+Next, import the `XataClient` class definition from the auto-generated `xata.ts` file to be used within `getStaticPaths`:
 
 ```ts
 import { XataClient } from '../../xata';
@@ -557,8 +562,9 @@ export async function getStaticPaths() {
 ```
 
 <Alert status="info">
-  The `new XataClient` is instantiated within the `getStaticPaths` function and not within the top-level scope because
-  only imports are available within the scope of `getStaticPaths`.
+  The `new XataClient` is instantiated within the `getStaticPaths` function and
+  not within the top-level scope because only imports are available within the
+  scope of `getStaticPaths`.
 </Alert>
 
 The last line within the Component Script section of `[slug].astro` pulls the properties returned
@@ -605,7 +611,7 @@ The last piece of functionality to add to the application is full-text fuzzy sea
 
 When you insert data into a Xata database, it is automatically indexed for full-text search. So you don't need to change
 any configuration to enable search, you just need to use the
-[TypeScript SDK search feature](https://xata.io/docs/typescript-client/search).
+[TypeScript SDK search feature](/docs/sdk/search).
 
 As mentioned earlier, by default, Astro is in [SSG Mode](https://docs.astro.build/en/core-concepts/routing/#static-ssg-mode).
 However, generating static paths for all possible user search values is impossible. So, for dynamically generated pages
@@ -676,11 +682,11 @@ const search = Astro.url.searchParams.get('q')! || '';
 
 Second, the landing page should list all blog posts if `search` is an empty string. However, if
 the `search` contains a value, a search is performed on the Posts table using the
-[`search` function](https://xata.io/docs/typescript-client/search#searching-in-a-single-table) exposed on the
-auto-generated `Posts` property. The value of `search` is passed as the text value to search for, and a
-second options parameter is populated with `fuzziness` set to `2`, which instructs the search behavior to allow for two
+[`search` function](/docs/sdk/search#searching-in-a-single-table) exposed on the
+auto-generated `Posts` property. Pass `search` as the text value to search for, and use a
+second options parameter with `fuzziness` set to `2`, which informs the fuzzy search behavior to allow for two
 letters changed/added/removed. See
-[fuzziness and typo tolerance](https://xata.io/docs/typescript-client/search#fuzziness-and-typo-tolerance) for more
+[fuzziness and typo tolerance](/docs/sdk/search#fuzziness-and-typo-tolerance) for more
 details.
 
 ```tsx
@@ -750,23 +756,23 @@ in the `q` query string and the results from the auto-generated `xata.db.Posts.s
 
 If you enjoyed this guide, you could continue working on improving the application. Here are some suggestions:
 
-- Add [pagination](https://xata.io/docs/typescript-client/get#paginating-results) for the blog post listing
-- Add [pagination](https://xata.io/docs/typescript-client/search#pagination) for blog post search results
+- Add [pagination](/docs/sdk/get#paginating-results) for the blog post listing
+- Add [pagination](/docs/sdk/search#pagination) for blog post search results
 - Handle single post view page not finding a result for a `slug`
 - Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
   use that new field
 
 You can also explore some of the features we've covered in more detail:
 
-- [Getting records](https://xata.io/docs/sdk/get)
-- [Filtering records](https://xata.io/docs/sdk/filtering)
-- [Searching records](https://xata.io/docs/sdk/search)
+- [Getting records](/docs/sdk/get)
+- [Filtering records](/docs/sdk/filtering)
+- [Searching records](/docs/sdk/search)
 
 Or dive into some of Xata's more advanced features, such as:
 
-- [Aggregations](https://xata.io/docs/sdk/aggregate)
-- [Transactions](https://xata.io/docs/sdk/transaction)
-- [Vector search](https://xata.io/docs/sdk/vector-search)
+- [Aggregations](/docs/sdk/aggregate)
+- [Transactions](/docs/sdk/transaction)
+- [Vector search](/docs/sdk/vector-search)
 
 [0]: https://app.xata.io
 [1]: https://app.xata.io/settings
