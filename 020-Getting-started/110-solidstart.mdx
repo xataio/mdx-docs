@@ -166,6 +166,19 @@ XATA_API_KEY=YOUR_API_KEY_HERE
 XATA_BRANCH=main
 ```
 
+To inform the TypeScript typechecking about these new environment variables, update `src/env.d.ts` as follows:
+
+```ts title="src/env.d.ts"
+interface ImportMetaEnv {
+  readonly XATA_API_KEY: string;
+  readonly XATA_BRANCH?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+```
+
 Since you selected TypeScript support, it also created files that provide typings and functions to call using Xata's
 TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows:
 
