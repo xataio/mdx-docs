@@ -10,9 +10,9 @@ published: true
 In this guide, you'll learn how to add Xata database and search functionality to a [SolidStart][2] application.
 You'll build the following basic blog application features:
 
-1.  Lists all posts
-2.  Retrieve and view a single post
-3.  Blog post full-text fuzzy search
+1.  List all blog posts
+2.  Retrieve and view a single blog post
+3.  Full-text fuzzy search of blog posts
 
 Although this application is a simple blog, you can apply these basics to other types of SolidStart applications.
 
@@ -33,7 +33,7 @@ npm install -g @xata.io/cli
 ```
 
 Once installed, authenticate the Xata CLI with your Xata account. If you don't already have an account, you can use the
-same workflow to signup for a new account. Run the following command to begin the authentication workflow:
+same workflow to sign up for a new account. Run the following command to begin the authentication workflow:
 
 ```sh
 xata auth login
@@ -51,7 +51,7 @@ apiKey=YOUR_API_KEY_HERE
 
 ## Create a new SolidStart app
 
-Let's begin by creating a new SolidStart application, accepting the default prompt options:
+Begin by creating a new SolidStart application, accepting the default prompt options:
 
 ```sh
 npm create solid@latest xata-solidstart
@@ -91,7 +91,7 @@ To close the dev server, hit Ctrl-C
 
 </Expand>
 
-Once the command has completed, go to the `xata-solidstart` directory, install the dependendencies, and run the application:
+Once the command has completed, go to the `xata-solidstart` directory, install the dependencies, and run the application:
 
 ```sh
 cd xata-solidstart
@@ -104,7 +104,7 @@ By default, the application will run on `http://localhost:3000`.
 ## Create a new database
 
 With the Xata CLI installed and logged in and a new SolidStart application in place, use the Xata CLI to create a new
-database. Accept all the prompt defaults for the following command except for the region selection where
+database. Accept all the prompt defaults for the following command except for the region selection, where
 you should choose the region closest to your application users:
 
 ```sh
@@ -221,7 +221,7 @@ Click **Schema** to see the schema definition with the inferred data types:
 
 ![Posts schema](images/xata-schema-posts.png)
 
-You'll also see `xata.*` [special columns](https://xata.io/docs/concepts/data-model#special-columns) automatically
+You'll also see `xata.*` [special columns](/docs/concepts/data-model#special-columns) automatically
 created and maintained by Xata.
 
 With the database schema in place, the final step is to generate the code that allows you to access and query the data
@@ -339,12 +339,14 @@ export default function Root() {
 }
 ```
 
+You may need to start and stop your development server for the Tailwind CSS changes to be picked up.
+
 ## Query and list the posts
 
-Now you are ready to integrate Xata into the SolidStart codebase. Let's start by stripping back the landing page,
-`app/routes/_index.tsx`, to a bare template:
+Now, you are ready to integrate Xata into the SolidStart codebase. Start by stripping back the landing page,
+`src/routes/index.tsx`, to a bare template:
 
-```tsx title="app/routes/_index.tsx"
+```tsx title="src/routes/index.tsx"
 export default function Home() {
   return (
     <>
@@ -354,10 +356,10 @@ export default function Home() {
 }
 ```
 
-Next, let's update the page to get all the posts using Xata, and
+Next, update the page to get all the posts using Xata, and
 list them within the page:
 
-```tsx title="app/routes/_index.tsx" {1-3,5-17,19-54}
+```tsx title="src/routes/index.tsx" {1-3,5-17,19-54}
 import { Match, Switch, For } from 'solid-js';
 import { useRouteData } from 'solid-start';
 import { createServerData$ } from 'solid-start/server';
@@ -414,7 +416,7 @@ export default function Home() {
 }
 ```
 
-Let's break down what's happening in the code above.
+The breakdown of what's happening in the code above is as follows.
 
 Import [`Match` and `Switch`](https://www.solidjs.com/docs/latest/api#switchmatch), and
 [`For`](https://www.solidjs.com/docs/latest/api#for) from Solid to be used when rendering the UI. Then import
@@ -427,13 +429,13 @@ import { useRouteData } from 'solid-start';
 import { createServerData$ } from 'solid-start/server';
 ```
 
-Next, define and export a `routeData` function. This returns a call to `createServerData$`, which is a SolidStart function
-that exists specifically for accessing resources only available on the server, like databases. This function provides data to the route when rendering.
+Next, define and export a `routeData` function. This returns a call to `createServerData$`, a SolidStart function
+specifically for accessing resources only available on the server, like databases. This function provides data to the route when rendering.
 Within that function, create an instance of the `XataClient`, passing in the values stored in environment variables for `apiKey` and `branch`. Then,
-use the `xata` client instance to get all the posts stored in the database. This is achieved via the auto-generated `Posts` property
+use the `xata` client instance to get all the posts stored in the database. You achieve this via the auto-generated `Posts` property,
 which exposes a number of helper functions. In this case, use the
-[`getAll`](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) function to get
-all the Post records. Finally, return the `posts` as the functions return value.
+[`getAll`](/docs/sdk/get#the-typescript-sdk-functions-for-querying) function to get
+all the Post records. Finally, return the `posts` as the function return value.
 
 ```tsx
 import { XataClient } from '~/xata';
@@ -455,8 +457,7 @@ export function routeData() {
   `getAll()` returns all the records in the query results. This is dangerous on large tables (more than 10,000 records),
   as it will potentially load a lot of data into memory and create a lot of requests to the server. In most situations,
   you should use `getMany()` or `getPaginated()`. See the [querying
-  documentation](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) for more
-  information.
+  documentation](/docs/sdk/get#the-typescript-sdk-functions-for-querying) for more information.
 </Alert>
 
 Finally, use the `useRouteData` hook within the `Home` function to retrieve the `posts` data.
@@ -564,7 +565,7 @@ export default function Post() {
 }
 ```
 
-Let's walk through what this does.
+Here's a walkthrough of what this does.
 
 Import `useParams` to enable access to the value of the `slug`. Import `useRouteData` and `createServerData$` to enable
 data to be loaded.
@@ -579,10 +580,10 @@ The `Title` component is imported from `solid-start` to allow the page title to 
 `createServerData$` functions do the same job as the landing page.
 
 Instantiate a new `XataClient` instance, get the page parameters using the `useParams` hook, and then use the
-[`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) on the
+[`filter` function](/docs/sdk/get#the-typescript-sdk-functions-for-querying) on the
 auto-generated `Posts` property to perform a query on the Posts table and find the
 record where the `slug` column equals the value of `params.slug`. Use the
-[`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to access
+[`getFirst` function](/docs/sdk/get#the-typescript-sdk-functions-for-querying) to access
 the first (and only) Post result and return the post as the `createServerData$` return value.
 
 ```tsx
@@ -601,7 +602,7 @@ export function routeData() {
 }
 ```
 
-Finally, retrieve the `post` data using the `useLoaderData` hook. Then use the `post` data to set
+Finally, retrieve the `post` data using the `useLoaderData` hook. Then, use the `post` data to set
 the page title via `<Title />` and update the rest of the page UI to contain all the information for the single Post:
 
 ```tsx
@@ -639,11 +640,11 @@ The last piece of functionality to add to the application is full-text fuzzy sea
 
 When you insert data into a Xata database, it is automatically indexed for full-text search. So you don't need to change
 any configuration to enable search, you just need to use the
-[TypeScript SDK search feature](https://xata.io/docs/typescript-client/search).
+[TypeScript SDK search feature](/docs/sdk/search).
 
-Let's add this functionality to the landing page:
+Add this functionality to the landing page:
 
-```tsx title="src/routes/posts/[slug].tsx" {1,15-24,32,36-45}
+```tsx title="src/routes/index.tsx" {1,15-24,32,36-45}
 import { useLocation } from '@solidjs/router';
 import { Match, Switch, For } from 'solid-js';
 import { useRouteData } from 'solid-start';
@@ -695,18 +696,18 @@ export default function Home() {
 }
 ```
 
-Add search with these changes.
+Here are all the changes you should make.
 
 First, import `useLocation` from `@solidjs/router` and use it within `createServerData$` to retrieve the
 value of a `q` querystring parameter, assigned to a variable named `search`.
 
 The landing page should list all blog posts if `search` is an empty string. However, if
 the search has a non-empty string value, a search is performed on the Posts table using the
-[`search` function](https://xata.io/docs/typescript-client/search#searching-in-a-single-table) exposed on the
+[`search` function](/docs/sdk/search#searching-in-a-single-table) exposed on the
 auto-generated `Posts` property. Pass `search` as the text value to search for, and use a
 second options parameter with `fuzziness` set to `2`, which informs the fuzzy search behavior to allow for two
 letters changed/added/removed. See
-[fuzziness and typo tolerance](https://xata.io/docs/typescript-client/search#fuzziness-and-typo-tolerance) for more
+[fuzziness and typo tolerance](/docs/sdk/search#fuzziness-and-typo-tolerance) for more
 details.
 
 Update the return value to include the `search` value in addition to the `posts`.
@@ -807,23 +808,23 @@ indexing. The search used a `q` query string and the auto-generated `xata.db.Pos
 
 If you enjoyed this guide, you could continue working on improving the application. Here are some suggestions:
 
-- Add [pagination](https://xata.io/docs/typescript-client/get#paginating-results) for the blog post listing
-- Add [pagination](https://xata.io/docs/typescript-client/search#pagination) for blog post search results
+- Add [pagination](/docs/sdk/get#paginating-results) for the blog post listing
+- Add [pagination](/docs/sdk/search#pagination) for blog post search results
 - Handle single post view page not finding a result for a `slug`
 - Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
   use that new field.
 
 You can also explore some of the features we've covered in more detail:
 
-- [Getting records](https://xata.io/docs/typescript-client/get)
-- [Filtering records](https://xata.io/docs/typescript-client/filtering)
-- [Searching records](https://xata.io/docs/typescript-client/search)
+- [Getting records](/docs/sdk/get)
+- [Filtering records](/docs/sdk/filtering)
+- [Searching records](/docs/sdk/search)
 
 Or dive into some of Xata's more advanced features, such as:
 
-- [Aggregations](https://xata.io/docs/typescript-client/aggregate)
-- [Transactions](https://xata.io/docs/typescript-client/transaction)
-- [Vector search](https://xata.io/docs/typescript-client/vector-search)
+- [Aggregations](/docs/sdk/aggregate)
+- [Transactions](/docs/sdk/transaction)
+- [Vector search](/docs/sdk/vector-search)
 
 [0]: https://app.xata.io
 [1]: https://app.xata.io/settings
