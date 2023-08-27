@@ -7,12 +7,12 @@ slug: getting-started/nextjs
 published: true
 ---
 
-In this guide, we'll create a new [Next.js][2] application and walk through adding Xata database and search
-functionality. We'll build the following basic blog application features:
+In this guide, you'll create a new [Next.js][2] application and walk through adding Xata database and search
+functionality. You'll build the following basic blog application features:
 
-1.  Lists all posts
-2.  Retrieve and view a single post
-3.  Blog post full-text fuzzy search
+1.  List all blog posts
+2.  Retrieve and view a single blog post
+3.  Full-text fuzzy search of blog posts
 
 Although this application is a simple blog, you can apply these basics to other types of Next.js applications.
 
@@ -180,7 +180,7 @@ TypeScript SDK. This will additionally be referenced in the `.xatarc` file as fo
 
 ```json
 {
-  "databaseUrl": "https://xata-nextjs-database-url"
+  "databaseUrl": "https://my-xata-app-database-url",
   "codegen": {
     "output": "src/xata.ts"
   }
@@ -230,10 +230,10 @@ Click **Schema** to see the schema definition with the inferred data types:
 
 ![Posts schema](images/xata-schema-posts.png)
 
-You'll also see `xata.*` [special columns](https://xata.io/docs/concepts/data-model#special-columns) automatically
+You'll also see `xata.*` [special columns](/docs/concepts/data-model#special-columns) automatically
 created and maintained by Xata.
 
-With the database schema in place, the final step is to generate the code that allows us to access and query the data
+With the database schema in place, the final step is to generate the code that allows you to access and query the data
 from our Next.js application. To do this, run:
 
 ```sh
@@ -269,12 +269,12 @@ export default async function Home() {
         </p>
         <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+            <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
           </a>
         </div>
       </div>
 
-      <div className="w-full max-w-5xl mt-16"></div>
+      <div className="w-full max-w-5xl mt-16">No posts</div>
     </main>
   );
 }
@@ -299,26 +299,26 @@ export default async function Home() {
         </p>
         <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+            <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
           </a>
         </div>
       </div>
 
       <div className="w-full max-w-5xl mt-16">
         {posts.length === 0 && <p>No blog posts found</p>}
-        {posts.map((record) => (
-          <div key={record.id} className="mb-16">
+        {posts.map((post) => (
+          <div key={post.id} className="mb-16">
             <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
-              {record.pubDate?.toDateString()}
+              {post.pubDate?.toDateString()}
             </p>
             <h2 className="text-2xl mb-2">
-              <a href={`posts/${record.slug}`}>{record.title}</a>
+              <a href={`posts/${post.slug}`}>{post.title}</a>
             </h2>
             <p className="text-purple-950 dark:text-purple-200 mb-5">
-              {record.description}
+              {post.description}
             </p>
             <a
-              href={`posts/${record.slug}`}
+              href={`posts/${post.slug}`}
               className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
             >
               Read more &rarr;
@@ -341,10 +341,7 @@ import { getXataClient } from '@/xata';
 const xata = getXataClient();
 ```
 
-Then, in the `Home` function, use the `xata` client instance to get all the posts stored in the database. This is
-achieved via the auto-generated `Posts` property which exposes a number of helper functions. In this case, we use the
-[`getAll`](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) function to get
-all the Post records.
+Then, in the `Home` function, use the `xata` client instance to get all the posts stored in the database. You achieve this via the auto-generated `Posts` property, which exposes a number of helper functions. In this case, we use the [`getAll`](/docs/sdk/get#the-typescript-sdk-functions-for-querying) function to get all the Post records.
 
 ```tsx
 export default async function Home() {
@@ -359,32 +356,32 @@ export default async function Home() {
   large tables (more than 10,000 records), as it will potentially load a lot of
   data into memory and create a lot of requests to the server. In most
   situations, you should use `getMany()` or `getPaginated()`. See the [querying
-  documentation](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying)
-  for more information.
+  documentation](/docs/sdk/get#the-typescript-sdk-functions-for-querying) for
+  more information.
 </Alert>
 
-Finally, we update the UI to display the result of the `getAll` call. If no records are present, we show a message
+Finally, we update the UI to display the result of the `getAll` call. If no Post records are present (`posts.length === 0`), we show a message
 saying, "No blog posts found". Otherwise, we loop through the `posts` using `posts.map` and access the columns of
 each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
 the blog post was published, `slug` to link to individual blog posts (which we'll use later), `title` for the title of
-the post, and `description` for the textual descript of the post:
+the post, and `description` for the textual description of the post:
 
 ```tsx
 <div className="w-full max-w-5xl mt-16">
   {posts.length === 0 && <p>No blog posts found</p>}
-  {posts.map((record) => (
-    <div key={record.id} className="mb-16">
+  {posts.map((post) => (
+    <div key={post.id} className="mb-16">
       <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
-        {record.pubDate?.toDateString()}
+        {post.pubDate?.toDateString()}
       </p>
       <h2 className="text-2xl mb-2">
-        <a href={`posts/${record.slug}`}>{record.title}</a>
+        <a href={`posts/${post.slug}`}>{post.title}</a>
       </h2>
       <p className="text-purple-950 dark:text-purple-200 mb-5">
-        {record.description}
+        {post.description}
       </p>
       <a
-        href={`posts/${record.slug}`}
+        href={`posts/${post.slug}`}
         className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
       >
         Read more &rarr;
@@ -419,7 +416,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
         </p>
         <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+            <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
           </a>
         </div>
       </div>
@@ -459,7 +456,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
         </p>
         <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+            <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
           </a>
         </div>
       </div>
@@ -491,11 +488,11 @@ import { getXataClient } from '@/xata';
 const xata = getXataClient();
 ```
 
-The single post is retrieved from the database via the auto-generated `Posts` property. The
-[`filter` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) is used to query
-the table for a row where the `slug` column equals the value of `params. slug`. Finally the
-[`getFirst` function](https://xata.io/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to return
-the first (and only) result for a post with this slug value.
+Retrieve the single post from the database via the auto-generated `Posts` property. Use the
+[`filter` function](/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to query
+the table for a row where the `slug` column equals the value of `params.slug`. Finally, use the
+[`getFirst` function](/docs/typescript-client/get#the-typescript-sdk-functions-for-querying) to return
+the first (and only) Post result.
 
 ```tsx
 export default async function Post({ params }: { params: { slug: string } }) {
@@ -524,8 +521,7 @@ The single blog post page will look as follows:
 The last piece of functionality to be added to the application is full-text fuzzy search of blog posts.
 
 When you insert data into a Xata database, it is automatically indexed for full-text search. So we don't need to change
-any configuration to enable search, we just need to use the
-[TypeScript SDK search feature](https://xata.io/docs/typescript-client/search).
+any configuration to enable search, we just need to use the [TypeScript SDK search feature](/docs/sdk/search).
 
 Let's add this functionality to the landing page:
 
@@ -554,7 +550,7 @@ export default async function Home({
         </p>
         <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/leggetter/xata-examples/5b0715c9ba36556400b6121bd224203cb89f7741/docs/app_logo.svg" />
+            <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
           </a>
         </div>
       </div>
@@ -592,11 +588,11 @@ export default async function Home({
 
 Secondly, the landing page should list all blog posts if the `searchParams.q` property isn't present. However, if
 the property is present, a search is performed on the Posts table using the
-[`search` function](https://xata.io/docs/typescript-client/search#searching-in-a-single-table) exposed on the
-auto-generated `Posts` property. The value of `searchParams.q` is passed as the text value to search for, and a
-second options parameter is populated with `fuzziness` set to `2`, which instructs the search behavior to allow for two
+[`search` function](/docs/typescript-client/search#searching-in-a-single-table) exposed on the
+auto-generated `Posts` property. Pass `searchParams.q` as the text value to search for, and use a
+second options parameter with `fuzziness` set to `2`, which informs the fuzzy search behavior to allow for two
 letters changed/added/removed. See
-[fuzziness and typo tolerance](https://xata.io/docs/typescript-client/search#fuzziness-and-typo-tolerance) for more
+[fuzziness and typo tolerance](/docs/sdk/search#fuzziness-and-typo-tolerance) for more
 details.
 
 ```tsx
@@ -615,8 +611,8 @@ export default async function Home({ searchParams }: { searchParams: { q: string
 The third and last change is to add a `<form>` to the page to allow a search value to be entered and submitted. The
 default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
 string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
-a `GET`request in the format`?q={q-value}`. Since this is precisely the behavior we need, and we've already updated
-the page function to accept the object with a`searchParams` property already, everything is in place.
+a `GET`request in the format `?q={q-value}`. Since this is precisely the behavior we need, and we've already updated
+the page function to accept the object with a `searchParams` property, everything is in place.
 
 ```tsx
 <div className="w-full max-w-5xl mt-16">
@@ -636,47 +632,52 @@ the page function to accept the object with a`searchParams` property already, ev
 The application now supports listing posts, viewing single posts via a dynamic route, and full-text fuzzy search of
 posts.
 
+<ArticleVideo
+  platform="html"
+  src="https://github.com/xataio/mdx-docs/raw/main/020-Getting-started/videos/getting-started-app.mp4"
+/>
+
 ## What you've learned
 
 In this guide, you've learned that Next.js App Router applications and Xata are a powerful combination. You created an
 application from scratch that lists blog posts, supports viewing a single blog post, and performs full-text fuzzy search
 on all posts.
 
-We walked through setting up the Xata CLI and using it to:
+You walked through setting up the Xata CLI and using it to:
 
 - Create a new Xata project
 - Create a database schema and populate it with data from an imported CSV file
 - Update the auto-generated code (in `src/xata.ts`) using `xata pull main` to reflect the updated schema
 
-We then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
-function. We also added the single post page making use of Next.js dynamic routes where a `slug` was passed and used
+You then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
+function. You also added the single post page making use of Next.js dynamic routes where a `slug` was passed and used
 with `xata.db.Posts.filter({ slug: params.slug }).getFirst()`.
 
-Finally, we added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
+Finally, you added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
 indexing. The search used a `q` query string and the auto-generated `xata.db.Posts.search` function.
 
 ## Learn more
 
 If you enjoyed this guide, you could continue working on improving the application. Here are some suggestions:
 
-- Add [pagination](https://xata.io/docs/typescript-client/get#paginating-results) for the blog post listing
-- Add [pagination](https://xata.io/docs/typescript-client/search#pagination) for blog post search results
+- Add [pagination](/docs/sdk/get#paginating-results) for the blog post listing
+- Add [pagination](/docs/sdk/search#pagination) for blog post search results
 - Handle single post view page not finding a result for a `slug`
 - Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
   use that new field.
-- Move common code from the two pages into `src/app/layout.tsx` or reusable components.
+- Move common code from the two pages into `src/app/layout.tsx` or reusable components
 
 You can also explore some of the features we've covered in more detail:
 
-- [Getting records](https://xata.io/docs/typescript-client/get)
-- [Filtering records](https://xata.io/docs/typescript-client/filtering)
-- [Searching records](https://xata.io/docs/typescript-client/search)
+- [Getting records](/docs/sdk/get)
+- [Filtering records](/docs/sdk/filtering)
+- [Searching records](/docs/sdk/search)
 
 Or dive into some of Xata's more advanced features, such as:
 
-- [Aggregations](https://xata.io/docs/typescript-client/aggregate)
-- [Transactions](https://xata.io/docs/typescript-client/transaction)
-- [Vector search](https://xata.io/docs/typescript-client/vector-search)
+- [Aggregations](/docs/sdk/aggregate)
+- [Transactions](/docs/sdk/transaction)
+- [Vector search](/docs/sdk/vector-search)
 
 [0]: https://app.xata.io
 [1]: https://app.xata.io/settings

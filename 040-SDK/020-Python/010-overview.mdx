@@ -1,9 +1,9 @@
 ---
-title: Python SDK overview
-navTitle: Overview
+title: Xata SDK for Python
+navTitle: SDK overview
 keywords: ['python', 'sdk']
 description: Get to know Xata using Python
-slug: python-sdk/overview
+slug: sdk/python/overview
 published: true
 ---
 
@@ -17,9 +17,9 @@ To install the library enter the following command:
 pip install xata
 ```
 
-The `xata` package is a standalone SDK library that features `XataClient`. By installing the package, you can import the SDK into your Python project and start building on top of Xata. 
+The `xata` package is a standalone SDK library that features `XataClient`. By installing the package, you can import the SDK into your Python project and start building on top of Xata.
 
-The Python SDK is different from the [Xata CLI](/docs/getting-started/installation#install-the-xata-cli) which can be used to manage your Xata databases from the command line or import the [Typescript and Javascript client](/docs/typescript-client/overview).
+The Python SDK is different from the [Xata CLI](/docs/getting-started/installation#install-the-xata-cli) which can be used to manage your Xata databases from the command line or import the [Typescript and Javascript client](/docs/sdk/typescript/overview).
 
 ## Configuration
 
@@ -92,3 +92,24 @@ client = XataClient(api_key="REDACTED_API_KEY", db_url="REDACTED_DB_URL")
 The SDK builds on the [requests](https://pypi.org/project/requests/) package and includes built-in logging support. By configuring the log level to debug, you can view the URL and status code by default.
 
 [0]: /docs/getting-started/cli#authentication
+
+## API Namespace
+
+The API surface of the Python SDK is organized into namespaces, with each namespace associated with a specific set of APIs. For instance, the `databases` namespace provides access to all the available Xata endpoints for managing databases.
+
+Alternatively, you can directly instantiate a namespace, as demonstrated in this [example](/docs/python-sdk/examples#get-a-record-from-a-table).
+
+|                                                                  |                           |
+| ---------------------------------------------------------------- | ------------------------- |
+| Authentication and API key management                            | `client.authentication()` |
+| Branch management                                                | `client.branch()`         |
+| Database operations                                              | `client.databases()`      |
+| User invites management                                          | `client.invites()`        |
+| Branch schema migrations and history                             | `client.migrations()`     |
+| User management                                                  | `client.users()`          |
+| Workspace management                                             | `client.workspaces()`     |
+| Table records access operations                                  | `client.records()`        |
+| APIs for searching, querying, filtering, and aggregating records | `client.data()`           |
+| Database table management                                        | `client.table()`          |
+
+The endpoints and namespaces are generated from the [OpenAPI specification](/docs/rest-api/contexts).
