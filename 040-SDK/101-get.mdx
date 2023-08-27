@@ -9,7 +9,7 @@ published: true
 
 The general form of a query is:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 import { getXataClient } from "./xata";
@@ -43,6 +43,14 @@ data = xata.data().query("{table_name}", {
 ```
 
 ```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT <columns> from \"table_name\" WHERE <filter> ORDER BY <sort> LIMIT <number>;"
+}
+```
+
+```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
@@ -64,7 +72,7 @@ For the REST API example, note that a POST request is used, even though the data
 
 All the requests are optional, so the simplest query request looks like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const teams = await xata.db.Teams.getMany();
@@ -75,6 +83,14 @@ teams = xata.data().query("Teams")
 ```
 
 ```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * from \"Teams\" LIMIT 20;"
+}
+```
+
+```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 ```
 
@@ -82,7 +98,7 @@ teams = xata.data().query("Teams")
 
 The response looks like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 ```ts
 [
   {
@@ -116,6 +132,25 @@ The response looks like this:
       "more": false
     }
   }
+```
+
+```json
+{
+  "records": [
+    {
+      "id": "rec_c8hng2h26un90p8sr7k0",
+      "name": "Matrix",
+      "owner": {
+        "id": "myid"
+      },
+      "xata": {
+        "version": 0,
+        "createdAt": "2023-05-15T08:21:31.96526+01:00",
+        "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+      }
+    }
+  ]
+}
 ```
 
 ```json
@@ -191,13 +226,22 @@ Unless you have a specific reason to prefer another method, we generally recomme
 
 You can retrieve a record with a given ID using a request like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
 ```ts
 const user = await xata.db.Users.read("myid");
 ```
 
 ```python
 user = xata.data().query("Users", "myid")
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * from \"Users\" WHERE id='myid';"
+}
 ```
 
 ```jsonc
@@ -212,7 +256,8 @@ By default, the Query API returns all columns of the queried table. For link col
 
 For example, if you are only interested in the name and the city of the user, you can make a request like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
 ```ts
 const users = await xata.db.Users
   .select(["name", "city"])
@@ -223,6 +268,14 @@ const users = await xata.db.Users
 users = xata.data().query("Users", {
   "columns": ["name", "city"]
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT name,city from \"Users\" LIMIT 20;"
+}
 ```
 
 ```jsonc
@@ -259,7 +312,7 @@ It's worth noting that the special columns [id](/docs/concepts/data-model#id), [
 The same syntax can be used to select columns from a linked table, therefore adding new columns to the response. For example, to query all the columns
 of the Teams table and also add all the columns of the owner user, you can use:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
@@ -269,6 +322,14 @@ const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
 users = xata.data().query("Users", {
   "columns": ["*", "owner.*"]
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT *,\"Users\".* FROM \"Teams\" LEFT JOIN \"Users\" ON \"Teams\".owner=\"Users\".id;"
+}
 ```
 
 ```jsonc
@@ -282,7 +343,7 @@ users = xata.data().query("Users", {
 
 You can do this transitively as well, for example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 ```ts
 const posts = await xata.db.Posts.select([
   "title",
@@ -299,6 +360,14 @@ posts = xata.data().query("Posts", {
     "author.team.*"
   ]
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT title,\"Users\".*,\"Teams\".* FROM \"Posts\" LEFT JOIN \"Users\" ON \"Posts\".author=\"Users\".id LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id;"
+}
 ```
 
 ```jsonc
@@ -319,7 +388,7 @@ This section contains a few examples of how to use filtering. To find all suppor
 
 To filter the results, use the `filter` function/parameter. For example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.filter({ email: 'keanu@example.com' }).getMany();
@@ -331,6 +400,14 @@ users = xata.data().query("Users", {
     "email": "keanu@example.com"
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" WHERE email='keanu@example.com' LIMIT 20;"
+}
 ```
 
 ```jsonc
@@ -349,7 +426,7 @@ Will return only the records with the given email address.
 
 You can also refer to a linked column in filters, for example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.filter({ 'team.name': 'Matrix' }).getMany();
@@ -361,6 +438,14 @@ users = xata.data().query("Users", {
     "team.name": "Matrix"
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id WHERE \"Teams\".name='Matrix';"
+}
 ```
 
 ```jsonc
@@ -379,7 +464,8 @@ Note that in the above, `name` is a column in the `Teams` table, and we can refe
 
 To give a more complex filtering example, consider the following:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
 ```ts
 const users = await xata.db.Users
   .filter({
@@ -402,6 +488,14 @@ users = xata.data().query("Users", {
     ]
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" WHERE zipcode > 100 AND (name LIKE '%Keanu%' OR name LIKE '%Carrie%') LIMIT 20;"
+}
 ```
 
 ```jsonc
@@ -434,7 +528,7 @@ To see the rest of the operators available, check out the [Filtering](/docs/sdk/
 
 To sort the results, use the `sort` function/parameter. For example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.sort('name', 'asc').getMany();
@@ -446,6 +540,14 @@ users = xata.data().query("Users", {
     "name": "asc"
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" ORDER BY \"name\" asc LIMIT 20;"
+}
 ```
 
 ```jsonc
@@ -462,7 +564,8 @@ users = xata.data().query("Users", {
 
 To sort descending, use `desc` instead of `asc`:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
 ```ts
 const users = await xata.db.Users
   .sort("name", "desc")
@@ -475,6 +578,14 @@ users = xata.data().query("Users", {
     "name": "desc"
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" ORDER BY \"city\" desc, \"name\" asc LIMIT 20;"
+}
 ```
 
 ```jsonc
@@ -491,7 +602,7 @@ users = xata.data().query("Users", {
 
 It is also possible to have secondary sort criteria. For example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMany();
@@ -504,6 +615,14 @@ users = xata.data().query("Users", {
     {"name": "asc"}
   ]
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" ORDER BY \"city\" desc, \"name\" asc LIMIT 20;"
+}
 ```
 
 ```jsonc
@@ -521,7 +640,7 @@ users = xata.data().query("Users", {
 
 To sort results in random order, use `random` instead of `desc` or `asc`:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.sort('*', 'random').getMany();
@@ -533,6 +652,14 @@ users = xata.data().query("Users", {
     "*": "random"
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" ORDER BY RANDOM() LIMIT 20;"
+}
 ```
 
 ```jsonc
@@ -688,7 +815,7 @@ The offset-page pagination is limited to querying up to 1000 records and is reco
 
 An example of offset based pagination:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
 const page = await xata.db.Users.getPaginated({
@@ -703,6 +830,14 @@ page = xata.data().query("Users", {
     "offset": 10
   }
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" LIMIT 10 OFFSET 10;"
+}
 ```
 
 ```jsonc
@@ -732,7 +867,7 @@ The default value for the consistency option is `strong`, which retrieves data f
 
 It is recommended to use the Replica Store for queries wherever possible, in order to get the best possible performance out of your branch's assigned units.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 ```ts
 const page = await xata.db.Users.getPaginated({
   consistency: "eventual"
@@ -744,6 +879,15 @@ records = xata.data().query("Users", {
   "columns": ["*"],
   "consistency": "eventual"
 })
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" LIMIT 20;",
+  "consistency": "eventual"
+}
 ```
 
 ```jsonc
