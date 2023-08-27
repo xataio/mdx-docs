@@ -281,6 +281,8 @@ useHead({
 
 Ensure the `<NuxtPage />` component is before the closing `</main>` element.
 
+You may need to restart your development server before all changes are detected.
+
 ## Query and list the posts
 
 The Nuxt app is now ready for integrating Xata into the codebase.
@@ -357,6 +359,8 @@ If there are no posts, show a message saying, "No blog posts found". Otherwise, 
 each Post record using their properties: `pubDate` to show the date the blog post was published, `slug` to link to individual
 blog posts (which will be used use later), `title` for the title of the post, and `description` for the textual description of
 the post.
+
+You may need to restart your development server before all changes are detected.
 
 This results in the page looking like the following:
 
@@ -531,7 +535,7 @@ const { data: posts } = await useFetch(`/api/posts`, { query: { q: search } });
 </template>
 ```
 
-`useRoute` is used similarly to the single blog post view, except this time you retreive the value of the `q` querystring
+`useRoute` is used similarly to the single blog post view, except this time you retrieve the value of the `q` querystring
 from `route.query.q` and assign it to a variable named `search`. The search value is then effectively proxied onto the
 `/api/post` API server route in the `useFetch` call where you add a second argument passing a `query` with a `q`
 querystring set to the value of `search`. As before, this performs the search against the Xata database and returns the results in
@@ -563,7 +567,7 @@ You walked through setting up the Xata CLI and using it to:
 - Update the auto-generated code (in `src/xata.ts`) using `xata pull main` to reflect the updated schema
 
 You then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
-function. You also added the single post page making use of Nuxt page parameters where a `slug` was passed and used
+function. You also added the single post page, making use of Nuxt page parameters where a `slug` was passed and used
 with `xata.db.Posts.filter({ slug }).getFirst()`.
 
 Finally, you added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
