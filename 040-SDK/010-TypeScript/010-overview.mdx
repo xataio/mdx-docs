@@ -74,6 +74,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 The `MyComponent` client component can then use `JSONData` from the client to match against Xata's auto-generated types as shown below.
 
 ```tsx title="/components/MyComponent.tsx"
+'use client';
 import { FC } from 'react';
 import { JSONData } from '@xata.io/client';
 import { UserRecord } from './xata';
