@@ -393,19 +393,19 @@ A Xata file can be configured for public access, resulting in an URL that is pub
 
 ### Signed URL
 
-A signed URL, offers authenticated access to a file without the need of an API Key. The key (signature) is in the URL itself, so anyone holding the URL can get access to the file.
-The signed URL has a configurable time to live after which the access URL expires. In order to avoid permanent public access, the time to live can be set to maximum 24h.
-The signed URL timeout can be configured per file by setting the `signedUrlTimeout` field in the file object. The default value is 1 minute.
+A signed URL offers authenticated access to a file without requiring an API key. The URL contains the key (signature) within it, so anyone holding the URL can get access to the file.
+The signed URL has a configurable time to live (TTL), which specifies when access to the URL expires. To avoid permanent public access, the TTL can be set to a maximum of 24h.
+You can modify the timeout duration of the signed URL for each file by adjusting the `signedUrlTimeout` field within the file object. The default value is 1 minute.
 A file's signed URL can be retrieved by reading or querying the `signedUrl` field of a file object.
-Signed URLs are recommended for scenarios where temporary access is needed without sharing the API key. For example rendering an image, without giving away a permanent image URL.
+Use signed URLs when you need temporary access without revealing the API key, such as rendering an image without disclosing a permanent image URL.
 
-## Content delivery detwork (CDN)
+## Content delivery network (CDN)
 
 File attachment support comes with an integrated content delivery network (CDN) which minimizes access latency by using regional caches.
 
 Caching is enabled for all signed and public URLs. This is to avoid caching data that is secured by API key permissions. This feature is enabled by default and doesn't require any configuration. Content from publicly accessible and signed URLs is cached for a duration of 4 hours.
 
-As with all cache systems, the fundamental problem is cache invalidation - maintaining cache access performance while ensuring updated content and preventing outdated entries. In its architectural approach, Xata addresses the issue of cache invalidation by treating file content as dynamic - analogous to data within a database. 
+As with all cache systems, the fundamental problem is cache invalidation - maintaining cache access performance while ensuring updated content and preventing outdated entries. In its architectural approach, Xata addresses the issue of cache invalidation by treating file content as dynamic - analogous to data within a database.
 
 Consequently, it's recommended that clients dynamically obtain access URLs from the database, rather than persisting them in static resources. When the target file is modified, URLs can become invalid, resulting in access disruptions if stored externally to the database.
 
@@ -413,7 +413,7 @@ Through the process of generating a new URL after each update, the system preven
 
 ## Image transformations
 
-For the very common case of storing images, Xata offers a set of transformations that can be applied in real-time while retrieving images through access URLs.  Transformations are specified in the URL and their result is cached by the CDN. Both public and signed URLs support transformations. In the URL the transformation specification is a comma separated list of individual transformations following the `/transform/` segment.
+For the very common case of storing images, Xata offers a set of transformations that can be applied in real-time while retrieving images through access URLs. Transformations are specified in the URL and their result is cached by the CDN. Both public and signed URLs support transformations. In the URL the transformation specification is a comma separated list of individual transformations following the `/transform/` segment.
 
 Original image URL:
 [`https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk)
@@ -421,19 +421,48 @@ Original image URL:
 Image URL with transformations:
 [`https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk)
 
-For example, retrieving an image scaled to 50 pixels height and converted to webp format will look like this:
+The below example shows a method to transform an image directly off the file object in a record.
 
 <TabbedCode tabs={['TypeScript', 'CURL']}>
-  ```ts
-  const { url, signedUrl } = file.transform({
-    height: 50,
-    format: 'webp'
-  });
-  ```
+
+```ts
+// Get a specific record from the "gallery" database
+const record = xata.db.gallery.read('record_id');
+
+// Get a new url and signedUrl for an image in the "imageColumnName"
+// This will create a square image that is cropped from the top
+const { url, signedUrl } = record.imageColumnName.transform({
+  height: 500,
+  width: 500,
+  format: 'webp',
+  fit: 'cover',
+  gravity: 'top'
+});
+```
 
 ```sh
 curl 'https://eu-west-1.storage.xata.sh/transform/height=50,format=webp/nj42n37o4l3dd19fe6vsh4plkk' \
 --output download.webp
+```
+
+</TabbedCode>
+
+With an existing Xata image URL you can also perform a similar transformation using the `transformImage` function imported from the client. Performing a transform client-side can be useful for generating images conditionally based on media queries within a browser.
+
+<TabbedCode tabs={['TypeScript']}>
+
+```ts
+// Some client side code
+import { transformImage } from '@xata.io/client';
+
+// Once you have a URL to a Xata image, you transform it and return a new URL
+const smallerImageUrl = transformImage('https://some/xata/imageurl', {
+  width: 500,
+  height: 500,
+  format: 'webp',
+  fit: 'cover',
+  gravity: 'center'
+});
 ```
 
 </TabbedCode>
