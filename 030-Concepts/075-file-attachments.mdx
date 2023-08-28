@@ -393,13 +393,13 @@ A Xata file can be configured for public access, resulting in an URL that is pub
 
 ### Signed URL
 
-A signed URL, offers authenticated access to a file without the need of an API Key. The key (signature) is in the URL itself, so anyone holding the URL can get access to the file.
-The signed URL has a configurable time to live after which the access URL expires. In order to avoid permanent public access, the time to live can be set to maximum 24h.
-The signed URL timeout can be configured per file by setting the `signedUrlTimeout` field in the file object. The default value is 1 minute.
+A signed URL offers authenticated access to a file without requiring an API key. The URL contains the key (signature) within it, so anyone holding the URL can get access to the file.
+The signed URL has a configurable time to live (TTL), which specifies when access to the URL expires. To avoid permanent public access, the TTL can be set to a maximum of 24h.
+You can modify the timeout duration of the signed URL for each file by adjusting the `signedUrlTimeout` field within the file object. The default value is 1 minute.
 A file's signed URL can be retrieved by reading or querying the `signedUrl` field of a file object.
-Signed URLs are recommended for scenarios where temporary access is needed without sharing the API key. For example rendering an image, without giving away a permanent image URL.
+Use signed URLs when you need temporary access without revealing the API key, such as rendering an image without disclosing a permanent image URL.
 
-## Content delivery detwork (CDN)
+## Content delivery network (CDN)
 
 File attachment support comes with an integrated content delivery network (CDN) which minimizes access latency by using regional caches.
 
