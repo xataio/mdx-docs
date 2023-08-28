@@ -113,7 +113,7 @@ By default, the application will run on `http://localhost:3000`.
 ## Create a new database
 
 With the Xata CLI installed and logged in and a new Next.js application in place, use the Xata CLI to create a new
-database. Accept all the prompt defaults for the following command except for the region selection where
+database. Accept all the prompt defaults for the following command except for the region selection, where
 you should choose the region closest to your application users:
 
 ```sh
@@ -254,28 +254,57 @@ Generated Xata code to ./src/xata.ts
 This updates the contents of `src/xata.ts` based on the schema defined on the `main` branch of our database. So, if you
 make any further changes to the schema, run `xata pull <branch>` to update the auto-generated code.
 
+## Basic styling and layout
+
+Update `src/app/layout.tsx` to contain the following code to add some basic common structure to the application:
+
+```tsx title="src/app/layout.tsx" {26}
+import './globals.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'Get started with Xata and Next.js'
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <main className="flex flex-col items-center p-8 lg:p-24 min-h-screen">
+          <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
+            <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
+              <a href="/">Get started with Xata and Next.js</a>
+            </p>
+            <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+              <a href="https://xata.io" className="w-20">
+                <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
+              </a>
+            </div>
+          </div>
+          {children}
+        </main>
+      </body>
+    </html>
+  );
+}
+```
+
+Ensure the `{children}` are rendered before the closing `</main>` element.
+
 ## Query and list the posts
 
-Now we're ready to integrate Xata into the Next.js codebase. Let's start by stripping back the landing page,
+Now, you're ready to integrate Xata into the Next.js codebase. Let's start by stripping back the landing page,
 `src/app/page.tsx`, to a bare template:
 
 ```tsx title="src/app/page.tsx"
 export default async function Home() {
   return (
-    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
-      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-          <a href="/">Get started with Xata and Next.js</a>
-        </p>
-        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
-          </a>
-        </div>
-      </div>
-
+    <>
       <div className="w-full max-w-5xl mt-16">No posts</div>
-    </main>
+    </>
   );
 }
 ```
@@ -283,7 +312,7 @@ export default async function Home() {
 Next, import the auto-generated `getXataClient` function from `src/xata.ts`, get all the posts using the client, and
 list them within the page:
 
-```tsx title="src/app/page.tsx" {1-3,6,21-42}
+```tsx title="src/app/page.tsx" {1-3,6,10-27}
 import { getXataClient } from '@/xata';
 
 const xata = getXataClient();
@@ -292,31 +321,16 @@ export default async function Home() {
   const posts = await xata.db.Posts.getAll();
 
   return (
-    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
-      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-          <a href="/">Get started with Xata and Next.js</a>
-        </p>
-        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
-          </a>
-        </div>
-      </div>
-
+    <>
       <div className="w-full max-w-5xl mt-16">
         {posts.length === 0 && <p>No blog posts found</p>}
         {posts.map((post) => (
           <div key={post.id} className="mb-16">
-            <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
-              {post.pubDate?.toDateString()}
-            </p>
+            <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">{post.pubDate?.toDateString()}</p>
             <h2 className="text-2xl mb-2">
               <a href={`posts/${post.slug}`}>{post.title}</a>
             </h2>
-            <p className="text-purple-950 dark:text-purple-200 mb-5">
-              {post.description}
-            </p>
+            <p className="text-purple-950 dark:text-purple-200 mb-5">{post.description}</p>
             <a
               href={`posts/${post.slug}`}
               className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
@@ -326,7 +340,7 @@ export default async function Home() {
           </div>
         ))}
       </div>
-    </main>
+    </>
   );
 }
 ```
@@ -352,12 +366,10 @@ export default async function Home() {
 ```
 
 <Alert status="warning">
-  `getAll()` returns all the records in the query results. This is dangerous on
-  large tables (more than 10,000 records), as it will potentially load a lot of
-  data into memory and create a lot of requests to the server. In most
-  situations, you should use `getMany()` or `getPaginated()`. See the [querying
-  documentation](/docs/sdk/get#the-typescript-sdk-functions-for-querying) for
-  more information.
+  `getAll()` returns all the records in the query results. This is dangerous on large tables (more than 10,000 records),
+  as it will potentially load a lot of data into memory and create a lot of requests to the server. In most situations,
+  you should use `getMany()` or `getPaginated()`. See the [querying
+  documentation](/docs/sdk/get#the-typescript-sdk-functions-for-querying) for more information.
 </Alert>
 
 Finally, we update the UI to display the result of the `getAll` call. If no Post records are present (`posts.length === 0`), we show a message
@@ -371,15 +383,11 @@ the post, and `description` for the textual description of the post:
   {posts.length === 0 && <p>No blog posts found</p>}
   {posts.map((post) => (
     <div key={post.id} className="mb-16">
-      <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
-        {post.pubDate?.toDateString()}
-      </p>
+      <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">{post.pubDate?.toDateString()}</p>
       <h2 className="text-2xl mb-2">
         <a href={`posts/${post.slug}`}>{post.title}</a>
       </h2>
-      <p className="text-purple-950 dark:text-purple-200 mb-5">
-        {post.description}
-      </p>
+      <p className="text-purple-950 dark:text-purple-200 mb-5">{post.description}</p>
       <a
         href={`posts/${post.slug}`}
         className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
@@ -406,41 +414,27 @@ To handle the single posts identified by a `slug` we need to make use of Next.js
 Create a new file, `src/app/posts/[slug]/page.tsx`, where the Next.js framework uses the directory `[slug]` to capture
 the name of the slug:
 
-```tsx title="src/app/posts/[slug]/page.tsx" {1,22}
+```tsx title="src/app/posts/[slug]/page.tsx" {1,10}
 export default async function Post({ params }: { params: { slug: string } }) {
   return (
-    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
-      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-          <a href="/">Get started with Xata and Next.js</a>
-        </p>
-        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
-          </a>
-        </div>
-      </div>
+    <div className="w-full max-w-5xl mt-16">
+      <p className="mb-2">
+        <a href="/" className="text-purple-600">
+          &larr; Back to blog
+        </a>
+      </p>
 
-      <div className="w-full max-w-5xl mt-16">
-        <p className="mb-2">
-          <a href="/" className="text-purple-600">
-            &larr; Back to blog
-          </a>
-        </p>
-
-        <h1 className="text-3xl mb-2">{params.slug}</h1>
-      </div>
-    </main>
+      <h1 className="text-3xl mb-2">{params.slug}</h1>
+    </div>
   );
 }
 ```
 
-There's a lot more markup in this page than there is dynamic functionality. The important functionality is that the slug
-value is passed into the function via a `params` parameter and accessed using `params.slug`.
+Above, the slug value is passed into the function via a `params` parameter and accessed using `params.slug`.
 
 Next, let's update the page to bring in the Xata client and use the slug value to fetch the post from the database:
 
-```tsx title="src/app/posts/[slug]/page.tsx" {1-6,28-32}
+```tsx title="src/app/posts/[slug]/page.tsx" {1-3,5-6,16-18}
 import { getXataClient } from '@/xata';
 
 const xata = getXataClient();
@@ -449,37 +443,22 @@ export default async function Post({ params }: { params: { slug: string } }) {
   const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
 
   return (
-    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
-      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-          <a href="/">Get started with Xata and Next.js</a>
-        </p>
-        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
-          </a>
-        </div>
-      </div>
+    <div className="w-full max-w-5xl mt-16">
+      <p className="mb-2">
+        <a href="/" className="text-purple-600">
+          &larr; Back to blog
+        </a>
+      </p>
 
-      <div className="w-full max-w-5xl mt-16">
-        <p className="mb-2">
-          <a href="/" className="text-purple-600">
-            &larr; Back to blog
-          </a>
-        </p>
-
-        <h1 className="text-3xl mb-2">{post?.title}</h1>
-        <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
-          {post?.pubDate?.toDateString()}
-        </p>
-        <p className="text-xl">{post?.description}</p>
-      </div>
-    </main>
+      <h1 className="text-3xl mb-2">{post?.title}</h1>
+      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">{post?.pubDate?.toDateString()}</p>
+      <p className="text-xl">{post?.description}</p>
+    </div>
   );
 }
 ```
 
-The Xata client is imported and initialized in the same way as it is in the landing page via assigning the return value
+The Xata client is imported and initialized in the same way as it is in the landing page by assigning the return value
 of `getXataClient` to a `xata` variable.
 
 ```tsx
@@ -525,16 +504,12 @@ any configuration to enable search, we just need to use the [TypeScript SDK sear
 
 Let's add this functionality to the landing page:
 
-```tsx title="src/app/page.tsx" {4-14,29-39}
+```tsx title="src/app/page.tsx" {5,6-11,15-24}
 import { getXataClient } from '@/xata';
 
 const xata = getXataClient();
 
-export default async function Home({
-  searchParams
-}: {
-  searchParams: { q: string };
-}) {
+export default async function Home({ searchParams }: { searchParams: { q: string } }) {
   let posts = null;
   if (searchParams.q) {
     posts = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 });
@@ -543,17 +518,7 @@ export default async function Home({
   }
 
   return (
-    <main className="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
-      <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-          <a href="/">Get started with Xata and Next.js</a>
-        </p>
-        <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a href="https://xata.io" className="w-20">
-            <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
-          </a>
-        </div>
-      </div>
+    <>
       <div className="w-full max-w-5xl mt-16">
         <form>
           <input
@@ -565,23 +530,19 @@ export default async function Home({
         </form>
       </div>
       ...
-    </main>
+    </>
   );
 }
 ```
 
-Add search with three changes.
+Here's a breakdown of the changes introduced above.
 
-First, update the main function to accept search parameters. This is achieved by having the function accept an object
+First, update the main function to accept search parameters. You achieve this by having the function accept an object
 with a `searchParams` property. When a search has been performed, `searchParams` will optionally have a `q` property
 access via `searchParams.q`.
 
 ```tsx
-export default async function Home({
-  searchParams
-}: {
-  searchParams: { q: string };
-}) {
+export default async function Home({ searchParams }: { searchParams: { q: string } }) {
   ...
 }
 ```
@@ -611,7 +572,7 @@ export default async function Home({ searchParams }: { searchParams: { q: string
 The third and last change is to add a `<form>` to the page to allow a search value to be entered and submitted. The
 default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
 string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
-a `GET`request in the format `?q={q-value}`. Since this is precisely the behavior we need, and we've already updated
+a `GET` request in the format `?q={q-value}`. Since this is precisely the behavior we need, and we've already updated
 the page function to accept the object with a `searchParams` property, everything is in place.
 
 ```tsx
@@ -664,8 +625,7 @@ If you enjoyed this guide, you could continue working on improving the applicati
 - Add [pagination](/docs/sdk/search#pagination) for blog post search results
 - Handle single post view page not finding a result for a `slug`
 - Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
-  use that new field.
-- Move common code from the two pages into `src/app/layout.tsx` or reusable components
+  use that new field
 
 You can also explore some of the features we've covered in more detail:
 
