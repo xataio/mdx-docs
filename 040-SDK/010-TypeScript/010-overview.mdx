@@ -7,32 +7,33 @@ slug: sdk/typescript/overview
 published: true
 ---
 
-The Xata SDK supports typescript definitions for your Xata database schema. It also works with JavaScript.
+The Xata SDK supports Typescript definitions for your Xata database schema. It also works with JavaScript.
 
-It has zero dependencies and can run in Node.js, V8, Deno, and Bun.
+It has zero dependencies and can run in [Node.js](https://nodejs.org/en/docs), [V8](https://v8.dev/docs), [Deno](https://deno.com/), and [Bun](https://bun.sh/).
 
 ## Installation
 
-We recommend installing the [Xata CLI](/docs/getting-started/cli) globally and import the Xata Client from the [code generated](/docs/getting-started/cli#codegen) by the CLI.
+We recommend installing the [Xata CLI](/docs/getting-started/cli) globally and importing the Xata Client from the [code generated](/docs/getting-started/cli#codegen) by the CLI.
 
-When initializing the Xata CLI with the command `xata init` in a project, the `@xata.io/client` package is installed locally using the current project's package manager. In case no package manager can be determined, the Xata CLI will prompt you to install the `@xata.io/client` package manually.
+When initializing the Xata CLI with the command `xata init` in a project, the `@xata.io/client` package is installed locally using the current project's package manager. In the event  
+a package manager can't be determined, the Xata CLI will prompt you to manually install the `@xata.io/client` package.
 
 ## Usage
 
 There are three ways to use the SDK:
 
-- Schema-generated Client: SDK to create/read/update/delete records in a given database following a schema file (with type-safety).
-- Schema-less Client: SDK to create/read/update/delete records in any database without schema validation (with partial type-safety).
-- API Client: SDK to interact with the whole Xata API and all its endpoints.
+1. Schema-generated Client: SDK to create/read/update/delete records in a given database following a schema file (with type-safety).
+1. Schema-less Client: SDK to create/read/update/delete records in any database without schema validation (with partial type-safety).
+1. API Client: SDK to interact with the whole Xata API and all its endpoints.
 
 ## Helper methods
 
 The TypeScript SDK provides helper methods for creating types based off of Xata client-generated types.
 The following are exported on the `@xata.io/client` package:
 
-- `SelectableColumn` provides a type with the valid columns for a Record.
-- `SelectedPick` returns a subtype of the Record with the requested fields.
-- `EditableData` removes built-in Record methods and reserved fields.
+- `SelectableColumn` provides a type with the valid columns for a record.
+- `SelectedPick` returns a subtype of the record with the requested fields.
+- `EditableData` removes built-in record methods and reserved fields.
 
 In the example below we create the type `myUser` with a selection of fields from the client-generated UserRecord:
 
@@ -50,7 +51,9 @@ type myUser = EditableData<SelectedPick<UserRecord, typeof fields>>;
 
 ## Serializing Xata data-structures
 
-Systems such as [Next.js](https://nextjs.org/) expect the server to pass down [serialized data-structures](https://developer.mozilla.org/en-US/docs/Glossary/Serialization) to the client. Since Xata records returned through the SDK deliver objects in addition to strings this means you will often need to serialize content passed to the client. Xata provides `.toSerializable()` on the record objects to help with this task. For client side code the `JSONData`helper from the `@xata.io/client` can help match this serialized data-structure back to the original types.
+Systems such as [Next.js](https://nextjs.org/) expect the server to send [serialized data-structures](https://developer.mozilla.org/en-US/docs/Glossary/Serialization) to the client. Since the Xata SDK returns records as objects as well as strings, there's a need to serialize content for client-side use. Serialization transforms the data into a structured text representation that can be easily sent and rebuilt on the client side.
+
+Xata provides the `.toSerializable()` method within the record objects to help with serialization. To revert serialized data back to its original types on the client side, you can use the JSONData helper from `@xata.io/client`.
 
 An example of a common pattern for this flow in a Next.js system:
 
@@ -81,7 +84,7 @@ import { UserRecord } from './xata';
 
 interface MyComponentProps {
   // The data we serialized still matches the UserRecord shape
-  records: JSONDATA<UserRecord>;
+  records: JSONData<UserRecord>;
 }
 
 export const MyComponent: FC<MyComponentProps> = ({ records }) => {
@@ -89,7 +92,7 @@ export const MyComponent: FC<MyComponentProps> = ({ records }) => {
     <>
       {records.map((record) => {
         // Date objects were converted to strings during serialization.
-        // We can always convert them back here in the client as needed
+        // We can always revert them to their original form here in the client, as needed
         const date = new Date(record.createdAt);
         const dateFormatted = date.toLocaleString();
         return <p>{dateFormatted}</p>;
