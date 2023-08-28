@@ -449,10 +449,8 @@ curl 'https://eu-west-1.storage.xata.sh/transform/height=50,format=webp/nj42n37o
 
 With an existing Xata image URL you can also perform a similar transformation using the `transformImage` function imported from the client. Performing a transform client-side can be useful for generating images conditionally based on media queries within a browser.
 
-<TabbedCode tabs={['TypeScript']}>
-
-```ts
-// Some client side code
+```ts title="path/to/component.tsx"
+'use client';
 import { transformImage } from '@xata.io/client';
 
 // Once you have a URL to a Xata image, you transform it and return a new URL
@@ -464,8 +462,6 @@ const smallerImageUrl = transformImage('https://some/xata/imageurl', {
   gravity: 'center'
 });
 ```
-
-</TabbedCode>
 
 The following transformations are available:
 
