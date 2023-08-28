@@ -7,8 +7,8 @@ slug: getting-started/astro
 published: true
 ---
 
-In this guide, we'll create a new [Astro][2] application and walk through adding Xata database and search
-functionality. We'll build the following basic blog application features:
+In this guide, you'll create a new [Astro][2] application and walk through adding Xata database and search
+functionality. you'll build the following basic blog application features:
 
 1.  List all blog posts
 2.  Retrieve and view a single blog post
@@ -207,7 +207,7 @@ The `src/xata.ts` file includes generated code you should typically never touch 
 
 ## Define the database schema and import CSV data
 
-You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide, we'll walk through
+You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide, you'll walk through
 using the Xata CLI and a CSV file to:
 
 1.  Auto-generate a schema based on column headings for names and data types inferred from the column values
@@ -311,7 +311,7 @@ const { title } = Astro.props;
     </style>
   </head>
   <body>
-    <main class="flex flex-wrap justify-center content-start p-8 lg:p-24 min-h-screen">
+    <main class="flex flex-col items-center p-8 lg:p-24 min-h-screen">
       <div class="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
         <p class="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
           <a href="/">Get started with Xata and Astro</a>
@@ -420,12 +420,10 @@ let posts = await xata.db.Posts.getAll();
 ```
 
 <Alert status="warning">
-  `getAll()` returns all the records in the query results. This is dangerous on
-  large tables (more than 10,000 records), as it will potentially load a lot of
-  data into memory and create a lot of requests to the server. In most
-  situations, you should use `getMany()` or `getPaginated()`. See the [querying
-  documentation](/docs/sdk/get#the-typescript-sdk-functions-for-querying) for
-  more information.
+  `getAll()` returns all the records in the query results. This is dangerous on large tables (more than 10,000 records),
+  as it will potentially load a lot of data into memory and create a lot of requests to the server. In most situations,
+  you should use `getMany()` or `getPaginated()`. See the [querying
+  documentation](/docs/sdk/get#the-typescript-sdk-functions-for-querying) for more information.
 </Alert>
 
 Finally, update the UI to display the result of the `getAll` call. If no Post records are present (`posts.length === 0`), show a message
@@ -439,15 +437,11 @@ the post, and `description` for the textual description of the post:
   {posts.length === 0 && <p>No blog posts found</p>}
   {posts.map((posts) => (
     <div class="mb-16">
-      <p class="text-xs mb-2 text-purple-950 dark:text-purple-200">
-        {posts.pubDate?.toDateString()}
-      </p>
+      <p class="text-xs mb-2 text-purple-950 dark:text-purple-200">{posts.pubDate?.toDateString()}</p>
       <h2 class="text-2xl mb-2">
         <a href={`posts/${posts.slug}`}>{posts.title}</a>
       </h2>
-      <p class="text-purple-950 dark:text-purple-200 mb-5">
-        {posts.description}
-      </p>
+      <p class="text-purple-950 dark:text-purple-200 mb-5">{posts.description}</p>
       <a
         href={`posts/${posts.slug}`}
         class="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
@@ -562,9 +556,8 @@ export async function getStaticPaths() {
 ```
 
 <Alert status="info">
-  The `new XataClient` is instantiated within the `getStaticPaths` function and
-  not within the top-level scope because only imports are available within the
-  scope of `getStaticPaths`.
+  The `new XataClient` is instantiated within the `getStaticPaths` function and not within the top-level scope because
+  only imports are available within the scope of `getStaticPaths`.
 </Alert>
 
 The last line within the Component Script section of `[slug].astro` pulls the properties returned
