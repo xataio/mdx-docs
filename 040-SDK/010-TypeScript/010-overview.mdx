@@ -48,7 +48,7 @@ const fields: SelectableColumn<UserRecord>[] = ['id', 'name', 'address'];
 type myUser = EditableData<SelectedPick<UserRecord, typeof fields>>;
 ```
 
-## Serializing Xata data-structures and retaining Type safety
+## Serializing Xata data-structures
 
 Systems such as [Next.js](https://nextjs.org/) expect the server to pass down [serialized data-structures](https://developer.mozilla.org/en-US/docs/Glossary/Serialization) to the client. Since Xata records returned through the SDK deliver objects in addition to strings this means you will often need to serialize content passed to the client. Xata provides `.toSerializable()` on the record objects to help with this task. For client side code the `JSONData`helper from the `@xata.io/client` can help match this serialized data-structure back to the original types.
 
