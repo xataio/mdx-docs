@@ -80,6 +80,7 @@ import { JSONData } from '@xata.io/client';
 import { UserRecord } from './xata';
 
 interface MyComponentProps {
+  // The data we serialized still matches the UserRecord shape
   records: JSONDATA<UserRecord>;
 }
 
@@ -87,6 +88,8 @@ export const MyComponent: FC<MyComponentProps> = ({ records }) => {
   return (
     <>
       {records.map((record) => {
+        // Date objects were converted to strings during serialization.
+        // We can always convert them back here in the client as needed
         const date = new Date(record.createdAt);
         const dateFormatted = date.toLocaleString();
         return <p>{dateFormatted}</p>;
