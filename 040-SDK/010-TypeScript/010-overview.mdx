@@ -1,8 +1,8 @@
 ---
 title: Xata SDK for TypeScript and JavaScript
 navTitle: SDK overview
-keywords: ['TypeScript', 'TypeScript client']
-description: Use the SDK as a schema-based, schema-less or an API client
+keywords: ['TypeScript', 'TypeScript client', 'javascript', 'js']
+description: Use the SDK as a schema-based, schema-less, or an API client
 slug: sdk/typescript/overview
 published: true
 ---
@@ -51,7 +51,7 @@ type myUser = EditableData<SelectedPick<UserRecord, typeof fields>>;
 
 ## Serializing Xata data-structures
 
-Systems such as [Next.js](https://nextjs.org/) expect the server to send [serialized data-structures](https://developer.mozilla.org/en-US/docs/Glossary/Serialization) to the client. Since the Xata SDK returns records as objects as well as strings, there's a need to serialize content for client-side use. Serialization transforms the data into a structured text representation that can be easily sent and rebuilt on the client side.
+Systems such as [Next.js](https://nextjs.org/) expect the server to send [serialized data-structures](https://developer.mozilla.org/en-US/docs/Glossary/Serialization) to the client. Since the Xata SDK returns records as objects as well as strings, there's a need to serialize content for client-side use. Serialization transforms the data into a structured text format that can be easily sent and rebuilt on the client side.
 
 Xata provides the `.toSerializable()` method within the record objects to help with serialization. To revert serialized data back to its original types on the client side, you can use the JSONData helper from `@xata.io/client`.
 
