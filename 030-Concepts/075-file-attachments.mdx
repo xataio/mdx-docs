@@ -405,7 +405,7 @@ File attachment support comes with an integrated content delivery network (CDN) 
 
 Caching is enabled for all signed and public URLs. This is to avoid caching data that is secured by API key permissions. This feature is enabled by default and doesn't require any configuration. Content from publicly accessible and signed URLs is cached for a duration of 4 hours.
 
-As with all cache systems, the fundamental problem is cache invalidation - maintaining cache access performance while ensuring updated content and preventing outdated entries. In its architectural approach, Xata addresses the issue of cache invalidation by treating file content as dynamic - analogous to data within a database. 
+As with all cache systems, the fundamental problem is cache invalidation - maintaining cache access performance while ensuring updated content and preventing outdated entries. In its architectural approach, Xata addresses the issue of cache invalidation by treating file content as dynamic - analogous to data within a database.
 
 Consequently, it's recommended that clients dynamically obtain access URLs from the database, rather than persisting them in static resources. When the target file is modified, URLs can become invalid, resulting in access disruptions if stored externally to the database.
 
@@ -413,7 +413,7 @@ Through the process of generating a new URL after each update, the system preven
 
 ## Image transformations
 
-For the very common case of storing images, Xata offers a set of transformations that can be applied in real-time while retrieving images through access URLs.  Transformations are specified in the URL and their result is cached by the CDN. Both public and signed URLs support transformations. In the URL the transformation specification is a comma separated list of individual transformations following the `/transform/` segment.
+For the very common case of storing images, Xata offers a set of transformations that can be applied in real-time while retrieving images through access URLs. Transformations are specified in the URL and their result is cached by the CDN. Both public and signed URLs support transformations. In the URL the transformation specification is a comma separated list of individual transformations following the `/transform/` segment.
 
 Original image URL:
 [`https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk)
@@ -421,19 +421,48 @@ Original image URL:
 Image URL with transformations:
 [`https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk)
 
-For example, retrieving an image scaled to 50 pixels height and converted to webp format will look like this:
+For example, the below example shows a method to transform an image in your server side code.
 
 <TabbedCode tabs={['TypeScript', 'CURL']}>
-  ```ts
-  const { url, signedUrl } = file.transform({
-    height: 50,
-    format: 'webp'
-  });
-  ```
+
+```ts
+// Get a specific record from the "gallery" database
+const record = xata.db.gallery.read('record_id');
+
+// Get a new url and signedUrl for the image in the "imageColumnName"
+// This will make a square image that is cropped from the top
+const { url, signedUrl } = record.imageColumnName.transform({
+  height: 500,
+  width: 500,
+  format: 'webp',
+  fit: 'cover',
+  gravity: 'top'
+});
+```
 
 ```sh
 curl 'https://eu-west-1.storage.xata.sh/transform/height=50,format=webp/nj42n37o4l3dd19fe6vsh4plkk' \
 --output download.webp
+```
+
+</TabbedCode>
+
+With an existing Xata image URL you can also perform a similar transformation using the `transformImage` function imported from the client. Performing a transform client-side can be useful for generating images conditionally based on media queries within a browser.
+
+<TabbedCode tabs={['TypeScript']}>
+
+```ts
+// Some client side code
+import { transformImage } from '@xata.io/client';
+
+// Once you have a URL to a Xata image, you transform it and return a new URL
+const smallerImageUrl = transformImage('https://some/xata/imageurl', {
+  width: 500,
+  height: 500,
+  format: 'webp',
+  fit: 'cover',
+  gravity: 'center'
+});
 ```
 
 </TabbedCode>
