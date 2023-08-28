@@ -421,7 +421,7 @@ Original image URL:
 Image URL with transformations:
 [`https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk)
 
-For example, the below example shows a method to transform an image in your server side code.
+The below example shows a method to transform an image directly off the file object in a record.
 
 <TabbedCode tabs={['TypeScript', 'CURL']}>
 
@@ -429,8 +429,8 @@ For example, the below example shows a method to transform an image in your serv
 // Get a specific record from the "gallery" database
 const record = xata.db.gallery.read('record_id');
 
-// Get a new url and signedUrl for the image in the "imageColumnName"
-// This will make a square image that is cropped from the top
+// Get a new url and signedUrl for an image in the "imageColumnName"
+// This will create a square image that is cropped from the top
 const { url, signedUrl } = record.imageColumnName.transform({
   height: 500,
   width: 500,
