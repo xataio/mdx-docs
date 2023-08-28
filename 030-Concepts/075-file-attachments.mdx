@@ -37,7 +37,7 @@ The object consists of the following fields:
 All the fields above are input fields and can be used in insert or update requests. For example:
 
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
 
 {
   "photo": {
@@ -60,7 +60,7 @@ There are 2 fields that are returned only **on demand**, when they are explicitl
 Using the dot notation a subset of fields can be selected for return like this:
 
 ```sh
-curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id?columns=photo.name,photo.mediaType,photo.size,photo.version,photo.url,photo.signedUrl,photo.attributes' \
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id?columns=photo.name,photo.mediaType,photo.size,photo.version,photo.url,photo.signedUrl,photo.attributes' \
 --header 'authorization: Bearer xau_REDACTED'
 ```
 
@@ -88,7 +88,7 @@ The returned file object will look like the following:
 The file item object is used to represent files in a file array column. This is the same as the file object, but it also includes an identifier so that files in the array can be referred by ID. The `id` is automatically generated if it is not passed at creation time. For example the following value can be used to create an array containing 2 files. The first file in the array gets a custom `id`, while the second will have an auto-generated `id`.
 
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
 
 {
   "images": [
@@ -127,7 +127,7 @@ All Xata record APIs can be used to create, read, update, delete and query files
   ```
 
 ```python
-record = xata.records().insertRecord("Users", {
+record = xata.records().insert("Users", {
   "name": "Keanu",
   "photo": {
     "name": "file.png",
@@ -138,7 +138,7 @@ record = xata.records().insertRecord("Users", {
 ```
 
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
 
 {
   "name": "Keanu",
@@ -155,35 +155,35 @@ record = xata.records().insertRecord("Users", {
 ### Update a file through updating a record
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
-  ```ts
-  const user = await xata.db.Users.update('record_id', {
-    photo: {
-      base64Content:
-        'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
-    }
-  });
+```ts
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    base64Content:
+      'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+  }
+});
 
 // or, using the `update` method on the record object:
 
 user.update({
-photo: {
-base64Content:
-'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
-}
+  photo: {
+    base64Content: 
+      'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+  }
 });
 
-````
+```
 
 ```python
-record = xata.records().updateRecordWithID("Users", "record_id", {
+record = xata.records().update("Users", "record_id", {
   "photo": {
     "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
   }
 })
-````
+```
 
 ```jsonc
-// PATCH https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/record_id
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
 
 {
   "photo": {
@@ -197,16 +197,16 @@ record = xata.records().updateRecordWithID("Users", "record_id", {
 ### Download a file through reading a record
 
 <TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
-  ```ts
-  const user = await xata.db.Users.read('record_id', ['photo.name', 'photo.base64Content']);
-  ```
+```ts
+const user = await xata.db.Users.read('record_id', ['photo.name', 'photo.base64Content']);
+```
 
 ```python
-user = xata.records().getRecord("Users", "record_id", columns=["photo.name", "photo.base64Content"])
+user = xata.records().get("Users", "record_id", columns=["photo.name", "photo.base64Content"])
 ```
 
 ```sh
-curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/record_id?columns=photo.name,photo.base64Content' \
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id?columns=photo.name,photo.base64Content' \
 --header 'authorization: Bearer xau_REDACTED'
 ```
 
@@ -227,21 +227,20 @@ Response:
 ### Delete a file through updating a record
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
-  ```ts
-  const user = await xata.db.Users.update('record_id', { photo: null });
+```ts
+const user = await xata.db.Users.update('record_id', { photo: null });
 
 // or, using the `update` method on the record object:
 
 await user.update({ photo: null });
-
-````
+```
 
 ```python
-record = xata.records().updateRecordWithID("Users", "record_id", {"photo": None})
-````
+record = xata.records().update("Users", "record_id", {"photo": None})
+```
 
 ```jsonc
-// PATCH https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/record_id
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
 
 {
   "photo": null
@@ -255,15 +254,15 @@ record = xata.records().updateRecordWithID("Users", "record_id", {"photo": None}
 Here is an example of retrieving access URLs for all files from the photo column, that are `image/png`, sorted by file size:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
-  ```ts
-  const photos = await xata.db.Users.select(['name', 'photo.url', 'photo.size'])
-    .filter({ 'photo.mediaType': 'image/png' })
-    .sort('photo.size', 'desc')
-    .getMany();
-  ```
+```ts
+const photos = await xata.db.Users.select(['name', 'photo.url', 'photo.size'])
+  .filter({ 'photo.mediaType': 'image/png' })
+  .sort('photo.size', 'desc')
+  .getMany();
+```
 
 ```python
-photos = xata.search_and_filter().queryTable("Users", {
+photos = xata.data().query("Users", {
   "columns": ["name", "photo.url", "photo.size"],
   "filter": { "photo.mediaType": "image/png" },
   "sort": { "photo.size": "desc" }
@@ -271,7 +270,7 @@ photos = xata.search_and_filter().queryTable("Users", {
 ```
 
 ```jsonc
-// POST https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
   "columns": ["name", "photo.url", "photo.size"],
@@ -293,19 +292,19 @@ Similar to the other Xata APIs the file APIs require the Authorization header an
 `file` column type:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
-  ```ts
-  await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id' }, file);
-  ```
+```ts
+await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id' }, file);
+```
 
 ```python
-response = self.client.files().put("table_name", "record_id", "column_name", file_content)
+response = xata.files().put("table_name", "record_id", "column_name", file_content)
 ```
 
 ```sh
-curl --request PUT 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file' \
---header 'Content-Type: image/jpeg' \
---header 'Authorization: Bearer xau_REDACTED' \
---data-binary '@/path/to/file'
+curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file' \
+  --header 'Content-Type: image/jpeg' \
+  --header 'Authorization: Bearer xau_REDACTED' \
+  --data-binary '@/path/to/file'
 ```
 
 </TabbedCode>
@@ -313,19 +312,19 @@ curl --request PUT 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{bran
 `file[]` (file array) column type:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
-  ```ts
-  await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id', fileId: 'id' }, file);
-  ```
+```ts
+await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id', fileId: 'id' }, file);
+```
 
 ```python
-response = self.client.files().put_item("table_name", "record_id", "column_name", "file_id", file_content)
+response = xata.files().put_item("table_name", "record_id", "column_name", "file_id", file_content)
 ```
 
 ```sh
-curl --request PUT 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file/id' \
---header 'Content-Type: image/jpeg' \
---header 'Authorization: Bearer xau_REDACTED' \
---data-binary '@/path/to/file'
+curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file/{file_id}' \
+  --header 'Content-Type: image/jpeg' \
+  --header 'Authorization: Bearer xau_REDACTED' \
+  --data-binary '@/path/to/file'
 ```
 
 </TabbedCode>
@@ -335,18 +334,18 @@ curl --request PUT 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{bran
 `file` column type:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
-  ```ts
-  const file = await xata.files.download({ table: 'table_name', column: 'column_name', record: 'record_id' });
-  ```
-
-```sh
-file = self.client.files().get("table_name", "record_id", "column_name")
+```ts
+const file = await xata.files.download({ table: 'table_name', column: 'column_name', record: 'record_id' });
 ```
 
 ```sh
-curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file' \
---header 'authorization: Bearer xau_REDACTED' \
---output download.jpeg
+file = xata.files().get("table_name", "record_id", "column_name")
+```
+
+```sh
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file' \
+  --header 'authorization: Bearer xau_REDACTED' \
+  --output download.jpeg
 ```
 
 </TabbedCode>
@@ -354,23 +353,23 @@ curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/tab
 `file[]` (file array) column type:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
-  ```ts
-  const file = await xata.files.download({
-    table: 'table_name',
-    column: 'column_name',
-    record: 'record_id',
-    fileId: 'file_id'
-  });
-  ```
+```ts
+const file = await xata.files.download({
+  table: 'table_name',
+  column: 'column_name',
+  record: 'record_id',
+  fileId: 'file_id'
+});
+```
 
 ```python
-file = self.client.files().get_item("table_name", "record_id", "column_name", "file_id")
+file = xata.files().get_item("table_name", "record_id", "column_name", "file_id")
 ```
 
 ```sh
-curl 'https://{your-workspace-slug}.{region}.xata.sh/db/{db}:{branch}/tables/table_name/data/record_id/column/column_name/file/id' \
---header 'authorization: Bearer xau_REDACTED' \
---output download.jpeg
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file/{file_id}' \
+  --header 'authorization: Bearer xau_REDACTED' \
+  --output download.jpeg
 ```
 
 </TabbedCode>
@@ -423,7 +422,7 @@ Image URL with transformations:
 
 The below example shows a method to transform an image directly off the file object in a record.
 
-<TabbedCode tabs={['TypeScript', 'CURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
 
 ```ts
 // Get a specific record from the "gallery" database
@@ -440,9 +439,16 @@ const { url, signedUrl } = record.imageColumnName.transform({
 });
 ```
 
+```python
+img = xata.files().transform("nj42n37o4l3dd19fe6vsh4plkk", {
+  "height": 50,
+  "format": "webp"
+})
+```
+
 ```sh
 curl 'https://eu-west-1.storage.xata.sh/transform/height=50,format=webp/nj42n37o4l3dd19fe6vsh4plkk' \
---output download.webp
+  --output download.webp
 ```
 
 </TabbedCode>
@@ -492,7 +498,7 @@ OR
 Adds a blur radius between 1 (slight blur) and 250 (maximum).
 
 ```txt
-/transform/blur=50`
+/transform/blur=50
 ```
 
 ### brightness
