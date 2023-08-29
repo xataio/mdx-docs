@@ -108,25 +108,25 @@ Use this to introduce a background color beneath the image. Applies to images wi
 
 ```ts
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8', {
-  background: 'red'
+  background: 'pink'
 });
 ```
 
 ```python
 img = xata.files().transform("https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8", {
-  "background": "red"
+  "background": "pink"
 })
 ```
 
 ```txt
-https://us-east-1.storage.xata.sh/transform/background=red/s38lomas915pn3vetrp1gomd7g
+https://us-east-1.storage.xata.sh/transform/background=pink/s38lomas915pn3vetrp1gomd7g
 ```
 
 </TabbedCode>
 
 <TransformImageExample
   url="https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8"
-  options={{ background: 'red' }}
+  options={{ background: 'pink' }}
 />
 
 ### blur
@@ -493,7 +493,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/71
   width: 250,
   height: 250,
   fit: 'pad',
-  background: 'red'
+  background: 'pink'
 });
 ```
 ```python
@@ -501,14 +501,14 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/71
   "width": 250,
   "height": 250,
   "fit": "pad",
-  "background": "red"
+  "background": "pink"
 })
 ```
 </TabbedCode>
 
 <TransformImageExample
   url="https://us-east-1.storage.xata.sh/71rs0ffso94k1e1982f9e3dqco"
-  options={{ height: 250, width: 250, fit: 'pad', background: 'red' }}
+  options={{ height: 250, width: 250, fit: 'pad', background: 'pink' }}
 />
 
 ### format
