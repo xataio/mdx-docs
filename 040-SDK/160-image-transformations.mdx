@@ -493,7 +493,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s3
   width: 250,
   height: 250,
   fit: 'pad',
-  background: 'blue'
+  background: 'red'
 });
 ```
 ```python
@@ -501,14 +501,14 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/s3
   "width": 250,
   "height": 250,
   "fit": "pad",
-  "background": "blue"
+  "background": "red"
 })
 ```
 </TabbedCode>
 
 <TransformImageExample
   url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
-  options={{ height: 250, width: 250, fit: 'pad' }}
+  options={{ height: 250, width: 250, fit: 'pad', background: 'red' }}
 />
 
 ### format
