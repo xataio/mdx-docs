@@ -587,9 +587,25 @@ Check the resulting JSON at https://us-east-1.storage.xata.sh/transform/format=j
 
 Increase exposure by a factor. A value of 1.0 equals no change, a value of 0.5 darkens the image, and a value of 2.0 lightens the image. 0 is ignored.
 
-```txt
-/transform/gamma=0.5
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  gamma: 0.5
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "gamma": 0.5
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/gamma=0.5/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ gamma: 0.5 }} />
 
@@ -662,9 +678,25 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/s3
 
 Specifies maximum height of the image in pixels. Exact behavior depends on the `fit` mode.
 
-```txt
-/transform/height=100
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  height: 100
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "height": 100
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/height=100/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ height: 100 }} />
 
@@ -687,9 +719,25 @@ Controls amount of invisible metadata (EXIF data) that should be preserved. Colo
 
 Specifies quality for images in JPEG, WebP, and AVIF formats. The quality is in a 1-100 scale, but useful values are between 50 (low quality, small file size) and 90 (high quality, large file size). 85 is the default.
 
-```txt
-/transform/quality=50
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  quality: 50
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "quality": 50
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/quality=50/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ quality: 10 }} />
 
@@ -697,9 +745,25 @@ Specifies quality for images in JPEG, WebP, and AVIF formats. The quality is in 
 
 Specifies number of degrees (90, 180, or 270) to rotate the image by. Width and height options refer to axes after rotation.
 
-```txt
-/transform/rotate=90
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  rotate: 90
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "rotate": 90
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/rotate=90/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ rotate: 90 }} />
 
@@ -707,15 +771,31 @@ Specifies number of degrees (90, 180, or 270) to rotate the image by. Width and 
 
 Specifies strength of sharpening filter to apply to the image. The value is a floating-point number between 0 (no sharpening, default) and 10 (maximum). 1 is a recommended value for downscaled images.
 
-```txt
-/transform/sharpen=2
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  sharpen: 2
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "sharpen": 2
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/sharpen=2/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ sharpen: 2 }} />
 
 ### trim
 
-Specifies the number of pixels to cut off on each side. Allows removal of borders or cutting out a specific fragment of an image. Trimming is performed before resizing or rotation. Takes `dpr` into account. The value must be four numbers in pixels separated by a semicolon, in the form of top;right;bottom;left.
+Specifies the number of pixels to cut off on each side. Allows removal of borders or cutting out a specific fragment of an image. Trimming is performed before resizing or rotation. Takes `dpr` into account.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
@@ -741,7 +821,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/s3
 ```
 
 ```txt
-/transform/trim=20;30;20;0
+https://us-east-1.storage.xata.sh/transform/trim=20;30;20;0/s38lomas915pn3vetrp1gomd7g
 ```
 
 </TabbedCode>
@@ -762,8 +842,24 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/s3
 
 Specifies maximum width of the image in pixels. Exact behavior depends on the fit mode
 
-```txt
-/transform/width=100
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 100
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "width": 100
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/width=100/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ width: 100 }} />
