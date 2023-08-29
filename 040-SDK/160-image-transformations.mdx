@@ -172,7 +172,7 @@ Image will be resized (shrunk or enlarged) to be as large as possible within the
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 100,
   height: 100,
-  fit: 'contain,
+  fit: 'contain'
 });
 ```
 
@@ -186,7 +186,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s3
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 250,
   height: 250,
-  fit: 'contain,
+  fit: 'contain'
 });
 ```
 
@@ -204,7 +204,7 @@ Similar to contain, but the image is never enlarged. If the image is larger than
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 100,
   height: 100,
-  fit: 'scale-down,
+  fit: 'scale-down'
 });
 ```
 
@@ -218,7 +218,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s3
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 250,
   height: 250,
-  fit: 'scale-down,
+  fit: 'scale-down'
 });
 ```
 
@@ -355,7 +355,7 @@ When cropping with fit: "cover" and fit: "crop", this parameter defines the side
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 100,
   height: 100,
-  fit: 'cover,
+  fit: 'cover',
   gravity: 'right'
 });
 ```
@@ -443,16 +443,16 @@ Specifies strength of sharpening filter to apply to the image. The value is a fl
 Specifies the number of pixels to cut off on each side. Allows removal of borders or cutting out a specific fragment of an image. Trimming is performed before resizing or rotation. Takes `dpr` into account. The value must be four numbers in pixels separated by a semicolon, in the form of top;right;bottom;left.
 
 <TabbedCode tabs={['TypeScript', 'URL']}>
-  ```ts
-  const transformedUrl = transformImage('https://some/xata/imageurl', {
-    trim: {
-      top: 20,
-      right: 30,
-      bottom: 20,
-      left: 0
-    }
-  });
-  ```
+```ts
+const transformedUrl = transformImage('https://some/xata/imageurl', {
+  trim: {
+    top: 20,
+    right: 30,
+    bottom: 20,
+    left: 0
+  }
+});
+```
 
 ```txt
 /transform/trim=20;30;20;0
@@ -481,7 +481,3 @@ Specifies maximum width of the image in pixels. Exact behavior depends on the fi
 ```
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ width: 100 }} />
-
-```
-
-```
