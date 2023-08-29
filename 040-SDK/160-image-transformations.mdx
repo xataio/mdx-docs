@@ -76,7 +76,6 @@ Use to remove animation frames from input files. Default is set to `true`. Setti
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
-// Note that the rendered example retains the original aspect-ratio
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   anim: false,
   format: 'auto'
@@ -105,15 +104,25 @@ https://us-east-1.storage.xata.sh/transform/anim=false,format=auto/s38lomas915pn
 
 Use this to introduce a background color beneath the image. Applies to images with transparency. Accepts any CSS color, such as #RRGGBB and rgba(…).
 
-```txt
-/transform/background=%23RRGGBB
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  background: 'red'
+});
 ```
 
-OR
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "background": "red"
+})
+```
 
 ```txt
-/transform/background=red
+https://us-east-1.storage.xata.sh/transform/background=red/s38lomas915pn3vetrp1gomd7g
 ```
+
+</TabbedCode>
 
 <TransformImageExample
   url="https://us-east-1.storage.xata.sh/55a0lk1nhp4tv90gl8rhfnfr9k"
@@ -124,9 +133,25 @@ OR
 
 Adds a blur radius between 1 (slight blur) and 250 (maximum).
 
-```txt
-/transform/blur=50
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  blur: 50
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "background": 50
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/blur=50/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ blur: 50 }} />
 
@@ -134,9 +159,25 @@ Adds a blur radius between 1 (slight blur) and 250 (maximum).
 
 Increase brightness by a factor. A value of `1.0` equals no change, a value of `0.5` equals half brightness, and a value of `2.0` equals twice as bright. `0` is ignored.
 
-```txt
-/transform/brightness=0.5
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  brightness: 0.5
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "brightness": 0.5
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/brightness=0.5/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample
   url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
@@ -147,9 +188,25 @@ Increase brightness by a factor. A value of `1.0` equals no change, a value of `
 
 This marginally reduces latency in case of a cache miss, by selecting the fastest-compressing file format. However, this comes at the expense of larger file sizes and diminished image quality. The only option is `fast`. It will usually override the format option and choose JPEG over WebP or AVIF.
 
-```txt
-/transform/compression=fast
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  compression: 'fast'
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "compression": "fast"
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/compression=fast/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample
   url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
