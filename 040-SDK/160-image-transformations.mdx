@@ -2,7 +2,7 @@
 title: Image transformations
 navTitle: Image transformations
 keywords: ['images', 'image resize', 'file attachments']
-description: Xata provides methods to transform images on retrieval
+description: Transform the shape, quality, size and other attributes for any image in Xata
 slug: sdk/image-transformations
 published: true
 ---
@@ -10,10 +10,15 @@ published: true
 For the very common case of storing images, Xata offers a set of transformations that can be applied in real-time while retrieving images through [access URLs](/docs/concepts/file-attachments#file-access-urls). Transformations are specified in the URL and their result is cached by the CDN. Both public and signed URLs support transformations. In the URL the transformation specification is a comma separated list of individual transformations following the `/transform/` segment.
 
 Original image URL:
-[`https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk)
+[`https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g`](https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g)
 
 Image URL with transformations:
-[`https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk`](https://eu-west-1.storage.xata.sh/transform/rotate=180,height=50/nj42n37o4l3dd19fe6vsh4plkk)
+[`https://us-east-1.storage.xata.sh/transform/rotate=180,height=100/s38lomas915pn3vetrp1gomd7g`](https://us-east-1.storage.xata.sh/transform/rotate=180,height=100/s38lomas915pn3vetrp1gomd7g)
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ rotate: 180, height: 100 }}
+/>
 
 The below example shows a method to transform an image directly off the file object in a record.
 
@@ -35,14 +40,14 @@ const { url, signedUrl } = record.imageColumnName.transform({
 ```
 
 ```python
-img = xata.files().transform("nj42n37o4l3dd19fe6vsh4plkk", {
+img = xata.files().transform("s38lomas915pn3vetrp1gomd7g", {
   "height": 50,
   "format": "webp"
 })
 ```
 
 ```sh
-curl 'https://eu-west-1.storage.xata.sh/transform/height=50,format=webp/nj42n37o4l3dd19fe6vsh4plkk' \
+curl 'https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g' \
   --output download.webp
 ```
 
@@ -155,20 +160,151 @@ This refers to the Device Pixel Ratio (DPR). The default is 1. This ia multiplie
 
 Affects interpretation of width and height. All resizing modes preserve aspect ratio.
 
-- `contain`
-  Image will be resized (shrunk or enlarged) to be as large as possible within the given width or height while preserving the aspect ratio. If you only provide a single dimension (for example, only width), the image will be shrunk or enlarged to exactly match that dimension.
-- `scale-down`
-  Similar to contain, but the image is never enlarged. If the image is larger than given width or height, it will be resized. Otherwise its original size will be kept.
-- `cover`
-  Resizes (shrinks or enlarges) to fill the entire area of width and height. If the image has an aspect ratio different from the ratio of width and height, it will be cropped to fit.
-- `crop`
-  Image will be shrunk and cropped to fit within the area specified by width and height. The image will not be enlarged. For images smaller than the given dimensions, it is the same as scale-down. For images larger than the given dimensions, it is the same as cover.
-- `pad`
-  Resizes to the maximum size that fits within the given width and height, and then fills the remaining area with a background color (white by default). This mode is not recommended, since you can achieve the same effect more efficiently with the contain mode and the CSS object-fit contain property.
+#### contain
 
-```txt
-/transform/fit=contain
+Image will be resized (shrunk or enlarged) to be as large as possible within the given width or height while preserving the aspect ratio. If you only provide a single dimension (for example, only width), the image will be shrunk or enlarged to exactly match that dimension.
+
+```ts
+// Note that the rendered example retains the original aspect-ratio
+const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 100,
+  height: 100,
+  fit: 'contain,
+});
 ```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ height: 100, width: 100, fit: 'contain' }}
+/>
+
+```ts
+// Note that the rendered example retains the original aspect-ratio, but doesn't grow beyond the original size
+const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 250,
+  height: 250,
+  fit: 'contain,
+});
+```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ height: 250, width: 250, fit: 'contain' }}
+/>
+
+#### scale-down
+
+Similar to contain, but the image is never enlarged. If the image is larger than given width or height, it will be resized. Otherwise its original size will be kept.
+
+```ts
+// Notice that the rendered example does not grow to 1000px
+const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 100,
+  height: 100,
+  fit: 'scale-down,
+});
+```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ height: 100, width: 100, fit: 'scale-down' }}
+/>
+
+```ts
+// Notice that the rendered example does not grow to 250 and maintain its original size
+const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 250,
+  height: 250,
+  fit: 'scale-down,
+});
+```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ height: 250, width: 250, fit: 'scale-down' }}
+/>
+
+#### cover
+
+Resizes (shrinks or enlarges) to fill the entire area of width and height. If the image has an aspect ratio different from the ratio of width and height, it will be cropped to
+
+```ts
+// Notice that the rendered example is a perfect square
+const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 100,
+  height: 100,
+  fit: 'cover'
+});
+```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ height: 100, width: 100, fit: 'cover' }}
+/>
+
+```ts
+// Notice that the rendered example is a perfect square that enlarges past its original size
+const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 250,
+  height: 250,
+  fit: 'cover'
+});
+```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ height: 250, width: 250, fit: 'cover' }}
+/>
+
+#### crop
+
+Image will be shrunk and cropped to fit within the area specified by width and height. The image will not be enlarged. For images smaller than the given dimensions, it is the same as scale-down. For images larger than the given dimensions, it is the same as cover.
+
+```ts
+// Notice that the rendered example crops to a square because it is below the original size
+const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 100,
+  height: 100,
+  fit: 'crop'
+});
+```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ height: 100, width: 100, fit: 'crop' }}
+/>
+
+```ts
+// Notice that the rendered example does not become a square, and does not grow above the original size
+const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 500,
+  height: 500,
+  fit: 'crop'
+});
+```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ height: 500, width: 500, fit: 'crop' }}
+/>
+
+#### pad
+
+Resizes to the maximum size that fits within the given width and height, and then fills the remaining area with a background color (white by default). This mode is not recommended, since you can achieve the same effect more efficiently with the contain mode and the CSS object-fit contain property.
+
+```ts
+const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 250,
+  height: 250,
+  fit: 'pad',
+  background: 'blue'
+});
+```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ height: 250, width: 250, fit: 'pad' }}
+/>
 
 ### format
 
