@@ -54,6 +54,7 @@ This URLs are recommended to access the file from a secure environment where an 
 
 A Xata file can be configured for public access, resulting in an URL that is publicly available without the need of an api key or a signature. A public URL does not expire and offers access until the file is reconfigured to remove public access. The public access is configured per file by setting the file field `enablePublicUrl` to `true`. The recommended scenarios for public access are public websites and public content sharing.
 
+<TabbedCode tabs={['TypeScript', 'Python']}>
 ```ts
 // Allow this User photo to be accessed publicly at any time by the URL alone
 const user = await xata.db.Users.update('record_id', {
@@ -65,6 +66,18 @@ const user = await xata.db.Users.update('record_id', {
 // Retrieve the public URL on the file in the "photo" column
 const { url } = user.photo.transform({ quality: 50 });
 ```
+
+```python
+user = xata.records().update("Users", "record_id", {
+  "photo": {
+    "enablePublicUrl": True
+  }
+})
+
+
+```
+
+</TabbedCode>
 
 ![Entire columns can be made public by default](images/column-access-public.png)
 
