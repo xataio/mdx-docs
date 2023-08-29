@@ -59,8 +59,8 @@ With an existing Xata image URL you can also perform a similar transformation us
 'use client';
 import { transformImage } from '@xata.io/client';
 
-// Once you have a URL to a Xata image, you transform it and return a new URL
-const smallerImageUrl = transformImage('https://some/xata/imageurl', {
+// Once you have a URL to a Xata image, you can transform it and return a new URL
+const transformedImageUrl = transformImage('https://some/xata/imageurl', {
   width: 500,
   height: 500,
   format: 'webp',
@@ -166,7 +166,7 @@ Image will be resized (shrunk or enlarged) to be as large as possible within the
 
 ```ts
 // Note that the rendered example retains the original aspect-ratio
-const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 100,
   height: 100,
   fit: 'contain,
@@ -180,7 +180,7 @@ const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lom
 
 ```ts
 // Note that the rendered example retains the original aspect-ratio, but doesn't grow beyond the original size
-const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 250,
   height: 250,
   fit: 'contain,
@@ -198,7 +198,7 @@ Similar to contain, but the image is never enlarged. If the image is larger than
 
 ```ts
 // Notice that the rendered example does not grow to 1000px
-const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 100,
   height: 100,
   fit: 'scale-down,
@@ -212,7 +212,7 @@ const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lom
 
 ```ts
 // Notice that the rendered example does not grow to 250 and maintain its original size
-const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 250,
   height: 250,
   fit: 'scale-down,
@@ -230,7 +230,7 @@ Resizes (shrinks or enlarges) to fill the entire area of width and height. If th
 
 ```ts
 // Notice that the rendered example is a perfect square
-const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 100,
   height: 100,
   fit: 'cover'
@@ -244,7 +244,7 @@ const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lom
 
 ```ts
 // Notice that the rendered example is a perfect square that enlarges past its original size
-const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 250,
   height: 250,
   fit: 'cover'
@@ -262,7 +262,7 @@ Image will be shrunk and cropped to fit within the area specified by width and h
 
 ```ts
 // Notice that the rendered example crops to a square because it is below the original size
-const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 100,
   height: 100,
   fit: 'crop'
@@ -276,7 +276,7 @@ const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lom
 
 ```ts
 // Notice that the rendered example does not become a square, and does not grow above the original size
-const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 500,
   height: 500,
   fit: 'crop'
@@ -293,7 +293,7 @@ const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lom
 Resizes to the maximum size that fits within the given width and height, and then fills the remaining area with a background color (white by default). This mode is not recommended, since you can achieve the same effect more efficiently with the contain mode and the CSS object-fit contain property.
 
 ```ts
-const smallerImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
   width: 250,
   height: 250,
   fit: 'pad',
