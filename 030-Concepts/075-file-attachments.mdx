@@ -46,9 +46,9 @@ Xata provides three ways to expose a file's URL to any request. This should allo
 
 ### Authenticated URLs
 
-Requests for these URLs require the Xata API key to be present in the Authorization header. Authenticated URLs are retrieved by reading or querying the `url` field of a file object. The `enablePublicUrl` field must be set to `false` (default value) to retrieve an authenticated URL.
+Authenticated URLs are private URLs that can be used to access a file with a valid Xata API Key. They are available in the `url` field of a file object if the file is not configured for public access.
 
-This level is recommended for access patterns where the key is available to the client service and the service requires cached, high throughput, high concurrency download access.
+This URLs are recommended to access the file from a secure environment where an API Key is available and you require cached, high throughput, high concurrency download access.
 
 ### Public URLs
 
