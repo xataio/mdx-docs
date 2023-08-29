@@ -383,6 +383,21 @@ Note that although the file fields can be queried, because the column value is a
 
 The `file[]` column type does not support constraints like `not null` or `unique` or parameters like default values. The default value for a `file[]` column is an empty array `[]`.
 
+### json
+The `json` type represents any [RFC 7159](https://www.rfc-editor.org/rfc/rfc7159.html)-compliant JSON document. Input is processed so storage and query operations are performant, therefore, it's useful to keep in mind that:
+- White spaces are not preserved
+- Key order is not preserved
+- In case of duplicate key, only the last one is stored
+
+Example definition:
+
+```json
+{
+  "name": "jsonField",
+  "type": "json"
+}
+```
+
 ## Special Columns
 
 Xata maintains a special set of columns that don't have to be defined in the schema. The `id` and the `xata.*` columns names are reserved and you cannot create your own columns with these names. No other column names are reserved.
