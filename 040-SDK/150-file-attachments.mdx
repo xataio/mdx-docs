@@ -34,7 +34,7 @@ record = xata.records().insert("Users", {
     "mediaType": "image/png",
     "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC",
   }
-});
+})
 ```
 
 ```jsonc
@@ -106,8 +106,8 @@ user = xata.records().get("Users", "record_id", columns=["photo.name", "photo.ba
 ```
 
 ```sh
-curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id?columns=photo.name,photo.base64Content' \
---header 'authorization: Bearer xau_REDACTED'
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?columns=photo.name,photo.base64Content' \
+  --header 'authorization: Bearer xau_REDACTED'
 ```
 
 </TabbedCode>
@@ -133,6 +133,7 @@ const user = await xata.db.Users.update('record_id', { photo: null });
 // or, using the `update` method on the record object:
 
 await user.update({ photo: null });
+```
 
 ```python
 record = xata.records().update("Users", "record_id", {"photo": None})
