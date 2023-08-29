@@ -549,7 +549,7 @@ https://us-east-1.storage.xata.sh/transform/format=webp/s38lomas915pn3vetrp1gomd
   options={{ format: 'webp' }}
 />
 
-Here is an example of outputing `JSON`, which will give you dimensions of the transformed image.
+Here is an example of outputing `JSON`, which will give you dimensions of the transformed image along with details from the original.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
@@ -574,6 +574,14 @@ https://us-east-1.storage.xata.sh/transform/format=json,height=100/s38lomas915pn
 </TabbedCode>
 
 Check the resulting JSON at https://us-east-1.storage.xata.sh/transform/format=json,height=100/s38lomas915pn3vetrp1gomd7g
+
+```json
+{
+  "width": 125,
+  "height": 100,
+  "original": { "file_size": 22684, "width": 250, "height": 200, "format": "image/jpeg" }
+}
+```
 
 ### gamma
 
