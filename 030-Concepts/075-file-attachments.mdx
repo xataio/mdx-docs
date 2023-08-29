@@ -15,11 +15,11 @@ Xata offers general purpose file attachment capabilities. In order to simplify t
 
 To support file attachments, Xata provides two column types:
 
-- [`file`](/docs/concepts/data-model#file) column type
+- [`file` column type](/docs/concepts/data-model#file)
   - The column stores file objects, which are JSON objects with a pre-defined schema.
   - Since the column stores a single file object, the file metadata fields can be used in query filters or in summary queries.
   - Files stored in this column type do not get a file id assigned, as they can be referenced by the record id and column name.
-- [`file[]`](/docs/concepts/data-model#file) (file array) column type
+- [`file[]` (file array) column type](/docs/concepts/data-model#file)
   - The column stores an array of file item objects.
   - As the column may store an arbitrary number of files, this content cannot be used in query filters or in summary queries.
   - Files stored in this array column type carry a file id so they can be referenced in endpoints such as the binary File API.
@@ -81,7 +81,6 @@ const user = await xata.db.Users.update('record_id', {
     signedUrlTimeout: 600 // In seconds
   }
 });
-
 
 // Retrieve the signed URL on the file in the "photo" column
 const { signedUrl } = = user.photo.transform({ quality: 50 });

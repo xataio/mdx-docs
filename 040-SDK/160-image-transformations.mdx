@@ -23,28 +23,28 @@ Image URL with transformations:
 The below example shows a method to transform an image directly off the file object in a record.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
-
-```ts
-// Get a specific record from the "gallery" database
-const record = xata.db.gallery.read('record_id');
+  ```ts
+  // Get a specific record from the "gallery" database
+  const record = xata.db.gallery.read('record_id');
 
 // Get a new url and signedUrl for an image in the "imageColumnName"
 // This will create a square image that is cropped from the top
 const { url, signedUrl } = record.imageColumnName.transform({
-  height: 500,
-  width: 500,
-  format: 'webp',
-  fit: 'cover',
-  gravity: 'top'
+height: 500,
+width: 500,
+format: 'webp',
+fit: 'cover',
+gravity: 'top'
 });
-```
+
+````
 
 ```python
 img = xata.files().transform("s38lomas915pn3vetrp1gomd7g", {
   "height": 50,
   "format": "webp"
 })
-```
+````
 
 ```sh
 curl 'https://es-east-1.storage.xata.sh/transform/height=50,format=webp/s38lomas915pn3vetrp1gomd7g' \
@@ -320,8 +320,13 @@ Converts format of the retrieved image.
   Instead of generating an image, outputs information about the image in JSON format. The JSON object will contain data such as image size (before and after resizing), source image’s MIME type, and file size.
 
 ```txt
-/transform/format=auto
+/transform/format=webp
 ```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ format: 'webp' }}
+/>
 
 ### gamma
 
@@ -342,15 +347,38 @@ When cropping with fit: "cover" and fit: "crop", this parameter defines the side
 - `side`
   A side ("left", "right", "top", "bottom") or coordinates specified on a scale from 0.0 (top or left) to 1.0 (bottom or right), 0.5 being the center. The X and Y coordinates are separated by lowercase `x` in the URL format. For example, 0x1 means left and bottom, 0.5x0.5 is the center, 0.5x0.33 is a point in the top third of the image.
 
-```txt
-/transform/gravity=auto
+```ts
+// Crop from right
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 100,
+  height: 100,
+  fit: 'cover,
+  gravity: 'right'
+});
 ```
 
-OR
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ width: 100, height: 100, fit: 'cover', gravity: 'right' }}
+/>
 
-```txt
-/transform/gravity=0x1
+```ts
+// Crop from left and bottom
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  width: 100,
+  height: 100,
+  fit: 'cover',
+  gravity: {
+    x: 0,
+    y: 1
+  }
+});
 ```
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ width: 100, height: 100, fit: 'cover', gravity: { x: 0, y: 1 } }}
+/>
 
 ### height
 
@@ -412,17 +440,16 @@ Specifies strength of sharpening filter to apply to the image. The value is a fl
 Specifies the number of pixels to cut off on each side. Allows removal of borders or cutting out a specific fragment of an image. Trimming is performed before resizing or rotation. Takes `dpr` into account. The value must be four numbers in pixels separated by a semicolon, in the form of top;right;bottom;left.
 
 <TabbedCode tabs={['TypeScript', 'URL']}>
-
-```ts
-const transformedUrl = transformImage('https://some/xata/imageurl', {
-  trim: {
-    top: 20,
-    right: 30,
-    bottom: 20,
-    left: 0
-  }
-});
-```
+  ```ts
+  const transformedUrl = transformImage('https://some/xata/imageurl', {
+    trim: {
+      top: 20,
+      right: 30,
+      bottom: 20,
+      left: 0
+    }
+  });
+  ```
 
 ```txt
 /transform/trim=20;30;20;0
@@ -451,3 +478,7 @@ Specifies maximum width of the image in pixels. Exact behavior depends on the fi
 ```
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ width: 100 }} />
+
+```
+
+```
