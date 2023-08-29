@@ -217,21 +217,61 @@ https://us-east-1.storage.xata.sh/transform/compression=fast/s38lomas915pn3vetrp
 
 Increase contrast by a factor. A value of 1.0 equals no change, a value of 0.5 equals low contrast, and a value of 2.0 equals high contrast. 0 is ignored.
 
-```txt
-/transform/contrast=0.5
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  contrast: 0.5
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "contrast": 0.5
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/contrast=0.5/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ contrast: 0.5 }} />
 
 ### dpr
 
-This refers to the Device Pixel Ratio (DPR). The default is 1. This ia multiplier for width/height that makes it easier to specify higher-DPI sizes in `img srcset`.
+This refers to the Device Pixel Ratio (DPR). The default is 1. This is a multiplier (similar to a flat scale) for width/height that makes it easier to specify higher-DPI sizes in `img srcset`. `dpr` needs to be used in tandem with a dimension transform to take effect.
 
-```txt
-/transform/dpr=2
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+// Note that the rendered example is actually 400px even though the original was 200px
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  dpr: 2,
+  height: 200,
+  fit: 'contain'
+});
 ```
 
-<TransformImageExample url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g" options={{ dpr: 2 }} />
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "dpr": 2,
+  "height": 200,
+  "fit": "contain"
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/dpr=2,height=200,fit=contain/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
+  options={{ dpr: 2, height: 200, fit: 'contain' }}
+/>
 
 ### fit
 
@@ -473,7 +513,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/s3
 
 ### format
 
-Converts format of the retrieved image.
+Converts the format of the retrieved image.
 
 - `auto`
   Will serve the WebP or AVIF format to browsers that support it. If this option is not specified, a standard format like JPEG or PNG will be used.
@@ -484,14 +524,56 @@ Converts format of the retrieved image.
 - `json`
   Instead of generating an image, outputs information about the image in JSON format. The JSON object will contain data such as image size (before and after resizing), source image’s MIME type, and file size.
 
-```txt
-/transform/format=webp
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  format: 'webp'
+});
 ```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "format": "webp"
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/format=webp/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
 
 <TransformImageExample
   url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
   options={{ format: 'webp' }}
 />
+
+Here is an example of outputing `JSON`, which will give you dimensions of the transformed image.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  height: 100,
+  format: 'json'
+});
+```
+
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "height": 100,
+  "format": "json"
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/format=json,height=100/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
+
+Check the resulting JSON at https://us-east-1.storage.xata.sh/transform/format=json,height=100/s38lomas915pn3vetrp1gomd7g
 
 ### gamma
 
