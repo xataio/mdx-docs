@@ -28,14 +28,14 @@ The below example shows a method to transform an image directly off the file obj
 
 ```ts
 // Get a specific record from the "gallery" database
-const record = xata.db.gallery.read('record_id');
+const record = await xata.db.gallery.read('record_id');
 
 // Get a new url and signedUrl for an image in the "imageColumnName"
 // This will create a square image that is cropped from the top
 const { url, signedUrl } = record.imageColumnName.transform({
   height: 100,
-  rotate: 180
-  format: 'webp',
+  rotate: 180,
+  format: 'webp'
 });
 ```
 
@@ -62,8 +62,8 @@ import { transformImage } from '@xata.io/client';
 // Once you have a URL to a Xata image, you can transform it and return a new URL
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   height: 100,
-  rotate: 180
-  format: 'webp',
+  rotate: 180,
+  format: 'webp'
 });
 ```
 
