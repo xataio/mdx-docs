@@ -133,11 +133,12 @@ const user = await xata.db.Users.update('record_id', { photo: null });
 // or, using the `update` method on the record object:
 
 await user.update({ photo: null });
-```
+
+````
 
 ```python
 record = xata.records().update("Users", "record_id", {"photo": None})
-```
+````
 
 ```jsonc
 // PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id

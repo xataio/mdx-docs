@@ -30,14 +30,14 @@ const record = xata.db.gallery.read('record_id');
 // Get a new url and signedUrl for an image in the "imageColumnName"
 // This will create a square image that is cropped from the top
 const { url, signedUrl } = record.imageColumnName.transform({
-  height: 500,
-  width: 500,
-  format: 'webp',
-  fit: 'cover',
-  gravity: 'top'
+height: 500,
+width: 500,
+format: 'webp',
+fit: 'cover',
+gravity: 'top'
 });
 
-```
+````
 
 ```python
 img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
@@ -47,7 +47,7 @@ img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3ve
   "fit": "cover",
   "gravity": "top"
 })
-```
+````
 
 ```sh
 curl 'https://es-east-1.storage.xata.sh/transform/height=50,format=webp/s38lomas915pn3vetrp1gomd7g' \
@@ -185,6 +185,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/s3
   "fit": "contain"
 })
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -210,6 +211,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/s3
   "fit": "contain"
 })
 ```
+
 </TabbedCode>
 
 <TransformImageExample
