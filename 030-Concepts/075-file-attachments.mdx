@@ -50,11 +50,40 @@ Authenticated URLs are private URLs that can be used to access a file with a val
 
 This URLs are recommended to access the file from a secure environment where an API Key is available and you require cached, high throughput, high concurrency download access.
 
+<TabbedCode tabs={['TypeScript', 'Python']}>
+
+```ts
+// Allow this User photo to be accessed publicly at any time by the URL alone
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    enablePublicUrl: false
+  }
+});
+
+// Retrieve the private URL on the file in the "photo" column
+const { url } = user.photo.transform({ quality: 50 });
+```
+
+```python
+user = xata.records().update("Users", "record_id", {
+  "photo": {
+    "enablePublicUrl": True
+  }
+})
+```
+
+</TabbedCode>
+
 ### Public URLs
 
 A Xata file can be configured for public access, resulting in an URL that is publicly available without the need of an api key or a signature. A public URL does not expire and offers access until the file is reconfigured to remove public access. The public access is configured per file by setting the file field `enablePublicUrl` to `true`. The recommended scenarios for public access are public websites and public content sharing.
 
+A public URL can be called directly without need of code. For example:
+
+https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g is availble publicly
+
 <TabbedCode tabs={['TypeScript', 'Python']}>
+
 ```ts
 // Allow this User photo to be accessed publicly at any time by the URL alone
 const user = await xata.db.Users.update('record_id', {
@@ -73,8 +102,6 @@ user = xata.records().update("Users", "record_id", {
     "enablePublicUrl": True
   }
 })
-
-
 ```
 
 </TabbedCode>

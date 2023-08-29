@@ -10,10 +10,12 @@ published: true
 For the very common case of storing images, Xata offers a set of transformations that can be applied in real-time while retrieving images through [access URLs](/docs/concepts/file-attachments#file-access-urls). Transformations are specified in the URL and their result is cached by the CDN. Both public and signed URLs support transformations. In the URL the transformation specification is a comma separated list of individual transformations following the `/transform/` segment.
 
 Original image URL:
-[`https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g`](https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g)
+
+https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g
 
 Image URL with transformations:
-[`https://us-east-1.storage.xata.sh/transform/rotate=180,height=100/s38lomas915pn3vetrp1gomd7g`](https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/s38lomas915pn3vetrp1gomd7g)
+
+https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/s38lomas915pn3vetrp1gomd7g
 
 <TransformImageExample
   url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
