@@ -13,7 +13,7 @@ Original image URL:
 [`https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g`](https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g)
 
 Image URL with transformations:
-[`https://us-east-1.storage.xata.sh/transform/rotate=180,height=100/s38lomas915pn3vetrp1gomd7g`](https://us-east-1.storage.xata.sh/transform/rotate=180,height=100/s38lomas915pn3vetrp1gomd7g)
+[`https://us-east-1.storage.xata.sh/transform/rotate=180,height=100/s38lomas915pn3vetrp1gomd7g`](https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/s38lomas915pn3vetrp1gomd7g)
 
 <TransformImageExample
   url="https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g"
@@ -22,7 +22,8 @@ Image URL with transformations:
 
 The below example shows a method to transform an image directly off the file object in a record.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
 ```ts
 // Get a specific record from the "gallery" database
 const record = xata.db.gallery.read('record_id');
@@ -30,45 +31,37 @@ const record = xata.db.gallery.read('record_id');
 // Get a new url and signedUrl for an image in the "imageColumnName"
 // This will create a square image that is cropped from the top
 const { url, signedUrl } = record.imageColumnName.transform({
-  height: 500,
-  width: 500,
+  height: 100,
+  rotate: 180
   format: 'webp',
-  fit: 'cover',
-  gravity: 'top'
 });
-
 ```
 
 ```python
 img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
-  "height": 50,
-  "width": 500,
+  "height": 100,
+  "rotate": 180,
   "format": "webp"
-  "fit": "cover",
-  "gravity": "top"
 })
 ```
 
-```sh
-curl 'https://es-east-1.storage.xata.sh/transform/height=50,format=webp/s38lomas915pn3vetrp1gomd7g' \
-  --output download.webp
+```txt
+https://us-east-1.storage.xata.sh/transform/height=50,format=webp/s38lomas915pn3vetrp1gomd7g
 ```
 
 </TabbedCode>
 
-With an existing Xata image URL you can also perform a similar transformation using the `transformImage` function imported from the client. Performing a transform client-side can be useful for generating images conditionally based on media queries within a browser.
+With an existing Xata image URL you can also perform a similar transformation using the `transformImage` function imported from the TypeScript client. Performing a transform client-side can be useful for generating images conditionally based on media queries within a browser. With this method, only a `url` for an existing Xata image is needed.
 
-```ts title="path/to/component.tsx"
+```ts title="client_component.tsx"
 'use client';
 import { transformImage } from '@xata.io/client';
 
 // Once you have a URL to a Xata image, you can transform it and return a new URL
-const transformedImageUrl = transformImage('https://some/xata/imageurl', {
-  width: 500,
-  height: 500,
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  height: 100,
+  rotate: 180
   format: 'webp',
-  fit: 'cover',
-  gravity: 'center'
 });
 ```
 
@@ -76,13 +69,35 @@ The following transformations are available:
 
 ### anim
 
-Use to remove animation frames from input files. Default is set to `true`. Setting it to `false` reduces animations to still images.
+Use to remove animation frames from input files. Default is set to `true`. Setting it to `false` reduces animations to still images. You will also need to pass at least one other transformation, like `format: 'auto'`, for it to take effect.
 
-```txt
-/transform/anim=false
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+// Note that the rendered example retains the original aspect-ratio
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g', {
+  anim: false,
+  format: 'auto'
+});
 ```
 
-<TransformImageExample url="https://us-east-1.storage.xata.sh/aeigh3g59h7ljcdlhrmmmcgtbk" options={{ anim: false }} />
+```python
+img = xata.files().transform("https://us-east-1.storage.xata.sh/s38lomas915pn3vetrp1gomd7g", {
+  "anim": false,
+  "format": "auto"
+})
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/anim=false,format=auto/s38lomas915pn3vetrp1gomd7g
+```
+
+</TabbedCode>
+
+<TransformImageExample
+  url="https://us-east-1.storage.xata.sh/aeigh3g59h7ljcdlhrmmmcgtbk"
+  options={{ anim: false, format: 'auto' }}
+/>
 
 ### background
 
@@ -185,6 +200,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/s3
   "fit": "contain"
 })
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -210,6 +226,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/s3
   "fit": "contain"
 })
 ```
+
 </TabbedCode>
 
 <TransformImageExample
