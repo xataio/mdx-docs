@@ -137,23 +137,23 @@ Adds a blur radius between 1 (slight blur) and 250 (maximum).
 
 ```ts
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  blur: 50
+  blur: 20
 });
 ```
 
 ```python
 img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
-  "background": 50
+  "background": 20
 })
 ```
 
 ```txt
-https://us-east-1.storage.xata.sh/transform/blur=50/4u1fh2o6p10blbutjnphcste94
+https://us-east-1.storage.xata.sh/transform/blur=20/4u1fh2o6p10blbutjnphcste94
 ```
 
 </TabbedCode>
 
-<TransformImageExample url="https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94" options={{ blur: 50 }} />
+<TransformImageExample url="https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94" options={{ blur: 20 }} />
 
 ### brightness
 
@@ -281,7 +281,7 @@ Affects interpretation of width and height. All resizing modes preserve aspect r
 
 Image will be resized (shrunk or enlarged) to be as large as possible within the given width or height while preserving the aspect ratio. If you only provide a single dimension (for example, only width), the image will be shrunk or enlarged to exactly match that dimension.
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
 // Note that the rendered example retains the original aspect-ratio
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
@@ -300,6 +300,10 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
 })
 ```
 
+```txt
+https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=contain/4u1fh2o6p10blbutjnphcste94
+```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -307,7 +311,8 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   options={{ height: 100, width: 100, fit: 'contain' }}
 />
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
 ```ts
 // Note that the rendered example retains the original aspect-ratio, but doesn't grow beyond the original size
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
@@ -326,6 +331,10 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
 })
 ```
 
+```txt
+https://us-east-1.storage.xata.sh/transform/width=250,height=250,fit=contain/4u1fh2o6p10blbutjnphcste94
+```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -337,9 +346,9 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
 
 Similar to contain, but the image is never enlarged. If the image is larger than given width or height, it will be resized. Otherwise its original size will be kept.
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
-// Notice that the rendered example does not grow to 1000px
+// Notice that the rendered example scales down properly because the source is larger
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 100,
   height: 100,
@@ -353,6 +362,9 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   "fit": "scale-down"
 })
 ```
+```txt
+https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=scale-down/4u1fh2o6p10blbutjnphcste94
+```
 </TabbedCode>
 
 <TransformImageExample
@@ -360,34 +372,37 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   options={{ height: 100, width: 100, fit: 'scale-down' }}
 />
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
-// Notice that the rendered example does not grow to 250 and maintain its original size
+// Notice that the rendered example does not grow beyond it's original size
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 250,
-  height: 250,
+  width: 600,
+  height: 400,
   fit: 'scale-down'
 });
 ```
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
-  "width": 250,
-  "height": 250,
+  "width": 600,
+  "height": 400,
   "fit": "scale-down"
 })
+```
+```txt
+https://us-east-1.storage.xata.sh/transform/width=600,height=400,fit=scale-down/4u1fh2o6p10blbutjnphcste94
 ```
 </TabbedCode>
 
 <TransformImageExample
   url="https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94"
-  options={{ height: 250, width: 250, fit: 'scale-down' }}
+  options={{ height: 600, width: 400, fit: 'scale-down' }}
 />
 
 #### cover
 
 Resizes (shrinks or enlarges) to fill the entire area of width and height. If the image has an aspect ratio different from the ratio of width and height, it will be cropped to
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
 // Notice that the rendered example is a perfect square
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
@@ -403,6 +418,9 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   "fit": "cover"
 })
 ```
+```txt
+https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=cover/4u1fh2o6p10blbutjnphcste94
+```
 </TabbedCode>
 
 <TransformImageExample
@@ -410,7 +428,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   options={{ height: 100, width: 100, fit: 'cover' }}
 />
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
 // Notice that the rendered example is a perfect square that enlarges past its original size
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
@@ -426,6 +444,9 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   "fit": "cover"
 })
 ```
+```txt
+https://us-east-1.storage.xata.sh/transform/width=250,height=250,fit=cover/4u1fh2o6p10blbutjnphcste94
+```
 </TabbedCode>
 
 <TransformImageExample
@@ -437,7 +458,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
 
 Image will be shrunk and cropped to fit within the area specified by width and height. The image will not be enlarged. For images smaller than the given dimensions, it is the same as scale-down. For images larger than the given dimensions, it is the same as cover.
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
 // Notice that the rendered example crops to a square because it is below the original size
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
@@ -453,6 +474,9 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   "fit": "crop"
 })
 ```
+```txt
+https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=crop/4u1fh2o6p10blbutjnphcste94
+```
 </TabbedCode>
 
 <TransformImageExample
@@ -460,7 +484,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   options={{ height: 100, width: 100, fit: 'crop' }}
 />
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python','URL']}>
 ```ts
 // Notice that the rendered example does not become a square, and does not grow above the original size
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
@@ -476,6 +500,9 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   "fit": "crop"
 })
 ```
+```txt
+https://us-east-1.storage.xata.sh/transform/width=500,height=500,fit=crop/4u1fh2o6p10blbutjnphcste94
+```
 </TabbedCode>
 
 <TransformImageExample
@@ -487,7 +514,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
 
 Resizes to the maximum size that fits within the given width and height, and then fills the remaining area with a background color (white by default). This mode is not recommended, since you can achieve the same effect more efficiently with the contain mode and the CSS object-fit contain property.
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 250,
@@ -503,6 +530,9 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   "fit": "pad",
   "background": "pink"
 })
+```
+```txt
+https://us-east-1.storage.xata.sh/transform/width=250,height=250,fit=pad/4u1fh2o6p10blbutjnphcste94
 ```
 </TabbedCode>
 
@@ -618,7 +648,7 @@ When cropping with fit: "cover" and fit: "crop", this parameter defines the side
 - `side`
   A side ("left", "right", "top", "bottom") or coordinates specified on a scale from 0.0 (top or left) to 1.0 (bottom or right), 0.5 being the center. The X and Y coordinates are separated by lowercase `x` in the URL format. For example, 0x1 means left and bottom, 0.5x0.5 is the center, 0.5x0.33 is a point in the top third of the image.
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
 // Crop from right
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
@@ -636,6 +666,9 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   "gravity": "right"
 })
 ```
+```txt
+https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=cover,gravity=right/4u1fh2o6p10blbutjnphcste94
+```
 </TabbedCode>
 
 <TransformImageExample
@@ -643,7 +676,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   options={{ width: 100, height: 100, fit: 'cover', gravity: 'right' }}
 />
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
 // Crop from left and bottom
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
@@ -666,6 +699,9 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
     "y": 1
   }
 })
+```
+```txt
+https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=cover,gravity=0x1/4u1fh2o6p10blbutjnphcste94
 ```
 </TabbedCode>
 
