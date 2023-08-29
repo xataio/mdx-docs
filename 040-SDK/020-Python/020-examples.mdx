@@ -314,6 +314,50 @@ assert resp.status_code == 200
 
 </TabbedCode>
 
+## Upload a File
+
+In this scenario we are uploading an on disk hosted file into a table `Photos` through the records API. For more examples please consult the [file attachment examples](/docs/sdk/file-attachments).
+
+<TabbedCode tabs={['1.x', '0.x']}>
+```python
+xata = XataClient()
+
+upload = xata.records().insert("Photos", {
+  "title": "My new uploaded photo",
+  "photo": {
+    "name": "Nordkette, Innsbruck",
+    "mediaType": "image/jpeg",
+    "base64Content": "Tm9yZGtldHRlLCBJbm5zYnJ1Y2ssIFR5cm9sLCBBdXN0cmlhLCBMb3JlbSBJcHN1bSBsb3Jv",
+    "enablePublicUrl": True
+  }
+})
+assert upload.is_success()
+```
+
+```python
+xata = XataClient()
+
+upload = xata.records().insertRecord("Photos", {
+  "title": "My new uploaded photo",
+  "photo": {
+    "name": "Nordkette, Innsbruck",
+    "mediaType": "image/jpeg",
+    "base64Content": "Tm9yZGtldHRlLCBJbm5zYnJ1Y2ssIFR5cm9sLCBBdXN0cmlhLCBMb3JlbSBJcHN1bSBsb3Jv",
+    "enablePublicUrl": True
+  }
+})
+assert upload.status_code == 201
+```
+</TabbedCode>
+
+The following snippets shows you a very simple way to read a file from disk and encode it to base 64:
+```python
+file_name = "photos/nordkette.jpg"
+with open(file_name, "rb") as f:
+  file_content = f.read()
+b64 = base64.b64encode(file_content).decode("ascii")
+```
+
 ## Ask AI Endpoint with follow up
 
 The `ask` endpoint uses search or similarity search algorithms to find relevant information from your database. Please refer to [this page](/docs/sdk/ask) to get more information about the endpoint.
