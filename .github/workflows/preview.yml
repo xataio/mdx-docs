@@ -35,27 +35,6 @@ jobs:
         with:
           node-version: 18
 
-      - name: Find Comment
-        uses: peter-evans/find-comment@v2
-        if: github.event_name == 'pull_request'
-        id: find-comment
-        with:
-          token: ${{ secrets.GIT_TOKEN }}
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'xata-bot'
-          body-includes: Check out the preview at
-
-      - name: Create or update comment with preview URL
-        uses: peter-evans/create-or-update-comment@v2
-        if: github.event_name == 'pull_request' && steps.find-comment.outputs.comment-id != ''
-        with:
-          token: ${{ secrets.GIT_TOKEN }}
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          edit-mode: append
-          body: |
-            [Pull request has been updated. Building  a new preview...]
-
       - run: npm i -g vercel@latest
 
       - id: deploy
@@ -69,12 +48,53 @@ jobs:
             --env XATA_PREVIEW=none \
             --build-env XATA_BRANCH=main \
             --env XATA_BRANCH=main \
+            --no-wait
             > deploy_url.txt
 
       - name: Get deployment URL
         id: get-url
         run: |
           echo "URL=$(cat deploy_url.txt)" >> $GITHUB_OUTPUT
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        if: github.event_name == 'pull_request'
+        id: find-comment
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'xata-bot'
+          body-includes: Check out
+
+      - name: Update comment with build status
+        uses: peter-evans/create-or-update-comment@v2
+        if: github.event_name == 'pull_request' && steps.find-comment.outputs.comment-id != ''
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: append
+          body: |
+            Pull request has been updated, building a new [preview](${{ steps.get-url.outputs.URL }})...
+
+      - name: Create comment with build status
+        uses: peter-evans/create-or-update-comment@v2
+        if: github.event_name == 'pull_request' && steps.find-comment.outputs.comment-id == ''
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: |
+            Check out the build status at ${{ steps.get-url.outputs.URL }}...
+
+      - name: Wait for deployment
+        run: |
+          vercel inspect \
+            --token ${{ secrets.VERCEL_TOKEN }} \
+            --scope $VERCEL_ORG_ID \
+            --wait \
+            ${{ steps.get-url.outputs.URL }}
 
       - name: Create or update alias
         run: |
@@ -85,17 +105,26 @@ jobs:
             ${{ steps.get-url.outputs.URL }} \
             xata-docs-pr-${{ github.event.pull_request.number }}.vercel.app
 
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        if: github.event_name == 'pull_request'
+        id: find-comment-2
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'xata-bot'
+          body-includes: Check out
+
       - name: Create or update comment with preview URL
         uses: peter-evans/create-or-update-comment@v2
         if: github.event_name == 'pull_request'
         with:
           token: ${{ secrets.GIT_TOKEN }}
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          comment-id: ${{ steps.find-comment-2.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
           body: |
             Check out the preview at https://xata-docs-pr-${{ github.event.pull_request.number }}.vercel.app
-            Deployment: ${{ steps.get-url.outputs.URL }}
 
       - name: If job cancelled
         if: ${{ cancelled() }}
