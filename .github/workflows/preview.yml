@@ -28,13 +28,33 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: xataio/website
-          # TODO: Change branch to "main" once we have a stable release
           ref: ${{ inputs.branch || 'main' }}
           token: ${{ secrets.GIT_TOKEN }}
 
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        if: github.event_name == 'pull_request'
+        id: find-comment
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'xata-bot'
+          body-includes: Check out the preview at
+
+      - name: Create or update comment with preview URL
+        uses: peter-evans/create-or-update-comment@v2
+        if: github.event_name == 'pull_request' && steps.find-comment.outputs.comment-id != ''
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: append
+          body: |
+            [Pull request has been updated. Building  a new preview...]
 
       - run: npm i -g vercel@latest
 
@@ -56,17 +76,16 @@ jobs:
         run: |
           echo "URL=$(cat deploy_url.txt)" >> $GITHUB_OUTPUT
 
-      - name: Find Comment
-        uses: peter-evans/find-comment@v2
-        if: github.event_name == 'pull_request'
-        id: find-comment
-        with:
-          token: ${{ secrets.GIT_TOKEN }}
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'xata-bot'
-          body-includes: Check out the preview at
+      - name: Create or update alias
+        run: |
+          vercel alias \
+            --token ${{ secrets.VERCEL_TOKEN }} \
+            --scope $VERCEL_ORG_ID \
+            --yes \
+            ${{ steps.get-url.outputs.URL }} \
+            xata-docs-pr-${{ github.event.pull_request.number }}.vercel.app
 
-      - name: Create or update comment of npm release
+      - name: Create or update comment with preview URL
         uses: peter-evans/create-or-update-comment@v2
         if: github.event_name == 'pull_request'
         with:
@@ -75,13 +94,8 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
           body: |
-            Check out the preview at ${{ steps.get-url.outputs.URL }}
-        #  uses: ruzickap/action-my-broken-link-checker@v2
-        #  with:
-        #  url: ${{ steps.get-url.outputs.URL }}
-        #  cmd_params: '--exclude=(github.com|twitter.com|localhost:3000) --buffer-size=8192 --max-connections=10 --color=always --rate-limit=10 --header="User-Agent:curl/7.54.0"'
-        #  debug: true
-      #  - name: Check links
+            Check out the preview at https://xata-docs-pr-${{ github.event.pull_request.number }}.vercel.app
+            Deployment: ${{ steps.get-url.outputs.URL }}
 
       - name: If job cancelled
         if: ${{ cancelled() }}
