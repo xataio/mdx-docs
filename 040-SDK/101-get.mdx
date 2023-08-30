@@ -240,7 +240,8 @@ user = xata.data().query("Users", "myid")
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * from \"Users\" WHERE id='myid';"
+  "statement": "SELECT * from \"Users\" WHERE id=$1;",
+  "params": ["myid"]
 }
 ```
 
@@ -406,7 +407,8 @@ users = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE email='keanu@example.com' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE email=$1 LIMIT 20;",
+  "params": ["keanu@example.com"]
 }
 ```
 
@@ -444,7 +446,8 @@ users = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id WHERE \"Teams\".name='Matrix';"
+  "statement": "SELECT * FROM \"Users\" LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id WHERE \"Teams\".name=$1;",
+  "params": ["Matrix"]
 }
 ```
 

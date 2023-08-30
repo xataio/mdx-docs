@@ -60,7 +60,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name = $1 LIMIT 20;",
+  "params": ["Keanu Reeves"]
 }
 ```
 
@@ -102,7 +103,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name = $1 LIMIT 20;",
+  "params": ["Keanu Reeves"]
 }
 ```
 
@@ -144,7 +146,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name IN ('Keanu Reeves','Carrie-Anne Moss') LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name IN ($1,$2) LIMIT 20;",
+  "params": ["Keanu Reeves", "Carrie-Ann Moss"]
 }
 ```
 
@@ -186,7 +189,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' AND city = 'New York' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name = $1 AND city = $2 LIMIT 20;",
+  "params": ["Keanu Reeves", "New York"]
 }
 ```
 
@@ -232,7 +236,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' OR city = 'New York' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name = $1 OR city = $2 LIMIT 20;",
+  "params": ["Keanu Reeves", "New York"]
 }
 ```
 
@@ -272,7 +277,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name = 'Keanu Reeves' OR name = 'Carrie-Anne Moss' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name = $1 OR name = $2 LIMIT 20;",
+  "params": ["Keanu Reeves", "Carrie-Ann Moss"]
 }
 ```
 
@@ -429,7 +435,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE NOT name = 'Keanu Reeves' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE NOT name = $1 LIMIT 20;",
+  "params": ["Keanu Reeves"]
 }
 ```
 
@@ -487,7 +494,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE NOT (name = 'Keanu Reeves' OR name = 'Laurence Fishburne') LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE NOT (name = $1 OR name = $2) LIMIT 20;"
+  "params": ["Keanu Reeves", "Laurence Fishburne"]
 }
 ```
 
@@ -540,7 +548,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name NOT IN ('Keanu Reeves','Laurence Fishburne') LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name NOT IN ($1,$2) LIMIT 20;",
+  "params": ["Keanu Reeves", "Laurence Fishburn"]
 }
 ```
 
@@ -583,7 +592,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE NOT name = 'Keanu Reeves' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE NOT name = $1 LIMIT 20;",
+  "params": ["Keanu Reeves"]
 }
 ```
 
@@ -634,7 +644,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name LIKE '%Keanu%' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name LIKE '%$1%' LIMIT 20;",
+  "params": ["Keanu Reeves"]
 }
 ```
 
@@ -676,7 +687,8 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name ~ 'K.*an.? R.*' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name ~ $1 LIMIT 20;",
+  "params": ["K.*an.? R.*"]
 }
 ```
 
@@ -731,13 +743,15 @@ records = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name ~ '^Keanu' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name ~ $1 LIMIT 20;",
+  "params": ["^Keanu"]
 }
 
 // or
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE name ~ 'Reeves$' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE name ~ $1 LIMIT 20;",
+  "params": ["Reeves$"]
 }
 ```
 
@@ -846,7 +860,8 @@ records = xata.data().query("Posts", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Posts\" WHERE \"xata.createdAt\"::timestamptz < '2022-10-25T02:00:00.000Z' AND \"xata.createdAt\"::timestamptz >= '2022-10-25T01:00:00.000Z' LIMIT 20;"
+  "statement": "SELECT * FROM \"Posts\" WHERE \"xata.createdAt\"::timestamptz < $1 AND \"xata.createdAt\"::timestamptz >= $2 LIMIT 20;",
+  "params": ["2022-10-25T02:00:00.000Z", "2022-10-25T01:00:00.000Z"]
 }
 ```
 
@@ -1000,7 +1015,8 @@ records = xata.data().query("Posts", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-    "statement": "SELECT * FROM \"Posts\" WHERE cardinality(\"labels\") = (SELECT sum((label LIKE '%mat%') :: int) FROM unnest(labels) AS label);"
+    "statement": "SELECT * FROM \"Posts\" WHERE cardinality(\"labels\") = (SELECT sum((label LIKE '%$1%') :: int) FROM unnest(labels) AS label);"
+  "params": ["mat"]
 }
 ```
 
