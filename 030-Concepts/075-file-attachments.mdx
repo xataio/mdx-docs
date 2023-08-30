@@ -30,7 +30,7 @@ A full breakdown of the `file` and `file[]` column types can be found on the [da
 
 File attachments are delivered through an integrated content delivery network (CDN) which minimizes access latency by using regional caches.
 
-Caching is enabled for all signed and public URLs. This is to avoid caching data that is secured by API key permissions. This feature is enabled by default and doesn't require any configuration. Content from publicly accessible and signed URLs is cached for a duration of 4 hours.
+Caching is enabled for all [signed](#signed-urls) and [public URLs](#public-urls). This is to avoid caching data that is secured by API key permissions. This feature is enabled by default and doesn't require any configuration. Content from publicly accessible and signed URLs is cached for a duration of 4 hours.
 
 As with all cache systems, the fundamental problem is cache invalidation - maintaining cache access performance while ensuring updated content and preventing outdated entries. In its architectural approach, Xata addresses the issue of cache invalidation by treating file content as dynamic - analogous to data within a database.
 
