@@ -11,6 +11,25 @@ published: true
 
 This integration allows you to use Kysely's query building capabilities while leveraging Xata's SQL over HTTP functionality.
 
+### Installation
+
+Install both Kysely and `@xata.io/kysely` with the Xata client. You can use the following package managers:
+
+#### pnpm
+```
+pnpm add kysely @xata.io/kysely @xata.io/client
+```
+
+#### yarn
+```
+yarn add kysely @xata.io/kysely @xata.io/client
+```
+
+#### npm 
+```
+npm install kysely @xata.io/kysely @xata.io/client
+```
+
 ### Xata dialect 
 
 Kysely is a query builder library for TypeScript that helps in generating SQL queries. For compatibility with Xata, a specialized dialect has been developed for Kysely. The [Xata dialect for Kysely](https://github.com/xataio/client-ts/tree/main/packages/plugin-client-kysely) enables the use of Xata-specific functionality with Kysely. The following example, demonstrates how you can employ the Xata dialect for Kysely:
@@ -34,3 +53,5 @@ In the provided code example, the following steps are being taken to integrate X
 1. Import the `Kysely` class from the 'kysely' library and import the `XataDialect` class from the '@xata.io/kysely' module. The `XataDialect` represents a specialized extension of Kysely tailored for the Xata database.
 1. Assign the result of the `getXataClient` function to the variable `xata`, establishing a connection to the Xata database and enabling interaction with it.
 1. Create a new instance of the `Kysely` class with a specific type, denoted as `Kysely<Database>`. This instance acts as a query builder, and its constructor is provided with an object containing the `xata` property, linking it to the Xata database using the Xata-specific dialect.
+
+* `XataDialect` accepts the Xata client instance as its only option. For more information on creating a Xata client instance, see our [getting started guide](/docs/getting-started/installation). 
