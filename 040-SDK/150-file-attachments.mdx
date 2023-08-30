@@ -1,0 +1,278 @@
+---
+title: File attachments
+navTitle: File attachments
+keywords: ['files', 'file storage', 'file attachments']
+description: Xata effectively keeps track of files within a database
+slug: sdk/file-attachments
+published: true
+---
+
+## Record APIs
+
+All Xata record APIs can be used to create, read, update, delete and query files.
+
+### Upload a file through inserting a new record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+  ```ts
+  const record = await xata.db.Users.create({
+    name: 'Keanu',
+    photo: {
+      name: 'file.png',
+      mediaType: 'image/png',
+      base64Content:
+        'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+    }
+  });
+  ```
+
+```python
+record = xata.records().insert("Users", {
+  "name": "Keanu",
+  "photo": {
+    "name": "file.png",
+    "mediaType": "image/png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC",
+  }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
+
+{
+  "name": "Keanu",
+  "photo": {
+    "name": "file.png",
+    "mediaType": "image/png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+</TabbedCode>
+
+### Update a file through updating a record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
+```ts
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    base64Content:
+      'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+  }
+});
+
+// or, using the `update` method on the record object:
+
+user.update({
+  photo: {
+    base64Content:
+      'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+  }
+});
+```
+
+```python
+record = xata.records().update("Users", "record_id", {
+  "photo": {
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+})
+```
+
+```jsonc
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
+
+{
+  "photo": {
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+</TabbedCode>
+
+### Download a file through reading a record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+```ts
+const user = await xata.db.Users.read('record_id', ['photo.name', 'photo.base64Content']);
+```
+
+```python
+user = xata.records().get("Users", "record_id", columns=["photo.name", "photo.base64Content"])
+```
+
+```sh
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?columns=photo.name,photo.base64Content' \
+  --header 'authorization: Bearer xau_REDACTED'
+```
+
+</TabbedCode>
+
+Response:
+
+```json
+{
+  "id": "record_id",
+  "photo": {
+    "name": "file.png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+### Delete a file through updating a record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const user = await xata.db.Users.update('record_id', { photo: null });
+
+// or, using the `update` method on the record object:
+
+await user.update({ photo: null });
+```
+
+```python
+record = xata.records().update("Users", "record_id", {"photo": None})
+```
+
+```jsonc
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
+
+{
+  "photo": null
+}
+```
+
+</TabbedCode>
+
+### Query files metadata
+
+Here is an example of retrieving access URLs for all files from the photo column, that are `image/png`, sorted by file size:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const photos = await xata.db.Users.select(['name', 'photo.url', 'photo.size'])
+  .filter({ 'photo.mediaType': 'image/png' })
+  .sort('photo.size', 'desc')
+  .getMany();
+```
+
+```python
+photos = xata.data().query("Users", {
+  "columns": ["name", "photo.url", "photo.size"],
+  "filter": { "photo.mediaType": "image/png" },
+  "sort": { "photo.size": "desc" }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+
+{
+  "columns": ["name", "photo.url", "photo.size"],
+  "filter": { "photo.mediaType": "image/png" },
+  "sort": { "photo.size": "desc" }
+}
+```
+
+</TabbedCode>
+
+## File (binary) APIs
+
+Since all record APIs use JSON for both request and response body, the file content needs to be encoded. For reasons like performance or data size on the wire, encoding the content might not be desired.
+To work directly with binary file content, Xata introduces new file APIs.
+Similar to the other Xata APIs, the file APIs require the Authorization header and a valid API key.
+
+### Upload a file using file APIs
+
+`file` column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+```ts
+await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id' }, file);
+```
+
+```python
+response = xata.files().put("table_name", "record_id", "column_name", file_content)
+```
+
+```sh
+curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file' \
+  --header 'Content-Type: image/jpeg' \
+  --header 'Authorization: Bearer xau_REDACTED' \
+  --data-binary '@/path/to/file'
+```
+
+</TabbedCode>
+
+`file[]` (file array) column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+```ts
+await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id', fileId: 'id' }, file);
+```
+
+```python
+response = xata.files().put_item("table_name", "record_id", "column_name", "file_id", file_content)
+```
+
+```sh
+curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file/{file_id}' \
+  --header 'Content-Type: image/jpeg' \
+  --header 'Authorization: Bearer xau_REDACTED' \
+  --data-binary '@/path/to/file'
+```
+
+</TabbedCode>
+
+### Download a file using file APIs
+
+`file` column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+```ts
+const file = await xata.files.download({ table: 'table_name', column: 'column_name', record: 'record_id' });
+```
+
+```sh
+file = xata.files().get("table_name", "record_id", "column_name")
+```
+
+```sh
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file' \
+  --header 'authorization: Bearer xau_REDACTED' \
+  --output download.jpeg
+```
+
+</TabbedCode>
+
+`file[]` (file array) column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+```ts
+const file = await xata.files.download({
+  table: 'table_name',
+  column: 'column_name',
+  record: 'record_id',
+  fileId: 'file_id'
+});
+```
+
+```python
+file = xata.files().get_item("table_name", "record_id", "column_name", "file_id")
+```
+
+```sh
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file/{file_id}' \
+  --header 'authorization: Bearer xau_REDACTED' \
+  --output download.jpeg
+```
+
+</TabbedCode>
+
+For scenarios like web applications, web sites, content sharing, Xata offers direct access URLs for the stored files.
+There are 3 levels of access available:
