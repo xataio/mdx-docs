@@ -128,15 +128,3 @@ jobs:
             --safe \
             --yes \
             $(cat deploy_url.txt)
-
-      - name: If job cancelled, update comment
-        if: ${{ cancelled() }} && github.event_name == 'pull_request'
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          token: ${{ secrets.GIT_TOKEN }}
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          edit-mode: replace
-          body: |
-            [x]:eyAiYXBwIjogIndlYnNpdGUtcHJldmlldyIgfQ==
-            Preview build cancelled, please re-run the workflow to create a new preview.
