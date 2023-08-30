@@ -183,15 +183,15 @@ photos = xata.data().query("Users", {
 
 ## File (binary) APIs
 
-Since all Record APIs use json for both request and response body, the file content needs to be encoded. For reasons like performance or data size on the wire, encoding the content might not be desired.
-To work directly with binary file content, Xata introduces new file APIs.\
-Similar to the other Xata APIs the file APIs require the Authorization header and a valid API key.
+Since all record APIs use JSON for both request and response body, the file content needs to be encoded. For reasons like performance or data size on the wire, encoding the content might not be desired.
+To work directly with binary file content, Xata introduces new file APIs.
+Similar to the other Xata APIs, the file APIs require the Authorization header and a valid API key.
 
-### Upload a file using File APIs
+### Upload a file using file APIs
 
 `file` column type:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
 ```ts
 await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id' }, file);
 ```
@@ -211,7 +211,7 @@ curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables
 
 `file[]` (file array) column type:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
 ```ts
 await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id', fileId: 'id' }, file);
 ```
@@ -229,11 +229,11 @@ curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables
 
 </TabbedCode>
 
-### Download a file using File APIs
+### Download a file using file APIs
 
 `file` column type:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
 ```ts
 const file = await xata.files.download({ table: 'table_name', column: 'column_name', record: 'record_id' });
 ```
@@ -252,7 +252,7 @@ curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/
 
 `file[]` (file array) column type:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
 ```ts
 const file = await xata.files.download({
   table: 'table_name',
