@@ -46,9 +46,9 @@ Xata provides three ways to expose a file's URL to any request. This should allo
 
 ### Authenticated URLs
 
-Authenticated URLs are private URLs that can be used to access a file with a valid Xata API Key. They are available in the `url` field of a file object if the file is not configured for public access.
+Authenticated URLs are private URLs that can be used to access a file with a valid Xata API key. They are available in the `url` field of a file object if the file is not configured for public access.
 
-This URLs are recommended to access the file from a secure environment where an API Key is available and you require cached, high throughput, high concurrency download access.
+These URLs are especially useful if you need quick, high-throughput, and concurrent download access, with cached data.
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
 
@@ -76,16 +76,16 @@ user = xata.records().update("Users", "record_id", {
 
 ### Public URLs
 
-A Xata file can be configured for public access, resulting in an URL that is publicly available without the need of an api key or a signature. A public URL does not expire and offers access until the file is reconfigured to remove public access. The public access is configured per file by setting the file field `enablePublicUrl` to `true`. The recommended scenarios for public access are public websites and public content sharing.
+A Xata file can be configured for public access, resulting in a URL that is publicly available without the need of an API key or a signature. A public URL does not expire and offers access until the file is reconfigured to remove public access. To enable public access for a file, you can set the `enablePublicUrl` field to `true` in the file's configuration. This is particularly useful for public websites and for sharing public content.
 
-A public URL can be called directly without need of code. For example:
+You can use the public URL directly without writing code. For instance:
 
-https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94 is availble publicly
+https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94 is available publicly
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
 
 ```ts
-// Allow this User photo to be accessed publicly at any time by the URL alone
+// Allow this user's photo to be accessed publicly at any time by the URL alone
 const user = await xata.db.Users.update('record_id', {
   photo: {
     enablePublicUrl: true
@@ -112,10 +112,10 @@ user = xata.records().update("Users", "record_id", {
 
 A signed URL offers authenticated access to a file without requiring an API key. The URL contains the key (signature) within it, so anyone holding the URL can get access to the file. The signed URL has a configurable time to live (TTL), which specifies when access to the URL expires. To avoid permanent public access, the TTL can be set to a maximum of 24h.
 
-You can modify the timeout duration of the signed URL for each file by adjusting the `signedUrlTimeout` field within the file object. The default value is 1 minute. A file's signed URL can be retrieved by reading or querying the `signedUrl` field of a file object. Use signed URLs when you need temporary access without revealing the API key, such as rendering an image without disclosing a permanent image URL.
+You can modify the timeout duration of the signed URL for each file by adjusting the `signedUrlTimeout` field within the file object. The default value is set to 1 minute. A file's signed URL can be retrieved by reading or querying the `signedUrl` field of a file object. Use signed URLs when you need temporary access without revealing the API key, such as rendering an image without disclosing a permanent image URL.
 
 ```ts
-// Set the timeout to be 10 minutes for this user's photo
+// Set the timeout to 10 minutes for this user's photo
 const user = await xata.db.Users.update('record_id', {
   photo: {
     signedUrlTimeout: 600 // In seconds
