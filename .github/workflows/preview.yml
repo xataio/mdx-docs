@@ -65,6 +65,7 @@ jobs:
           token: ${{ secrets.GIT_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'xata-bot'
+          # We use hidden base64 encoded state to detect the action's comments
           body-includes: '[x]:eyAiYXBwIjogIndlYnNpdGUtcHJldmlldyIgfQ=='
 
       - name: Update comment with build status
