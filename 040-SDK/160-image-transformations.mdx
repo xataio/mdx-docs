@@ -31,7 +31,6 @@ The below example shows a method to transform an image directly off the file obj
 const record = await xata.db.gallery.read('record_id');
 
 // Get a new url and signedUrl for an image in the "imageColumnName"
-// This will create a square image that is cropped from the top
 const { url, signedUrl } = record.imageColumnName.transform({
   height: 100,
   rotate: 180,
