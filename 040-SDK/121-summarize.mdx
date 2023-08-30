@@ -62,7 +62,8 @@ records = xata.data().summarize("sales", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT product,AVG(sale_price) FROM \"sales\" WHERE product = 'basketball' GROUP BY product;"
+  "statement": "SELECT product,AVG(sale_price) FROM \"sales\" WHERE product = $1 GROUP BY product;",
+  "params": ["basketball"]
 }
 ```
 
@@ -551,7 +552,8 @@ records = xata.data().summarize("sales", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT product, AVG(sale_price) AS average_sale_price FROM \"sales\" WHERE product = 'basketball' GROUP BY product;",
+  "statement": "SELECT product, AVG(sale_price) AS average_sale_price FROM \"sales\" WHERE product = $1 GROUP BY product;",
+  "params": ["basketball"],
   "consistency": "eventual"
 }
 ```
