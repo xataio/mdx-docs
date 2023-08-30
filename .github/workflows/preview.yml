@@ -97,6 +97,9 @@ jobs:
             --wait \
             ${{ steps.get-url.outputs.URL }}
 
+      - name: Wait 10 seconds
+        run: sleep 10
+
       - name: Create or update alias
         run: |
           vercel alias \
