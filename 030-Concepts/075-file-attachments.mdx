@@ -102,6 +102,10 @@ user = xata.records().update("Users", "record_id", {
     "enablePublicUrl": True
   }
 })
+
+img = xata.files().transform("4u1fh2o6p10blbutjnphcste94", {
+  "quality": 50
+})
 ```
 
 </TabbedCode>
@@ -114,6 +118,7 @@ A signed URL offers authenticated access to a file without requiring an API key.
 
 You can modify the timeout duration of the signed URL for each file by adjusting the `signedUrlTimeout` field within the file object. The default value is set to 1 minute. A file's signed URL can be retrieved by reading or querying the `signedUrl` field of a file object. Use signed URLs when you need temporary access without revealing the API key, such as rendering an image without disclosing a permanent image URL.
 
+<TabbedCode tabs={['TypeScript', 'Python']}>
 ```ts
 // Set the timeout to 10 minutes for this user's photo
 const user = await xata.db.Users.update('record_id', {
@@ -125,3 +130,16 @@ const user = await xata.db.Users.update('record_id', {
 // Retrieve the signed URL on the file in the "photo" column
 const { signedUrl } = user.photo.transform({ quality: 50 });
 ```
+
+```python
+user = xata.records().update("Users", "record_id", {
+  "photo": {
+    "signedUrlTimeout": 600 # In seconds
+  }
+})
+
+img = xata.files().transform("4u1fh2o6p10blbutjnphcste94", {
+  "quality": 50
+})
+```
+</TabbedCode>
