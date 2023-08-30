@@ -55,6 +55,7 @@ jobs:
         run: |
           echo "Deploy URL: $(cat deploy_url.txt)"
           echo "URL=$(cat deploy_url.txt)" >> $GITHUB_OUTPUT
+          echo "HOSTNAME=$(cat deploy_url.txt | cut -d/ -f3)" >> $GITHUB_OUTPUT
 
       - name: Find Comment
         uses: peter-evans/find-comment@v2
@@ -75,7 +76,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: append
           body: |
-            Pull request has been updated, building a new [preview](https://vercel.com/deployments/${{ steps.get-url.outputs.URL }}?redirect=1)...
+            Pull request has been updated, building a new [preview](https://vercel.com/deployments/${{ steps.get-url.outputs.HOSTNAME }}?redirect=1)...
 
       - name: Create comment with build status
         uses: peter-evans/create-or-update-comment@v2
@@ -86,7 +87,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
           body: |
-            Check out the [build status](https://vercel.com/deployments/${{ steps.get-url.outputs.URL }}?redirect=1)...
+            Check out the [build status](https://vercel.com/deployments/${{ steps.get-url.outputs.HOSTNAME }}?redirect=1)...
 
       - name: Wait for deployment
         run: |
