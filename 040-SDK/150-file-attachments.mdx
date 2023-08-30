@@ -244,7 +244,7 @@ file = xata.files().get("table_name", "record_id", "column_name")
 
 ```sh
 curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file' \
-  --header 'authorization: Bearer xau_REDACTED' \
+  --header 'Authorization: Bearer xau_REDACTED' \
   --output download.jpeg
 ```
 
@@ -268,7 +268,7 @@ file = xata.files().get_item("table_name", "record_id", "column_name", "file_id"
 
 ```sh
 curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file/{file_id}' \
-  --header 'authorization: Bearer xau_REDACTED' \
+  --header 'Authorization: Bearer xau_REDACTED' \
   --output download.jpeg
 ```
 
