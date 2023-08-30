@@ -31,6 +31,6 @@ return await db.selectFrom('person').where('id', '=', id).selectAll().executeTak
 
 In the provided code example, the following steps are being taken to integrate Xata with Kysley:
 
-1. Import the `Kysely` class from the 'kysely' library and import the `XataDialect` class from the '@xata.io/kysely' module. The XataDialect represents a specialized extension of Kysely tailored for the Xata database.
+1. Import the `Kysely` class from the 'kysely' library and import the `XataDialect` class from the '@xata.io/kysely' module. The `XataDialect` represents a specialized extension of Kysely tailored for the Xata database.
 1. Assign the result of the `getXataClient` function to the variable `xata`, establishing a connection to the Xata database and enabling interaction with it.
-1. Create a new instance of the `Kysely class with a specific type, denoted as Kysely<Database>. This instance acts as a query builder, and its constructor is provided with an object containing the `xata` property, linking it to the Xata database using the Xata-specific dialect.
+1. Create a new instance of the `Kysely` class with a specific type, denoted as `Kysely<Database>`. This instance acts as a query builder, and its constructor is provided with an object containing the `xata` property, linking it to the Xata database using the Xata-specific dialect.
