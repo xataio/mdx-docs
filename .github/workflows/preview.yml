@@ -40,7 +40,7 @@ jobs:
       - id: deploy
         name: Deploy to Vercel
         run: |
-          vercel deploy \
+          vercel deploy --no-wait \
             --token ${{ secrets.VERCEL_TOKEN }} \
             --build-env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}' \
             --env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}' \
@@ -48,13 +48,13 @@ jobs:
             --env XATA_PREVIEW=none \
             --build-env XATA_BRANCH=main \
             --env XATA_BRANCH=main \
-            --no-wait
             > deploy_url.txt
 
       - name: Get deployment URL
         id: get-url
         run: |
           echo "URL=$(cat deploy_url.txt)" >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
 
       - name: Find Comment
         uses: peter-evans/find-comment@v2
