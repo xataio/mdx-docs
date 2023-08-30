@@ -75,7 +75,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: append
           body: |
-            Pull request has been updated, building a new [preview](${{ steps.get-url.outputs.URL }})...
+            Pull request has been updated, building a new [preview](https://vercel.com/deployments/${{ steps.get-url.outputs.URL }}?redirect=1)...
 
       - name: Create comment with build status
         uses: peter-evans/create-or-update-comment@v2
@@ -86,7 +86,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
           body: |
-            Check out the build status at ${{ steps.get-url.outputs.URL }}...
+            Check out the [build status](https://vercel.com/deployments/${{ steps.get-url.outputs.URL }}?redirect=1)...
 
       - name: Wait for deployment
         run: |
