@@ -54,7 +54,7 @@ jobs:
         id: get-url
         run: |
           echo "URL=$(cat deploy_url.txt)" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
+          cat "Deploy URL: $(cat deploy_url.txt)"
 
       - name: Find Comment
         uses: peter-evans/find-comment@v2
