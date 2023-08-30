@@ -65,29 +65,19 @@ jobs:
           token: ${{ secrets.GIT_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'xata-bot'
-          body-includes: Check out
+          body-includes: '[x]:eyAiYXBwIjogIndlYnNpdGUtcHJldmlldyIgfQ=='
 
       - name: Update comment with build status
         uses: peter-evans/create-or-update-comment@v2
-        if: github.event_name == 'pull_request' && steps.find-comment.outputs.comment-id != ''
-        with:
-          token: ${{ secrets.GIT_TOKEN }}
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          edit-mode: append
-          body: |
-            Pull request has been updated, building a new [preview](https://vercel.com/deployments/${{ steps.get-url.outputs.HOSTNAME }}?redirect=1)...
-
-      - name: Create comment with build status
-        uses: peter-evans/create-or-update-comment@v2
-        if: github.event_name == 'pull_request' && steps.find-comment.outputs.comment-id == ''
+        if: github.event_name == 'pull_request'
         with:
           token: ${{ secrets.GIT_TOKEN }}
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
           body: |
-            Check out the [build status](https://vercel.com/deployments/${{ steps.get-url.outputs.HOSTNAME }}?redirect=1)...
+            [x]:eyAiYXBwIjogIndlYnNpdGUtcHJldmlldyIgfQ==
+            Pull request has been updated, building a new [preview](https://vercel.com/deployments/${{ steps.get-url.outputs.HOSTNAME }}?redirect=1)...
 
       - name: Wait for deployment
         run: |
@@ -95,10 +85,8 @@ jobs:
             --token ${{ secrets.VERCEL_TOKEN }} \
             --scope $VERCEL_ORG_ID \
             --wait \
+            --timeout=10m \
             ${{ steps.get-url.outputs.URL }}
-
-      - name: Wait 10 seconds
-        run: sleep 10
 
       - name: Create or update alias
         run: |
@@ -117,7 +105,7 @@ jobs:
           token: ${{ secrets.GIT_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'xata-bot'
-          body-includes: Check out
+          body-includes: '[x]:eyAiYXBwIjogIndlYnNpdGUtcHJldmlldyIgfQ=='
 
       - name: Create or update comment with preview URL
         uses: peter-evans/create-or-update-comment@v2
@@ -128,9 +116,10 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
           body: |
+            [x]:eyAiYXBwIjogIndlYnNpdGUtcHJldmlldyIgfQ==
             Check out the preview at https://xata-docs-pr-${{ github.event.pull_request.number }}.vercel.app
 
-      - name: If job cancelled
+      - name: If job cancelled, remove deployment
         if: ${{ cancelled() }}
         run: |
           vercel remove \
@@ -139,3 +128,15 @@ jobs:
             --safe \
             --yes \
             $(cat deploy_url.txt)
+
+      - name: If job cancelled, update comment
+        if: ${{ cancelled() }} && github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: |
+            [x]:eyAiYXBwIjogIndlYnNpdGUtcHJldmlldyIgfQ==
+            Preview build cancelled, please re-run the workflow to create a new preview.
