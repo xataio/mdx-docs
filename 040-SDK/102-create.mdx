@@ -40,7 +40,8 @@ record = xata.records().insert("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "INSERT INTO \"Users\" (email,name) VALUES ('keanu@example.com','Keanu Reeves') RETURNING *;"
+  "statement": "INSERT INTO \"Users\" (email,name) VALUES ($1,$2) RETURNING *;",
+  "params": ["keanu@example.com", "Keanu Reeves"]
 }
 ```
 
@@ -87,9 +88,9 @@ The TypeScript SDK returns the created record. The response looks like this:
       "id": "rec_c8hnbch26un1nl0rthkg",
       "name": "Keanu Reeves",
       "xata": {
-          "createdAt": "2023-05-15T08:21:31.96526+01:00",
-          "updatedAt": "2023-05-15T08:21:31.96526+01:00",
-          "version": 0
+        "createdAt": "2023-05-15T08:21:31.96526+01:00",
+        "updatedAt": "2023-05-15T08:21:31.96526+01:00",
+        "version": 0
       }
     }
   ]
@@ -137,7 +138,8 @@ record = xata.records().insert_with_id("Users", "myid" {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "INSERT INTO \"Users\" (id,email,name) VALUES ('myid','keanu@example.com','Keanu Reeves') RETURNING *;"
+  "statement": "INSERT INTO \"Users\" (id,email,name) VALUES ($1,$2,$3) RETURNING *;",
+  "params": ["myid", "keanu@example.com", "Keanu Reeves"]
 }
 ```
 
@@ -176,7 +178,8 @@ record = xata.records().insert("Posts", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "INSERT INTO \"Posts\" (title,author) VALUES ('Filming the Matrix','rec_cd8rqcoavc42pi67lgd0') RETURNING *;"
+  "statement": "INSERT INTO \"Posts\" (title,author) VALUES ($1,$2) RETURNING *;",
+  "params": ["Filming the Matrix", "rec_cd8rqcoavc42pi67lgd0"]
 }
 ```
 
@@ -241,7 +244,18 @@ users = xata.records().bulk_insert("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "INSERT INTO \"Users\" (email,name,team) VALUES ('laurence@example.com','Laurence Fishburne','rec_cd8s4kbo8dsvsjilo1ug'),('hugo@example.com','Hugo Weaving','rec_cd8s4kbo8dsvsjilo1ug'),('joe@example.com','Joe Pantoliano','rec_cd8s4kbo8dsvsjilo1ug') RETURNING *;"
+  "statement": "INSERT INTO \"Users\" (email,name,team) VALUES ($1,$2,$3),($4,$5,$6),($7,$8,$9) RETURNING *;",
+  "params": [
+    "laurence@example.com",
+    "Laurence Fishburne",
+    "rec_cd8s4kbo8dsvsjilo1ug",
+    "hugo@example.com",
+    "Hugo Weaving",
+    "rec_cd8s4kbo8dsvsjilo1ug",
+    "joe@example.com",
+    "Joe Pantoliano",
+    "rec_cd8s4kbo8dsvsjilo1ug"
+  ]
 }
 ```
 

@@ -26,7 +26,8 @@ user = xata.records().delete("Users", "rec_cd8s3r8avc42pi67m13g")
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "DELETE FROM \"Users\" WHERE id = 'rec_cd8s3r8avc42pi67m13g';"
+  "statement": "DELETE FROM \"Users\" WHERE id = $1;",
+  "params": ["rec_cd8s3r8avc42pi67m13g"]
 }
 ```
 
@@ -69,7 +70,8 @@ users = xata.records().transaction({
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "DELETE FROM \"Users\" WHERE id IN ('rec_cd8s3r8avc42pi67m13g','rec_cgh9o1oncchhigq95n2g');"
+  "statement": "DELETE FROM \"Users\" WHERE id IN ($1,$2);",
+  "params": ["rec_cd8s3r8avc42pi67m13g", "rec_cgh9o1oncchhigq95n2g"]
 }
 ```
 

@@ -229,7 +229,7 @@ You can retrieve a record with a given ID using a request like this:
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.read("myid");
+const user = await xata.db.Users.read('myid');
 ```
 
 ```python
@@ -240,7 +240,8 @@ user = xata.data().query("Users", "myid")
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * from \"Users\" WHERE id='myid';"
+  "statement": "SELECT * from \"Users\" WHERE id=$1;",
+  "params": ["myid"]
 }
 ```
 
@@ -259,9 +260,7 @@ For example, if you are only interested in the name and the city of the user, yo
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
-const users = await xata.db.Users
-  .select(["name", "city"])
-  .getMany();
+const users = await xata.db.Users.select(['name', 'city']).getMany();
 ```
 
 ```python
@@ -355,8 +354,8 @@ const posts = await xata.db.Posts.select([
 ```python
 posts = xata.data().query("Posts", {
   "columns": [
-    "title", 
-    "author.*", 
+    "title",
+    "author.*",
     "author.team.*"
   ]
 })
@@ -406,7 +405,8 @@ users = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" WHERE email='keanu@example.com' LIMIT 20;"
+  "statement": "SELECT * FROM \"Users\" WHERE email=$1 LIMIT 20;",
+  "params": ["keanu@example.com"]
 }
 ```
 
@@ -444,7 +444,8 @@ users = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT * FROM \"Users\" LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id WHERE \"Teams\".name='Matrix';"
+  "statement": "SELECT * FROM \"Users\" LEFT JOIN \"Teams\" ON \"Users\".team=\"Teams\".id WHERE \"Teams\".name=$1;",
+  "params": ["Matrix"]
 }
 ```
 
@@ -467,15 +468,10 @@ To give a more complex filtering example, consider the following:
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
-const users = await xata.db.Users
-  .filter({
-    "zipcode": { $gt: 100 },
-    $any: [
-      { name: { $contains: "Keanu" } },
-      { name: { $contains: "Carrie" } },
-    ]
-  })
-  .getMany();
+const users = await xata.db.Users.filter({
+  zipcode: { $gt: 100 },
+  $any: [{ name: { $contains: 'Keanu' } }, { name: { $contains: 'Carrie' } }]
+}).getMany();
 ```
 
 ```python
@@ -503,11 +499,8 @@ users = xata.data().query("Users", {
 
 {
   "filter": {
-    "zipcode": {"$gt": 100},
-    "$any": [
-      {"name": { "$contains": "Keanu" }},
-      {"name": { "$contains": "Carrie" }}
-    ]
+    "zipcode": { "$gt": 100 },
+    "$any": [{ "name": { "$contains": "Keanu" } }, { "name": { "$contains": "Carrie" } }]
   }
 }
 ```
@@ -567,9 +560,7 @@ To sort descending, use `desc` instead of `asc`:
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
-const users = await xata.db.Users
-  .sort("name", "desc")
-  .getMany();
+const users = await xata.db.Users.sort('name', 'desc').getMany();
 ```
 
 ```python
@@ -629,10 +620,7 @@ users = xata.data().query("Users", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
-  "sort": [
-    {"city": "desc"},
-    {"name": "asc"}
-  ]
+  "sort": [{ "city": "desc" }, { "name": "asc" }]
 }
 ```
 
