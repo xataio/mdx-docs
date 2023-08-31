@@ -120,6 +120,11 @@ img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbut
 
 ![Entire columns can be made public by default](images/column-access-public.png)
 
+<Alert status="warning">
+  ⚠️ *Public object caching*  
+  When a public object gets cached, changing permissions will not invalidate the cached entry. The file is still accessible through old URLs until the cache entry expires in 2h. Xata advises greatest caution when configuring public access, because in practice there is a delay in changing the permissions from public to private.
+</Alert>
+
 ### Signed URLs
 
 A signed URL offers authenticated access to a file without requiring an API key. The URL contains the key (signature) within it, so anyone holding the URL can get access to the file. The signed URL has a configurable time to live (TTL), which specifies when access to the URL expires. To avoid permanent public access, the TTL can be set to a maximum of 24h.
