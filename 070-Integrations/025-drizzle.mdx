@@ -1,0 +1,70 @@
+---
+title: Drizzle with Xata
+navTitle: Drizzle
+keywords: ['orm', 'drizzle', 'typescript', 'query builder']
+description: "Use the Drizzle integration as a TypeScript ORM"
+slug: integrations/drizzle
+published: true
+---
+
+<Alert status="warning">
+  The integration of Drizzle with Xata is in active development and is considered experimental.
+</Alert>
+
+[Drizzle](https://github.com/drizzle-team/drizzle-orm) is a TypeScript ORM that is focused on type safety and closely follows the SQL syntax. 
+
+### Installation
+
+Install both Drizzle and `@xata.io/drizzle` with the Xata client. You can use the following package managers:
+
+<TabbedCode tabs={['npm', 'pnpm', 'yarn']}>
+```sh
+npm install drizzle-orm @xata.io/drizzle @xata.io/client
+```
+
+```sh
+pnpm add drizzle-orm @xata.io/drizzle @xata.io/client
+```
+
+```sh
+yarn add drizzle-orm @xata.io/drizzle @xata.io/client
+```
+</TabbedCode>
+
+### Usage 
+
+You can use Drizzle with a Xata, as demonstrated in the following examples:
+
+```tsx
+import { pgTable, text } from 'drizzle-orm/pg-core';
+import { drizzle } from '@xata.io/drizzle';
+import { eq } from 'drizzle-orm';
+import { getXataClient } from './xata'; // Generated client
+
+const xata = getXataClient();
+
+const drivers = pgTable('drivers', {
+  id: text('id').primaryKey(),
+  surname: text('surname'),
+  forename: text('forename'),
+  nationality: text('nationality')
+});
+
+const db = drizzle(xata);
+
+const result = await db
+  .select({ surname: drivers.surname, forename: drivers.forename })
+  .from(drivers)
+  .where(eq(drivers.nationality, 'Spanish'))
+  .execute();
+```
+
+The code imports required modules from the `drizzle-orm` and `@xata.io/drizzle` libraries. It also brings in the `eq` function from `drizzle-orm` for value comparison and the `getXataClient` function from a local xata module. The `getXataClient` function is used to acquire an instance of the Xata client.
+
+Currently, we recommend manually defining the schema like in the example above. We are working on utility functions to automatically generate the Drizzle model from the Xata database schema.
+
+### Limitations
+
+- Drizzle migrations are not supported yet
+- Transactions are not supported yet
+
