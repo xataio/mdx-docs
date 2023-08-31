@@ -168,6 +168,7 @@ records = xata.sql().query(
 
 ### Delete record using a parameterized query
 
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const user = { id: "my-user-id" };
 const { records: [record] } = await xata.sql<TeamsRecord>`DELETE FROM "Users" WHERE id=${user.id})`;
@@ -186,6 +187,7 @@ records = xata.sql().query(
   "params": ["my-record-id"]
 }
 ```
+</TabbedCode>
 
 ## Limitations
 
