@@ -98,7 +98,7 @@ const { url, metadataUrl } = record.imageColumnName.transform({
   format: 'webp'
 });
 
-const metadata = await fetchMetadata(metaDataUrl);
+const metadata = await fetchMetadata(metadataUrl);
 
 console.log(metadata.height); // 100px
 
