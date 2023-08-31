@@ -13,6 +13,9 @@ published: true
 
 [Drizzle](https://github.com/drizzle-team/drizzle-orm) is a TypeScript ORM that is focused on type safety and follows closely follows the SQL syntax. 
 
+
+### Usage 
+
 You can use Drizzle with a Xata, as demonstrated in the following examples:
 
  ```tsx
@@ -32,5 +35,6 @@ You can use Drizzle with a Xata, as demonstrated in the following examples:
 
  const result = await db.select(['forename', 'surname']).from(drivers).where(eq('nationality', 'spanish')).execute();
  ```
+The code imports required modules from the `drizzle-orm` and `@xata.io/drizzle` libraries. It also brings in the `eq` function from `drizzle-orm` for value comparison and the `getXataClient` function from a local xata module. The `getXataClient` function is used to acquire an instance of the Xata client.
 
- Currently, we recommend manually defining the schema like in the example above. We are working on utility functions to automatically generate the Drizzle model from the Xata database schema.
+Currently, we recommend manually defining the schema like in the example above. We are working on utility functions to automatically generate the Drizzle model from the Xata database schema.
