@@ -87,7 +87,7 @@ https://us-east-1.storage.xata.sh/transform/height=50,format=webp/4u1fh2o6p10blb
 
 Once a transformation occurs, it is common to need the dimensions of the new image. `metadataUrl` and `signedMetadataUrl` (if using signed URLs) are available when making transformations from a file on a record.
 
-```ts
+```ts title="TypeScript"
 // Get a specific record from the "gallery" database
 const record = await xata.db.gallery.read('record_id');
 
@@ -98,7 +98,40 @@ const { url, metadataUrl } = record.imageColumnName.transform({
   format: 'webp'
 });
 
-console.log('Fetch against this to get post-transform dimensions', metaDataUrl);
+const metadata = fetchMetadata(metaDataUrl);
+
+console.log(metadata.height); // 100px
+
+//
+// Generic TypeScript function useful for fetching metadata
+//
+
+interface OriginalImageInfo {
+  file_size: number;
+  width: number;
+  height: number;
+  format: string;
+}
+
+interface ImageMetadata {
+  width: number;
+  height: number;
+  original: OriginalImageInfo;
+}
+
+export const fetchMetadata = async (metadataUrl: string): Promise<ImageMetadata | null> => {
+  try {
+    const response = await fetch(metadataUrl);
+    if (!response.ok) {
+      throw new Error('Failed to fetch metadata');
+    }
+    const data: ImageMetadata = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching metadata:', error);
+    return null;
+  }
+};
 ```
 
 If using the URL based transformations, you can still get post-transformation metadata by utilizing the [`format=json` option](#format), which you will need to do as a second call.
