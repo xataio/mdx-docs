@@ -171,7 +171,7 @@ records = xata.sql().query(
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const user = { id: "my-user-id" };
-const { records: [record] } = await xata.sql<TeamsRecord>`DELETE FROM "Users" WHERE id=${user.id})`;
+await xata.sql<TeamsRecord>`DELETE FROM "Users" WHERE id=${user.id})`;
 ```
 ```python
 xata.sql().query(
