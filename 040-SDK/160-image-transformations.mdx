@@ -22,16 +22,45 @@ https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u
   options={{ rotate: 180, height: 100 }}
 />
 
-The following example shows a method to transform an image directly off the file object in a record.
+## Record based transformations
 
-<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+When querying a `file` of `file[]` column off a record, you can make a direct transformation on any files contained.
+
+<TabbedCode tabs={['TypeScript', 'URL']}>
 
 ```ts
 // Get a specific record from the "gallery" database
 const record = await xata.db.gallery.read('record_id');
 
 // Get a new url and signedUrl for an image in the "imageColumnName"
-const { url, signedUrl } = record.imageColumnName.transform({
+// Also grab the related meta data (height, width...etc) of the new image
+const { url, signedUrl, metaDataUrl, signedMetaDataUrl } = record.imageColumnName.transform({
+  height: 100,
+  rotate: 180,
+  format: 'webp'
+});
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/height=50,format=webp/4u1fh2o6p10blbutjnphcste94
+```
+
+</TabbedCode>
+
+## URL based transformations
+
+It is also possible to make transformations directly on any given image URL without knowledge of the record it is attached to.
+
+For TypeScript, this is done client-side with the `transformImage()` helper in `@xata.io/client`. Performing client-side transformations can be useful for generating images conditionally based on media queries within a browser. With this method, only a `url` for an existing Xata image is needed.
+
+<TabbedCode tabs={['TypeScript','Python', 'URL']}>
+
+```ts title="client_component.tsx"
+'use client';
+import { transformImage } from '@xata.io/client';
+
+// Once you have a URL to a Xata image, you can transform it and return a new URL
+const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   height: 100,
   rotate: 180,
   format: 'webp'
@@ -52,21 +81,29 @@ https://us-east-1.storage.xata.sh/transform/height=50,format=webp/4u1fh2o6p10blb
 
 </TabbedCode>
 
-With an existing Xata image URL you can also perform a similar transformation using the `transformImage` function imported from the TypeScript client. Performing a transform client-side can be useful for generating images conditionally based on media queries within a browser. With this method, only a `url` for an existing Xata image is needed.
+## Post-transformation dimensions
 
-```ts title="client_component.tsx"
-'use client';
-import { transformImage } from '@xata.io/client';
+Once a transformation occurs, it is common to need the dimensions of the new image.
 
-// Once you have a URL to a Xata image, you can transform it and return a new URL
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+```ts
+// Get a specific record from the "gallery" database
+const record = await xata.db.gallery.read('record_id');
+
+// Also grab the related meta data (height, width...etc) of the new image
+const { url, metaDataUrl } = record.imageColumnName.transform({
   height: 100,
   rotate: 180,
   format: 'webp'
 });
+
+console.log('height of new image', metaDataUrl.height);
 ```
 
+## Options
+
 The following transformations are available:
+
+> All options show the URL method of handling transformations. For the TypeScript examples, remember to import `transformImage` from `@xata.io/cleint`.
 
 ### anim
 
