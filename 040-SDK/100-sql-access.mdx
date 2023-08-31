@@ -174,7 +174,7 @@ const user = { id: "my-user-id" };
 const { records: [record] } = await xata.sql<TeamsRecord>`DELETE FROM "Users" WHERE id=${user.id})`;
 ```
 ```python
-records = xata.sql().query(
+xata.sql().query(
   "DELETE FROM \"Users\" WHERE id=$1",
   ["my-record-id"]
 )
