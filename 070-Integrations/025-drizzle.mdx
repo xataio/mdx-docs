@@ -24,16 +24,22 @@ You can use Drizzle with a Xata, as demonstrated in the following examples:
  import { eq } from 'drizzle-orm';
  import { getXataClient } from './xata';
 
- const xata = getXataClient();
- const db = drizzle(xata);
+const xata = getXataClient();
 
- const drivers = pgTable('drivers', {
-   id: text('id').primaryKey(),
-   surname: text('surname'),
-   forename: text('forename')
- });
+const drivers = pgTable("drivers", {
+  id: text("id").primaryKey(),
+  surname: text("surname"),
+  forename: text("forename"),
+  nationality: text("nationality"),
+});
 
- const result = await db.select(['forename', 'surname']).from(drivers).where(eq('nationality', 'spanish')).execute();
+const db = drizzle(xata);
+
+const result = await db
+  .select({ surname: drivers.surname, forename: drivers.forename })
+  .from(drivers)
+  .where(eq(drivers.nationality, "Spanish"))
+  .execute();
  ```
 The code imports required modules from the `drizzle-orm` and `@xata.io/drizzle` libraries. It also brings in the `eq` function from `drizzle-orm` for value comparison and the `getXataClient` function from a local xata module. The `getXataClient` function is used to acquire an instance of the Xata client.
 
