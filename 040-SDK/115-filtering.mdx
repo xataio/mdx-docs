@@ -1070,9 +1070,9 @@ records = xata.data().query("Posts", {
 The above matches if none of the labels contains the string "act".
 
 ## JSON
-Any node of a JSON document tree is easily accessible via the `->` operator.
-We can use this notation to apply most of the operators we've seen so far in order to filter JSON documents.
-Following our previous examples with a `Posts` table, let's assume that each post has a `social` field of type `JSON` which contains the times the post was shared on different social networks:
+Any node of a JSON document tree can be accessed using the `->` operator. This notation lets you apply familiar operators to filter JSON documents. 
+
+Following our previous examples with a `Posts` table, assume each post has a JSON type `social` field which contains the times the post was shared on different social networks:
 
 ```jsonc
 {
@@ -1086,7 +1086,7 @@ Following our previous examples with a `Posts` table, let's assume that each pos
 }
 ```
 
-Filtering posts by the sharing metrics on LinkedIn is as simple as:
+To filter posts based on LinkedIn sharing metrics, use the following:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
