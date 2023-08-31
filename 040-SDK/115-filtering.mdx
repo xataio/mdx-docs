@@ -1000,7 +1000,7 @@ records = xata.data().query("Posts", {
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-    "statement": "SELECT * FROM \"Posts\" WHERE cardinality(\"labels\") = (SELECT sum((label LIKE '%mat%') :: int) FROM unnest(labels) AS label);"
+  "statement": "SELECT * FROM \"Posts\" WHERE cardinality(\"labels\") = (SELECT sum((label LIKE '%mat%') :: int) FROM unnest(labels) AS label);"
 }
 ```
 
@@ -1069,7 +1069,8 @@ records = xata.data().query("Posts", {
 
 The above matches if none of the labels contains the string "act".
 
-## JSON
+## Working with JSON documents
+
 Any node of a JSON document tree is easily accessible via the `->` operator.
 We can use this notation to apply most of the operators we've seen so far in order to filter JSON documents.
 Following our previous examples with a `Posts` table, let's assume that each post has a `social` field of type `JSON` which contains the times the post was shared on different social networks:
@@ -1079,10 +1080,10 @@ Following our previous examples with a `Posts` table, let's assume that each pos
   "id": "1",
   "title": "My first post",
   "social": {
-    "x": {"shared":1},
-    "facebook": {"shared":51},
-    "linkedin": {"shared":204}
-    }
+    "x": { "shared": 1 },
+    "facebook": { "shared": 51 },
+    "linkedin": { "shared": 204 }
+  }
 }
 ```
 
@@ -1091,10 +1092,11 @@ Filtering posts by the sharing metrics on LinkedIn is as simple as:
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
-    const records = await xata.db.Posts.filter({
-        "social->linkedin->shared": { $gt: 5 },
-    }).getMany();
+const records = await xata.db.Posts.filter({
+  'social->linkedin->shared': { $gt: 5 }
+}).getMany();
 ```
+
 ```python
     records = xata.data().query("Posts", {
         "filter": {
@@ -1104,23 +1106,25 @@ Filtering posts by the sharing metrics on LinkedIn is as simple as:
         }
 })
 ```
+
 ```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-    "statement": "SELECT * FROM \"Posts\" WHERE (social->'linkedin'->>'shared')::numeric > 5;"
+  "statement": "SELECT * FROM \"Posts\" WHERE (social->'linkedin'->>'shared')::numeric > 5;"
 }
 ```
 
 ```jsonc
-    // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
-    {
-      "filter": {
-        "social->linkedin->shared": {
-          "$gt": 5
-        }
-      }
+{
+  "filter": {
+    "social->linkedin->shared": {
+      "$gt": 5
     }
+  }
+}
 ```
+
 </TabbedCode>
