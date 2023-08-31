@@ -1079,10 +1079,16 @@ Following our previous examples with a `Posts` table, assume each post has a JSO
   "id": "1",
   "title": "My first post",
   "social": {
-    "x": {"shared":1},
-    "facebook": {"shared":51},
-    "linkedin": {"shared":204}
+    "x": {
+      "shared": 1
+    },
+    "facebook": {
+      "shared":51
+    },
+    "linkedin": {
+      "shared":204
     }
+  }
 }
 ```
 
@@ -1091,36 +1097,38 @@ To filter posts based on LinkedIn sharing metrics, use the following:
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
 ```ts
-    const records = await xata.db.Posts.filter({
-        "social->linkedin->shared": { $gt: 5 },
-    }).getMany();
+const records = await xata.db.Posts.filter({
+    "social->linkedin->shared": { $gt: 5 },
+}).getMany();
 ```
+
 ```python
-    records = xata.data().query("Posts", {
-        "filter": {
-            "social->linkedin->shared": {
-                "$gt": 5
-            }
-        }
+records = xata.data().query("Posts", {
+  "filter": {
+    "social->linkedin->shared": {
+      "$gt": 5
+    }
+  }
 })
 ```
+
 ```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-    "statement": "SELECT * FROM \"Posts\" WHERE (social->'linkedin'->>'shared')::numeric > 5;"
+  "statement": "SELECT * FROM \"Posts\" WHERE (social->'linkedin'->>'shared')::numeric > 5;"
 }
 ```
 
 ```jsonc
-    // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
-    {
-      "filter": {
-        "social->linkedin->shared": {
-          "$gt": 5
-        }
-      }
+{
+  "filter": {
+    "social->linkedin->shared": {
+      "$gt": 5
     }
+  }
+}
 ```
 </TabbedCode>
