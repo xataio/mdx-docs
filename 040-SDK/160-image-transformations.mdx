@@ -36,7 +36,7 @@ const record = await xata.db.gallery.read('record_id');
 // an image in the "imageColumnName"
 //
 // Also grab the related meta data (height, width...etc) of the new image
-const { url, signedUrl, metaDataUrl, signedMetaDataUrl } = record.imageColumnName.transform({
+const { url, signedUrl, metadataUrl, signedMetadataUrl } = record.imageColumnName.transform({
   height: 100,
   rotate: 180,
   format: 'webp'
