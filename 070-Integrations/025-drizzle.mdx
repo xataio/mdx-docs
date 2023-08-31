@@ -1,0 +1,36 @@
+---
+title: Drizzle with Xata
+navTitle: Drizzle
+keywords: ['orm', 'kysley', 'typescript', 'query builder']
+description: "Use the Drizzle integration as a TypeScript ORM"
+slug: integrations/drizzle
+published: true
+---
+
+<Alert status="warning">
+  The integration of Drizzle with Xata is currently in an experimental phase and is not yet fully supported.
+</Alert>
+
+[Drizzle](https://github.com/drizzle-team/drizzle-orm) is a TypeScript ORM that is focused on type safety and follows closely follows the SQL syntax. 
+
+You can use Drizzle with a Xata, as demonstrated in the following examples:
+
+ ```tsx
+ import { pgTable, text } from 'drizzle-orm/pg-core';
+ import { drizzle } from '@xata.io/drizzle';
+ import { eq } from 'drizzle-orm';
+ import { getXataClient } from './xata';
+
+ const xata = getXataClient();
+ const db = drizzle(xata);
+
+ const drivers = pgTable('drivers', {
+   id: text('id').primaryKey(),
+   surname: text('surname'),
+   forename: text('forename')
+ });
+
+ const result = await db.select(['forename', 'surname']).from(drivers).where(eq('nationality', 'spanish')).execute();
+ ```
+
+ Currently, we recommend manually defining the schema like in the example above. We are working on utility functions to automatically generate the Drizzle model from the Xata database schema.
