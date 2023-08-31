@@ -92,7 +92,7 @@ Once a transformation occurs, it is common to need the dimensions of the new ima
 const record = await xata.db.gallery.read('record_id');
 
 // Also grab the related meta data (height, width...etc) of the new image
-const { url, metaDataUrl } = record.imageColumnName.transform({
+const { url, metadataUrl } = record.imageColumnName.transform({
   height: 100,
   rotate: 180,
   format: 'webp'
