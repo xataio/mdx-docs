@@ -32,7 +32,9 @@ When querying a `file` of `file[]` column off a record, you can make a direct tr
 // Get a specific record from the "gallery" database
 const record = await xata.db.gallery.read('record_id');
 
-// Get a new url and signedUrl for an image in the "imageColumnName"
+// Get a new url and signedUrl based on transformations applied to
+// an image in the "imageColumnName"
+//
 // Also grab the related meta data (height, width...etc) of the new image
 const { url, signedUrl, metaDataUrl, signedMetaDataUrl } = record.imageColumnName.transform({
   height: 100,
@@ -83,7 +85,7 @@ https://us-east-1.storage.xata.sh/transform/height=50,format=webp/4u1fh2o6p10blb
 
 ## Post-transformation metadata
 
-Once a transformation occurs, it is common to need the dimensions of the new image. `metaDataUrl` and `signedMetaUrl` (if used signed URLs) are available when making transformations from a file on a record.
+Once a transformation occurs, it is common to need the dimensions of the new image. `metaDataUrl` and `signedMetaUrl` (if using signed URLs) are available when making transformations from a file on a record.
 
 ```ts
 // Get a specific record from the "gallery" database
@@ -96,7 +98,7 @@ const { url, metaDataUrl } = record.imageColumnName.transform({
   format: 'webp'
 });
 
-console.log('height of new image', metaDataUrl.height);
+console.log('height of new image', metaDataUrl.height); // 100px
 ```
 
 If using the URL based transformations, you can still get post-transformation metadata by utilizing the [`format=json` option](#format), which you will need to do as a second call.
