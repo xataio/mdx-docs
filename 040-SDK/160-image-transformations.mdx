@@ -81,9 +81,9 @@ https://us-east-1.storage.xata.sh/transform/height=50,format=webp/4u1fh2o6p10blb
 
 </TabbedCode>
 
-## Post-transformation dimensions
+## Post-transformation metadata
 
-Once a transformation occurs, it is common to need the dimensions of the new image.
+Once a transformation occurs, it is common to need the dimensions of the new image. `metaDataUrl` and `signedMetaUrl` (if used signed URLs) are available when making transformations from a file on a record.
 
 ```ts
 // Get a specific record from the "gallery" database
@@ -98,6 +98,8 @@ const { url, metaDataUrl } = record.imageColumnName.transform({
 
 console.log('height of new image', metaDataUrl.height);
 ```
+
+If using the URL based transformations, you can still get post-transformation metadata by utilizing the [`format=json` option](#format), which you will need to do as a second call.
 
 ## Options
 
