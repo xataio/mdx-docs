@@ -98,7 +98,7 @@ const { url, metaDataUrl } = record.imageColumnName.transform({
   format: 'webp'
 });
 
-console.log('height of new image', metaDataUrl.height); // 100px
+console.log('Fetch against this to get post-transform dimensions', metaDataUrl);
 ```
 
 If using the URL based transformations, you can still get post-transformation metadata by utilizing the [`format=json` option](#format), which you will need to do as a second call.
