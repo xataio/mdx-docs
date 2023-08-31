@@ -62,3 +62,9 @@ const result = await db
 The code imports required modules from the `drizzle-orm` and `@xata.io/drizzle` libraries. It also brings in the `eq` function from `drizzle-orm` for value comparison and the `getXataClient` function from a local xata module. The `getXataClient` function is used to acquire an instance of the Xata client.
 
 Currently, we recommend manually defining the schema like in the example above. We are working on utility functions to automatically generate the Drizzle model from the Xata database schema.
+
+### Limitations
+
+- Drizzle migrations are not supported yet
+- Transactions are not supported yet
+
