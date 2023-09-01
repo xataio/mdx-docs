@@ -383,6 +383,23 @@ Note that although the file fields can be queried, because the column value is a
 
 The `file[]` column type does not support constraints like `not null` or `unique` or parameters like default values. The default value for a `file[]` column is an empty array `[]`.
 
+### json
+
+The `json` type represents any [RFC 7159](https://www.rfc-editor.org/rfc/rfc7159.html)-compliant JSON document. To ensure efficient processing of input and optimal performance in storage and query operations, take note of the following considerations:
+
+- White spaces are not preserved.
+- Key order is not preserved.
+- In case of duplicate keys, only the last one is stored.
+
+Example definition:
+
+```json
+{
+  "name": "jsonField",
+  "type": "json"
+}
+```
+
 ## Special Columns
 
 Xata maintains a special set of columns that don't have to be defined in the schema. The `id` and the `xata.*` columns names are reserved and you cannot create your own columns with these names. No other column names are reserved.
@@ -615,6 +632,7 @@ curl -X POST "https://REDACTED.us-east-1.xata.sh/db/mydb:main/tables/Companies/s
   -H "authorization: Bearer xau_REDACTED" \
   -d '{"columns": ["exchange", "ceo"], "consistency": "eventual"}'
 ```
+
 </TabbedCode>
 
 Using `consistency: eventual` is beneficial if you are not bound to real time data. In the given example, you are running a report from yesterday's data. With the delay it is not possible to guarantee consistency or ensure that a record inserted less than 100 milliseconds ago will be part of the result set. By using leveraging `consistency: eventual` for read requests, you are doubling your [concurrency limits](/docs/rest-api/limits).

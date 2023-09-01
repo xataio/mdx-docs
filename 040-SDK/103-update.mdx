@@ -140,7 +140,7 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
 
 {
   "statement": "UPDATE \"Users\" SET counter = counter + 1 WHERE id = $1 RETURNING *;",
-  "params": ["rec_c8hnbch26un1nl0rthkg"],
+  "params": ["rec_c8hnbch26un1nl0rthkg"]
 }
 ```
 
@@ -177,7 +177,7 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
 
 {
   "statement": "UPDATE \"Users\" SET counter = counter + 10 WHERE id = $1 RETURNING *;",
-  "params": ["rec_c8hnbch26un1nl0rthkg"],
+  "params": ["rec_c8hnbch26un1nl0rthkg"]
 }
 ```
 
@@ -214,7 +214,7 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
 
 {
   "statement": "UPDATE \"Users\" SET counter = counter / 2 WHERE id = $1 RETURNING *;",
-  "params": ["rec_c8hnbch26un1nl0rthkg"],
+  "params": ["rec_c8hnbch26un1nl0rthkg"]
 }
 ```
 
@@ -258,10 +258,10 @@ After executing a request, you will notice that the version field of the record 
 
 ```ts
 user.xata;
-// { 
-//   "version": 2, 
-//   "createdAt": "2023-05-15T08:21:31.96526+01:00", 
-//   "updatedAt": "2023-05-15T21:58:54.072595+01:00" 
+// {
+//   "version": 2,
+//   "createdAt": "2023-05-15T08:21:31.96526+01:00",
+//   "updatedAt": "2023-05-15T21:58:54.072595+01:00"
 // }
 ```
 
@@ -322,8 +322,8 @@ const updatedUser = await xata.db.Users.update(
 
 ```python
 user = xata.records().update(
-  "Users", 
-  "rec_c8hnbch26un1nl0rthkg", 
+  "Users",
+  "rec_c8hnbch26un1nl0rthkg",
   {
     "name": 'Keanu Reeves',
     "email": 'keanu@xata.io'
@@ -337,7 +337,7 @@ user = xata.records().update(
 
 {
   "statement": "UPDATE \"Users\" SET email = $1, name = $2 WHERE id = $3 AND \"xata.version\" = $4 RETURNING *;",
-  "params": ["keanu@xata.io", "Keanu Reeves", "rec_c8hnbch26un1nl0rthkg", 0],
+  "params": ["keanu@xata.io", "Keanu Reeves", "rec_c8hnbch26un1nl0rthkg", 0]
 }
 ```
 

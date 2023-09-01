@@ -35,14 +35,14 @@ Below are the parameters passed to the methods in the following examples:
 ## Insert or update a new record
 
 <TabbedCode tabs={['1.x', '0.x']}>
-```python
-from xata.client import XataClient
+  ```python
+  from xata.client import XataClient
 
 xata = XataClient(db_name="my_db")
 
 record = {
-  "name": "Peter Parker",
-  "job": "Spiderman",
+"name": "Peter Parker",
+"job": "Spiderman",
 }
 
 # Insert record to table "Avengers" and let Xata generate a record Id
@@ -65,8 +65,8 @@ assert resp.is_success()
 # Upsert: Update or insert a record
 
 record = {
-  "name": "Bruce Banner",
-  "job": "Hulk",
+"name": "Bruce Banner",
+"job": "Hulk",
 }
 resp = xata.records().upsert("Avengers", "hulk-1", record)
 
@@ -82,7 +82,8 @@ resp = xata.records().upsert("Avengers", "spidey-1", record)
 
 assert resp.status_code == 200
 assert resp.is_success()
-```
+
+````
 
 ```python
 from xata.client import XataClient
@@ -121,7 +122,7 @@ record["job"] = "the incredible hulk"
 resp = client.records().upsertRecordWithID("Avengers", "spidey-1", record)
 # On update status code = 200
 assert resp.status_code == 200
-```
+````
 
 </TabbedCode>
 
@@ -130,21 +131,24 @@ assert resp.status_code == 200
 The following example shows how to retrieve a record with the id `spidey`, from the table `Avengers` and how to handle records that do not exist.
 
 <TabbedCode tabs={['1.x', '0.x']}>
-```python
-from xata.client import XataClient
-records = XataClient().records()
+  ```python
+  from xata.client import XataClient
+  records = XataClient().records()
 
 spiderman = records.get("Avengers", "spidey")
 print(spiderman.is_success()) # True
 
 print(spiderman)
+
 # {"id": "spidey", "name": "Peter Parker", "job": "spiderman"}
 
 # If the record with the Id does not exist, the status code will be 404
+
 batman = records.get("Avengers", "bruce-wayne")
 print(batman.status_code) # 404
 print(batman.is_success()) # False
-```
+
+````
 
 ```python
 from xata.client import XataClient
@@ -158,7 +162,7 @@ print(spiderman.json())
 batman = records.getRecord("Avengers", "bruce-wayne")
 print(batman.status_code)
 # 404
-```
+````
 
 </TabbedCode>
 
@@ -167,20 +171,22 @@ print(batman.status_code)
 The following example shows how to query a table and apply filters and sorts. We will query the table `Avengers`, and apply some filters.
 
 <TabbedCode tabs={['1.x', '0.x']}>
-```python
-from xata.client import XataClient
+  ```python
+  from xata.client import XataClient
 
 resp = xata.data().query("Avengers", {
-  "columns": ["name", "thumbnail"], # the columns we want returned
-  "filter": { "job": "spiderman" }, # optional filters to apply
-  "sort": { "name": "desc" } # optional sorting key and order (asc/desc)
+"columns": ["name", "thumbnail"], # the columns we want returned
+"filter": { "job": "spiderman" }, # optional filters to apply
+"sort": { "name": "desc" } # optional sorting key and order (asc/desc)
 })
 assert resp.is_success()
 print(resp["records"])
+
 # [{"id": "spidey", "name": "Peter Parker", "job": "spiderman"}]
 
 # Note it will be an array, even if there is only one record matching the filters
-```
+
+````
 
 ```python
 from xata.client import XataClient
@@ -197,38 +203,45 @@ records = resp.json()
 print(data["records"])
 # [{"id": "spidey", "name": "Peter Parker", "job": "spiderman"}]
 # Note it will be an array, even if there is only one record matching the filters
-```
+````
 
 </TabbedCode>
 
 ## Pagination
 
-The following example will show you how to paginate through your data, and introduce you to two new convenience methods, `response.has_more_results()` and `response.get_cursor()` introduced in `1.x`. 
-We want to limit the records per call to 25, and assume the `people` table has a total amount of records is > 25. 
+The following example will show you how to paginate through your data, and introduce you to two new convenience methods, `response.has_more_results()` and `response.get_cursor()` introduced in `1.x`.
+We want to limit the records per call to 25, and assume the `people` table has a total amount of records is > 25.
 So we need to make multiple calls to page through our data.
 
 <TabbedCode tabs={['1.x', '0.x']}>
-```python
-from xata.client import XataClient
+  ```python
+  from xata.client import XataClient
 
 records = xata.data().query("people", {
-  "page": {
-    "size": 25 # limit result set to 25 records
-  }
+"page": {
+"size": 25 # limit result set to 25 records
+}
 })
+
 # do something with the data ..
 
-# are more pages available ? If yes keep looping 
+# are more pages available ? If yes keep looping
+
 # through until we reached the last page
+
 while records.has_more_results():
-  # fetch the next page ...
-  records = self.xata.data().query("people", {
-    "page": {
-      "after": records.get_cursor() # get the next cursor
-    }
-  })
-  # do something with the data ..
-```
+
+# fetch the next page ...
+
+records = self.xata.data().query("people", {
+"page": {
+"after": records.get_cursor() # get the next cursor
+}
+})
+
+# do something with the data ..
+
+````
 
 ```python
 from xata.client import XataClient
@@ -240,7 +253,7 @@ records = xata.data().queryTable("people", {
 })
 # do something with the data ...
 
-# are more pages available ? If yes keep looping 
+# are more pages available ? If yes keep looping
 # through until we reached the last page
 more = records.json()["meta"]["page"]["more"]
 while more:
@@ -253,19 +266,21 @@ while more:
   # do something with the data ..
 
   more = records.json()["meta"]["page"]["more"]
-```
+````
+
 </TabbedCode>
 
 ## Delete a record from a table
 
 <TabbedCode tabs={['1.x', '0.x']}>
-```python
-from xata.client import XataClient
-records = XataClient().records()
+  ```python
+  from xata.client import XataClient
+  records = XataClient().records()
 
 record = records.delete("Avengers", "captain-america")
 print(record.status_code) # 204
-```
+
+````
 
 ```python
 from xata.client import XataClient
@@ -273,7 +288,7 @@ records = XataClient().records()
 
 record = records.deleteRecord("Avengers", "captain-america")
 print(record.status_code) # 204
-```
+````
 
 </TabbedCode>
 
@@ -282,20 +297,21 @@ print(record.status_code) # 204
 The Bulk Processor is a helpful tool for performing bulk operations using the Xata Python client. It abstracts away the complexity of managing bulk operations, making it easier to perform large-scale insert operations. Using the [Bulk Processor](/docs/python-sdk/bulk-processor) is recommended for bulk operations in Xata.
 
 <TabbedCode tabs={['1.x', '0.x']}>
-```python
-from xata.client import XataClient
+  ```python
+  from xata.client import XataClient
 
 xata = XataClient(api_key="REDACTED_API_KEY", db_name="my_db", branch_name="feature-042")
 
 avengers = [
-  {"name": "Peter Parker", "job": "Spiderman"},
-  {"name": "Bruce Banner", "job": "Hulk"},
-  {"name": "Steve Rodgers Parker", "job": "Captain America"},
-  {"name": "Tony Stark", "job": "Iron Man"},
+{"name": "Peter Parker", "job": "Spiderman"},
+{"name": "Bruce Banner", "job": "Hulk"},
+{"name": "Steve Rodgers Parker", "job": "Captain America"},
+{"name": "Tony Stark", "job": "Iron Man"},
 ]
 resp = xata.records().bulk_insert("Avengers", {"records": avengers})
 assert resp.is_success()
-```
+
+````
 
 ```python
 from xata.client import XataClient
@@ -310,7 +326,7 @@ avengers = [
 ]
 resp = client.records().bulkInsertTableRecords("Avengers", {"records": avengers})
 assert resp.status_code == 200
-```
+````
 
 </TabbedCode>
 
@@ -319,20 +335,21 @@ assert resp.status_code == 200
 In this scenario we are uploading an on disk hosted file into a table `Photos` through the records API. For more examples please consult the [file attachment examples](/docs/sdk/file-attachments).
 
 <TabbedCode tabs={['1.x', '0.x']}>
-```python
-xata = XataClient()
+  ```python
+  xata = XataClient()
 
 upload = xata.records().insert("Photos", {
-  "title": "My new uploaded photo",
-  "photo": {
-    "name": "Nordkette, Innsbruck",
-    "mediaType": "image/jpeg",
-    "base64Content": "Tm9yZGtldHRlLCBJbm5zYnJ1Y2ssIFR5cm9sLCBBdXN0cmlhLCBMb3JlbSBJcHN1bSBsb3Jv",
-    "enablePublicUrl": True
-  }
+"title": "My new uploaded photo",
+"photo": {
+"name": "Nordkette, Innsbruck",
+"mediaType": "image/jpeg",
+"base64Content": "Tm9yZGtldHRlLCBJbm5zYnJ1Y2ssIFR5cm9sLCBBdXN0cmlhLCBMb3JlbSBJcHN1bSBsb3Jv",
+"enablePublicUrl": True
+}
 })
 assert upload.is_success()
-```
+
+````
 
 ```python
 xata = XataClient()
@@ -347,10 +364,12 @@ upload = xata.records().insertRecord("Photos", {
   }
 })
 assert upload.status_code == 201
-```
+````
+
 </TabbedCode>
 
 The following snippets shows you a very simple way to read a file from disk and encode it to base 64:
+
 ```python
 file_name = "photos/nordkette.jpg"
 with open(file_name, "rb") as f:
@@ -363,8 +382,8 @@ b64 = base64.b64encode(file_content).decode("ascii")
 The `ask` endpoint uses search or similarity search algorithms to find relevant information from your database. Please refer to [this page](/docs/sdk/ask) to get more information about the endpoint.
 
 <TabbedCode tabs={['1.x', '0.x']}>
-```python
-xata = XataClient()
+  ```python
+  xata = XataClient()
 
 answer = xata.data().ask("xata", "does xata have a python sdk")
 assert answer.is_success()
@@ -374,12 +393,14 @@ print("Records: %s" % answer["records"])
 print("Session: %s" % answer["sessionId"])
 
 # Ask a follow up question using the sessionId from the previous question
+
 follow_up = xata.data().ask_follow_up("xata", answer["sessionId"], "what is the best way to do bulk?")
 assert follow_up.is_success()
 
 print("Answer : %s" % follow_up["answer"])
 print("Records: %s" % follow_up["records"])
-```
+
+````
 
 ```python
 client = XataClient(api_key="REDACTED_API_KEY", workspace_id="REDACTED_WS_ID")
@@ -395,21 +416,22 @@ print("Answer : %s" % resp.json()["answer"])
 print("Records: %s" % resp.json()["records"])
 
 # follow up questions only available in 1.x version of the SDK
-```
+````
 
 </TabbedCode>
 
 ## Get the current User
 
 <TabbedCode tabs={['1.x', '0.x']}>
-```python
-from xata.client import XataClient
+  ```python
+  from xata.client import XataClient
 
 xata = XataClient()
 
 user = xata.users().get()
 print(user.status_code) # 200
-```
+
+````
 
 ```python
 from xata.client import XataClient
@@ -418,7 +440,7 @@ client = XataClient()
 
 user = client.users().getUser()
 print(user.status_code) # 200
-```
+````
 
 </TabbedCode>
 
