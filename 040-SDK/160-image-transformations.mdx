@@ -320,6 +320,38 @@ https://us-east-1.storage.xata.sh/transform/contrast=0.5/4u1fh2o6p10blbutjnphcst
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94" options={{ contrast: 0.5 }} />
 
+### download
+
+Option to force browser to download the image instead of displaying it. This is useful for images that you want to be downloaded by default.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
+
+```ts
+const transformedImageUrl = transformImage(
+  'https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94',
+  {
+    download: "xata-cat.jpg",
+    format: "jpg"
+  }
+);
+```
+
+```python
+img = xata.files().transform(
+  "https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94",
+  {
+    "download": "xata-cat.jpg",
+    "format": "jpg"
+  }
+)
+```
+
+```txt
+https://us-east-1.storage.xata.sh/transform/download=xata-cat.jpg,format=jpg/4u1fh2o6p10blbutjnphcste94
+```
+
+</TabbedCode>
+
 ### dpr
 
 This refers to the Device Pixel Ratio (DPR). The default is 1. This is a multiplier (similar to a flat scale) for width/height that makes it easier to specify higher-DPI sizes in `img srcset`. `dpr` needs to be used in tandem with a dimension transform to take effect.
