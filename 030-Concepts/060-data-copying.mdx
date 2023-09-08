@@ -27,6 +27,8 @@ Due to the wide variability in database schemas, Xata cannot guarantee a specifi
 
 Typically, the data copying process takes less than 2 minutes to complete under normal circumstances.
 
-Currently, Xata imposes a data limit of 10,000 rows. In future releases, we intend to provide users with the ability to configure the limit, up to and including copying all data from a branch.
+Currently, Xata imposes a data copy limit of 10,000 rows. File attachments are not copied.
+
+In future releases, we intend to provide users with the ability to configure the limit, up to and including copying all data from a branch.
 
 In the meantime, you can transfer data between branches using the standard query and bulk insert APIs, but note that point-in-time consistency cannot be ensured with this approach. If you require assistance with implementation, contact us.
