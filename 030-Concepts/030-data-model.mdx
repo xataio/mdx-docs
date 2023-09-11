@@ -439,7 +439,26 @@ At query time, you can easily include columns from the target table by specifyin
 
 Also, you can navigate the link in the opposite direction, from the target table to the source table. For example, if you have a `posts` table with an `author` column of type `link` that points to a `users` table. You are able to navigate the link from the `users` table to the `posts` table. At query time, you can get a list of the related posts in a single request by specifying the `<-posts.author` field. The arrow (`<-`) token indicates we are using a backwards relationship established by the `author` column (of type `link`) from `posts`. An example request that retrieves the name and related posts from the `users` table would look like this:
 
-<TabbedCode tabs={['JSON', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'JSON', 'Python']}>
+```ts
+const page = await xata.db.users
+    .select([
+        "name",
+        {
+            name: "<-posts.author",
+            columns: ["title"],
+            as: "posts",
+            limit: 10,
+            offset: 0,
+            sort: [
+                {
+                    createdAt: "desc",
+                },
+            ],
+        },
+    ]).getAll();
+```
+
 ```jsonc
 // POST /db/blogs:main/tables/users/query
 {
@@ -461,6 +480,7 @@ Also, you can navigate the link in the opposite direction, from the target table
   ]
 }
 ```
+
 ```python
 users = self.client.data().query("Users", {
   "table": "users",
@@ -482,6 +502,7 @@ users = self.client.data().query("Users", {
   ]
 })
 ```
+
 </TabbedCode>
 
 The response would look like this (notice the nested `records` array under the `posts` field):
