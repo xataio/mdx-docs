@@ -94,6 +94,77 @@ record = xata.records().update("Users", "record_id", {
 
 </TabbedCode>
 
+### Append a file to an array through updating a record
+
+In the following example the `photos` column is of type `file[]` (file array).
+The existing file ids from the array must be present in the update.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
+```ts
+const user = await xata.db.Users.update('record_id', {
+  photos: [
+    { 
+      id: 'existing_file_id'
+    },
+    {
+      id: 'new_id',
+      base64Content:
+        'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+    }
+  ]
+});
+
+// or, using the `update` method on the record object:
+
+user.update({
+  photos: [
+    {
+      id: 'existing_file_id'
+    },
+    {
+      id: 'new_id',
+      base64Content:
+        'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+    }
+  ]
+});
+```
+
+```python
+record = xata.records().update("Users", "record_id", {
+  "photos": [
+    {
+      "id": "existing_file_id"
+    },
+    {
+      "id": "new_id",
+      "base64Content":
+        "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+    }
+  ]
+})
+```
+
+```jsonc
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
+
+{
+  "photos": [
+    {
+      "id": "existing_file_id"
+    },
+    {
+      "id": "new_id",
+      "base64Content":
+        "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+    }
+  ]
+}
+```
+
+</TabbedCode>
+
 ### Download a file through reading a record
 
 <TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
@@ -145,6 +216,34 @@ record = xata.records().update("Users", "record_id", {"photo": None})
 
 {
   "photo": null
+}
+```
+
+</TabbedCode>
+
+### Delete a file from an array through updating a record
+
+A file array item is deleted by setting the array to the set of ids that need to be kept.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const user = await xata.db.Users.update('record_id', { photos: [{id: 'id_to_keep_1'}, {id: 'id_to_keep_2'} ] });
+
+// or, using the `update` method on the record object:
+
+await user.update({ photos: [{id: 'id_to_keep_1'}, {id: 'id_to_keep_2'} ] });
+
+````
+
+```python
+record = xata.records().update("Users", "record_id", {"photos": [{id: 'id_to_keep_1'}, {id: 'id_to_keep_2'} ]})
+````
+
+```jsonc
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
+
+{
+  "photos": [{id: 'id_to_keep_1'}, {id: 'id_to_keep_2'} ]
 }
 ```
 
@@ -202,7 +301,7 @@ response = xata.files().put("table_name", "record_id", "column_name", file_conte
 ```
 
 ```sh
-curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file' \
+curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file' \
   --header 'Content-Type: image/jpeg' \
   --header 'Authorization: Bearer xau_REDACTED' \
   --data-binary '@/path/to/file'
@@ -210,7 +309,10 @@ curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables
 
 </TabbedCode>
 
-`file[]` (file array) column type:
+### Append a file to an array using file APIs
+
+Column type is `file[]` (file array).
+The `fileId` is optional and a unique id will be automatically generated if not provided.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
 ```ts
@@ -222,7 +324,7 @@ response = xata.files().put_item("table_name", "record_id", "column_name", "file
 ```
 
 ```sh
-curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file/{file_id}' \
+curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file/{file_id}' \
   --header 'Content-Type: image/jpeg' \
   --header 'Authorization: Bearer xau_REDACTED' \
   --data-binary '@/path/to/file'
@@ -244,7 +346,7 @@ file = xata.files().get("table_name", "record_id", "column_name")
 ```
 
 ```sh
-curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file' \
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file' \
   --header 'Authorization: Bearer xau_REDACTED' \
   --output download.jpeg
 ```
@@ -268,9 +370,30 @@ file = xata.files().get_item("table_name", "record_id", "column_name", "file_id"
 ```
 
 ```sh
-curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/column_name/file/{file_id}' \
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file/{file_id}' \
   --header 'Authorization: Bearer xau_REDACTED' \
   --output download.jpeg
+```
+
+</TabbedCode>
+
+### Delete a file from an array using file APIs
+
+Column type is `file[]` (file array).
+`fileId` is required to identify the array item to be deleted.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+```ts
+await xata.files.delete({ table: 'table_name', column: 'column_name', record: 'record_id', fileId: 'id' });
+```
+
+```python
+response = xata.files().delete_item("table_name", "record_id", "column_name", "file_id")
+```
+
+```sh
+curl --request DELETE 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file/{file_id}' \
+  --header 'Authorization: Bearer xau_REDACTED' \
 ```
 
 </TabbedCode>
