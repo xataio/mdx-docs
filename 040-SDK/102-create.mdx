@@ -69,7 +69,7 @@ The TypeScript SDK returns the created record. The response looks like this:
   }
 ```
 
-```python
+```json
 {
   "id": "rec_c8hnbch26un1nl0rthkg",
   "xata": {
@@ -84,13 +84,11 @@ The TypeScript SDK returns the created record. The response looks like this:
 {
   "records": [
     {
-      "email": "keanu@example.com",
       "id": "rec_c8hnbch26un1nl0rthkg",
-      "name": "Keanu Reeves",
       "xata": {
+        "version": 0,
         "createdAt": "2023-05-15T08:21:31.96526+01:00",
-        "updatedAt": "2023-05-15T08:21:31.96526+01:00",
-        "version": 0
+        "updatedAt": "2023-05-15T08:21:31.96526+01:00"
       }
     }
   ]
@@ -107,13 +105,16 @@ The TypeScript SDK returns the created record. The response looks like this:
   }
 }
 ```
-
 </TabbedCode>
 
-In the above:
+In the above the API returns a [special set of columns](/docs/concepts/data-model#special-columns):
 
-- `id` is the ID of the record, which Xata generates automatically. The generated records are globally unique and sortable. This means that sorting by the IDs you sort by the insertion order.
-- `xata.version` is the version of the record. It is automatically incremented any time the record is updated and can be used for optimistic locking.
+- [`id`](/docs/concepts/data-model#id) is the ID of the record, which Xata generates automatically. The generated records are globally unique and sortable. This means that sorting by the IDs you sort by the insertion order.
+- [`xata.version`](/docs/concepts/data-model#xataversion) is the version of the record. It is automatically incremented any time the record is updated and can be used for optimistic locking.
+- [`xata.createdAt`](/docs/concepts/data-model#xatacreatedat) is the timestamp when the record was created.
+- [`xata.updatedAt`](/docs/concepts/data-model#xataupdatedat) is the timestamp of last record update.
+
+If you want to return more columns, you can specify them via the `columns` parameter.
 
 ## Creating a record with a given ID
 
@@ -157,7 +158,7 @@ In the REST API example, note the change from `POST` to `PUT`. The `createOnly` 
 
 ## Creating a record with a linked field
 
-In the schema that we chose, the `Posts` table has an `author` column of type `link` that links to the `Users` table. To insert a record with a linked field, use the ID of the target record in the link column. For example:
+In the schema that we chose, the `Posts` table has an `author` column of type `link` that links to the `Users` table. To insert a record with a linked field, use the ID of the target record in the link column.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 ```ts
@@ -287,7 +288,7 @@ users = xata.records().bulk_insert("Users", {
 
 It is possible to provide IDs for each of the records. If records with the same IDs already exist, the bulk operation is cancelled and an error is returned.
 
-File and file[] (file array) columns are not permitted in bulk requests.
+`file` and `file[]` (file array) columns are not permitted in bulk requests.
 
 ## Next Steps
 
