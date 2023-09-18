@@ -37,13 +37,13 @@ https://app.xata.io/integrations/oauth/authorize
 
 The application must include the following query parameters:
 
-| Parameter       | Description                                                                                                                      |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `client_id`     | The client ID of the application.                                                                                                |
-| `redirect_uri`  | The URL that Xata should redirect the user back to after the user signs in. This URL must be registered with the application.    |
-| `response_type` | Must be set to `code`.                                                                                                           |
-| `scope`         | Scopes that the application is requesting. Can be repeated to request multiple scopes.                                           |
-| `state`         | A string that the application can use to maintain state between the request and the callback. Also used to prevent CSRF attacks. |
+| Parameter       | Description                                                                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client_id`     | The client ID of the application.                                                                                                                                                        |
+| `redirect_uri`  | The URL that Xata should redirect the user back to after the user signs in. This URL must be registered with the application.                                                            |
+| `response_type` | Must be set to `code`.                                                                                                                                                                   |
+| `scope`         | Scopes that the application is requesting. Can be repeated to request multiple scopes. Right now, the only supported scope is `admin:all` and can be ignored as it is the default scope. |
+| `state`         | A string that the application can use to maintain state between the request and the callback. Also used to prevent CSRF attacks.                                                         |
 
 For example:
 
@@ -99,12 +99,12 @@ For example:
 
 The response will be a JSON object with the following properties:
 
-| Property        | Description                                           |
-| --------------- | ----------------------------------------------------- |
-| `access_token`  | The access token.                                     |
-| `refresh_token` | The refresh token.                                    |
-| `expires_in`    | The number of seconds until the access token expires. |
-| `token_type`    | The type of token. Will always be `Bearer`.           |
+| Property        | Description                                          |
+| --------------- | ---------------------------------------------------- |
+| `access_token`  | The access token.                                    |
+| `refresh_token` | The refresh token.                                   |
+| `expires_in`    | The date and time when the access token will expire. |
+| `token_type`    | The type of token. Will always be `Bearer`.          |
 
 For example:
 
@@ -112,7 +112,7 @@ For example:
 {
   "access_token": "abc123",
   "refresh_token": "def456",
-  "expires_in": 3600,
+  "expires_in": "2023-10-19T03:04:28Z",
   "token_type": "Bearer"
 }
 ```
