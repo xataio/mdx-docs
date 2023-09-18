@@ -162,3 +162,14 @@ The response will be a JSON object with the following properties:
 | `refresh_token` | The refresh token.                                    |
 | `expires_in`    | The number of seconds until the access token expires. |
 | `token_type`    | The type of token. Will always be `Bearer`.           |
+
+### Scopes
+
+At the moment, Xata only supports one scope: `admin:all`. This scope allows the application to make requests to the Xata API on behalf of the user. The scope has the same permissions as an API key created by the user.
+
+### Limits
+
+- Authorization codes expire after 10 minutes.
+- Access tokens expire after 1 month.
+- A user can only have 5 pending authorization codes at a time per application.
+- A user can only have 5 valid access tokens at a time per application.
