@@ -1,0 +1,55 @@
+---
+title: Available regions
+navTitle: Available regions
+keywords: ['regions']
+description: Deploy Xata in the following regions.
+slug: getting-started/available-regions
+published: true
+---
+
+The following Amazon Web Services regions are available:
+
+| Region         | Zone          | Location       |
+| -------------- | ------------- | -------------- |
+| ap-southeast-2 | Australia     | Sydney         |
+| eu-central-1   | Europe        | Frankdurt      |
+| eu-west-1      | Europe        | Ireland        |
+| us-east-1      | United States | North Virginia |
+| us-west-1      | United States | Oregon         |
+
+Alternatively, you can also pull the list of regions via the [`listRegions`](/docs/api-reference/workspaces/workspace_id/regions) API:
+
+```bash
+curl https://api.xata.io/workspaces/{workspace_id}/regions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"
+```
+
+Will yield the response:
+
+```json
+{
+  "regions": [
+    {
+      "id": "eu-west-1",
+      "name": "Ireland"
+    },
+    {
+      "id": "ap-southeast-2",
+      "name": "Sydney"
+    },
+    {
+      "id": "eu-central-1",
+      "name": "Frankfurt"
+    },
+    {
+      "id": "us-east-1",
+      "name": "N. Virginia"
+    },
+    {
+      "id": "us-west-2",
+      "name": "Oregon"
+    }
+  ]
+}
+```
