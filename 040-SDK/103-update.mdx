@@ -18,7 +18,7 @@ const user = await xata.db.Users.createOrReplace('myid', { name: 'Keanu Reeves' 
 ```
 
 ```python
-user = xata.records().upsert("Users", "myid" {
+user = xata.records().upsert("Users", "myid", {
   "name": "Keanu Reeves"
 })
 ```
