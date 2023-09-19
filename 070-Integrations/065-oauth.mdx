@@ -1,0 +1,172 @@
+---
+title: OAuth 2
+navTitle: OAuth 2
+keywords: ['oauth']
+description: Use OAuth 2.0 for secure authentication and authorized access
+slug: integrations/oauth
+published: true
+---
+
+Xata offers OAuth 2.0 authentication for external applications. This allows you to use Xata as an identity provider for your application. This is useful if you want to build an application that uses Xata and you want to allow users to sign in with their Xata account.
+
+<Alert status="info">
+  <strong>OAuth 2.0 support is currently in beta.</strong>
+  If you are interested in using OAuth 2.0, contact us at <a href="mailto:integrations@xata.io">
+    integrations@xata.io
+  </a>.
+</Alert>
+
+## Authorization Code Flow
+
+Xata supports the [Authorization Code Flow](https://tools.ietf.org/html/rfc6749#section-4.1) of OAuth2. This flow is designed for web applications that run on a server. It is not designed for mobile or desktop applications.
+
+The Authorization Code Flow works as follows:
+
+1. The application redirects the user to Xata to sign in.
+2. Xata redirects the user back to the application with an authorization code.
+3. The application exchanges the authorization code for an access token.
+4. The application uses the access token to make requests to the Xata API.
+
+### Redirecting the user to Xata
+
+To redirect the user to Xata, the application must redirect the user to the following URL:
+
+```
+https://app.xata.io/integrations/oauth/authorize
+```
+
+The application must include the following query parameters:
+
+| Parameter       | Description                                                                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client_id`     | The client ID of the application.                                                                                                                                                        |
+| `redirect_uri`  | The URL that Xata should redirect the user back to after the user signs in. This URL must be registered with the application.                                                            |
+| `response_type` | Must be set to `code`.                                                                                                                                                                   |
+| `scope`         | Scopes that the application is requesting. Scopes define what actions or data the application can access or perform for the user. This can be repeated to request multiple scopes. Currently, the only supported scope is `admin:all` and it can be ignored as it is the default.
+| `state`         | A string that the application can use to maintain state between the request and the callback. Also used to prevent CSRF attacks.                                                         |
+
+For example:
+
+```
+https://app.xata.io/integrations/oauth/authorize?client_id=123&redirect_uri=https://example.com/callback&response_type=code&scope=admin:all&state=abc123
+```
+
+### Redirecting the user back to the application
+
+After the user signs in, Xata will redirect the user back to the application. Xata will include the following query parameters:
+
+| Parameter    | Description                                                          |
+| ------------ | -------------------------------------------------------------------- |
+| `code`       | The authorization code.                                              |
+| `state`      | The state that was provided in the original request.                 |
+| `color-mode` | The color mode of the user's Xata account. Can be `light` or `dark`. |
+
+For example:
+
+```
+https://example.com/callback?code=abc123&state=abc123&color-mode=light
+```
+
+### Exchanging the authorization code for an access token
+
+To exchange the authorization code for an access token, the application must make a `POST` request to the following URL:
+
+```
+https://app.xata.io/api/integrations/oauth/token
+```
+
+The application must include the following parameters in the request body:
+
+| Parameter       | Description                           |
+| --------------- | ------------------------------------- |
+| `client_id`     | The client ID of the application.     |
+| `client_secret` | The client secret of the application. |
+| `grant_type`    | Must be set to `authorization_code`.  |
+| `code`          | The authorization code.               |
+| `redirect_uri`  | The URL used in the original request. |
+
+For example:
+
+```json
+{
+  "client_id": "123",
+  "client_secret": "abc",
+  "grant_type": "authorization_code",
+  "code": "abc123",
+  "redirect_uri": "https://example.com/callback"
+}
+```
+
+The response will be a JSON object with the following properties:
+
+| Property        | Description                                          |
+| --------------- | ---------------------------------------------------- |
+| `access_token`  | The access token.                                    |
+| `refresh_token` | The refresh token.                                   |
+| `expires_in`    | The date and time when the access token will expire. |
+| `token_type`    | The type of token. Will always be `Bearer`.          |
+
+For example:
+
+```json
+{
+  "access_token": "abc123",
+  "refresh_token": "def456",
+  "expires_in": "2023-10-19T03:04:28Z",
+  "token_type": "Bearer"
+}
+```
+
+### Using the access token
+
+The application can use the access token to make requests to the Xata API. The access token must be included in the `Authorization` header of the request.
+
+### Refreshing the access token
+
+Access tokens are set to automatically expire. When an access token expires, the application must use the refresh token to get a new access token.
+
+To refresh the access token, the application must make a `POST` request to the following URL:
+
+```
+https://app.xata.io/api/integrations/oauth/token
+```
+
+The application must include the following parameters in the request body:
+
+| Parameter       | Description                           |
+| --------------- | ------------------------------------- |
+| `client_id`     | The client ID of the application.     |
+| `client_secret` | The client secret of the application. |
+| `grant_type`    | Must be set to `refresh_token`.       |
+| `refresh_token` | The refresh token.                    |
+
+For example:
+
+```json
+{
+  "client_id": "123",
+  "client_secret": "abc",
+  "grant_type": "refresh_token",
+  "refresh_token": "def456"
+}
+```
+
+The response will be a JSON object with the following properties:
+
+| Property        | Description                                           |
+| --------------- | ----------------------------------------------------- |
+| `access_token`  | The access token.                                     |
+| `refresh_token` | The refresh token.                                    |
+| `expires_in`    | The number of seconds until the access token expires. |
+| `token_type`    | The type of token. Will always be `Bearer`.           |
+
+## Scopes
+
+At the moment, Xata only supports the scope `admin:all`. This scope allows the application to make requests to the Xata API on behalf of the user. The scope has the same permissions as an API key created by the user.
+
+## Limits
+
+- Authorization codes expire after 10 minutes.
+- Access tokens expire after 1 month.
+- A user can only have 5 pending authorization codes at a time per application.
+- A user can only have 5 valid access tokens at a time per application.
