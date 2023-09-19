@@ -7,11 +7,11 @@ slug: integrations/oauth
 published: false
 ---
 
-Xata offers OAuth 2.0 authentication for external applications. This allows you to use Xata as an identity provider for your application. This is useful if you want to build an application that uses Xata and you want to allow users to sign in with their Xata account.
+Xata offers OAuth 2.0 authentication for external applications. This allows you to use Xata as an identity provider for your application. This is very useful if you're creating an app that uses Xata, and you want to give users the option to log in using their Xata account.
 
 <Alert status="info">
   <strong>OAuth 2.0 is currently in beta.</strong>
-  If you are interested in using OAuth 2.0, please contact us at <a href="mailto:integrations@xata.io">
+  If you are interested in using OAuth 2.0, contact us at <a href="mailto:integrations@xata.io">
     integrations@xata.io
   </a>.
 </Alert>
@@ -27,7 +27,7 @@ The Authorization Code Flow works as follows:
 3. The application exchanges the authorization code for an access token.
 4. The application uses the access token to make requests to the Xata API.
 
-### Redirecting the User to Xata
+### Redirecting the user to Xata
 
 To redirect the user to Xata, the application must redirect the user to the following URL:
 
@@ -39,11 +39,11 @@ The application must include the following query parameters:
 
 | Parameter       | Description                                                                                                                                                                              |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `client_id`     | The client ID of the application.                                                                                                                                                        |
-| `redirect_uri`  | The URL that Xata should redirect the user back to after the user signs in. This URL must be registered with the application.                                                            |
-| `response_type` | Must be set to `code`.                                                                                                                                                                   |
-| `scope`         | Scopes that the application is requesting. Can be repeated to request multiple scopes. Right now, the only supported scope is `admin:all` and can be ignored as it is the default scope. |
-| `state`         | A string that the application can use to maintain state between the request and the callback. Also used to prevent CSRF attacks.                                                         |
+| `client_id`     | This is the client ID of the application.                                                                                                                                                        |
+| `redirect_uri`  | This is the URL that Xata should redirect the user back to after the user signs in. This URL must be registered with the application.                                                            |
+| `response_type` | This must be set to `code`.                                                                                                                                                                   |
+| `scope`         | This returns the scopes that the application is requesting. Scopes define what actions or data the application can access or perform for the user. This can be repeated to request multiple scopes. Right now, the only supported scope is `admin:all` and it can be ignored as it is the default scope. |
+| `state`         | A string that the application can use to maintain state between the request and the callback. This is also used to prevent CSRF attacks.                                                         |
 
 For example:
 
@@ -51,7 +51,7 @@ For example:
 https://app.xata.io/integrations/oauth/authorize?client_id=123&redirect_uri=https://example.com/callback&response_type=code&scope=admin:all&state=abc123
 ```
 
-### Redirecting the User Back to the Application
+### Redirecting the user back to the application
 
 After the user signs in, Xata will redirect the user back to the application. Xata will include the following query parameters:
 
@@ -67,7 +67,7 @@ For example:
 https://example.com/callback?code=abc123&state=abc123&color-mode=light
 ```
 
-### Exchanging the Authorization Code for an Access Token
+### Exchanging the authorization code for an access token
 
 To exchange the authorization code for an access token, the application must make a `POST` request to the following URL:
 
@@ -117,11 +117,11 @@ For example:
 }
 ```
 
-### Using the Access Token
+### Using the access token
 
 The application can use the access token to make requests to the Xata API. The access token must be included in the `Authorization` header of the request.
 
-### Refreshing the Access Token
+### Refreshing the access token
 
 Access tokens are set to automatically expire. When an access token expires, the application must use the refresh token to get a new access token.
 
@@ -162,7 +162,7 @@ The response will be a JSON object with the following properties:
 
 ## Scopes
 
-At the moment, Xata only supports one scope: `admin:all`. This scope allows the application to make requests to the Xata API on behalf of the user. The scope has the same permissions as an API key created by the user.
+At the moment, Xata only supports the scope `admin:all`. This scope allows the application to make requests to the Xata API on behalf of the user. The scope has the same permissions as an API key created by the user.
 
 ## Limits
 
