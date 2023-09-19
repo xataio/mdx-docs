@@ -62,7 +62,7 @@ These URLs are especially useful if you need quick, high-throughput, and concurr
 // Retrieve the private URL on the file in the "photo" column
 const { url } = user.photo.transform({ quality: 50 });
 
-````
+```
 
 ```python
 # Disallow this User photo to be accessed publicly at any time by the URL alone
@@ -76,7 +76,7 @@ user = xata.records().update("Users", "record_id", {
 img = xata.files().transform("<photo.signedUrl>", {
   "quality": 50
 })
-````
+```
 
 </TabbedCode>
 
@@ -100,7 +100,7 @@ https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94 is available public
 // Retrieve the public URL on the file in the "photo" column
 const { url } = user.photo.transform({ quality: 50 });
 
-````
+```
 
 ```python
 # Allow this user's photo to be accessed publicly at any time by the URL alone
@@ -114,7 +114,7 @@ user = xata.records().update("Users", "record_id", {
 img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "quality": 50
 })
-````
+```
 
 </TabbedCode>
 
@@ -145,7 +145,7 @@ You can modify the timeout duration of the signed URL for each file by adjusting
 // Retrieve the signed URL on the file in the "photo" column
 const { signedUrl } = user.photo.transform({ quality: 50 });
 
-````
+```
 
 ```python
 # Set the timeout to 10 minutes for this user's photo
@@ -159,6 +159,6 @@ user = xata.records().update("Users", "record_id", {
 img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "quality": 50
 })
-````
+```
 
 </TabbedCode>
