@@ -51,18 +51,18 @@ Authenticated URLs are private URLs that can be used to access a file with a val
 These URLs are especially useful if you need quick, high-throughput, and concurrent download access, with cached data.
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
-
-```ts
-// Disallow this User photo to be accessed publicly at any time by the URL alone
-const user = await xata.db.Users.update('record_id', {
-  photo: {
-    enablePublicUrl: false
-  }
-});
+  ```ts
+  // Disallow this User photo to be accessed publicly at any time by the URL alone
+  const user = await xata.db.Users.update('record_id', {
+    photo: {
+      enablePublicUrl: false
+    }
+  });
 
 // Retrieve the private URL on the file in the "photo" column
 const { url } = user.photo.transform({ quality: 50 });
-```
+
+````
 
 ```python
 # Disallow this User photo to be accessed publicly at any time by the URL alone
@@ -76,7 +76,7 @@ user = xata.records().update("Users", "record_id", {
 img = xata.files().transform("<photo.signedUrl>", {
   "quality": 50
 })
-```
+````
 
 </TabbedCode>
 
@@ -89,18 +89,18 @@ You can use the public URL directly without writing code. For instance:
 https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94 is available publicly
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
-
-```ts
-// Allow this user's photo to be accessed publicly at any time by the URL alone
-const user = await xata.db.Users.update('record_id', {
-  photo: {
-    enablePublicUrl: true
-  }
-});
+  ```ts
+  // Allow this user's photo to be accessed publicly at any time by the URL alone
+  const user = await xata.db.Users.update('record_id', {
+    photo: {
+      enablePublicUrl: true
+    }
+  });
 
 // Retrieve the public URL on the file in the "photo" column
 const { url } = user.photo.transform({ quality: 50 });
-```
+
+````
 
 ```python
 # Allow this user's photo to be accessed publicly at any time by the URL alone
@@ -114,15 +114,14 @@ user = xata.records().update("Users", "record_id", {
 img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "quality": 50
 })
-```
+````
 
 </TabbedCode>
 
 ![Entire columns can be made public by default](images/column-access-public.png)
 
 <Alert status="warning">
-  **Public object caching**  
-  When a public object gets cached, changing permissions will not invalidate the cached entry.
+  **Public object caching** When a public object gets cached, changing permissions will not invalidate the cached entry.
   The file is still accessible through old URLs until the cache entry expires in 2h. Xata advises greatest caution when
   configuring public access, because in practice there is a delay in changing the permissions back from public to
   private.
@@ -135,13 +134,13 @@ A signed URL offers authenticated access to a file without requiring an API key.
 You can modify the timeout duration of the signed URL for each file by adjusting the `signedUrlTimeout` field within the file object. Please note that `signedUrlTimeout` expects a positive number, defining the timeout duration in seconds. The default value is set to 60 seconds. A file's signed URL can be retrieved by reading or querying the `signedUrl` field of a file object. Use signed URLs when you need temporary access without revealing the API key, such as rendering an image without disclosing a permanent image URL.
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
-```ts
-// Set the timeout to 10 minutes for this user's photo
-const user = await xata.db.Users.update('record_id', {
-  photo: {
-    signedUrlTimeout: 600 // In seconds
-  }
-});
+  ```ts
+  // Set the timeout to 10 minutes for this user's photo
+  const user = await xata.db.Users.update('record_id', {
+    photo: {
+      signedUrlTimeout: 600 // In seconds
+    }
+  });
 
 // Retrieve the signed URL on the file in the "photo" column
 const { signedUrl } = user.photo.transform({ quality: 50 });
