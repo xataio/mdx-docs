@@ -235,7 +235,7 @@ In usage, using the Xata TypeScript SDK is similar to using a Typescript ORM, fo
 
 Under the hood, however, the Xata SDK is implemented a bit differently and makes use of recent TypeScript additions to generate the types at run-time. It also has a somewhat simpler problem to solve, because it only needs to talk with the Xata API, not generate SQL. The result of this is that the Xata SDK is very lightweight and has zero dependencies, so it can be used in many JavaScript runtimes including Node.js, Cloudflare Workers, Deno, Electron, etc.
 
-## Edge caching and edge functions (Private Beta)
+## Edge caching (Beta)
 
 Another interesting aspect of the TypeScript SDK is that it has plugins. 
 The SDK plugins enhance the core functionality and can use dependencies. It is possible to use such a plugin, for example, to cache the query results in the edge function memory, or even better, in Cloudflare Durable Objects. This makes it easy and cheap for applications to scale reads globally and provide very small latencies at the same time.
@@ -249,31 +249,6 @@ return await xata.db.products.sort('popularity', 'desc').getMany({
 The SDK also has knowledge of which records have been updated, which means that they can invalidate the cache so that a client would generally “read their writes”. In the future, we’ll also be able to use the logical replication events to invalidate the edge cache, which will mean that you can use larger TTLs.
 
 Xata typically works best in combination with frameworks that provide a way to run serverless functions, like Next.js, Remix, SvelteKit, etc. This is because it is currently unsafe to access Xata directly from the browser, we don’t yet have “row level security” rules, but these frameworks provide a simple way to write “server code” and deploy it as serverless functions.
-
-But what about the users that don’t use those frameworks but still want to use Xata and don’t want to run their servers? This is where the Xata Edge Functions come in: you write functions in your TypeScript/JavaScript code, annotate them as server-side, and our transpiler automatically extracts them and deploys them as edge functions.
-
-```tsx
-import { useQuery } from '@tanstack/react-query';
-import { xataWorker } from '~/xata';
-
-const listProducts = xataWorker('listSomeProducts', async ({ xata }) => {
-  return await xata.db.products.sort('popularity', 'desc').getMany();
-});
-
-export const Home = () => {
-  const { data = [] } = useQuery(['products'], listProducts);
-
-  return (
-    <Grid>
-      {data.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </Grid>
-  );
-};
-```
-
-Behind the scenes, we’re using [Cloudflare Workers for Platforms](https://blog.cloudflare.com/workers-for-platforms/), but you don’t need a Cloudflare account - it works automatically with your Xata account. The Xata Edge Functions are currently in private beta. [Contact us](https://support.xata.io/hc/en-us), if you are interested in trying them out.
 
 ## Data safety
 
