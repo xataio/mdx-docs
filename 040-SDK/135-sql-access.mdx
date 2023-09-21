@@ -234,10 +234,11 @@ Certain commands are not supported in Xata:
 
 ### Connection methods
 
-SQL access in Xata is achieved via HTTP/S Proxy. Tools that use wire protocol with a connection string to PostgreSQL are not compatible with Xata's SQL Proxy.
+SQL access in Xata is achieved via an HTTP or HTTPS proxy. Tools that use a wire protocol with a connection string to PostgreSQL are not compatible with Xata's SQL proxy.
+
 You can use SQL in Xata with any of the following methods:
 
-- From the built-in PostgreSQL Playground in the Xata Web UI.
-- With API calls to your branch's `/sql` endpoint using Web Clients such as Postman.
-- Using the *sql* methods provided in the Typescript and Python SDKs.
-- Through [Kysely](/docs/integrations/kysely) and [Drizzle](/docs/integrations/drizzle) integrations.
+- Use the built-in PostgreSQL Playground in the Xata Web UI.
+- Execute API calls to your branch's `/sql` endpoint using web clients such as Postman.
+- Use the SQL methods provided in the Typescript and Python SDKs.
+- Use the [Kysely](/docs/integrations/kysely) and [Drizzle](/docs/integrations/drizzle) integrations.
