@@ -235,21 +235,6 @@ In usage, using the Xata TypeScript SDK is similar to using a Typescript ORM, fo
 
 Under the hood, however, the Xata SDK is implemented a bit differently and makes use of recent TypeScript additions to generate the types at run-time. It also has a somewhat simpler problem to solve, because it only needs to talk with the Xata API, not generate SQL. The result of this is that the Xata SDK is very lightweight and has zero dependencies, so it can be used in many JavaScript runtimes including Node.js, Cloudflare Workers, Deno, Electron, etc.
 
-## Edge caching (Beta)
-
-Another interesting aspect of the TypeScript SDK is that it has plugins. 
-The SDK plugins enhance the core functionality and can use dependencies. It is possible to use such a plugin, for example, to cache the query results in the edge function memory, or even better, in Cloudflare Durable Objects. This makes it easy and cheap for applications to scale reads globally and provide very small latencies at the same time.
-
-```tsx
-return await xata.db.products.sort('popularity', 'desc').getMany({
-  cache: 10 * 60 * 1000 // TTL
-});
-```
-
-The SDK also has knowledge of which records have been updated, which means that they can invalidate the cache so that a client would generally “read their writes”. In the future, we’ll also be able to use the logical replication events to invalidate the edge cache, which will mean that you can use larger TTLs.
-
-Xata typically works best in combination with frameworks that provide a way to run serverless functions, like Next.js, Remix, SvelteKit, etc. This is because it is currently unsafe to access Xata directly from the browser, we don’t yet have “row level security” rules, but these frameworks provide a simple way to write “server code” and deploy it as serverless functions.
-
 ## Data safety
 
 Xata is committed to protecting the security and ensuring the availability of user data. To do so, we implement appropriate technical measures and internal organization policies to protect from unauthorized access, data leak or loss.
