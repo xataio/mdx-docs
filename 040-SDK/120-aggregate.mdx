@@ -771,6 +771,8 @@ results = xata.data().aggregate("titles", {
 }
 ```
 
+</TabbedCode>
+
 ### Percentiles
 
 `percentiles` is a metric-aggregation that computes the percentiles of a numeric column. You can specify an array with the percentiles you want to compute. For example, you can request the median by asking for the 50th percentile (`[50]`), or you can request the 50th, 90th, and 99.9th percentiles by asking for `[50, 90, 99.9]`.
@@ -816,9 +818,11 @@ results = xata.data().aggregate("titles", {
   }
 }
 ```
+
 </TabbedCode>
 
-The answer will be an object with a `values` sub object that has the percentiles as keys, and the values as the percentile values.
+The result will be an object containing a 'values' sub-object. This sub-object will have percentiles as keys and their corresponding values as the percentile values.
+
 For example:
 
 ```json
@@ -835,4 +839,3 @@ For example:
   }
 }
 ```
-
