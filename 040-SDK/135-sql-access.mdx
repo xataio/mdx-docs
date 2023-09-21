@@ -207,7 +207,7 @@ When using SQL in Xata, there are a few constraints to keep in mind.
 
 ### Resource consumption
 
-- In PostgreSQL, the `work_mem` configuration is set to 4 MB. A query is limited to 4 MB of memory and this limit is enforced before the data is saved into temporary files. The `work_mem` configuartion sets the baseline maximum memory for query operations like sorting or using hash tables before writing to temporary disk file.
+- In PostgreSQL, the `work_mem` configuration is set to 4 MB. A query is limited to 4 MB of memory and this limit is enforced before the data is saved into temporary files. The `work_mem` configuration sets the baseline maximum memory for query operations like sorting or using hash tables before writing to temporary disk file.
 - The `hash_mem_multiplier` is set to `1`. The `hash_mem_multiplier` computes the maximum memory for hash-based operations by multiplying it by `work_mem`. For additional information on resource consumption in Postgres, see the [PostgreSQL docs](https://www.postgresql.org/docs/current/runtime-config-resource.html).
 
 ### Column names
@@ -231,3 +231,14 @@ Certain commands are not supported in Xata:
 - Data control language (DCL) commands such as `GRANT` and `REVOKE` are not supported.
 
 - Transaction control language (TCL) commands such as `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ROLLBACK TO SAVEPOINT`, and `SET TRANSACTION` are not supported.
+
+### Connection methods
+
+SQL access in Xata is achieved via an HTTP or HTTPS proxy. Tools that use a wire protocol with a connection string to PostgreSQL are not compatible with Xata's SQL proxy.
+
+You can use SQL in Xata with any of the following methods:
+
+- Use the built-in PostgreSQL Playground in the Xata Web UI.
+- Execute API calls to your branch's `/sql` endpoint using web clients such as Postman.
+- Use the SQL methods provided in the Typescript and Python SDKs.
+- Use the [Kysely](/docs/integrations/kysely) and [Drizzle](/docs/integrations/drizzle) integrations.
