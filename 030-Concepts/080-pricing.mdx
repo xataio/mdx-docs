@@ -19,10 +19,6 @@ This limit exists on shared Xata instances to ensure reliability for all users o
 
 The maximum number of simultaneous requests that can be processed at any given time for each specific store type:
 
-- **Consistent transactional store** - Free tier: 50 requests. Pro tier: 150 requests
-- **Read replicas store** - Free tier: 50 requests. Pro tier: 150 requests
-- **Search/analytics engine** - Free tier: 50 requests. Pro tier: 150 requests
-
 If the request concurrency limit is exceeded additional requests will fail with a HTTP status `429`.
 
 These allocations are designed to prioritize and balance the workload across the different store types based on requirements and usage patterns.
