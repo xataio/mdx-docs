@@ -8,3 +8,31 @@ published: true
 ---
 
 For information on pricing, billing, and usage limits, please refer to our comprehensive [pricing page](/pricing).
+
+### Request Rate limit
+
+The maximum number of requests allowed per second. If the request rate limit is exceeded additional requests will fail with a HTTP status `429`.
+
+This limit exists on shared Xata instances to ensure reliability for all users on the instance.
+
+### Request Concurrency limit
+
+The maximum number of simultaneous requests that can be processed at any given time for each specific store type:
+
+- **Consistent transactional store** - Free tier: 50 requests. Pro tier: 150 requests
+- **Read replicas store** - Free tier: 50 requests. Pro tier: 150 requests
+- **Search/analytics engine** - Free tier: 50 requests. Pro tier: 150 requests
+
+If the request concurrency limit is exceeded additional requests will fail with a HTTP status `429`.
+
+These allocations are designed to prioritize and balance the workload across the different store types based on requirements and usage patterns.
+
+### Data Size
+
+The data size on disk denotes the quantity of data held within the transactional database.
+
+This size limit is considered a soft-limit and is not strictly enforced in real-time. However, if you exceed this limit, it indicates that your data storage requirements may be approaching a critical level. In such cases, we recommend you explore potential solutions with [Xata Support](https://support.xata.io/hc/en-us) to optimize and scale your data storage.
+
+
+
+If you have any further questions or need assistance, don't hesitate contact [Support](https://support.xata.io/hc/en-us).
