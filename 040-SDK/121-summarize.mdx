@@ -204,34 +204,33 @@ All summaries support links. If you have a link set up, you specify it using the
 One can specify several summaries in the same request. As long as the names are unique, do not contain special characters, and do not conflict with columns on your table, you are free to set the names as you wish.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
-  ```ts
-  const records = await xata.db.sales.summarize({
-    summaries: {
-      // count all rows
-      "all_sales": {"count": "*"},
+```ts
+const records = await xata.db.sales.summarize({
+  summaries: {
+    // count all rows
+    "all_sales": {"count": "*"},
 
-      // count all rows where `store_id` is not null
-      "all_sales_from_store": {"count": "store_id"},
+    // count all rows where `store_id` is not null
+    "all_sales_from_store": {"count": "store_id"},
 
-      // sum the `profit` column
-      "total_profit": {"sum": "profit"},
+    // sum the `profit` column
+    "total_profit": {"sum": "profit"},
 
-      // average the `shipping.time_days` column
-      "average_shipping_time": {"average": "shipping.time_days"},
+    // average the `shipping.time_days` column
+    "average_shipping_time": {"average": "shipping.time_days"},
 
-      // count the total rows where `has_arrived` is not null
-      "total_has_arrived": {"count": "has_arrived"},
+    // count the total rows where `has_arrived` is not null
+    "total_has_arrived": {"count": "has_arrived"},
 
-      // retrieve the smallest value in the `package_volume` column
-      "smallest_package": {"min": "package_volume"}
+    // retrieve the smallest value in the `package_volume` column
+    "smallest_package": {"min": "package_volume"}
 
-      // retrieve the largest value in the `sale_price` column
-      "largest_sale_price": {"max": "sale_price"}
-
-}
+    // retrieve the largest value in the `sale_price` column
+    "largest_sale_price": {"max": "sale_price"}
+  }
 })
 
-````
+```
 
 ```python
 records = xata.data().summarize("sales", {
@@ -258,7 +257,7 @@ records = xata.data().summarize("sales", {
     "largest_sale_price": { "max": "sale_price" }
   }
 })
-````
+```
 
 ```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
