@@ -15,9 +15,9 @@ After reading this document, you'll have a far better understanding of what the 
 
 ## Columns & summaries
 
-The endpoint has two concepts that are important to understand. These are _columns_ and _summaries_. If you're already familiar with aggregations and `GROUP BY` in SQL; you can skip this section.
+The endpoint has two concepts that are important to understand: _columns_ and _summaries_. If you're already familiar with aggregations and `GROUP BY` in SQL, you can skip this section.
 
-Let's look at a table. Each time you sell something on your e-commerce store, you insert a row into this table.
+Consider the following table. Whenever a sale occurs in an e-commerce store, a new row is added to this table, denoting the item sold and its sale price.
 
 | product    | sale_price |
 | ---------- | ---------- |
@@ -27,7 +27,7 @@ Let's look at a table. Each time you sell something on your e-commerce store, yo
 | shirt      | 40.0       |
 | shirt      | 80.0       |
 
-Using the above example, a **column** is something you wish to run a calculation for. If you set `product` as a **column** you will see only one row returned for each unique value from the `product` column. In this table, it would mean you receive two rows back. One row for `basketball` and one row for `shirt`.
+In the context of the given table, a column represents an attribute for which you desire to perform a calculation. Assigning `product` as a column would yield one result row for each unique value within the `product` column. With the table above, this implies you would retrieve two rows: one representing `basketball` and the other, `shirt`.
 
 A **summary** has two parts. These consist of a _function_ (the summary) and a _parameter_ (the column name). The function can be called `sum`, or `average`. The parameter is the column name on which you would like to execute the function. A question I can ask is to `{"sum": "sale_price"}` to retrieve the total sale price.
 
