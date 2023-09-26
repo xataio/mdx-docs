@@ -209,7 +209,7 @@ const differentSizedPage = anotherPageWithDifferentSize.records;
 ```
 
 - `getAll()`: returns all the records in the query results. Warning: this is dangerous on large tables (more than 10,000 records), as it will potentially load a lot of data into memory and create a lot of requests to the server.
-- `getMany()`: returns the requested number of records for the query in a single response. The default is 20 records, but you can change it by modifying the pagination size.
+- `getMany()`: returns the requested number of records for the query in a single response. The default is 20 records, but you can change it by modifying the pagination size. The pagination limit is 50,000 records.
 
 ```ts
 const page = await xata.db.Posts.getMany({
@@ -799,7 +799,7 @@ You can continue like this until `"more"` is returned as `false`.
 
 ### Offset-based Pagination
 
-The offset-page pagination is limited to querying up to 1000 records and is recommended only for usecases where you don't expect the number of records to grow beyond that. In most cases, you should use the cursor-based pagination.
+The offset-page pagination limit is 50,000 records (about 250 pages). In most cases, you should use the cursor-based pagination.
 
 An example of offset based pagination:
 
