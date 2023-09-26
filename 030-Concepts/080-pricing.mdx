@@ -30,5 +30,47 @@ The data size on disk denotes the quantity of data held within the transactional
 This size limit is considered a soft-limit and is not strictly enforced in real-time. However, if you exceed this limit, it indicates that your data storage requirements may be approaching a critical level. In such cases, we recommend you explore potential solutions with [Xata Support](https://support.xata.io/hc/en-us) to optimize and scale your data storage.
 
 
+### FAQ
+
+#### What is a capacity unit?
+
+In most cases, you can think of a unit as 250,000 records. There are extra limits applied (rate limit, concurrency limit, data size limit) but with normal usage patterns you shouldn't hit them.
+
+#### Is there a maximum number of reads and writes per month?
+   
+No, you can serve as many reads and writes as you want within the rate limit, which is defined per second (resets every second).'
+  
+#### How is the data size measured?
+  
+We measure one copy of your data, as it is stored in the primary transactional store and file attachments. For data redundancy purposes, and because we use multiple types of stores, we store multiple copies of your data (typically 5 copies), but we only charge for one.'
+
+#### What is the concurrency limit?',
+
+The concurrency limit is the maximum number of queries that are executed in parallel. It is different from a "connections limit" because the queries are counted only while they are actually executing, and more connections can be accepted and queued. Its goal is to protect against very slow queries.
+
+#### What happens when I exceed the number of records or data size limit?',
+
+The number of records and data size are soft-limits and are not enforced in real-time. If you are over the limit for a long time, we will contact you to upgrade.
+ 
+#### What happens when the rate limit or concurrency limits are reached?
+    
+When the rate limit or concurrency limits are reached, we will throttle your requests and we might answer with a 429 status code. Your app will be in degraded mode, but only the requests over the limit are affected. The rate limit is reset every second, and the concurrency limit is measured at any given time.
+ 
+#### What happens on upgrade and downgrade?
+
+If you upgrade in the middle of the billing month, you will be charged a pro-rated amount for the remaining days of the month. If you downgrade in the middle of the billing month, we will credit you a pro-rated amount for the remaining days of the month.
+  
+#### Will my database be suspended after a period of inactivity?',
+ 
+Nope, even if it’s not accessed, we don’t put your DB to sleep, even on the free plan. We want projects of all kinds to be able to depend on Xata even if they are not paying.'
+
+#### Do you have a program for start-ups program?,
+   
+Yes, we do, please get in touch with us for details.'
+
+#### We are a non-profit. Do you have discounts?',
+
+Yes! In fact, the idea for Xata was born out of a non-profit. Get in touch with us, we’d love to help.
+
 
 If you have any further questions or need assistance, don't hesitate contact [Support](https://support.xata.io/hc/en-us).
