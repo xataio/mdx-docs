@@ -223,7 +223,7 @@ const records = await xata.db.sales.summarize({
     "total_has_arrived": {"count": "has_arrived"},
 
     // retrieve the smallest value in the `package_volume` column
-    "smallest_package": {"min": "package_volume"}
+    "smallest_package": {"min": "package_volume"},
 
     // retrieve the largest value in the `sale_price` column
     "largest_sale_price": {"max": "sale_price"}
@@ -287,6 +287,50 @@ records = xata.data().summarize("sales", {
 }
 ```
 
+</TabbedCode>
+
+#### Count all records of a table
+
+In the previous example it was already hinted, that `"all_sales": {"count": "*"}` will return the amount of records of the selected table. 
+For simplicity, the following example will solely show how the retrieve the total number of records stored in the table `sales`:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+```ts
+const records = await xata.db.sales.summarize({
+  summaries: {
+    "total": {"count": "*"}
+  }
+})
+
+console.log(res.summaries[0].total)
+```
+
+```python
+records = xata.data().summarize("sales", {
+  "summaries": {
+    "total": { "count": "*" }
+  }
+})
+
+print(records["summaries"][0]["count"])
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT COUNT(*) as total FROM \"sales\""
+}
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
+{
+  "summaries": {
+    "total": { "count": "*" }
+  }
+}
+```
 </TabbedCode>
 
 ### columns
