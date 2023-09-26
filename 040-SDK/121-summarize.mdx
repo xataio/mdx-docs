@@ -296,15 +296,15 @@ The `columns` key lets you specify how you'd like to group your data. Columns wo
 You may submit explicit column names, use wildcards, and reference linked columns as needed.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
-  ```ts
-  const records = await xata.db.sales.summarize({
-    columns: [
-      'settings.*',       // group by all columns in the `settings` object
-      'username',         // group by the username field
-      'user.hobbies.name' // group by a linked column
-    ]
-  });
-  ```
+```ts
+const records = await xata.db.sales.summarize({
+  columns: [
+    'settings.*',       // group by all columns in the `settings` object
+    'username',         // group by the username field
+    'user.hobbies.name' // group by a linked column
+  ]
+});
+```
 
 ```python
 records = xata.data().summarize("sales", {
@@ -342,20 +342,20 @@ Keep in mind: `filter` does **not** support filtering on the result of a summary
 Sort lets you decide how you'd like your results sorted. You may sort on `columns` you've explicitly referenced, as well as on `summaries` you've requested. When wanting to sort by a summary, you use the name you've chosen.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
-  ```ts
-  const records = await xata.db.sales.summarize({
-    columns: {"store_name"},
-    summaries: {
-      "total_sales": {"count": "*"}
-    },
-    sort: [
-      // put the highest total_sales at the top
-      {"total_sales": "desc"},
-      // if total_sales is equal for two rows, order them by the store_name
-      {"store_name": "asc"}
-    ]
-  })
-  ```
+```ts
+const records = await xata.db.sales.summarize({
+  columns: {"store_name"},
+  summaries: {
+    "total_sales": {"count": "*"}
+  },
+  sort: [
+    // put the highest total_sales at the top
+    {"total_sales": "desc"},
+    // if total_sales is equal for two rows, order them by the store_name
+    {"store_name": "asc"}
+  ]
+})
+```
 
 ```python
 records = xata.data().summarize("sales", {
@@ -409,13 +409,13 @@ If this limitation is too small, we ask that you move your workload to the [aggr
 An example of a page request looks like:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
-  ```ts
-  const records = await xata.db.sales.summarize({
-    pagination: {
-      size: 50 // return up to 50 results
-    }
-  });
-  ```
+```ts
+const records = await xata.db.sales.summarize({
+  pagination: {
+    size: 50 // return up to 50 results
+  }
+});
+```
 
 ```python
 records = xata.data().summarize("sales", {
@@ -450,21 +450,21 @@ The key feature `summariesFilter` adds is the ability to take a summary and filt
 An example looks like:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
-  ```ts
-  const records = await xata.db.sales.summarize({
-    columns: ['product_name'],
-    summaries: {
-      revenue: { sum: 'price' },
-      items_sold: { count: '*' }
-    },
-    summariesFilter: {
-      // only return product names where the total revenue is >= 100 AND
-      // where sold >= 1000 of them
-      revenue: { $ge: 100.0 },
-      items_sold: { $ge: 1000 }
-    }
-  });
-  ```
+```ts
+const records = await xata.db.sales.summarize({
+  columns: ['product_name'],
+  summaries: {
+    revenue: { sum: 'price' },
+    items_sold: { count: '*' }
+  },
+  summariesFilter: {
+    // only return product names where the total revenue is >= 100 AND
+    // where sold >= 1000 of them
+    revenue: { $ge: 100.0 },
+    items_sold: { $ge: 1000 }
+  }
+});
+```
 
 ```python
 records = xata.data().summarize("sales", {
@@ -518,16 +518,16 @@ The default value for the consistency option is `strong`, which retrieves data f
 It is recommended to use the Replica Store for summarize requests wherever possible, in order to get the best possible performance out of your branch's assigned units.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
-  ```ts
-  const records = await xata.db.sales.summarize({
-    filter: { product: 'basketball' },
-    columns: ['product'],
-    summaries: {
-      average_sales_price: { average: 'sale_price' }
-    },
-    consistency: 'eventual'
-  });
-  ```
+```ts
+const records = await xata.db.sales.summarize({
+  filter: { product: 'basketball' },
+  columns: ['product'],
+  summaries: {
+    average_sales_price: { average: 'sale_price' }
+  },
+  consistency: 'eventual'
+});
+```
 
 ```python
 records = xata.data().summarize("sales", {
