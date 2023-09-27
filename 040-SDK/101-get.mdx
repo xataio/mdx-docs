@@ -209,7 +209,7 @@ const differentSizedPage = anotherPageWithDifferentSize.records;
 ```
 
 - `getAll()`: returns all the records in the query results. Warning: this is dangerous on large tables (more than 10,000 records), as it will potentially load a lot of data into memory and create a lot of requests to the server.
-- `getMany()`: returns the requested number of records for the query in a single response. The default is 20 records, but you can change it by modifying the pagination size. The pagination limit is 50,000 records.
+- `getMany()`: returns the requested number of records for the query in a single response. The default is 20 records, but you can change it by modifying the pagination size.
 
 ```ts
 const page = await xata.db.Posts.getMany({
