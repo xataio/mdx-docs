@@ -38,29 +38,28 @@ The Xata transactions API can be thought of as a way to wrap our existing insert
 We'll start by taking a look at a full request-response, and then we'll step into each operation and its options.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+  ```ts
+  const result = await xata.transactions.run([
+    { insert: { table: 'titles', record: { originalTitle: 'A new film' } } },
+    { insert: { table: 'titles', record: { id: 'new-0', originalTitle: 'The squeel' }, createOnly: true } },
+    { update: { table: 'titles', id: 'new-0', fields: { originalTitle: 'The sequel' }, ifVersion: 0 } },
+    { update: { table: 'titles', id: 'new-1', fields: { originalTitle: 'The third' }, upsert: true } },
+    { get: { table: 'titles', id: 'new-0', columns: ['id', 'originalTitle'] } },
+    { delete: { table: 'titles', id: 'new-0' } }
+  ]);
+  ```
 
-```ts
-const result = await xata.transactions.run([
-  { insert: { table: 'titles', record: { originalTitle: 'A new film' } } },
-  { insert: { table: 'titles', record: { id: 'new-0', originalTitle: 'The squeel' }, createOnly: true } },
-  { update: { table: 'titles', id: 'new-0', fields: { originalTitle: 'The sequel' }, ifVersion: 0 } },
-  { update: { table: 'titles', id: 'new-1', fields: { originalTitle: 'The third' }, upsert: true } },
-  { get: { table: 'titles', id: 'new-0', columns: ['id', 'originalTitle'] } },
-  { delete: { table: 'titles', id: 'new-0' } }
-]);
 ```
-
-```python
-result = xata.records().transactions({
+result = xata.records().transaction({
   "operations": [
     { "insert": { "table": "titles", "record": { "originalTitle": "A new film" } } },
-    { "insert": { "table": "titles", "record": { "id": "new-0", "originalTitle": "The squeel" }, "createOnly": true } },
+    { "insert": { "table": "titles", "record": { "id": "new-0", "originalTitle": "The squeel" }, "createOnly": True } },
     { "update": { "table": "titles", "id": "new-0", "fields": { "originalTitle": "The sequel" }, "ifVersion": 0 } },
-    { "update": { "table": "titles", "id": "new-1", "fields": { "originalTitle": "The third" }, "upsert": true } },
+    { "update": { "table": "titles", "id": "new-1", "fields": { "originalTitle": "The third" }, "upsert": True } },
     { "get": { "table": "titles", "id": "new-0", "columns": ["id", "originalTitle"] } },
     { "delete": { "table": "titles", "id": "new-0" } }
   ]
-})
+});
 ```
 
 ```jsonc
@@ -128,18 +127,17 @@ By default, if a record exists with the same explicit ID, Xata will overwrite th
 setting `createOnly` to `true` for the operation.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
-
-```ts
-const result = await xata.transactions.run([
-  {
-    insert: {
-      table: 'titles',
-      record: { id: 'rec_cfl4g6v838og05h0iv6g', originalTitle: 'A new film' },
-      createOnly: true
+  ```ts
+  const result = await xata.transactions.run([
+    {
+      insert: {
+        table: 'titles',
+        record: { id: 'rec_cfl4g6v838og05h0iv6g', originalTitle: 'A new film' },
+        createOnly: true
+      }
     }
-  }
-]);
-```
+  ]);
+  ```
 
 ```python
 result = xata.records().transactions({
@@ -201,4 +199,4 @@ a transaction if no record is found.
 ## Limitations
 
 - A maximum of 1000 operations are allowed in a single transaction. If you exceed this limit, you will receive an error message.
-- Inserting and updating content to file and file[] (file array) columns is not permitted with transactions.
+- Inserting and updating content to file and file\[] (file array) columns is not permitted with transactions.
