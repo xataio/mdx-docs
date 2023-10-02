@@ -771,7 +771,8 @@ records = xata.data().query("Users", {
 
 ## Case insensitive matching
 
-The `$contains` and `$pattern` operations are case sensitive but they have case insensitive counterparts: `$iContains` and `$iPattern`.
+The `$contains` and `$pattern` operations are case sensitive but they have case insensitive counterparts: `$iContains` and `$iPattern`. `$iContains` finds case-insensitive substrings, while `$iPattern` performs case-insensitive pattern matching, useful for regular expressions or wildcard searches.
+
 Their usage is the same as the case sensitive versions.
 
 Example for `$iContains`:
