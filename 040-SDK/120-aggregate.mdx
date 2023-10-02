@@ -772,3 +772,70 @@ results = xata.data().aggregate("titles", {
 ```
 
 </TabbedCode>
+
+### Percentiles
+
+`percentiles` is a metric-aggregation that computes the percentiles of a numeric column. You can specify an array with the percentiles you want to compute. For example, you can request the median by asking for the 50th percentile (`[50]`), or you can request the 50th, 90th, 99th, and 99.9th percentiles by asking for `[50, 90, 99, 99.9]`.
+
+Example:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
+```ts
+const records = await xata.db.titles.aggregate({
+  latencyPercentiles: {
+    percentiles: {
+      column: 'latency',
+      percentiles: [50, 90, 99, 99.9]
+    }
+  }
+});
+```
+
+```python
+results = xata.data().aggregate("titles", {
+  "aggs": {
+    "latencyPercentiles": {
+      "sum": {
+        "column": "latency",
+        "percentiles": [50, 90, 99, 99.9]
+      }
+    }
+  }
+})
+```
+
+```json
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/aggregate
+{
+  "aggs": {
+    "latencyPercentiles": {
+      "percentiles": {
+        "column": "latency",
+        "percentiles": [50, 90, 99, 99.9]
+      }
+    }
+  }
+}
+```
+
+</TabbedCode>
+
+The result will be an object containing a 'values' sub-object. This sub-object will have percentiles as keys and their corresponding values as the percentile values.
+
+For example:
+
+```json
+{
+  "aggs": {
+    "latencyPercentiles": {
+      "values": {
+        "50.0": 30,
+        "90:0": 78,
+        "99.0": 120,
+        "99.9": 124
+      }
+    }
+  }
+}
+```

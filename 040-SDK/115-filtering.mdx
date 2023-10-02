@@ -769,6 +769,103 @@ records = xata.data().query("Users", {
 
 </TabbedCode>
 
+## Case insensitive matching
+
+The `$contains` and `$pattern` operations are case sensitive but they have case insensitive counterparts: `$iContains` and `$iPattern`. `$iContains` finds case-insensitive substrings, while `$iPattern` performs case-insensitive pattern matching, useful for regular expressions or wildcard searches.
+
+Their usage is the same as the case sensitive versions.
+
+Example for `$iContains`:
+
+
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $iContains: 'Keanu' }
+}).getMany();
+
+// or
+const records = await xata.db.Users.filter('name', iContains('keanu')).getMany();
+```
+
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "name": {
+      "$iContains": "keanu"
+    }
+  }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" WHERE name ILIKE $1 LIMIT 20;",
+  "params": ["%keanu reeves%"]
+}
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+
+{
+  "filter": {
+    "name": {
+      "$iContains": "keanu"
+    }
+  }
+}
+```
+
+</TabbedCode>
+
+Example for `$iPattern`:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $iPattern: 'k*an? r*' }
+}).getMany();
+```
+
+```python
+records = xata.data().query("Users", {
+  "filter": {
+    "name": {
+      "$iPattern": "K*an? R*"
+    }
+  }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" WHERE name ILIKE $1 LIMIT 20;",
+  "params": ["K.*an.? R.*"]
+}
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+
+{
+  "filter": {
+    "name": {
+      "$iPattern": "K*an? R*"
+    }
+  }
+}
+```
+
+</TabbedCode>
+
+
 ## Comparison operators
 
 The comparison operators are:
