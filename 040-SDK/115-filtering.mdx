@@ -781,7 +781,7 @@ Example for `$iContains`:
 
 ```ts
 const records = await xata.db.Users.filter({
-  name: { $contains: 'Keanu' }
+  name: { $iContains: 'Keanu' }
 }).getMany();
 
 // or
