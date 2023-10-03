@@ -114,7 +114,7 @@ Xata's SDK clients throttle and retry `429` requests until they can be processed
 Tips & best practices useful to optimize requests for the Xata API:
 
 - In case the client receives a `429` response code from Xata, it means the request was **not** processed so your application can safely retry it.
-- Log and track errors in your application error channels or log streams in order to monitor for throttling errors, so you can make informed decisions for whether to upgrade your plan.
+- Log and track errors in your application error channels or log streams in order to monitor for throttling errors, so you can make informed decisions whether to upgrade your plan.
 - For writing records to Xata, use the bulk endpoint instead of the atomic (individual record insert) data endpoint. The bulk endpoint allows batching of multiple records in a single request, which favors the optimal use of both your branch's request rate limit and concurrency slots in the transactional store.
 - For requests to the `query` and `summarize` endpoints, consider using the `consistency: eventual` option to use the Read Replicas Store. This makes it less likely to reach the concurrency limit of either Store type and gets the best possible performance from your Xata plan.
 
