@@ -33,7 +33,7 @@ After connecting a database to a GitHub repository, Xata will create and maintai
 - When the preview is created for the first time, part of the data from the `main` branch will be copied over to it. This will be done by copying up to 10,000 rows from the `main` branch.
 - If there are new migrations added by the pull request (under the `.xata/migrations` folder), they will be executed on the preview branch.
 
-<Alert>[File attachments](https://xata.io/docs/sdk/file-attachments) are not copied to the preview branch.</Alert>
+<Alert>[File attachments](https://xata.io/docs/sdk/file-attachments){' are not copied to the preview branch.'}</Alert>
 
 Every new push to the pull request will trigger these steps again, so the Xata preview branch will always be up to date with the latest changes in the pull request.
 
