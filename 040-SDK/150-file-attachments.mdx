@@ -104,7 +104,7 @@ The existing file ids from the array must be present in the update.
 ```ts
 const user = await xata.db.Users.update('record_id', {
   photos: [
-    { 
+    {
       id: 'existing_file_id'
     },
     {
@@ -156,8 +156,7 @@ record = xata.records().update("Users", "record_id", {
     },
     {
       "id": "new_id",
-      "base64Content":
-        "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+      "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
     }
   ]
 }
@@ -243,7 +242,7 @@ record = xata.records().update("Users", "record_id", {"photos": [{id: 'id_to_kee
 // PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
 
 {
-  "photos": [{id: 'id_to_keep_1'}, {id: 'id_to_keep_2'} ]
+  "photos": [{ "id": "id_to_keep_1" }, { "id": "id_to_keep_2" }]
 }
 ```
 
@@ -397,4 +396,3 @@ curl --request DELETE 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tab
 ```
 
 </TabbedCode>
-

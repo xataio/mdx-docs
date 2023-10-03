@@ -621,13 +621,13 @@ Limitations: You can add constraints only to new columns of empty tables.
 
 ## Consistency
 
-Branches in Xata are replicated from a Primary Store to multiple Replica Stores. Data operations such as insert/update/delete are first performed in the Primary Store and changes are subsequently propagated to the Replica Stores, making them eventually consistent.
+Branches in Xata are replicated from a primary store to multiple replica stores. Data operations such as insert/update/delete are first performed in the Primary Store and changes are subsequently propagated to the replica stores, making them eventually consistent.
 
 The propagation delay may vary and there is no strict guarantee but it is typically much less than 100 milliseconds for the vast majority of requests.
 
-Xata units grant dedicated concurrency slots to the Primary and the eventually consistent Replica Stores. Read operations performed by the `/query` and `/summarize` endpoints can run against either of the Primary or Replica Stores. While the default method for those operations is `consistency: strong`, so they use the Primary Store to ensure the Xata API returns most accurate data by default, it is strongly advised to use the Replica Store wherever possible.
+Xata has concurrency slots on the Primary and the eventually consistent replica stores. Read operations performed by the `/query` and `/summarize` endpoints can run against either of the primary or replica stores. While the default method for those operations is `consistency: strong`, so they use the Primary Store to ensure the Xata API returns most accurate data by default, it is strongly advised to use the replica store wherever possible.
 
-This allows the available concurrency slots in the Primary Store to serve write operations and queries that purposely retrieve the latest state of content. Thus making it less likely for the operations that use the Primary Store to reach the [concurrency limit](/docs/rest-api/limits) and allowing you to get the best possible performance out of your branch's assigned units by utilizing both Store types.
+This allows the available concurrency slots in the primary store to serve write operations and queries that purposely retrieve the latest state of content. Thus making it less likely for the operations that use the Primary Store to reach the [concurrency limit](/docs/rest-api/limits) and allowing you to get the best possible performance out of your plan by utilizing both Store types.
 
 In order to change the consistency level from `strong` to `eventual`, you must add the property `consistency: eventual` to your `/query` or `/summarize` request. For example:
 
