@@ -94,13 +94,13 @@ The REST API may return HTTP response code `429` as a throttling error when the 
 
 Xata uses three Store types with individual concurrency limits:
 
-- **Consistent transactional store:** 2 concurrent requests / unit.  
+- **Consistent transactional store:** 2 concurrent requests / unit.
   Endpoints: `data`, `bulk`, `transaction`, `query`, `summarize`
-- **Read replicas store:** 3 concurrent requests / unit  
+- **Read replicas store:** 3 concurrent requests / unit
   Endpoints: `query`, `summarize` with option `consistency: eventual`
-- **Search & Analytics store:** 5 concurrent requests / unit.  
+- **Search & Analytics store:** 5 concurrent requests / unit.
   Endpoints: `aggregate`, `search`, `ask`, `vectorSearch`
-- **File attachments store:** 2 concurrent requests / unit.  
+- **File attachments store:** 2 concurrent requests / unit.
   Endpoints: `data`, `file`
 
 In case the concurrency limit in a Store is exceeded, requests to it are throttled internally with a timeout of 50ms. After reaching the timeout, the API errors with HTTP response code `429`.
@@ -109,13 +109,13 @@ For **File attachments**, the concurrency limits apply to CRUD and query operati
 
 ## Best practices
 
-Xata's SDK clients throttle and retry `429` requests until they can be processed with the units available. Instead of throwing an application error when you have a significant amount of traffic, it degrades the speed without failing. Whenever a request needs to be throttled by the SDK, it prints an application log with the amount of extra time it took to be processed. To avoid noticeable speed impact in your application, you can increase the assigned units to your branch.
+Xata's SDK clients throttle and retry `429` requests until they can be processed. Instead of throwing an application error when you have a significant amount of traffic, it degrades the speed without failing. Whenever a request needs to be throttled by the SDK, it prints an application log with the amount of extra time it took to be processed. To avoid noticeable speed impact in your application, you can upgrade your plan.
 
 Tips & best practices useful to optimize requests for the Xata API:
 
 - In case the client receives a `429` response code from Xata, it means the request was **not** processed so your application can safely retry it.
-- Log and track errors in your application error channels or log streams in order to monitor for throttling errors, so you can make informed decisions for adjusting the units assigned to your branch.
+- Log and track errors in your application error channels or log streams in order to monitor for throttling errors, so you can make informed decisions whether to upgrade your plan.
 - For writing records to Xata, use the bulk endpoint instead of the atomic (individual record insert) data endpoint. The bulk endpoint allows batching of multiple records in a single request, which favors the optimal use of both your branch's request rate limit and concurrency slots in the transactional store.
-- For requests to the `query` and `summarize` endpoits, consider using the `consistency: eventual` option to use the Read Replicas Store. This makes it less likely to reach the concurrency limit of either Store type and gets the best possible performance from your Xata branch's assigned units.
+- For requests to the `query` and `summarize` endpoints, consider using the `consistency: eventual` option to use the Read Replicas Store. This makes it less likely to reach the concurrency limit of either Store type and gets the best possible performance from your Xata plan.
 
 Custom plans can increase or remove some limits. To discuss upgrading, contact us by [email](mailto:support@xata.io) or fill the [Contact Form](https://support.xata.io/hc/en-us/requests/new).
