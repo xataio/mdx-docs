@@ -11,9 +11,7 @@ Xata offers OAuth 2.0 authentication for external applications. This allows you 
 
 <Alert status="info">
   <strong>OAuth 2.0 support is currently in beta.</strong>
-  If you are interested in using OAuth 2.0, contact us at <a href="mailto:integrations@xata.io">
-    integrations@xata.io
-  </a>.
+  If you are interested in using OAuth 2.0, contact us at <a href="mailto:integrations@xata.io">integrations@xata.io</a>.
 </Alert>
 
 ## Authorization Code Flow
@@ -22,10 +20,10 @@ Xata supports the [Authorization Code Flow](https://tools.ietf.org/html/rfc6749#
 
 The Authorization Code Flow works as follows:
 
-1. The application redirects the user to Xata to sign in.
-2. Xata redirects the user back to the application with an authorization code.
-3. The application exchanges the authorization code for an access token.
-4. The application uses the access token to make requests to the Xata API.
+1.  The application redirects the user to Xata to sign in.
+2.  Xata redirects the user back to the application with an authorization code.
+3.  The application exchanges the authorization code for an access token.
+4.  The application uses the access token to make requests to the Xata API.
 
 ### Redirecting the user to Xata
 
@@ -37,13 +35,13 @@ https://app.xata.io/integrations/oauth/authorize
 
 The application must include the following query parameters:
 
-| Parameter       | Description                                                                                                                                                                              |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `client_id`     | The client ID of the application.                                                                                                                                                        |
-| `redirect_uri`  | The URL that Xata should redirect the user back to after the user signs in. This URL must be registered with the application.                                                            |
-| `response_type` | Must be set to `code`.                                                                                                                                                                   |
-| `scope`         | Scopes that the application is requesting. Scopes define what actions or data the application can access or perform for the user. This can be repeated to request multiple scopes. Currently, the only supported scope is `admin:all` and it can be ignored as it is the default.
-| `state`         | A string that the application can use to maintain state between the request and the callback. Also used to prevent CSRF attacks.                                                         |
+| Parameter       | Description                                                                                                                                                                                                                                                                       |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client_id`     | The client ID of the application.                                                                                                                                                                                                                                                 |
+| `redirect_uri`  | The URL that Xata should redirect the user back to after the user signs in. This URL must be registered with the application.                                                                                                                                                     |
+| `response_type` | Must be set to `code`.                                                                                                                                                                                                                                                            |
+| `scope`         | Scopes that the application is requesting. Scopes define what actions or data the application can access or perform for the user. This can be repeated to request multiple scopes. Currently, the only supported scope is `admin:all` and it can be ignored as it is the default. |
+| `state`         | A string that the application can use to maintain state between the request and the callback. Also used to prevent CSRF attacks.                                                                                                                                                  |
 
 For example:
 
