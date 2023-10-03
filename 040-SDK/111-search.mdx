@@ -207,17 +207,14 @@ If you'd like to search only some of the tables in the database, you can specify
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-  const results = await xata.search.all("new st", {
-    tables: ["Users", "Posts"]
-  })
+const results = await xata.search.all('new st', {
+  tables: ['Users', 'Posts']
+});
 
-  // equivalent to:
-  const results = await xata.search.all("new st", {
-    tables: [
-      { table: "Users" },
-      { table: "Posts" }
-    ]
-  })
+// equivalent to:
+const results = await xata.search.all('new st', {
+  tables: [{ table: 'Users' }, { table: 'Posts' }]
+});
 ```
 
 ```python
