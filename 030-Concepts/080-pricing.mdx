@@ -13,7 +13,7 @@ Xata's pricing model is carefully designed to cater to different user needs, fro
 
 ### Concurrency limit
 
-The concurrency limit refers to the cap on the number of queries that can run simultaneously. It's the cap on how many requests we process at once. Unlike a "connections limit", this doesn't count the total connections, but only the active queries. Even if a large number of connections are made, only a certain number of them can execute queries at the same time. This protects against very slow queries and ensures that extremely time-consuming queries don't stall the entire system.
+The concurrency limit refers to the number of queries that can run simultaneously. It's the cap on how many requests we process at once. Unlike a "connections limit", this doesn't count the total connections, but only the active queries. Even if a large number of connections are made, only a certain number of them can execute queries at the same time. This protects against very slow queries and ensures that extremely time-consuming queries don't stall the entire system.
 
 To ensure optimal performance for users, we've set the following limits. These allocations are designed to prioritize and balance the workload across the different store types based on requirements and usage patterns:
 
