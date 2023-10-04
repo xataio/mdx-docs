@@ -7,19 +7,17 @@ slug: concepts/pricing
 published: true
 ---
 
-For information on pricing, billing, and usage limits, refer to our [pricing page](/pricing).
+Xata's pricing model is carefully designed to cater to different user needs, from individual projects to high-scale enterprise applications. For information on pricing, billing, and usage limits, you can refer to our [pricing page](/pricing).
 
-### Request Rate limit
+## Billing terms
 
-The maximum number of requests allowed per second. If the request rate limit is exceeded additional requests will fail with a `429` HTTP status.
+### Concurrency limit
 
-This limit exists on shared Xata instances to ensure reliability for all users on the instance.
-
-### Request Concurrency limit
+The concurrency limit is the maximum number of queries that are executed in parallel. It is different from a "connections limit" because the queries are counted only while they are actually executing, and more connections can be accepted and queued. It protects against very slow queries.
 
 The maximum number of simultaneous requests that can be processed at any given time.
 
-If the request concurrency limit is exceeded additional requests will fail with a `429` HTTP status.
+If the request concurrency limit is exceeded, additional requests will fail with a `429` HTTP status.
 
 These allocations are designed to prioritize and balance the workload across the different store types based on requirements and usage patterns.
 
@@ -29,4 +27,120 @@ The data size on disk denotes the quantity of data held within the transactional
 
 This size limit is considered a soft-limit and is not strictly enforced in real-time. However, if you exceed this limit, it indicates that your data storage requirements may be approaching a critical level. In such cases, we recommend you explore potential solutions with [Xata Support](https://support.xata.io/hc/en-us) to optimize and scale your data storage.
 
-If you have any further questions or need assistance, don't hesitate contact [Support](https://support.xata.io/hc/en-us).
+### Request Rate limit
+
+The maximum number of requests allowed per second. If the request rate limit is exceeded, additional requests will fail with a `429` HTTP status. This limit exists on shared Xata instances to ensure reliability for all users on the instance. The rate limit for the Free plan is 75 queries per second (qps).
+
+### Storage
+
+Database storage currnetly bundles storage on disk with I/O rates and compute costs. The price per GB relefects a combination of all three. Search engine storage currnetly bundles storage on disk with I/O rates and compute costs. The price per GB relefects a combination of all three. The amount of storage on disk your file attachments consume.
+
+## Pricing plans
+
+### Common features across all plans
+
+All of our plans, irrespective of their pricing, include the following features:
+
+#### PostgreSQL database
+
+Xata uses Postgres, which serves as the backbone for storing structured, relational data securely. Each plan starts with 10 branches and 15 GB of storage space, but you can get more space if you need it, and even go for a customized plan if that suits you better.
+
+#### High Availability
+
+Ensures consistent service access with minimal interruptions or downtime.
+
+#### Elasticsearch integration
+
+Integrates efficient and responsive full-text search capabilities within your projects. Our search engine uses Elasticsearch, making searching a breeze because it replicates all the data from our database. You get 2 GB of space here initially, but you can buy more, or go custom, depending on what you need.
+
+#### File Attachments
+
+Cloudflare's CDN for file deliveries: Facilitates swift and secure delivery of files across the internet. For storing and delivering files, we are using S3 and Cloudflare's CDN. It means your files are stored safely, and you get them quickly when you need them. Starting storage here is also 2 GB, but you can get more or customize it as per your needs.
+
+#### Image Transformations
+
+You can do 10k image transformations from the get-go, and if you need more, that’s possible too. There are custom plans available here as well.
+
+#### AI Questions
+
+We have an option for integrating with OpenAI and ChatGPT, allowing you to ask up to 250 AI-powered questions. If you want to ask more questions, you can, and yes, custom plans are available here as well.
+
+#### Support
+
+Depending on your plan, you get different levels of support, starting from community support to dedicated support, so help is available when you need it.
+
+### Free plan
+
+The Free Plan is perfect for individuals who are working on personal projects or are in the experimentation phase. This plan offers the basic functionalities needed to get started, at no cost.
+The Free plan is ideal for:
+
+- Individual Developers
+- Students
+- Hobbyists
+- Experimenter wanting to learn amore about Xata
+
+#### Features
+
+- Database Branches: 10 Database Branches Manage your structured, relational data across up to 10 branches.
+- Availability: High Availability to ensures your projects are always up and running, with minimal disruptions.
+- Data Storage: 15 GB Space to store the data related to your projects.
+- Storage: 2 GB for search engine and file attachments. You can use this space for enabling full-text search and storing file attachments.
+- AI Queries/Month: Run queries with AI integration up to 250 times a month.
+- Support: Community Support is offered, so you can engage with community forums for assistance and discussions.
+
+### Pro plan
+
+The Pro Plan is optimized for small to medium-sized teams that require more resources. It operates on a usage-based pricing model, allowing you to scale resources as needed. Each month has a starting charge of $20. If there are any additional costs from extra usage during the month, you'll see those charges on your account on the first day of the next month.
+
+The Pro plan is ideal for:
+
+- Small to Medium-sized teams
+- Startups
+- Growing projects
+
+We encourage you to reach out to us if you aere present a startup or a non-profit organization, as we offer specialized programs and discounts tailored to meet your needs.
+
+#### Features:
+
+- 10 Database Branches: 10 Database Branches Manage your structured, relational data across up to 10 branches.
+- High Availability: Ensures your projects are always up and running, with minimal disruptions.
+- Data Storage: 15 GB Space to store the data related to your projects.
+- Storage: 2 GB for Search Engine & File Attachment Use this space for enabling full-text search and storing file attachments.
+- 250 AI Queries/Month: 250 AI Queries/Month Run queries with AI integration up to 250 times a month.
+- Community Support: Engage with community forums for assistance and discussions.
+
+Unlimited Database Branches: Expand your data structuring and management without limitations.
+Multiple Availability Zones: Your projects are hosted in different zones, improving reliability.
+Support SLAs: Benefit from guaranteed support response and resolution times.
+
+#### Enterprise plan
+
+The Enterprise plan caters to large organizations with specific and high-scale needs. This plan provides custom solutions, tailored support, and volume discounts, ensuring optimal functionality and efficiency.
+
+The Enterprise plan is ideal for:
+
+- Large organizations
+- High-scale enterprises
+- Specialized projects
+
+Features:
+
+- 10 Database Branches: 10 Database Branches Manage your structured, relational data across up to 10 branches.
+- High Availability: Ensures your projects are always up and running, with minimal disruptions.
+- Data Storage: 15 GB Space to store the data related to your projects.
+- Storage: 2 GB for Search Engine & File Attachment Use this space for enabling full-text search and storing file attachments.
+- 250 AI Queries/Month: 250 AI Queries/Month Run queries with AI integration up to 250 times a month.
+- Community Support: Engage with community forums for assistance and discussions.
+
+Unlimited Database Branches: Expand your data structuring and management without limitations.
+Multiple Availability Zones: Your projects are hosted in different zones, improving reliability.
+Support SLAs: Benefit from guaranteed support response and resolution times.
+Everything in PRO, Plus:
+Integration with Your AWS Account: Connect your existing AWS account for enhanced control and security.
+Single Sign-On (SSO): Secure and efficient access management.
+Volume Discounts: Reduce your costs with discounts on bulk usage.
+Dedicated Support: Receive support tailored to your specific needs and challenges.
+General Information:
+Transparent Pricing: Our clear pricing structure ensures there are no hidden fees; you pay only for what you use.
+Flexible Options: Each plan is flexible, enabling modifications or upgrades as your project develops.
+Tailored to Your Needs: Whether you are an individual or a large team, there’s a plan designed to meet your specific needs.
