@@ -45,7 +45,7 @@ PITR operates by consistently backing up transaction logs. It grants you the cap
 
 ### Rate limit
 
-Each shared Xata instance has a set request rate limit to maintain consistent performance for all users. If requests surpass this threshold, they will return a 429 HTTP status. The following soft limits apply for rate limits in Xata
+Each shared Xata instance has a set request rate limit to maintain consistent performance for all users. If requests surpass this threshold, they will return a 429 HTTP status. The following limits apply:
 
   - **Free tier:** Limited to 75 requests/second (qps).
   - **Pro tier:** Starts with a 150 requests/second (qps), which can be adjusted upon request.
