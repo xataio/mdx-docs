@@ -22,7 +22,7 @@ We've set specific limits to balance workloads across different store types. The
 
 > The Pro tier has a 'soft' limit to guard against unintended excessive use or misuse. Contact us if you require a higher limit.
 
-Limits apply to each workspace and are distributed among the databases and branches within that workspace.
+Concurrency limits apply to each branch. These limits are designated for each branch in the workspace.
 
 If the number of simultaneous requests surpasses the concurrency limit, any additional requests will be temporarily queued for 100ms. If the volume of parallel requests doesn't decrease within that time, the queued requests will fail, returning an HTTP 429 status.
 
