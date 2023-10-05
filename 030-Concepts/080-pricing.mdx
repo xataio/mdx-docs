@@ -7,28 +7,28 @@ slug: concepts/pricing
 published: true
 ---
 
-Xata's pricing model is carefully designed to cater to different user needs, from individual projects to high-scale enterprise applications. Ensure you check out our [pricing page](/pricing) for a comprehensive overview of the pricing structure. This page provides information on pricing, billing, and usage limits. 
+Xata's pricing model is carefully designed to cater to different user needs, from individual projects to high-scale enterprise applications. Ensure you check out our [pricing page](/pricing) for a comprehensive overview of the pricing structure. This page provides additional information on pricing, billing, and usage limits. 
 
 ## Billing terms
 
 ### Concurrency limit
 
-The concurrency limit refers to the number of queries that can run simultaneously. It's the cap on how many requests we process at once. Unlike a "connections limit", this doesn't count the total connections, but only the active queries. Even if a large number of connections are made, only a certain number of them can execute queries at the same time. This protects against very slow queries and ensures that extremely time-consuming queries don't stall the entire system.
+The concurrency limit refers to the number of queries that can run simultaneously. It's the cap on how many requests we process at once. Unlike a "connections limit", this doesn't count the total connections, but only the active queries. Xata doesn't limit the number of connections.
 
-To ensure optimal performance for users, we've set the following limits. These allocations are designed to prioritize and balance the workload across the different store types based on requirements and usage patterns:
+We've set specific limits to balance workloads across different store types. The number of concurrency limit depends on the plan and are allocated to each branch:
 
   -  **Free plan:** 15 parallel requests (6 primary + 9 from replicas) to the database
   -  **Pro plan:** 45 parallel request (18 primary + 27 from replicas) to the database
 
-> These allocations are 'soft' limits. If the high usage isn't accidental or abusive, Xata can adjust these caps. Xata operates on shared clusters, and aims to ensure that one user's high usage doesn't negatively affect everyone else using that cluster.
-
-If requests surpass the concurrency limit, they'll receive a 429 HTTP status, indicating they've been rejected due to overload.
+> The Pro tier has a 'soft' limit to guard against unintended excessive use or misuse. Contact us if you require a higher limit.
 
 Limits apply to each workspace and are distributed among the databases and branches within that workspace.
 
-### Data Size
+If the number of simultaneous requests surpasses the concurrency limit, any additional requests will be temporarily queued for 100ms. If the volume of parallel requests doesn't decrease within that time, the queued requests will fail, returning an HTTP 429 status.
 
-The disk's data size represents the amount of data stored in the transactional database.
+### Database storage
+
+The disk's storage represents the amount of data stored in the transactional database. Database storage in Xata encompasses not only disk space but also I/O rates and compute resources. The listed price per GB integrates the three components.
 
 This size limit is considered a soft-limit and is not strictly enforced in real-time. However, if you exceed this limit, it indicates that your data storage requirements may be approaching a critical level. In such cases, we recommend you explore potential solutions with [Xata Support](https://support.xata.io/hc/en-us) to optimize and scale your data storage.
 
@@ -41,7 +41,7 @@ Point-in-time recovery (PITR) enables the restoration of data to a specific time
   - Malformed updates: Rollback changes from updates that led to unexpected or undesired results.
   - Security breaches: In the event of data compromise or unauthorized alterations, revert the database to a secure, pre-breach state.
 
-PITR operates by consistently backing up transaction logs. It grants you the capability to revert data to any designated point within a specified retention window.
+PITR operates by consistently backing up transaction logs. It grants you the capability to revert data to any designated point within the specified retention window.
 
 ### Rate limit
 
@@ -51,17 +51,6 @@ Each shared Xata instance has a set request rate limit to maintain consistent pe
   - **Pro tier:** Starts with a 150 requests/second (qps), which can be adjusted upon request.
 
 Limits apply to each workspace and are distributed among the databases and branches within that workspace.
-
-### Storage
-
-Database storage in Xata encompasses not only disk space but also I/O rates and compute resources. The listed price per GB integrates the following three components. 
-
-- **Storage on disk:** The actual space where your data resides. This can include database entries, files, or any other assets.
-
-- **I/O rates:** I/O, or Input/Output, rates determine the speed at which data can be read from or written to the storage. Higher I/O rates mean operations like reading from or saving to the database will be faster, leading to quicker response times for your apps.
-
-- **Compute costs:** Involves the use of computational power for the effective handling, access, and alteration of stored data. This ensures data storage, fast operations, and robust processing.
-
 
 ## Pricing plans
 
@@ -75,13 +64,13 @@ All Xata plans, irrespective of their pricing, include the following features:
 
 - **High availability (HA):** Consistent service access with minimal interruptions or downtime.
 
-- **Elasticsearch integration:** Integrates efficient and responsive full-text search capabilities within your projects. Our search engine uses Elasticsearch, making searching a breeze because it replicates all the data from our database. You get 2 GB of space here initially, but you can buy more, or go custom, depending on what you need.
+- **Elasticsearch integration:** Integrates efficient and responsive full-text search capabilities within your projects. Our search engine uses Elasticsearch, which makes searches easy because it replicates all the data from our database. You get 2 GB of space initially, but can add more depending on what you need.
 
-- **File attachments:** Xata uses S3 and Cloudflare's CDN for storing and delivering files. Your files are stored safely, and you access them quickly when you need them. Starting storage is 2 GB, but you can add more or customize it as per your needs.
+- **File attachments:** Xata uses S3 and Cloudflare's CDN for storing and delivering files. Your files are stored safely and you can access them quickly when you need them. Starting storage is 2 GB, but you can add more or customize it per your needs.
 
 - **Image transformations:** You can do 10k image transformations from the start and add more as needed. 
 
-- **AI questions:** Xata offers an option for integrating with OpenAI and ChatGPT, allowing you to ask up to 250 AI-powered questions. If you want to ask more questions, you can, and yes, custom plans are available here as well.
+- **AI questions:** Xata offers an option for integrating with OpenAI and ChatGPT, allowing you to ask up to 250 AI-powered questions. If you want to ask more questions, you can add more with the Pro or Enterprise plans.
 
 - **Support:** Depending on your plan, you get different levels of support, starting from community support to dedicated support.
 
@@ -94,7 +83,7 @@ The Free plan is perfect for individuals who are working on personal projects or
   - Individual developers
   - Students
   - Hobbyists
-  - Experimenters, who want to learn more about Xata
+  - Experimenters who want to learn more about Xata
 
 ##### Features
 - **Database branches:** Manage your relational and structural data using up to 10 database branches.
@@ -119,10 +108,10 @@ Each month has a starting charge of $20. If there are any additional costs from 
 
 ##### Features
 - **Database branches:** Unlimited database branches to allow for expanded data structuring and management without limitations.
-- **Availability:** Multiple availability zones to ensure projects are hosted in different zones and have improved reliability.
+- **Availability:** High availability to ensure your projects are always up and running, with minimal disruptions. In addition, multiple availability zones to ensure projects are hosted in different zones and have improved reliability.
 - **Data storage:** Includes 15 GB of space for project-related data, and beyond that, unlimited storage in which you only pay for the additional storage you use.
-- **Storage:** Includes 2 GB to start for search engine and file attachments. Beyond that, unlimited storage for full-text search and storing file attachments is available.
-- **AI queries/month:** Includes 250 AI queries monthly. You can scale up to unlimited queries, paying only for the usage beyond the initial 250.
+- **Storage:** Includes 2 GB to start for search engine and file attachments. Beyond that, unlimited storage for full-text search and storing file attachments is available, in which you only pay for the additional storage you use.
+- **AI queries/month:** Includes 250 AI queries monthly. You can scale up to unlimited queries, paying only for the usage beyond the initial 250 queries.
 - **Support:** Support outliined in SLAs for guaranteed support responses and resolution times, in addition to community support so you can engage with community forums for assistance and discussions.
 
 ### Enterprise plan
@@ -138,7 +127,7 @@ The Enterprise plan is designed for large organizations that require specific, l
 - **Database branches:** Unlimited database branches to allow for expanded data structuring and management without limitations.
 - **Availability:** Multiple availability zones to ensure projects are hosted in different zones and have improved reliability.
 - **Data storage:** Includes 15 GB of space for project-related data, and beyond that, unlimited storage in which you only pay for the additional storage you use.
-- **Storage:** Includes 2 GB to start for search engine and file attachments. Beyond that, unlimited storage for full-text search and storing file attachments is available.
+- **Storage:** Includes 2 GB to start for search engine and file attachments. Beyond that, unlimited storage for full-text search and storing file attachments is available, in which you only pay for the additional storage you use.
 - **AI queries/month:** Includes 250 AI queries monthly. You can scale up to unlimited queries, paying only for the usage beyond the initial 250 queries.
 - **Integrations:** Integration with AWS to connect your existing AWS account for enhanced control and security.
 - **Security:** Single Sign-On (SSO) for secure and efficient access management.
@@ -147,32 +136,32 @@ The Enterprise plan is designed for large organizations that require specific, l
 
 ### Change plans
 
-Visit the [pricing page](https://xata.io/pricing) to upgrade from the Free to Pro plan. For the Enterprise plan, please contact us.
+Visit the [pricing page](https://xata.io/pricing) to upgrade from the Free to Pro plan. For the Enterprise plan, contact us.
 
 ### Pricing summary
 
 | Attribute                   | Free            | Pro             | Enterprise |
 |-----------------------------|-----------------|-----------------|---------   |
 | Max storage/month           | 5 GB            | 15 GB + $2 per additional GB |Unlimited   |
-| Row reads/month             | Unlimited*      | Unlimited*      | Unlimited* |
-| Row writes/month            | 10 million      | 50 million      | N/A     |
-| Available cluster sizes     | 1               | 1               | N/A     |
-| Availability zones          | 1               | 1               | N/A     |
-| Production branches         | 1 per database  | 2 per database  | Unlimited|
-| Development branches        | 1 per database  | 5 per database  | N/A     |
-| Concurrent connections      | 1,000           | 10,000          | N/A     |
-| Query Insights retention    | 24 hours        | 7 days          | N/A     |
-| Horizontal sharding         | Not included    | Not included    | N/A     |
-| Deployment options          | Multi-tenant    | Multi-tenant    | N/A     |
-| Read only regions           | Included        | Included        | Included    |
-| Web console                 | Included        | Included        | Included    |
-| Xata  CLI                   | Included        | Included        | Included     |
-| SSO                         | Not included    | Available as an add-on | Available as an add-on|
-| Audit log retention         | 5 days          | 15 days         | N/A     |
-| Automatic backups           | Daily           | Every 12 hours  | N/A     |
-| Support                     | Community       | SLA       | N/A     |
+| Row reads/month             | Unlimited*      | Unlimited*      | Unlimited  |
+| Row writes/month            | Unlimited*      | Unlimited*      | Unlimited           |
+| Availability zones          | 2               | 3               |                     |
+| Branches                    | 10              | Unlimited       | Unlimited           |
+| Replicas                    | Included        | Included        | Included            |
+| Concurrent connections      | Unlimited       | Unlimited       | Unlimited           |
+| Query insights retention    |                 |                 |                     |
+| Horizontal sharding         | Not included    | Not included    | N/A                 |
+| Read only regions           | Included        | Included        | Included            |
+| Questions                   | 250 questions   | 250 questions + $5 per additional 100 questions| Unlimited
+| File attachments storage    | 2 GB            | 2 GB + $0.1 per additional GB | Unlimited
+| Image transformations       |10k transformations|	10k transformations + $1 per additional 10k transformations| 	Unlimited
+| Web console                 | Included        | Included        | Included            |
+| Xata  CLI                   | Included        | Included        | Included            |
+| SSO                         | Not included    | Not included    | Included            |
+| PITR / Automatic backups    | Included        | Incldued        | Included            |
+| Support                     | Community       | SLA             | Dedicated Support   |
 
-* as related to you subscription setting permit
+* _Based on the permissions of your selected plan_
 
 
 ## FAQ
@@ -187,9 +176,8 @@ If you exceed the rate limit on Xata, you will receive a 429 HTTP status as a no
 ##### Can I increase my rate limit?
 Yes, you can increase the limit by upgrading to the Pro plan, if you are on the Free plan. You can also contact us if you would like to discuss pricing options.
 
-##### How are read and write requests measured?
-
 ##### Do the reads and writes per second differ depending on the plan chosen?
+No. Regardless of the plan you chose, the reads and writes per second remain consistent. This means that users on different plans will experience the same performance in terms of data access.
 
 ##### How is the data size measured?
 We measure and determine data size by database storage, search engine storage, file attachment storage.
@@ -197,23 +185,15 @@ We measure and determine data size by database storage, search engine storage, f
 ##### What happens when the rate limit or concurrency limits are reached?
 When the rate limit or concurrency limits are reached, we will throttle your requests and  answer with a 429 status code. Your app will be in a degraded mode, but only the requests over the limit are affected. The rate limit is reset every second, and the concurrency limit is measured at any given time.
 
-</Expand>
-
-<Expand title="Changing plans">
-##### What happens on upgrade and downgrade?
-If you decide to upgrade or downgrade your subscription plan in the middle of a billing cycle, we calculate the charges or credits based on the number of days remaining in the month. This approach ensures that you are billed accurately, reflecting the services you use during the billing cycle.
-
 ##### Will my database be suspended after a period of inactivity?'
 Nope. Even if it’s not accessed, we don’t put your database to sleep, even if your'e on the free plan. We want projects of all kinds to be able to depend on Xata even if they are not paying.'
 
-</Expand>
-
 <Expand title="Billing and special pricing">
+
+#### How long is a billing cycle?
+
 ##### When will I be billed?
-For our paid plans, you will receive an invioce on the first day of each month. This will include usage from the previous month and any outstanding balances.
-
-##### What is included in the invoice?
-
+For our Pro and Enterprise plans, an invoice will be generated every 30 days based on the date you initiated your plan. This invoice will cover the past month's usage and any previous outstanding amounts
 
 ##### Do you have a program for start-ups program?,
 Yes, we do, please get in touch with us for details.'
@@ -222,5 +202,15 @@ Yes, we do, please get in touch with us for details.'
 Yes! In fact, the idea for Xata was born out of a non-profit. Get in touch with us, we’d love to help.
 
 </Expand>
+
+</Expand>
+
+<Expand title="Changing plans">
+##### What happens on upgrade and downgrade?
+If you day to change your subscription level partway through a billing cycle, we'll adjust the charges or credits based on the days left in the 30-day period from when you started your plan. This method ensures you're billed fairly, based on the services utilized during that billing period.
+
+</Expand>
+
+
 
 Ensure you check out our [pricing page](https://xata.io/pricing). If you have any further questions or need assistance, send a message to contactus@xata.io or contact [Support](https://support.xata.io/hc/en-us).
