@@ -66,7 +66,7 @@ All Xata plans, irrespective of their pricing, include the following features:
 
 - **High availability (HA):** Consistent service access with minimal interruptions or downtime.
 
-- **Elasticsearch integration:** Integrates efficient and responsive full-text search capabilities within your projects. Our search engine uses Elasticsearch, which makes searches easy because it replicates all the data from our database. You get 2 GB of space initially, but can add more depending on what you need.
+- **Elasticsearch integration:** Integrates efficient and responsive full-text search capabilities within your projects. Our search engine uses Elasticsearch, which makes searches easy because it replicates all the data from our database. You get 15 GB of space initially, but can add more depending on what you need.
 
 - **File attachments:** Xata uses S3 and Cloudflare's CDN for storing and delivering files. Your files are stored safely and you can access them quickly when you need them. Starting storage is 2 GB, but you can add more or customize it per your needs.
 
@@ -90,8 +90,9 @@ The Free plan is perfect for individuals who are working on personal projects or
 ##### Features
 - **Database branches:** Manage your relational and structural data using up to 10 database branches.
 - **Availability:** High availability to ensure your projects are always up and running, with minimal disruptions.
-- **Data storage:** 15 GB to store the data related to your projects.
-- **Storage:** 2 GB for search engine and file attachments. You can use this space for enabling full-text search and storing file attachments.
+- **Data storage:** 15 GB for storing the data related to your projects. This does not include search engine and file attachment storage. 
+- **Search engine storage:** 15 GB for searching and storing results. You can use this space for enabling full-text search. Search engine storage currently bundles storage on disk with I/O rates and compute costs. 
+- **File attachment storage:** 2 GB for storing file attachments.
 - **AI queries/month:** Run queries with AI integration up to 250 times a month.
 - **Support:** Community support is offered, so you can engage with community forums for assistance and discussions.
 
@@ -100,7 +101,7 @@ The Free plan is perfect for individuals who are working on personal projects or
 
 The Pro Plan is optimized for small to medium-sized teams that require more resources. It operates on a usage-based pricing model, allowing you to scale resources as needed. 
 
-Each billing period has a starting charge of $20. If there are any additional costs from extra usage during the month, you will see those charges on your account on the first day of the next billing period. 
+Each billing period has a minimum charge of $20. If there are any additional charges related to the plan during the month, you will see those charges invoiced at the start of the following billing period. 
 
 **The Pro plan is ideal for:**
   - Small to medium-sized teams
@@ -113,7 +114,8 @@ Each billing period has a starting charge of $20. If there are any additional co
 - **Database branches:** Unlimited database branches to allow for expanded data structuring and management without limitations.
 - **Availability:** High availability to ensure your projects are always up and running, with minimal disruptions. In addition, multiple availability zones to ensure projects are hosted in different zones and have improved reliability.
 - **Data storage:** Includes 15 GB of space for project-related data, and beyond that, unlimited storage in which you only pay for the additional storage you use.
-- **Storage:** Includes 2 GB to start for search engine and file attachments. Beyond that, unlimited storage for full-text search and storing file attachments is available, in which you only pay for the additional storage you use.
+- **Search engine storage:** 15 GB for searching and storing results. You can use this space for enabling full-text search. Search engine storage currently bundles storage on disk with I/O rates and compute costs. Beyond that, additional search engine storage is available, in which you only pay for the additional storage you use.
+- **File attachment storage:** 2 GB for storing file attachments. Beyond that, unlimited storage for storing file attachments is available, in which you only pay for the additional storage you use.
 - **AI queries/month:** Includes 250 AI queries monthly. You can scale up to unlimited queries, paying only for the usage beyond the initial 250 queries.
 - **Support:** Support outliined in SLAs for guaranteed support responses and resolution times, in addition to community support so you can engage with community forums for assistance and discussions.
 
@@ -130,7 +132,8 @@ The Enterprise plan is designed for large organizations that require specific, l
 - **Database branches:** Unlimited database branches to allow for expanded data structuring and management without limitations.
 - **Availability:** Multiple availability zones to ensure projects are hosted in different zones and have improved reliability.
 - **Data storage:** Includes 15 GB of space for project-related data, and beyond that, unlimited storage in which you only pay for the additional storage you use.
-- **Storage:** Includes 2 GB to start for search engine and file attachments. Beyond that, unlimited storage for full-text search and storing file attachments is available, in which you only pay for the additional storage you use.
+- **Search engine storage:** 15 GB for searching and storing results. You can use this space for enabling full-text search. Search engine storage currently bundles storage on disk with I/O rates and compute costs. Beyond that, additional search engine storage is available, in which you only pay for the additional storage you use.
+- **File attachment storage:** 2 GB for storing file attachments. Beyond that, unlimited storage for storing file attachments is available, in which you only pay for the additional storage you use.
 - **AI queries/month:** Includes 250 AI queries monthly. You can scale up to unlimited queries, paying only for the usage beyond the initial 250 queries.
 - **Integrations:** Integration with AWS to connect your existing AWS account for enhanced control and security.
 - **Security:** Single Sign-On (SSO) for secure and efficient access management.
@@ -143,7 +146,7 @@ Visit the [pricing page](https://xata.io/pricing) to upgrade from the Free to Pr
 
 ### Pricing summary
 
-| Attribute                   | Free            | Pro             | Enterprise |
+|                             | Free            | Pro             | Enterprise |
 |-----------------------------|-----------------|-----------------|---------   |
 | Max storage/month           | 5 GB            | 15 GB + $2 per additional GB |Unlimited   |
 | Row reads/month             | Unlimited*      | Unlimited*      | Unlimited  |
