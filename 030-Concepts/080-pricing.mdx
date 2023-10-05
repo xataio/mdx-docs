@@ -22,7 +22,7 @@ We've set specific limits to balance workloads across different store types. The
 
 > The Pro tier has a 'soft' limit to guard against unintended excessive use or misuse. Contact us if you require a higher limit.
 
-Concurrency limits apply to each branch. These limits are designated for each branch in the workspace.
+Concurrency limits apply to each branch in the workspace. 
 
 If the number of simultaneous requests surpasses the concurrency limit, any additional requests will be temporarily queued for 100ms. If the volume of parallel requests doesn't decrease within that time, the queued requests will fail, returning an HTTP 429 status.
 
@@ -52,7 +52,7 @@ Each shared Xata instance has a set request rate limit to maintain consistent pe
 
 The Pro plan has a flexible limit, while the Free plan has a strict, fixed limit.
 
-Limits apply to each branch. These limits are designated for each branch in the workspace.
+These limits are designated for each branch in the workspace.
 
 ## Pricing plans
 
@@ -98,8 +98,9 @@ The Free plan is perfect for individuals who are working on personal projects or
 
 ### Pro plan
 
-The Pro Plan is optimized for small to medium-sized teams that require more resources. It operates on a usage-based pricing model, allowing users to scale resources as needed. 
-Each month has a starting charge of $20. If there are any additional costs from extra usage during the month, users will see those charges on their account on the first day of the next month.
+The Pro Plan is optimized for small to medium-sized teams that require more resources. It operates on a usage-based pricing model, allowing you to scale resources as needed. 
+
+Each billing period has a starting charge of $20. If there are any additional costs from extra usage during the month, you will see those charges on your account on the first day of the next billing period. 
 
 **The Pro plan is ideal for:**
   - Small to medium-sized teams
@@ -188,14 +189,18 @@ We measure and determine data size by database storage, search engine storage, f
 When the rate limit or concurrency limits are reached, we will throttle your requests and  answer with a 429 status code. Your app will be in a degraded mode, but only the requests over the limit are affected. The rate limit is reset every second, and the concurrency limit is measured at any given time.
 
 ##### Will my database be suspended after a period of inactivity?'
-Nope. Even if it’s not accessed, we don’t put your database to sleep, even if your'e on the free plan. We want projects of all kinds to be able to depend on Xata even if they are not paying.
+No. Even if it’s not accessed, we don’t put your database to sleep, even if your'e on the free plan. We want projects of all kinds to be able to depend on Xata even if they are not paying.
+
+</Expand>
+
 
 <Expand title="Billing and special pricing">
 
 #### How long is a billing cycle?
+A billing period lasts 30 days and begins on the day you choose and start your plan.
 
 ##### When will I be billed?
-For our Pro and Enterprise plans, an invoice will be generated every 30 days based on the date you initiated your plan. This invoice will cover the past month's usage and any previous outstanding amounts
+For our Pro and Enterprise plans, an invoice will be generated every 30 days based on the date you initiated your plan. This invoice will cover the past month's usage and any previous outstanding amounts.
 
 ##### Do you have a program for start-ups program?,
 Yes, we do, please get in touch with us for details.'
@@ -205,11 +210,10 @@ Yes! In fact, the idea for Xata was born out of a non-profit. Get in touch with 
 
 </Expand>
 
-</Expand>
 
 <Expand title="Changing plans">
 ##### What happens on upgrade and downgrade?
-If you day to change your subscription level partway through a billing cycle, we'll adjust the charges or credits based on the days left in the 30-day period from when you started your plan. This method ensures you're billed fairly, based on the services utilized during that billing period.
+If you adjust your subscription level mid-billing cycle, we'll prorate the charges or credits for the remaining days in your 30-day period from the plan's start date. This ensures accurate billing based on your actual usage during that time.
 
 </Expand>
 
