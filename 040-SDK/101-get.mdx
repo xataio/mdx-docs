@@ -381,6 +381,33 @@ posts = xata.data().query("Posts", {
 
 In this example, the `author` is a link column from `Posts` to `Users` and `team` is a link column from `Users` to `Teams`.
 
+Also when getting a record by ID, by default only the id column of linked records is included in the response, but you can request link columns to be expanded:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
+```ts
+const user = await xata.db.Posts.read('myid',["author.*"]);
+```
+
+```python
+user = xata.records().get("Posts", "myid", columns=["author.*"])
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT *,\"Users\".* FROM \"Posts\" LEFT JOIN \"Users\" ON \"Posts\".author=\"Users\".id WHERE \"Posts\".id=$1",
+  "params": ["myid"]
+}
+```
+
+```jsonc
+// GET https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?columns=author.*
+```
+
+</TabbedCode>
+
 ## Filtering Records
 
 This section contains a few examples of how to use filtering. To find all supported operators and examples for them, see the [Filtering](/docs/sdk/filtering) section of the API Guide.
