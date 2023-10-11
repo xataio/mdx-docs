@@ -697,8 +697,8 @@ This section doesn't apply to the TypeScript SDK, because it is offering a highe
 
 Xata offers two types of pagination:
 
-- cursor-based, using `after` and `before` parameters
-- offset-based, using `offset` and `limit` parameters
+- cursor-based, using `after` and `before` parameters. It is optimal for building `next / prev` navigation patterns.
+- offset-based, using `offset` and `limit` parameters. It is optimal for building `1..2..10...19..20` navigation patterns.
 
 ### Cursor-based Pagination
 
@@ -825,7 +825,7 @@ You can continue like this until `"more"` is returned as `false`.
 
 ### Offset-based Pagination
 
-The offset-page pagination limit is 50,000 records. In most cases, you should use the cursor-based pagination.
+Offset-based pagination lets you request specific pages of data using the offset parameter (`offset`), relative to a specified page size (`size`). While this offers flexibility, it requires knowing the total record count, which can affect performance. As a safeguard, Xata limits offset-based pagination to 50,000 total records to ensure timely responses.
 
 An example of offset based pagination:
 
@@ -867,7 +867,7 @@ page = xata.data().query("Users", {
 
 </TabbedCode>
 
-You can find more information about pagination in the [API reference](/docs/api-reference/db/db_branch_name/tables/table_name/query#pagination).
+You can find more information about pagination in the [API reference](/docs/api-reference/db/db_branch_name/tables/table_name/query#pagination). When trying to make a decision between cursor and pagination styles we recommend starting with offset-based pagination since it provides more flexibility. If a table becomes very large and you need to page through it all, switch to the cursor-based method.
 
 ## Next Steps
 
