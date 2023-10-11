@@ -319,7 +319,7 @@ results = xata.data().aggregate("titles", {
 `dateHistogram` is a bucket-aggregation that splits the data into buckets by a datetime column. It is configured with the following parameters:
 
 - `column`: The column to use for bucketing. Must be of type datetime.
-- `interval`: The fixed interval to use when bucketing. It is formatted as number + units, for example: `5d`, `20m`, `10s`.
+- `interval`: The fixed interval to use when bucketing. It is formatted as number + unit of time, for example: `5d`, `20m`, `10s`.
 - `calendarInterval`: The calendar-aware interval to use when bucketing. Possible values are: `minute`, `hour`, `day`, `week`, `month`, `quarter`, `year`.
 - `timezone`: The timezone to use for bucketing. By default, UTC is assumed. The accepted format is as an ISO 8601 UTC offset. For example: `+01:00` or
   `-08:00`.

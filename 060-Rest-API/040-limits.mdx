@@ -81,31 +81,27 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 
 ## Rate limits
 
-Xata assigns capacity for request rate and concurrent connections at the branch level, in the form of billing units.
-
-The Free plan grants a baseline of **3** billing units in each branch while additional units can be [purchased](https://xata.io/pricing).
-
 The REST API may return HTTP response code `429` as a throttling error when the rate limiting conditions are met:
 
 - **Request rate limit**: Total number of atomic HTTP requests submitted per second to any API endpoint under a branch
 - **Concurrency limit**: Number of requests executing in parallel at any given moment within a certain Store of a branch
 
+For more information on rate limits, see our [docs](/docs/pricing) or visit the [pricing page](/pricing)
+
 ## Store types
 
-Xata uses three Store types with individual concurrency limits:
+Xata uses three store types with individual concurrency limits:
 
-- **Consistent transactional store:** 2 concurrent requests / unit.
-  Endpoints: `data`, `bulk`, `transaction`, `query`, `summarize`
-- **Read replicas store:** 3 concurrent requests / unit
-  Endpoints: `query`, `summarize` with option `consistency: eventual`
-- **Search & Analytics store:** 5 concurrent requests / unit.
-  Endpoints: `aggregate`, `search`, `ask`, `vectorSearch`
-- **File attachments store:** 2 concurrent requests / unit.
-  Endpoints: `data`, `file`
+| Store type                         | Concurrent requests | Endpoints                                                  |
+| ---------------------------------- | ------------------- | ---------------------------------------------------------- |
+| **Consistent transactional store** | 2                   | `data`, `bulk`, `transaction`, `query`, `summarize`        |
+| **Read replicas store**            | 3                   | `query`, `summarize` _with option_ `consistency: eventual` |
+| **Search & Analytics store**       | 5                   | `aggregate`, `search`, `ask`, `vectorSearch`               |
+| **File attachments store**         | 2                   | `data`, `file`                                             |
 
-In case the concurrency limit in a Store is exceeded, requests to it are throttled internally with a timeout of 50ms. After reaching the timeout, the API errors with HTTP response code `429`.
+In the event the concurrency limit in a store is exceeded, requests to it are throttled internally with a timeout of 100ms. After reaching the timeout, the API errors with HTTP response code `429`.
 
-For **File attachments**, the concurrency limits apply to CRUD and query operations on `data` and `file` endpoints. For content sharing and high throughput scenarios, the direct access URLs should be used, which are NOT subject to rate and concurrency limits.
+For **file attachments**, the concurrency limits apply to CRUD and query operations on `data` and `file` endpoints. For content sharing and high throughput scenarios, the direct access URLs should be used, which are NOT subject to rate and concurrency limits.
 
 ## Best practices
 
