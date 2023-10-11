@@ -308,8 +308,7 @@ It's worth noting that the special columns [id](/docs/concepts/data-model#id), [
 
 ### Selecting Columns from the Linked Tables
 
-The same syntax can be used to select columns from a linked table, therefore adding new columns to the response. For example, to query all the columns
-of the Teams table and also add all the columns of the owner user, you can use:
+The same syntax can be used to select columns from a linked table, therefore adding new columns to the response. For example, to query all the columns of the teams table and also add all the columns of the owner user, you can use:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
@@ -380,6 +379,33 @@ posts = xata.data().query("Posts", {
 </TabbedCode>
 
 In this example, the `author` is a link column from `Posts` to `Users` and `team` is a link column from `Users` to `Teams`.
+
+By default, when retrieving a record by its ID, only the ID column of linked records is included in the response. However, you have the option to request the linked columns to be expanded. In the following examples, the code is using the `.read()` method to retrieve a record with the ID `myid` from the `Posts` table. The code specifies it wants the `author` column to be expanded and to retrieve more information from the `author` linked record.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
+```ts
+const user = await xata.db.Posts.read('myid', ['author.*']);
+```
+
+```python
+user = xata.records().get("Posts", "myid", columns=["author.*"])
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT *,\"Users\".* FROM \"Posts\" LEFT JOIN \"Users\" ON \"Posts\".author=\"Users\".id WHERE \"Posts\".id=$1",
+  "params": ["myid"]
+}
+```
+
+```jsonc
+// GET https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?columns=author.*
+```
+
+</TabbedCode>
 
 ## Filtering Records
 
