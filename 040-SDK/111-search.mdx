@@ -902,7 +902,7 @@ The parameter definitions are:
 
 - `column`: the column in which to look for the value.
 - `origin`: The datetime from where to apply the score decay function. If it is not specified, the current date and time is used.
-- `scale`: The duration at which distance from origin the score is decayed with factor, using an exponential function. It is formatted as number + units, for example: `5d`, `20m`, `10s`.
+- `scale`: The duration at which distance from origin the score is decayed with factor, using an exponential function. It is formatted as number + unit of time, for example: `5d`, `20m`, `10s`.
 - `decay`: The decay factor to expect at "scale" distance from the "origin".
 - `factor`: The factor to multiply the decayed boost with.
 
