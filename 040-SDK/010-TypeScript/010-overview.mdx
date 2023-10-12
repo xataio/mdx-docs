@@ -104,6 +104,6 @@ export const MyComponent: FC<MyComponentProps> = ({ records }) => {
 
 ## Limitations
 
-Type recursion is limited to 3 levels in the TypeScript SDK, because each nested level adds computational complexity to the type checker and the language server.
+Type recursion is limited to 3 levels in the TypeScript SDK. This is to prevent excessive strain on both the type checker and the language server since each nested level adds computational complexity.
 
-Calls on deeper nested columns will still work, but you may notice a TypeScript error that the type cannot be inferred.
+Calls on deeper nested columns will still work, but a TypeScript error may be displayed indicating the type cannot to determined.
