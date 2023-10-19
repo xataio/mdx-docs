@@ -58,11 +58,11 @@ Xata offers an official integration with Vercel. This integration automatically 
 
 If you previously configured these variables manually in Vercel, you will need to remove them before enabling our integration.
 
-1. In any Xata database, click **Settings** in the top navigation menu.
-1. In the _Workflow integrations_ section, click **Vercel** from the listed integration options, then click **Install the Xata app on Vercel**  on the _Setup Vercel integration_ page. This directs you to Vercel's website.
-1. After clicking **Add Integration**, you can select where to add the integration to. Your personal account and your team's organization account are listed. 
-1. If  prompted, you can select the individual projects to which the integration will be added or add the integration globally.
-> NOTE: Permissions are required to modify the `.env` variables for Vercel previews to point to the correct Xata database preview.
+1.  In any Xata database, click **Settings** in the top navigation menu.
+2.  In the _Workflow integrations_ section, click **Vercel** from the listed integration options, then click **Install the Xata app on Vercel** on the _Setup Vercel integration_ page. This directs you to Vercel's website.
+3.  After clicking **Add Integration**, you can select where to add the integration to. Your personal account and your team's organization account are listed.
+4.  If prompted, you can select the individual projects to which the integration will be added or add the integration globally.
+    > NOTE: Permissions are required to modify the `.env` variables for Vercel previews to point to the correct Xata database preview.
 
 ![Vercel integration](images/vercel-integration.png)
 
@@ -100,14 +100,14 @@ package = "@xata.io/netlify"
 
 With the GitHub and Vercel or Netlify integrations installed, you can now follow a typical code-based PR workflow to migrate your database through code and provide previews during PRs. At a summary level, you'll find yourself performing the following workflow loop to branch, review and merge your changes. We'll go through each step individually.
 
-1. Create and checkout a new code branch with `git branch my_feature` for your feature.
-1. Create a new Xata branch with `xata branch create my_feature`, then update your `.env` file to point to the `my_feature` branch.
-1. Perform a `xata pull my_feature` command in your local project to pull in the changes, generating the necessary `client` and `migration` code files.
-1. Continue to edit your code and database as needed
-1. Commit the migration files (along with any other code) and create a new GitHub PR.
-1. The Xata App will add a comment to your PR with a health check of your migration. It will also generate a `preview-my_feature` branch with data copied from your source branch.
-1. If Netlify or Vercel is also present in that repository, the deployment previews for your application will use the Xata `preview-my_feature` as the source for those previews.
-1. On merge of the PR, Xata will perform an automatic migration, applying your branch schema to your target branch.
+1.  Create and checkout a new code branch with `git branch my_feature` for your feature.
+2.  Create a new Xata branch with `xata branch create my_feature`, then update your `.env` file to point to the `my_feature` branch.
+3.  Perform a `xata pull my_feature` command in your local project to pull in the changes, generating the necessary `client` and `migration` code files.
+4.  Continue to edit your code and database as needed
+5.  Commit the migration files (along with any other code) and create a new GitHub PR.
+6.  The Xata App will add a comment to your PR with a health check of your migration. It will also generate a `preview-my_feature` branch with data copied from your source branch.
+7.  If Netlify or Vercel is also present in that repository, the deployment previews for your application will use the Xata `preview-my_feature` as the source for those previews.
+8.  On merge of the PR, Xata will perform an automatic migration, applying your branch schema to your target branch.
 
 ### Create a new Git branch
 
@@ -174,10 +174,10 @@ If you also have Vercel or Netlify configured for your repository you should see
 
 On merge of your PR the following actions will occur.
 
-1. GitHub will merge down code, including the files in the `.xata/migrations` folder
-1. Xata will notice the change and perform a migration, changing the schema in your target branch.
-1. Xata will delete the `preview-my_feature` branch
-1. Your host (Vercel or Netlify) will deploy your website, utilizing your newly migrated main branch.
+1.  GitHub will merge down code, including the files in the `.xata/migrations` folder
+2.  Xata will notice the change and perform a migration, changing the schema in your target branch.
+3.  Xata will delete the `preview-my_feature` branch
+4.  Your host (Vercel or Netlify) will deploy your website, utilizing your newly migrated main branch.
 
 You can confirm the migration was performed on the Xata side by going to your database's **migrations** page. With the `status` set to `merged` you will see a record of the completed migration, along with a link to the GitHub PR that trigged it.
 
@@ -193,8 +193,8 @@ At this point your migration is complete. Xata continues to keep the `my_feature
 
 Getting GitHub, Xata, Vercel, or Netlify to work together is usually simpler when you start by connecting GitHub first, and then Vercel or Netlify. If you were previously using Vercel with Xata without our official integration, do the following:
 
-1. Ensure you remove any Xata-related environment variables, like `XATA_BRANCH`, that you may have set before you proceed with the integration. This step is essential to avoid permission errors.
-1. After you've cleared these variables, apply the integration. The integration will automatically manage these environment variables for you.
+1.  Ensure you remove any Xata-related environment variables, like `XATA_BRANCH`, that you may have set before you proceed with the integration. This step is essential to avoid permission errors.
+2.  After you've cleared these variables, apply the integration. The integration will automatically manage these environment variables for you.
 
 If you are having trouble getting a specific integration working, you can try resolving the issue by removing the integration from the settings page of the source provider (GitHub, Vercel, or Netlify) and then reconfiguring the integration.
 
