@@ -40,7 +40,7 @@ Through the process of generating a new URL after each update, the system preven
 
 ## File access URLs
 
-Xata provides three ways to expose a file's URL to any request. This should allow you to build a range of products from public facing websites, to more security minded applications that need to think through authentication. Files are secure by default, with action required through these methods to provide access.
+Xata provides three ways to expose a file's URL to any request. This allows you to build a range of products from public facing websites, to more security-minded applications that need to think through authentication. Files are secure by default, with action required through these methods to provide access.
 
 ![A file's access can be toggled in the app](images/file-access.png)
 
@@ -86,7 +86,7 @@ A Xata file can be configured for public access, resulting in a URL that is publ
 
 You can use the public URL directly without writing code. For instance:
 
-https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94 is available publicly
+https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94 is available publicly.
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
   ```ts
@@ -131,7 +131,7 @@ private.
 
 ### Signed URLs
 
-A signed URL offers authenticated access to a file without requiring an API key. The URL contains the key (signature) within it, so anyone holding the URL can get access to the file.  Because of their on demand nature, signed URLs need to be requested directly and do not come along with the default request on the record.
+A signed URL offers authenticated access to a file without requiring an API key. The URL contains the key (signature) within it, so anyone holding the URL can get access to the file. Because of their on demand nature, signed URLs need to be requested directly and do not come along with the default request on the record.
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
 
@@ -152,6 +152,7 @@ records = xata.data().query("Users", {
 # Returns an empty string for records[0].photo.signedUrl
 records = xata.data().query("Users")
 ```
+
 </TabbedCode>
 
 Signed URLs have a configurable time to live (TTL), which specifies when access to the URL expires. To avoid permanent public access, the TTL can be set to a maximum of 24h. You can modify the timeout duration of the signed URL for each file by adjusting the `signedUrlTimeout` field within the file object. Please note that `signedUrlTimeout` expects a positive number, defining the timeout duration in seconds. The default value is set to 60 seconds.
