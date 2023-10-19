@@ -133,13 +133,27 @@ private.
 
 A signed URL offers authenticated access to a file without requiring an API key. The URL contains the key (signature) within it, so anyone holding the URL can get access to the file. Because of their on demand nature, Signed URLs need to be requested directly and do not come along with the default request on the record.
 
+<TabbedCode tabs={['TypeScript', 'Python']}>
+
 ```ts
 // Will return the signed URL for photo column
-const page = await xata.db.Users.select(['id', 'name', 'photo.*', 'photo.signedUrl']).getPaginated();
+const records = await xata.db.Users.select(['id', 'name', 'photo.*', 'photo.signedUrl']).getMany();
 
-// Will return an empty string for record.photo.signedUrl
-const page = await xata.db.Users.getPaginated();
+// Will return an empty string for record.records.signedUrl
+const records = await xata.db.Users.getMany();
 ```
+
+```python
+# Will return the signed URL for photo column
+records = xata.data().query("Users", {
+  "columns": ["id", "name", 'photo.*', 'photo.signedUrl']
+})
+
+# Will return an empty string for record.photo.signedUrl
+records = xata.data().query("Users")
+```
+
+</TabbedCode>
 
 Signed URLs has a configurable time to live (TTL), which specifies when access to the URL expires. To avoid permanent public access, the TTL can be set to a maximum of 24h. You can modify the timeout duration of the signed URL for each file by adjusting the `signedUrlTimeout` field within the file object. Please note that `signedUrlTimeout` expects a positive number, defining the timeout duration in seconds. The default value is set to 60 seconds.
 
