@@ -136,20 +136,20 @@ A signed URL offers authenticated access to a file without requiring an API key.
 <TabbedCode tabs={['TypeScript', 'Python']}>
 
 ```ts
-// Will return the signed URL for photo column
+// Will return the signed URL for records[0].photo.signedUrl
 const records = await xata.db.Users.select(['id', 'name', 'photo.*', 'photo.signedUrl']).getMany();
 
-// Will return an empty string for record.records.signedUrl
+// Will return an empty string for records[0].photo.signedUrl
 const records = await xata.db.Users.getMany();
 ```
 
 ```python
-# Will return the signed URL for photo column
+# Will return the signed URL for records[0].photo.signedUrl
 records = xata.data().query("Users", {
   "columns": ["id", "name", 'photo.*', 'photo.signedUrl']
 })
 
-# Will return an empty string for record.photo.signedUrl
+# Will return an empty string for records[0].photo.signedUrl
 records = xata.data().query("Users")
 ```
 
