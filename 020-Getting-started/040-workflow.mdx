@@ -54,9 +54,15 @@ On the **Settings** page click the host you prefer. The steps may vary slightly 
 
 #### Installation for Vercel
 
-Xata provides [an official Vercel integration][2] that will automatically tie Xata preview databases to Vercel preview deployments. Enabling the integration will give Xata the ability to dynamically change environment variables (such a `XATA_BRANCH`) on the fly in your Vercel project as GitHub PRs are made. If you were previously using Vercel and manually setting those variables, you will need to remove them before enabling our integration.
+Xata offers an official integration with Vercel. This integration automatically connects Xata's preview databases to Vercel's preview deployments. Enabling the integration allows Xata to dynamically modify environment variables (such as `XATA_BRANCH`) in your Vercel project as GitHub pull requests are created.
 
-Click **Settings** in the top navigation for any Xata database, then click the Vercel integration from the listed options. This directs you to Vercel's website, where you can select the organization you would like to attach to the Xata database. Your personal account and your team's organization account are listed. Permissions are required to adjust the `.env` variables that instruct Vercel previews to point to the correct Xata database preview.
+If you previously configured these variables manually in Vercel, you will need to remove them before enabling our integration.
+
+1. In any Xata database, click **Settings** in the top navigation menu.
+1. In the _Workflow integrations_ section, click **Vercel** from the listed integration options, then click **Install the Xata app on Vercel**  on the _Setup Vercel integration_ page. This directs you to Vercel's website.
+1. After clicking **Add Integration**, you can select where to add the integration to. Your personal account and your team's organization account are listed. 
+1. If  prompted, you can select the individual projects to which the integration will be added or add the integration globally.
+> NOTE: Permissions are required to modify the `.env` variables for Vercel previews to point to the correct Xata database preview.
 
 ![Vercel integration](images/vercel-integration.png)
 
@@ -185,9 +191,12 @@ At this point your migration is complete. Xata continues to keep the `my_feature
 
 ### Integrations not applying correctly
 
-Getting Github, Xata and Vercel or Netlify working together typically is easier when you attach Github first, then Vercel or Netlify. If you were previously using Vercel with Xata without our official integration, you'll want to make sure you clear any Xata related environment variables (like `XATA_BRANCH`) you may have set before performing the integration. Trying to apply the integration (which manages those environment variables automatically) onto a project where they already exist may cause permission errors. This is only required for your deployment, and not for local development.
+Getting GitHub, Xata, Vercel, or Netlify to work together is usually simpler when you start by connecting GitHub first, and then Vercel or Netlify. If you were previously using Vercel with Xata without our official integration, do the following:
 
-If you are having trouble getting a specific integration working, try removing the integration on the source provider (Github, Vercel or Netlify) from their respective settings interfaces and trying it over.
+1. Ensure you remove any Xata-related environment variables, like `XATA_BRANCH`, that you may have set before you proceed with the integration. This step is essential to avoid permission errors.
+1. After you've cleared these variables, apply the integration. The integration will automatically manage these environment variables for you.
+
+If you are having trouble getting a specific integration working, you can try resolving the issue by removing the integration from the settings page of the source provider (GitHub, Vercel, or Netlify) and then reconfiguring the integration.
 
 ### Migrations and preview branches
 
