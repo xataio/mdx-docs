@@ -18,9 +18,9 @@ The concurrency limit refers to the number of queries that can run simultaneousl
 Xata sets specific limits to balance workloads across different store types. The number of concurrency limit depends on the plan and are allocated to each branch:
 
 - **Free plan:** 15 parallel requests (6 primary + 9 from replicas) to the database
-- **Pro plan:** 45 parallel request (18 primary + 27 from replicas) to the database
+- **Pro plan:** 45 parallel requests (18 primary + 27 from replicas) to the database
 
-> The Pro tier has a 'soft' limit to guard against unintended excessive use or misuse. [Contact us](contactus@xata.io) if you require a higher limit.
+> The Pro tier has a 'soft' limit to guard against unintended excessive use or misuse. [Contact Support](https://support.xata.io/hc/en-us/requests/new) if you require a higher limit.
 
 Concurrency limits apply to each branch in the workspace.
 
@@ -28,9 +28,9 @@ If the number of simultaneous requests surpasses the concurrency limit, any addi
 
 ### Database storage
 
-The disk's storage represents the amount of data stored in the transactional database. Database storage in Xata encompasses not only disk space but also I/O rates and compute resources. The listed price per GB integrates the three components.
+The storage size represents the amount of data stored in the transactional database. Database storage in Xata encompasses not only disk space but also I/O rates and compute resources. The listed price per GB integrates the three components.
 
-This size limit is considered a soft-limit and is not strictly enforced in real-time. However, if you exceed this limit, it indicates that your data storage requirements may be approaching a critical level. If you exceed this limit on the Free plan, you'll be asked to upgrade. It's recommended you explore solutions with [Xata support](https://support.xata.io/hc/en-us) to optimize and scale your data storage.
+This size limit is considered a soft-limit and is not strictly enforced in real-time. However, if you exceed this limit, it indicates that your data storage requirements may be approaching a critical level. If you exceed this limit on the Free plan, you'll be asked to upgrade. It's recommended you explore solutions with [Xata Support](https://support.xata.io/hc/en-us/requests/new) to optimize and scale your data storage.
 
 ### Backup restoration
 
@@ -38,7 +38,7 @@ Xata offers recovery options for scenarios like accidental data loss, database c
 
 #### Daily backups
 
-Daily backups ensure your data is regularly and automatically backed up every day. Xata manages daily backups on all plans. This is most suitable for projects that can handle a maximum data loss of up to 24 hours in case of a disaster. If you need to restore data from a daily backup, [contact us](contactus@xata.io) for assistance. Free plan users have the option to request a data restoration once per month.
+Daily backups ensure your data is regularly and automatically backed up every day. Xata manages daily backups on all plans. This is most suitable for projects that can handle a maximum data loss of up to 24 hours in case of a disaster. If you need to restore data from a daily backup, [contact Support](https://support.xata.io/hc/en-us/requests/new) for assistance. Free plan users have the option to request a data restoration once per month.
 
 #### Point-in-time recovery
 
@@ -49,7 +49,7 @@ Point-in-time recovery (PITR) enables the restoration of data to a specific time
 - Malformed updates: Rollback changes from updates that led to unexpected or undesired results.
 - Security breaches: In the event of data compromise or unauthorized alterations, revert the database to a secure, pre-breach state.
 
-Pro plan users can restore their databases to an earlier state, with the help of Xata support, using the PITR feature. To do this, [contact support](https://support.xata.io/hc/en-us) and specify the point in time you want to revert to. Pro plan users have an unlimited number of PITR requests available.
+Pro plan users can restore their databases to an earlier state, with the help of Support, using the PITR feature. To do this, [contact Support](https://support.xata.io/hc/en-us/requests/new) and specify the point in time you want to revert to. Pro plan users have an unlimited number of PITR requests available.
 
 ### Rate limit
 
@@ -97,7 +97,7 @@ The Free plan is perfect for individuals who are working on personal projects or
 - Hobbyists
 - Experimenters who want to learn more about Xata
 
-For more information check the [pricing page](/pricing-page) or [start for free](https://app.xata.io/signin?mode=signup).
+For more information check the [pricing page](/pricing) or [start for free](https://app.xata.io/signin?mode=signup).
 
 ### Pro plan
 
@@ -123,11 +123,11 @@ The Enterprise plan is designed for large organizations that require specific, l
 
 ### Change plans
 
-Visit the [pricing page](https://xata.io/pricing) to upgrade from the Free to Pro plan. For the Enterprise plan, [contact us](contactus@xata.io)
+Visit the [pricing page](https://xata.io/pricing) to upgrade from the Free to Pro plan. For the Enterprise plan, [contact us](mailto:contactus@xata.io)
 
 ### Startup and organization discounts
 
-If you're affiliated with a startup or a non-profit organization, [contact us](contactus@xata.io). Xata has specific programs and discounts designed especially for startups and non-profits.
+If you're affiliated with a startup or a non-profit organization, [contact us](mailto:contactus@xata.io). Xata has specific programs and discounts designed especially for startups and non-profits.
 
 ## FAQ
 
@@ -142,7 +142,7 @@ If you exceed the rate limit on Xata, you will receive a 429 HTTP status as a no
 
 ##### Can I increase my rate limit?
 
-Yes, you can increase the limit by upgrading to the Pro plan, if you are on the Free plan. You can also contact us if you would like to discuss pricing options.
+Yes, you can increase the limit by upgrading to the Pro plan, if you are on the Free plan. You can also [contact us](mailto:contactus@xata.io)if you would like to discuss pricing options.
 
 ##### Do the reads and writes per second differ depending on the plan chosen?
 
@@ -188,4 +188,4 @@ If you adjust your subscription level mid-billing cycle, we'll prorate the charg
 
 </Expand>
 
-Ensure you check out our [pricing page](/pricing). If you have any further questions or need assistance, send a message to contactus@xata.io.
+Ensure you check out our [pricing page](/pricing). If you have any further questions about pricing, send a message to [contactus@xata.io](mailto:contactus@xata.io).
