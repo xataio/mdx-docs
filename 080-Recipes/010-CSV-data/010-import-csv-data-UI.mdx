@@ -32,19 +32,20 @@ When importing CSV files into Xata, ensure the data aligns with the correct form
 
 Choose a format that matches the data you're entering. Xata columns support the following formats:
 
-| Format type   | Description                                                                            | Example formats                                                   |
-| ------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| String        | Text with or without quotes, less than 180 characters.                                 | `"Value"` or `Value`                                              |
-| Text          | Text with or without quotes, longer than 180 characters.                               | `"Hello world and welcome to Xata"`                               |
-| Integer       | Whole numbers without decimal points                                                   | `42`                                                              |
-| Float         | Numbers with decimal points                                                            | `3.14`                                                            |
-| Boolean       | Represents true or false values                                                        | `true`                                                            |
-| Datetime      | Date and time information. Our CSV importer will attempt to parse all common datetimes | `2023-08-30T00:00:00.000Z` or `26-02-88` or any other date format |
-| Link to Table | ID of a record in another table                                                        | `rec_xyz` or `usr_xyz`if using custom IDs                         |
-| Email         | Email addresses                                                                        | `user@example.com`                                                |
-| Multiple      | Multiple values seperated by a comma or a JSON array                                   | `Red,Green` or `["Red", "Green"]`                                 |
-| File          | Not supported                                                                          |                                                                   |
-| Vector        | Not supported                                                                          |                                                                   |
+| Format type   | Description                                                                            | Example formats                                                          |
+| ------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| String        | Text with or without quotes, less than 180 characters.                                 | `"Value"` or `Value`                                                     |
+| Text          | Text with or without quotes, longer than 180 characters.                               | `"Hello world and welcome to Xata"`                                      |
+| Integer       | Whole numbers without decimal points                                                   | `42`                                                                     |
+| Float         | Numbers with decimal points                                                            | `3.14`                                                                   |
+| Boolean       | Represents true or false values                                                        | `true`                                                                   |
+| Datetime      | Date and time information. Our CSV importer will attempt to parse all common datetimes | `2023-08-30T00:00:00.000Z` or `26-02-88` or any other date format        |
+| Link to Table | ID of a record in another table                                                        | `rec_xyz` or `usr_xyz`if using custom IDs                                |
+| Email         | Email addresses                                                                        | `user@example.com`                                                       |
+| Multiple      | Multiple values separated by a comma or a JSON array                                   | `Red,Green` or `["Red", "Green"]`                                        |
+| File          | Text or images files                                                                   | `.txt`, `.doc`, `.docx`, `.pdf` `.png`, `.jpg` `.jpeg`, `gif`, or `.svg` |
+| Vector        | Not supported                                                                          |                                                                          |
+| JSON          | JSON objects, arrays, or scalar values                                                 | `.js` or `.json`                                                         |
 
 ### Filename formatting
 
