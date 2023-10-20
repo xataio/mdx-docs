@@ -14,7 +14,7 @@ Most Xata API operations occur within the context of a _workspace_, which can be
 The Core API is accessible at the origin `https://api.xata.io` and is responsible for operations on all Xata properties that are not bound to a specific workspace. These include:
 
 - `/user`: Since one user can belong to multiple workspaces, a `user` is not bound to a workspace.
-- `/workspaces`: A workspace is equivalent to an organization or team, and thus cannot be a child of another workspace. Workspaces are top-level entities, so workspaces are managed with the Core API.
+- `/workspaces`: A workspace is equivalent to an organization or team, and cannot be a child of another workspace. Workspaces are top-level entities, so workspaces are managed with the Core API.
 
 Everything else that falls under the context of a workspace is operable with Xata's workspace-bound APIs.
 

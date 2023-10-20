@@ -7,21 +7,23 @@ slug: rest-api
 published: true
 ---
 
-API overview - low code-no code Xata API development - Zapier integration?
+Xata uses HTTP-based APIs for data management and collaboration, ensuring standardization, security, and compatibility with various client apps. Adherence to RESTful principles ensures predictable and consistent API structures for evolvability without disrupting existing applications.
+
+Xata can support no-code or low-code data ingestion through integrations with tools like Zapier and Airbyte.
 
 ## Methods
 
-To perform operations with Xata entities using the REST API, you can use the following standard HTTP methods:
-
-| HTTP Method | Description                                            | Read or Write |
-| ----------- | ------------------------------------------------------ | ------------- |
-| GET         | Retrieve data or information from a resource.          | Read          |
-| POST        | Create a new resource or initiate specific actions.    | Write         |
-| PATCH       | Make partial modifications to an existing resource.    | Write         |
-| PUT         | Replace an existing resource or create if not present. | Write         |
-| DELETE      | Remove a resource or data from a collection.           | Write         |
+| HTTP Method | Description                                            | Read or Write | CRUD Equivalent    |
+| ----------- | ------------------------------------------------------ | ------------- | ------------------ |
+| GET         | Retrieve data or information from a resource.          | Read          | Read               |
+| POST        | Create a new resource or initiate specific actions.    | Write         | Create             |
+| PATCH       | Make partial modifications to an existing resource.    | Write         | Update (_partial_) |
+| PUT         | Replace an existing resource or create if not present. | Write         | Update (_full_)    |
+| DELETE      | Remove a resource or data from a collection.           | Write         | Delete             |
 
 ## Responses
+
+The responses listed below are standardized and can be applied to any API, including the Xata API. These response status codes adhere to the standards defined in [RFC 2616](https://www.ietf.org/rfc/rfc2616.txt) and [RFC 6585](https://datatracker.ietf.org/doc/html/rfc6585) for web APIs.
 
 | Status code | Meaning                                    | Description                                                                                                                                                                            |
 | ----------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -34,4 +36,5 @@ To perform operations with Xata entities using the REST API, you can use the fol
 | 404         | Not found                                  | The requested resource could not be found on the server.                                                                                                                               |
 | 405         | Method not allowed                         | The HTTP method used in the request is not allowed for the requested resource.                                                                                                         |
 | 409         | Conflict                                   | There is a conflict with the current state of the resource or a resource version mismatch.                                                                                             |
-| 5xx         | Internal server error/ Service unavailable | An unexpected error occurred on the server, and the request could not be fulfilled. The server is temporarily unable to handle the request, typically due to maintenance or high load. |
+| 429         | Too many requests                          | The user or client exceeded request rate limits.                                                                                                                                       |
+| 5xx         | Internal server error/ service unavailable | An unexpected error occurred on the server, and the request could not be fulfilled. The server is temporarily unable to handle the request, typically due to maintenance or high load. |
