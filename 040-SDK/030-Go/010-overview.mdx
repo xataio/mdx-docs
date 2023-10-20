@@ -1,0 +1,49 @@
+---
+title: Xata SDK for Go
+navTitle: SDK overview
+keywords: ['go', 'golang', 'sdk']
+description: Get to know Xata using Go
+slug: sdk/go/overview
+published: true
+---
+
+<Alert status="info">
+  Please be aware that the Go SDK is still in *beta*. Not all endpoints are covered in the SDK and potential breaking changes may occur before the promotion to a `1.0.0` and stability GA release.
+</Alert>
+
+Intro text + repo link: https://github.com/xataio/xata-go
+
+## Installation
+
+dependency name + go.mod
+
+## Configuration
+
+The client probes the following environment variables for authentication.
+
+```bash
+export XATA_API_KEY="REDACTED_API_KEY"
+export XATA_DATABASE_URL="REDACTED_DB_URL"
+```
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	
+	"github.com/xataio/xata-go/xata"
+)
+
+func main() {
+	workspaces, err := xata.NewWorkspacesClient()
+    resp, _ := workspaces.List(context.Background())
+    fmt.Printf("%#v\n", *resp.Workspaces[0])
+}
+```
+
+## Endpoint Coverage
+
+As indicated the SDK is still in development, this also means that some endpoints are not available at the moment. You can check the coverage [here](https://github.com/xataio/xata-go/issues/1).

@@ -161,7 +161,7 @@ In the REST API example, note the change from `POST` to `PUT`. The `createOnly` 
 
 In the schema that we chose, the `Posts` table has an `author` column of type `link` that links to the `Users` table. To insert a record with a linked field, use the ID of the target record in the link column.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 ```ts
 const record = await xata.db.Posts.create({
   title: 'Filming the Matrix',
@@ -174,6 +174,26 @@ record = xata.records().insert("Posts", {
   "title": "Filming the Matrix",
   "author": "rec_cd8rqcoavc42pi67lgd0"
 })
+```
+
+```go
+records, err := xata.NewRecordsClient()
+ctx := context.TODO()
+insertRecordRequest := xata.InsertRecordRequest{
+		RecordRequest: xata.RecordRequest{
+			DatabaseName: xata.String("<database_name>"),
+			TableName:    "Posts",
+		},
+		Columns: []string{
+			"title",
+			"author",
+		},
+		Body: map[string]*xata.DataInputRecordValue{
+			"title":  "Filming the Matrix",
+      "author": "rec_cd8rqcoavc42pi67lgd0",
+		},
+	}
+record, err := recordsCli.Insert(ctx, insertRecordRequest)
 ```
 
 ```jsonc
