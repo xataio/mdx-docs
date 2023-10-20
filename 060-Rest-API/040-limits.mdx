@@ -63,11 +63,11 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 
 ## Response limits
 
-| Scope                   | Limit          |
-| :---------------------- | :------------- |
-| Page size               | 1000 records   |
-| Offset pagination size  | 50,000 records |
-| Cursor pagination depth | Unrestricted   |
+| Scope                   | Limit         |
+| :---------------------- | :------------ |
+| Page size               | 1000 records  |
+| Offset pagination size  | 50000 records |
+| Cursor pagination depth | Unrestricted  |
 
 ## File attachments limits
 
@@ -86,7 +86,7 @@ The REST API may return HTTP response code `429` as a throttling error when the 
 - **Request rate limit**: Total number of atomic HTTP requests submitted per second to any API endpoint under a branch
 - **Concurrency limit**: Number of requests executing in parallel at any given moment within a certain Store of a branch
 
-For more information on rate limits, see our [docs](/docs/pricing) or visit the [pricing page](/pricing)
+For more information on rate limits, see our [docs](/docs/pricing).
 
 ## Store types
 
@@ -114,4 +114,4 @@ Tips & best practices useful to optimize requests for the Xata API:
 - For writing records to Xata, use the bulk endpoint instead of the atomic (individual record insert) data endpoint. The bulk endpoint allows batching of multiple records in a single request, which favors the optimal use of both your branch's request rate limit and concurrency slots in the transactional store.
 - For requests to the `query` and `summarize` endpoints, consider using the `consistency: eventual` option to use the Read Replicas Store. This makes it less likely to reach the concurrency limit of either Store type and gets the best possible performance from your Xata plan.
 
-Custom plans can increase or remove some limits. To discuss upgrading, contact us by [email](mailto:support@xata.io) or fill the [Contact Form](https://support.xata.io/hc/en-us/requests/new).
+Custom plans can increase or remove some limits. To discuss upgrading, [contact us](mailto:support@xata.io) or complete the [Contact Form](https://support.xata.io/hc/en-us/requests/new).

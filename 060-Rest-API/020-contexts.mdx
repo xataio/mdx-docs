@@ -2,12 +2,12 @@
 title: REST API contexts
 navTitle: API contexts
 keywords: ['rest', 'api', 'context', 'open-api']
-description: Terminology and rules for working with Xata
+description: Terminology and rules for working with the Xata API
 slug: rest-api/contexts
 published: true
 ---
 
-Most Xata API operations occur within the context of a **workspace**, which can be thought of as a "organization" in which all of your databases live. Some things though, are not _part_ of a workspace, but adjacent to workspaces&mdash;like _other workspaces_. Because of this, Xata offers different API hosts depending on your usage contexts. We explain this more in the following sections.
+Most Xata API operations occur within the context of a _workspace_, which can be thought of as a "organization" in which all of your databases live. Some things though, are not _part_ of a workspace, but adjacent to workspaces&mdash;like _other workspaces_. Because of this, Xata offers different API hosts depending on your usage contexts. We explain this more in the following sections.
 
 ## Core API
 
@@ -20,7 +20,7 @@ Everything else that falls under the context of a workspace is operable with Xat
 
 ## Workspace API
 
-Each workspace in Xata can contain any number of databases. Each database has any number of tables and branches. When interacting with Xata properties within the bounds of a workspace, we use the workspace-level API. This is accessible at a domain that is visible to you in your workspace's management section.
+Each workspace in Xata can contain any number of databases. Each database can have any number of tables and branches. When interacting with Xata properties within the bounds of a workspace, we use the workspace-level API. This is accessible at a domain that is visible to you in your workspace's management section.
 
 ![Managing a Workspace in Xata](images/manage-workspace.png)
 
@@ -30,7 +30,7 @@ For example, the general form of the database API is:
 https://{workspace-display-name}-{workspace-id}.{region}.xata.sh/db/{dbname}
 ```
 
-An exampe of this is:
+An example of this is:
 
 ```text
 https://your-workspace-71fpth.us-east-1.xata.sh/db/yourdatabase
@@ -43,7 +43,7 @@ In the above:
 - `{region}` is the region in which the database is hosted. Note that the region can be configured per database, and this value must match the database region configuration.
 - `{dbname}` is the name of the database you are interacting with.
 
-You can find out your workspace domain by navigating to the **Configuration** tab in the Xata Web UI, or in the **Get Code Snippet** fly out under **Set up Xata Project**.
+You can find your workspace domain by navigating to the **Configuration** tab in the Xata Web UI, or in the **Get Code Snippet** under **Set up Xata Project**.
 
 ## OpenAPI specifications
 
@@ -54,9 +54,11 @@ To provide an easy way to use your favorite tools for exploring the Xata API, yo
 
 ## Tool recommendations
 
+The following are tools for API development and management. Insomnia serves as an open-source API client and design platform, enabling developers to send requests, view responses, and document APIs. Postman streamlines API development and testing by simplifying request creation, automating testing, and facilitating collaboration. OpenAPI Codegen automates the generation of client code from OpenAPI specifications. Together, these tools empower developers to design, test, document, and generate code for APIs.
+
 ### Insomnia
 
-[Insomnia](https://insomnia.rest/) is a leading Open Source API Client, and collaborative API design platform for REST, SOAP, GraphQL, and GRPC.
+[Insomnia](https://insomnia.rest/) is a leading open-source API Client, and collaborative API design platform for REST, SOAP, GraphQL, and GRPC.
 
 ![Xata API in Insomnia](images/insomnia.png)
 
@@ -68,7 +70,7 @@ To provide an easy way to use your favorite tools for exploring the Xata API, yo
 
 ### OpenAPI Codegen
 
-With [OpenAPI Codegen](https://github.com/fabien0102/openapi-codegen) you an generate TypeScript fetcher functions or typed react-query hooks from your OpenAPI schema.
+With [OpenAPI Codegen](https://github.com/fabien0102/openapi-codegen) you can generate TypeScript fetcher functions or typed react-query hooks from your OpenAPI schema.
 
 > ⚠️ Using generated react-query components in this context will leak your API key! The REST API must always be called in a server-side environment!
 

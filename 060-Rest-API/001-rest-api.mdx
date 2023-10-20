@@ -1,0 +1,37 @@
+---
+title: REST API overview
+navTitle: Overview
+keywords: ['rest', 'api', 'authentication', 'overviews']
+description: Get familiar with API methods and responses.
+slug: rest-api
+published: true
+---
+
+API overview - low code-no code Xata API development - Zapier integration?
+
+## Methods
+
+To perform operations with Xata entities using the REST API, you can use the following standard HTTP methods:
+
+| HTTP Method | Description                                            | Read or Write |
+| ----------- | ------------------------------------------------------ | ------------- |
+| GET         | Retrieve data or information from a resource.          | Read          |
+| POST        | Create a new resource or initiate specific actions.    | Write         |
+| PATCH       | Make partial modifications to an existing resource.    | Write         |
+| PUT         | Replace an existing resource or create if not present. | Write         |
+| DELETE      | Remove a resource or data from a collection.           | Write         |
+
+## Responses
+
+| Status code | Meaning                                    | Description                                                                                                                                                                            |
+| ----------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 200         | OK                                         | The request was successful, and the server provides the requested data.                                                                                                                |
+| 201         | Created                                    | The request was successful, and a new resource was created as a result.                                                                                                                |
+| 204         | No content                                 | The request was successful, but there is no additional data to return in the response body.                                                                                            |
+| 400         | Bad request                                | The request contains invalid data or parameters. The client should modify and resend the request.                                                                                      |
+| 401         | Unauthorized                               | Authentication is required, or the provided credentials are invalid or expired.                                                                                                        |
+| 403         | Forbidden                                  | The client does not have permission to access the requested resource.                                                                                                                  |
+| 404         | Not found                                  | The requested resource could not be found on the server.                                                                                                                               |
+| 405         | Method not allowed                         | The HTTP method used in the request is not allowed for the requested resource.                                                                                                         |
+| 409         | Conflict                                   | There is a conflict with the current state of the resource or a resource version mismatch.                                                                                             |
+| 5xx         | Internal server error/ Service unavailable | An unexpected error occurred on the server, and the request could not be fulfilled. The server is temporarily unable to handle the request, typically due to maintenance or high load. |
