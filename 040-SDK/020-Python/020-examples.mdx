@@ -31,6 +31,8 @@ Below are the parameters passed to the methods in the following examples:
 - `xata.data().ask()`: table name (str), question (str)
 - `xata.data().ask_follow_up()`: table name (str), session id (str), question (str)
 - `to_rfc3339()`: dt (datetime), tz (timezone, default: utc)
+- `xata.table().create()`: table name (str)
+- `xata.table().set_schema()`: table name (str), table schema (dictionary)
 
 ## Insert or update a new record
 
@@ -478,4 +480,37 @@ date_with_tz = datetime.strptime("2023-03-20 13:42:16", "%Y-%m-%d %H:%M:%S")
 tz_europe_vienna = timezone("Europe/Vienna")
 print(to_rfc339(date_with_tz, tz_europe_vienna))
 > "2023-03-20T13:42:16+01:05"
+```
+
+## Updating the table schema
+
+The Xata SDK provides schema editing operations under the [Table](https://xata-py.readthedocs.io/en/latest/api.html#xata.api.table.Table) class.
+
+You can create tables, add and delete columns, or set the full table schema at once.
+
+```python
+from xata.client import XataClient
+xata = XataClient()
+
+table_schema = {
+  "columns": [
+      {
+          "name": "title",
+          "type": "string",
+      },
+      {
+          "name": "description",
+          "type": "text",
+          "notNull": True,
+          "defaultValue": "Default text"
+      }
+  ]
+}
+
+assert xata.table().create("mytable").is_success()
+
+resp = xata.table().set_schema("mytable", table_schema)
+
+# if the operation failed, print the server response
+assert resp.is_success(), resp
 ```
