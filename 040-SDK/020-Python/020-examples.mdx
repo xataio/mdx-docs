@@ -507,7 +507,7 @@ table_schema = {
   ]
 }
 
-xata.table().create("mytable")
+assert xata.table().create("mytable").is_success()
 
 set_table_schema_resp = xata.table().set_schema("mytable", table_schema)
 
