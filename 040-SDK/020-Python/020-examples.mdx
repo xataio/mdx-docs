@@ -509,7 +509,7 @@ table_schema = {
 
 assert xata.table().create("mytable").is_success()
 
-set_table_schema_resp = xata.table().set_schema("mytable", table_schema)
+resp = xata.table().set_schema("mytable", table_schema)
 
 if set_table_schema_resp.is_success():
   print("Table schema has been updated")
