@@ -511,6 +511,7 @@ assert xata.table().create("mytable").is_success()
 
 resp = xata.table().set_schema("mytable", table_schema)
 
-if set_table_schema_resp.is_success():
+# if the operation failed, print the server response
+assert not resp.is_success(), resp
   print("Table schema has been updated")
 ```
