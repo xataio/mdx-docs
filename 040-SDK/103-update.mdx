@@ -126,7 +126,7 @@ const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: {
 ```
 
 ```python
-user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg" {
+user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg", {
   "counter": {
     "$increment": 1
   }
