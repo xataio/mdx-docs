@@ -15,7 +15,7 @@ To access Xata via the API, authentication is required using an API key associat
 
 You can use a personal API key to log in to the Xata CLI client, granting you access to your workspaces and databases.
 
-To create an API key, visit the [Account Settings](https://app.xata.io/settings) page and click **+ Add a key**. You'll be prompted to enter a name for your key, then click **Save**.
+To create an API key, visit the [Account Settings](https://app.xata.io/settings) page and click **+ Add a key**. You'll be prompted to enter a name for your key, then click **Save**. Upon regenerating a key, the previous key instance becomes invalid immediately. You need to update the API key value with the new value in every place where it is used.
 
 ## Find your API key
 
@@ -57,4 +57,4 @@ curl -X GET https://api.xata.io/workspaces \
 ```
 </TabbedCode>
 
-> Note that we `import fetch from "node-fetch"` because **we recommend interacting with the Xata API from a backend** that serves as a proxy to our API. This protects your API key by not exposing it to a browser environment. When `fetch` is called in a browser, all headers sent with the request [are visible in a browser's developer tools](https://stackoverflow.com/questions/4423061/how-can-i-view-http-headers-in-google-chrome), which raises security concerns.
+> Note that we `import fetch from "node-fetch"` because **we recommend interacting with the Xata API from a backend** that serves as a proxy to our API. This protects your API key by not exposing it to a browser environment. When `fetch` is called in a browser, all headers sent with the request [are visible in a browser's developer tools](https://stackoverflow.com/questions/4423061/how-can-i-view-http-headers-in-google-chrome), which has severe security implications. This visibility can have serious security consequences, as it may lead to the unintended exposure of your API key, potentially putting your database at risk of security threats.
