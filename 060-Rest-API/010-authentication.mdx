@@ -7,15 +7,29 @@ slug: rest-api/authentication
 published: true
 ---
 
-The Xata API authenticates users using API keys that provide identity while interacting with a database in a secure manner. Below, we'll explore creating a key and then using it to fetch data from the Xata web API.
+The Xata API uses API keys to authenticate users, ensuring secure interactions with the database.
 
-To create an API key, visit the [account settings](https://app.xata.io/settings) page.
+To access Xata via the API, authentication is required using an API key associated with the workspace. Client libraries like TypeScript or Python include this key in the "Authorization" header when emitting HTTPS requests to Xata. If you're using tools like cURL to make HTTPS requests directly, you'll need to include the API key in the "Authorization" HTTP request header.
 
-## Sending an Authenticated Request
+## Generate an API key
 
-Once you've got an API key, you're ready to interact with any route on our [API Reference](/docs/api-reference/user), passing the key in the request's `Authorization` header. For example, to get a list of your workspaces, you'd do a request like this in TypeScript:
+You can use a personal API key to log in to the Xata CLI client, granting you access to your workspaces and databases.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+To create an API key, visit the [Account Settings](https://app.xata.io/settings) page and click **+ Add a key**. You'll be prompted to enter a name for your key, then click **Save**. Upon regenerating a key, the previous key instance becomes invalid immediately. You need to update the API key value with the new value in every place where it is used.
+
+## Find your API key
+
+All the API keys you generate are listed in the "Personal API Keys" section of your [Account Settings](https://app.xata.io/settings).
+
+## Regenerate an API key
+
+For security and access control reasons, it's important to regenerate your API key if you have any concerns about its security. Do not share or disclose your API key under any circumstances. If you suspect that your key's security has been compromised, take action by clicking **Regenerate** to update it.
+
+## Send an authenticated request
+
+After you have an API key, you're ready to interact with any route on our [API reference](/docs/api-reference/user), passing the key in the request's `Authorization` header. For example, to get a list of your workspaces, you can make a request like the following:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
 ```ts
 import fetch from 'node-fetch'
 fetch('https://api.xata.io/workspaces', {
@@ -43,6 +57,4 @@ curl -X GET https://api.xata.io/workspaces \
 ```
 </TabbedCode>
 
-Note that we `import fetch from "node-fetch"` because **we recommend interacting with the Xata API from a backend** that serves as a proxy to our API. This protects your API key by not exposing it to a browser environment. When `fetch` is called in a browser, all headers sent along with the request [are visible in a browser's developer tools](https://stackoverflow.com/questions/4423061/how-can-i-view-http-headers-in-google-chrome), which raises some security concerns.
-
-Armed with this knowledge, feel free to search these docs and [API Reference](/docs/api-reference/user) by pressing ⌘K on macOS or Ctrl+K on Windows for your next steps.
+> Note that we `import fetch from "node-fetch"` because **we recommend interacting with the Xata API from a backend** that serves as a proxy to our API. This protects your API key by not exposing it to a browser environment. When `fetch` is called in a browser, all headers sent with the request [are visible in a browser's developer tools](https://stackoverflow.com/questions/4423061/how-can-i-view-http-headers-in-google-chrome), which has severe security implications. This visibility can have serious security consequences, as it may lead to the unintended exposure of your API key, potentially putting your database at risk of security threats.
