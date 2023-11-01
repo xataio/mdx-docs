@@ -7,7 +7,7 @@ slug: rest-api/limits
 published: true
 ---
 
-# Limits
+## Limits
 
 Xata applies some limits based on the plan level and the API endpoint in order to ensure reliable operation and scalability.
 
@@ -20,14 +20,14 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 - [File attachments limits](#file-attachments-limits)
 - [Rate limits](#rate-limits)
 
-## User limits
+### User limits
 
 | Scope               | Limit |
 | :------------------ | :---- |
 | API keys per user   | 40    |
 | Workspaces per user | 40    |
 
-## Schema limits
+### Schema limits
 
 | Scope                   | Limit     |
 | :---------------------- | :-------- |
@@ -37,7 +37,7 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 | Database name length    | 255 chars |
 | Branch name length      | 255 chars |
 
-## Column limits
+### Column limits
 
 | Scope                       | Limit       |
 | :-------------------------- | :---------- |
@@ -47,13 +47,13 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 | Text column size            | 200 KB      |
 | Multiple type total size    | 65536 chars |
 
-## Record limits
+### Record limits
 
 | Scope       | Limit  |
 | :---------- | :----- |
 | Record size | 600 KB |
 
-## Request limits
+### Request limits
 
 | Scope        | Limit           |
 | :----------- | :-------------- |
@@ -61,15 +61,15 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 | Bulk insert  | 1000 records    |
 | Transaction  | 1000 operations |
 
-## Response limits
+### Response limits
 
-| Scope                   | Limit          |
-| :---------------------- | :------------- |
-| Page size               | 1000 records   |
-| Offset pagination size  | 50,000 records |
-| Cursor pagination depth | Unrestricted   |
+| Scope                   | Limit         |
+| :---------------------- | :------------ |
+| Page size               | 1000 records  |
+| Offset pagination size  | 50000 records |
+| Cursor pagination depth | Unrestricted  |
 
-## File attachments limits
+### File attachments limits
 
 | Scope                                               | Limit |
 | :-------------------------------------------------- | :---- |
@@ -79,29 +79,29 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 | Number of files in a file array                     | 50    |
 | Max ttl for a signed URL                            | 24h   |
 
-## Rate limits
+### Rate limits
 
 The REST API may return HTTP response code `429` as a throttling error when the rate limiting conditions are met:
 
 - **Request rate limit**: Total number of atomic HTTP requests submitted per second to any API endpoint under a branch
 - **Concurrency limit**: Number of requests executing in parallel at any given moment within a certain Store of a branch
 
-For more information on rate limits, see our [docs](/docs/concepts/pricing) or visit the [pricing page](/pricing)
+For more information on rate limits, see our [docs](/docs/concepts/pricing).
 
-## Store types
+#### Store types
 
-Xata uses three store types with individual concurrency limits:
+Xata uses store types with individual concurrency limits:
 
-| Store type                         | Concurrent requests | Endpoints                                                  |
-| ---------------------------------- | ------------------- | ---------------------------------------------------------- |
-| **Consistent transactional store** | 2                   | `data`, `bulk`, `transaction`, `query`, `summarize`        |
-| **Read replicas store**            | 3                   | `query`, `summarize` _with option_ `consistency: eventual` |
-| **Search & Analytics store**       | 5                   | `aggregate`, `search`, `ask`, `vectorSearch`               |
-| **File attachments store**         | 2                   | `data`, `file`                                             |
+| Store type                     | Concurrent requests | Endpoints                                                  |
+| ------------------------------ | ------------------- | ---------------------------------------------------------- |
+| Consistent transactional store | 2                   | `data`, `bulk`, `transaction`, `query`, `summarize`        |
+| Read replicas store            | 3                   | `query`, `summarize` _with option_ `consistency: eventual` |
+| Search & Analytics store       | 5                   | `aggregate`, `search`, `ask`, `vectorSearch`               |
+| File attachments store         | 2                   | `data`, `file`                                             |
 
 In the event the concurrency limit in a store is exceeded, requests to it are throttled internally with a timeout of 100ms. After reaching the timeout, the API errors with HTTP response code `429`.
 
-For **file attachments**, the concurrency limits apply to CRUD and query operations on `data` and `file` endpoints. For content sharing and high throughput scenarios, the direct access URLs should be used, which are NOT subject to rate and concurrency limits.
+For file attachments, the concurrency limits apply to CRUD and query operations on `data` and `file` endpoints. For content sharing and high throughput scenarios, the direct access URLs should be used, which are NOT subject to rate and concurrency limits.
 
 ## Best practices
 
@@ -114,4 +114,4 @@ Tips & best practices useful to optimize requests for the Xata API:
 - For writing records to Xata, use the bulk endpoint instead of the atomic (individual record insert) data endpoint. The bulk endpoint allows batching of multiple records in a single request, which favors the optimal use of both your branch's request rate limit and concurrency slots in the transactional store.
 - For requests to the `query` and `summarize` endpoints, consider using the `consistency: eventual` option to use the Read Replicas Store. This makes it less likely to reach the concurrency limit of either Store type and gets the best possible performance from your Xata plan.
 
-Custom plans can increase or remove some limits. To discuss upgrading, contact us by [email](mailto:support@xata.io) or fill the [Contact Form](https://support.xata.io/hc/en-us/requests/new).
+Custom plans can increase or remove some limits. To discuss upgrading, [contact us](mailto:support@xata.io) or complete the [Contact Form](https://support.xata.io/hc/en-us/requests/new).
