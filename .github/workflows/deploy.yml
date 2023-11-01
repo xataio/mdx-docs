@@ -1,0 +1,36 @@
+name: Deploy vercel website
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: team_lMj2cFnO13wwm6LWz3X5kulx
+      VERCEL_PROJECT_ID: prj_7fENPf4qHhMCnz6j2IGYWDUkJ9wU
+
+    steps:
+      - name: Checkout website repo
+        uses: actions/checkout@v3
+        with:
+          repository: xataio/frontend-next
+          sparse-checkout: |
+            apps/website
+          ref: ${{ inputs.branch || 'main' }}
+          token: ${{ secrets.GIT_TOKEN }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - run: npm i -g vercel@latest
+
+      - id: deploy
+        name: Deploy to Vercel
+        run: |
+          vercel deploy --prod --no-wait \
+            --token ${{ secrets.VERCEL_TOKEN }}
