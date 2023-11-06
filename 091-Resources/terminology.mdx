@@ -12,135 +12,381 @@ This glossary defines the core concepts behind Xata as well as general terms use
 ## A
 
 ### ACID
+**ACID** stands for atomicity, consistency, isolation, and durability. It is a set of properties that ensure database transactions are processed reliably.
 
 ### Active record ORM
+**Active record object-relational mapping (ORM)** is a design pattern that maps database records to objects in your application.
 
 ### API key
+An **API key** is a code that authorizes access to an API.
 
-### Authentication
+### Aggregate functions
+**Aggregate functions** operate on a set of values and return a single value in SQL.
 
-### Authorization
+### API endpoint
+An **API endpoint** is a specific touchpoint of communication in an API defined by a URL and HTTP method.
+
+### Asynchronous replication
+**Asynchronous replication** refers to database replication without immediate confirmation, allowing for performance improvements.
 
 ---
 
 ## B
 
 ### Bottleneck
+A **bottleneck** refers to a point in a system where the flow of data is constrained.
+
+### Backup
+A **backup** is a copy of data used to restore the original after a data loss event.
+
+### Base table
+A **base table** is a relational database table that stores actual data.
+
+### B-tree index
+A **B-tree index** is a balanced tree structure used for efficient data retrieval in databases.
 
 ---
 
 ## C
 
-### Cache Hit Ratio Metric
+### Cache hit ratio metric
+**Cache hit ratio metric** measures the effectiveness
 
 ### CLI
+**CLI** stands for command line interface, a way to interact with a computer or software by entering commands.
 
-### Connection Pooling
+### Connection pooling
+**Connection pooling** is a technique used to manage database connections to improve performance.
 
-### CSV file
+### CAP theorem
+**CAP theorem** states that a distributed data store cannot simultaneously guarantee consistency, availability, and partition tolerance.
+
+### Columnar storage
+**Columnar storage** is a format where each column's data is stored separately, used for efficiency in reading and aggregating data.
+
+### Concurrency control
+**Concurrency control** ensures safe transaction execution in a database when accessed concurrently.
 
 ---
 
 ## D
 
 ### DBaaS
+**DBaaS** stands for database as a service, providing database management and hosting in the cloud.
+
+### Data mart
+**Data mart** is a subset of a data warehouse focused on a specific business area.
+
+### Data replication
+**Data replication** copies data from one location to another for consistency and backup.
+
+### Data warehousing
+**Data warehousing** manages data from various sources to provide business insights.
+
+### Denormalization
+**Denormalization** is the process of combining data to improve read performance at the expense of write performance.
+
+### Distributed database
+A **distributed database** is a database in which storage devices are not all attached to a common processor.
 
 ---
 
 ## E
+
+### Entity-relationship (ER) model
+An **entity-relationship (ER) model** is an abstract way to describe a database's structure.
+
+### ETL (extract, transform, load)
+**ETL** is a process that involves extracting data, transforming it, and loading it into a system.
+
+### Eventual consistency
+**Eventual consistency** is a model in distributed computing that ensures all updates to a database will eventually become consistent.
+
+### Execution plan
+An **execution plan** is a sequence of operations that a database management system will perform to execute a specific SQL query.
+
+### Explain plan
+**Explain plan** is a tool in SQL databases that shows how the database would execute a query, which is useful for optimization.
+
+### Entity
+An **entity** is a thing with distinct and independent existence in database design, usually mapped to a table.
 
 ---
 
 ## F
 
 ### Failover
+**Failover** is the process of switching to a backup system when the primary system fails.
+
+### Foreign key
+A **foreign key** is a field in a table that uniquely identifies a row of another table.
+
+### Full-text search
+**Full-text search** is a technique used for searching natural-language documents stored in a database.
+
+### Functional index
+A **functional index** is a database index that is based on expressions or functions applied to one or more columns.
+
+### Federation
+**Federation** is a database design pattern that allows the management of several databases as if they were one.
+
+### Flat file
+A **flat file** is a database stored in a plain text file, where each line holds one record.
 
 ---
 
 ## G
 
+### Graph database
+A **graph database** is a database that uses graph structures for semantic queries, with nodes, edges, and properties to represent and store data.
+
+### Grid computing
+**Grid computing** is a distributed architecture of large numbers of computers connected to solve a complex problem.
+
+### Group by clause
+The **group by clause** is used in SQL to group rows that have the same values in specified columns into summary rows.
+
 ---
 
 ## H
 
-### High Availability (HA)
+### High availability (HA)
+**High availability (HA)** is a characteristic of a system that aims to ensure an agreed level of operational performance, usually uptime, for a higher than normal period.
+
+### Heap
+A **heap** is a type of database index that is unordered and is particularly useful for tables with frequent inserts and deletes.
+
+### Hash index
+A **hash index** is an index that uses a hash function to compute the location of data.
 
 ---
 
 ## I
 
+### Index
+An **index** is a data structure that improves the speed of data retrieval operations on a database table.
+
+### Inner join
+An **inner join** returns rows when there is a match in both tables being joined.
+
+### Isolation level
+**Isolation level** refers to the degree to which the transactions are isolated from each other.
+
 ---
 
 ## J
+
+### Join
+A **join** is a SQL operation used to combine rows from two or more tables based on a related column between them.
+
+### JSON (JavaScript Object Notation)
+**JSON (JavaScript Object Notation)** is a lightweight data-interchange format that is easy for humans to read and write and easy for machines to parse and generate.
+
+### JDBC (Java Database Connectivity)
+**JDBC (Java Database Connectivity)** is an API for the programming language Java, which defines how a client may access a database.
 
 ---
 
 ## K
 
+### Key-value store
+A **key-value store** is a simple database that uses an associative array (think dictionary or map) as the fundamental data model where each key is associated with one and only one value in a collection.
+
+### Kubernetes
+**Kubernetes** is an open-source system for automating deployment, scaling, and management of containerized applications, often used for maintaining databases in cloud environments.
+
+### Kerberos authentication
+**Kerberos authentication** is a network authentication protocol designed to provide strong authentication for client/server applications.
+
 ---
 
 ## L
+
+### Load balancing
+**Load balancing** distributes workloads across multiple computing resources, like computers, a computer cluster, network links, or central processing units.
+
+### Locking
+**Locking** prevents multiple processes from modifying the same data at the same time, ensuring data integrity.
+
+### Log shipping
+**Log shipping** is the process of automating the backup of database and transaction log files on a primary server and then restoring them onto a standby server.
 
 ---
 
 ## M
 
+### Materialized view
+A **materialized view** is a database object that contains the results of a query which can be updated from the original database periodically.
+
+### Middleware
+**Middleware** is software which lies between an operating system and the applications running on it, enabling communication and data management.
+
+### Multitenancy
+**Multitenancy** refers to a software architecture in which a single instance of software runs on a server and serves multiple tenants or users.
+
 ---
 
 ## N
+
+### Normalization
+**Normalization** is the process of organizing data in a database to reduce redundancy and improve data integrity.
+
+### NoSQL database
+A **NoSQL database** provides a mechanism for storage and retrieval of data that is modeled in means other than the tabular relations used in relational databases.
+
+### Non-clustered index
+A **non-clustered index** is a type of database index that is designed to improve the speed of data retrieval without altering the physical order of the records.
 
 ---
 
 ## O
 
+### ORM (Object-Relational Mapping)
+**ORM (Object-Relational Mapping)** is a programming technique for converting data between incompatible type systems using object-oriented programming languages.
+
+### OLAP (Online Analytical Processing)
+**OLAP (Online Analytical Processing)** is an approach to answering multi-dimensional analytical queries swiftly in computing.
+
+### OLTP (Online Transaction Processing)
+**OLTP (Online Transaction Processing)** is a class of systems that facilitate and manage transaction-oriented applications, typically for data entry and retrieval transaction processing.
+
 ---
 
 ## P
 
-### PostgreSQL
+### Primary key
+A **primary key** is a special relational database table column (or combination of columns) designated to uniquely identify all table records.
+
+### Partitioning
+**Partitioning** is a database design technique whereby a table is divided into multiple pieces, but is still managed as a single table.
+
+### Polyglot persistence
+**Polyglot persistence** refers to using different data storage technologies to handle varying data storage needs.
 
 ---
 
 ## Q
 
+### Query optimization
+**Query optimization** is a function of many relational database management systems in which multiple query plans for satisfying a query are examined and a good query plan is identified.
+
+### Queue
+A **queue** is a collection of entities that are maintained in a sequence and can be modified by the addition of entities at one end of the sequence and the removal from the other end of the sequence.
+
+### Quorum
+**Quorum** is the minimum number of members that must be present to make the proceedings of that meeting valid.
+
 ---
 
 ## R
+
+### Referential integrity
+**Referential integrity** is a property of data stating that all its references are valid.
+
+### RAID (Redundant Array of Independent Disks)
+**RAID (Redundant Array of Independent Disks)** is a data storage virtualization technology that combines multiple physical disk drive components into one or more logical units for the purposes of data redundancy, performance improvement, or both.
+
+### RESTful API (Representational State Transfer)
+**RESTful API (Representational State Transfer)** is an architectural style for providing standards between computer systems on the web, making it easier for systems to communicate with each other.
 
 ---
 
 ## S
 
-### SDK
+### Stored procedure
+A **stored procedure** is a prepared SQL code that you can save, so the code can be reused over and over again.
 
-### Serverless Data Platform
+### Schema
+In a relational database, a **schema** represents the organizational structure of the database.
 
 ### Sharding
+**Sharding** is a type of database partitioning that separates very large databases into smaller, faster, more easily managed parts called data shards.
 
 ---
 
 ## T
 
+### Transaction
+A **transaction** in the context of databases, is a sequence of operations performed as a single logical unit of work.
+
+### Trigger
+A **trigger** is a procedural code that is automatically executed in response to certain events on a particular table or view in a database.
+
+### Two-phase commit
+**Two-phase commit** is a type of atomic commitment protocol used in distributed database.
+
+
 ---
 
 ## U
+
+### Unique key
+A **unique key** is a set of one or more fields/columns of a table that uniquely identify a record in a database table.
+
+### Unstructured data
+**Unstructured data** refers to information that either does not have a pre-defined data model or is not organized in a pre-defined manner.
+
+### Update anomaly
+An **update anomaly** is an error or inconsistency that may occur in a database when updating operations are performed on data that are not suitably normalized.
 
 ---
 
 ## V
 
+### View
+A **view** in SQL, is a virtual table based on the result-set of an SQL statement.
+
+### VARCHAR
+**VARCHAR** stands for variable character field, a type of data in SQL that can hold letters and numbers up to a specified length.
+
+### Version control
+**Version control** in the context of databases, refers to the management of changes to databases, database schemas, and sometimes database data.
+
 ---
 
 ## W
+
+### Write-ahead logging (WAL)
+**Write-ahead logging (WAL)** is a family of techniques for providing atomicity and durability (two of the ACID properties) in database systems.
+
+### Warehouse
+In computing, a **warehouse** typically refers to a large storage database used for managing and storing large amounts of data.
+
+### Wrapper
+In the context of databases, a **wrapper** is a program that provides a compatibility layer between different data formats or protocols.
 
 ---
 
 ## X
 
+### XML database
+An **XML database** is a data persistence software system that allows data to be specified, and sometimes stored, in XML format.
+
+### XPath
+**XPath** stands for XML Path Language, which is a query language for selecting nodes from an XML document.
+
+### XA transactions
+**XA transactions** represent a standard for distributed transaction processing that allows multiple resources to participate in a single transaction.
+
 ---
 
 ## Y
 
+### YAML
+**YAML** stands for "YAML Ain't Markup Language" and is a human-readable data serialization standard that can be used in conjunction with all programming languages and is often used to write configuration files.
+
 ---
 
 ## Z
+
+### Zero downtime
+**Zero downtime** refers to the goal of running a system or service without interruptions, thereby eliminating periods during which the system is unavailable or offline.
+
+### Zone redundancy
+**Zone redundancy** is a high-availability architectural design that replicates services across separate and isolated locations (zones) within a cloud provider's region to protect from zone failures.
+
+### Zettabyte
+A **zettabyte** is a unit of digital information storage that represents 1 sextillion bytes or a trillion gigabytes, often used to quantify the amount of data stored in large databases or data warehouses.
+
+
+
