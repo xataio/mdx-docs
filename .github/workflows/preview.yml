@@ -32,8 +32,8 @@ jobs:
             package.json
             pnpm-lock.yaml
             apps/website
-            configs/*
-            packages/*
+            configs
+            packages
           ref: ${{ inputs.branch || 'main' }}
           token: ${{ secrets.GIT_TOKEN }}
 
