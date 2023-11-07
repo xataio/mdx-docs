@@ -15,11 +15,15 @@ jobs:
 
     steps:
       - name: Checkout website repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: xataio/frontend-next
           sparse-checkout: |
+            package.json
+            pnpm-lock.yaml
             apps/website
+            configs
+            packages
           ref: ${{ inputs.branch || 'main' }}
           token: ${{ secrets.GIT_TOKEN }}
 
