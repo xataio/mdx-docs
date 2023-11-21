@@ -164,7 +164,7 @@ On completion, notice Xata updated our client files in `src/xata.ts` and added m
 
 ### Commit your code, and create a GitHub PR
 
-Once you are happy with your changes you should commit your files and create a GitHub PR for your Git branch. Xata's GitHub application will look for new files in your `.xata/migrations` folder so make sure they are included in the commit. Regardless of whether migrations are present, Xata will generate a preview branch for any PR you deploy using a `preview-{branch_name}` naming system and copy over sample data (excluding file attachments). The Xata app bot will leave a comment with the details.
+Once you are happy with your changes you should commit your files and create a GitHub PR for your Git branch. Xata's GitHub application will look for new files in your `.xata/migrations` folder so make sure they are included in the commit. Regardless of whether migrations are present, Xata will generate a preview branch for any PR you deploy using a `preview-{branch_name}` naming system. This is done by forking the `main` branch, applying schema migrations Pull Request branch and copying over sample data from `main` (excluding file attachments). The Xata app bot will leave a comment with the details.
 
 If you also have Vercel or Netlify configured for your repository you should see their bot make a similar comment. As long as your integrations were set up properly, the preview deployment that your host provides should be using the preview database that Xata provides. The workflow should be the same whether you are using the Netlify of Vercel integration.
 
