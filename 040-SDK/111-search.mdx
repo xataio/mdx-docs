@@ -18,7 +18,7 @@ The format of a search request at the branch level (across tables) is as follows
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const records = await xata.search.all("<search phrase>", {
+const results = await xata.search.all("<search phrase>", {
     tables: [
       {
         table: "...",
@@ -36,7 +36,7 @@ const records = await xata.search.all("<search phrase>", {
 ```
 
 ```python
-records = xata.data().search_branch({
+results = xata.data().search_branch({
   "query": "<search phrase>",
   "tables": [{
     "table": "...",
@@ -100,7 +100,7 @@ Which returns results in the following format:
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-for (const res of results) {
+for (const res of results.records) {
   // result record
   console.log(res.record);
   /*
@@ -139,6 +139,7 @@ for (const res of results) {
 
 ```python
 {
+  "totalCount": 1,
   "records": [
     {
       "address": {
@@ -165,6 +166,7 @@ for (const res of results) {
 
 ```json
 {
+  "totalCount": 1,
   "records": [
     {
       "address": {
@@ -260,7 +262,7 @@ If you want to search in a single table, it's easier to use the table-level sear
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const records = await xata.db.Users.search("<search phrase>", {
+const results = await xata.db.Users.search("<search phrase>", {
   target: [...],
   filter: {...},
   boosters: [...],
@@ -393,7 +395,7 @@ The filtering is applied at the table level. For example:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
-const records = await xata.search.all("new st", {
+const results = await xata.search.all("new st", {
 tables: [
     {
       table: "Users",
@@ -444,7 +446,7 @@ By default, Xata searches across all columns from the selected tables. You can r
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const records = await xata.search.all('new st', {
+const results = await xata.search.all('new st', {
   tables: [
     {
       table: 'Users',
@@ -455,7 +457,7 @@ const records = await xata.search.all('new st', {
 ```
 
 ```python
-records = xata.data().search_branch({
+results = xata.data().search_branch({
   "query": "kaanu",
   "tables": [
     {
@@ -491,7 +493,7 @@ For example, here we retrieve the second page of up to `10` search results:
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const records = await xata.search.all('new st', {
+const results = await xata.search.all('new st', {
   tables: [
     {
       table: 'Users',
@@ -506,7 +508,7 @@ const records = await xata.search.all('new st', {
 ```
 
 ```python
-records = xata.data().search_branch({
+results = xata.data().search_branch({
   "query": "new st",
   "tables": [
     {
@@ -559,7 +561,7 @@ You can assign an integer weight to each column. The default weight is 1. The hi
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const records = await xata.search.all('matrix', {
+const results = await xata.search.all('matrix', {
   tables: [
     {
       table: 'Posts',
@@ -570,7 +572,7 @@ const records = await xata.search.all('matrix', {
 ```
 
 ```python
-records = xata.data().search_branch({
+results = xata.data().search_branch({
   "query": "matrix",
   "tables": [
     {
@@ -627,7 +629,7 @@ contain metrics relevant for the relevancy, like "number of stars", or "number o
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const records = await xata.search.all('matrix', {
+const results = await xata.search.all('matrix', {
   tables: [
     {
       table: 'Posts',
@@ -638,7 +640,7 @@ const records = await xata.search.all('matrix', {
 ```
 
 ```python
-records = xata.data().search_branch({
+results = xata.data().search_branch({
   "query": "matrix",
   "tables": [
     {
@@ -699,7 +701,7 @@ The modifier parameter options are:
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const records = await xata.search.all('matrix', {
+const results = await xata.search.all('matrix', {
   tables: [
     {
       table: 'Posts',
@@ -710,7 +712,7 @@ const records = await xata.search.all('matrix', {
 ```
 
 ```python
-records = xata.data().search_branch({
+results = xata.data().search_branch({
   "query": "matrix",
   "tables": [
     {
@@ -763,7 +765,7 @@ example, articles in a given category. Or you can use it to "pin" a particular r
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const records = await xata.search.all('matrix', {
+const results = await xata.search.all('matrix', {
   tables: [
     {
       table: 'Posts',
@@ -774,7 +776,7 @@ const records = await xata.search.all('matrix', {
 ```
 
 ```python
-records = xata.data().search_branch({
+results = xata.data().search_branch({
   "query": "matrix",
   "tables": [
     {
@@ -827,7 +829,7 @@ be used to boost, for example, more recent articles.
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
 ```ts
-const records = await xata.search.all('matrix', {
+const results = await xata.search.all('matrix', {
   tables: [
     {
       table: 'Posts',
@@ -847,7 +849,7 @@ const records = await xata.search.all('matrix', {
 ```
 
 ```python
-records = xata.data().search_branch({
+results = xata.data().search_branch({
   "query": "matrix",
   "tables": [
     {
