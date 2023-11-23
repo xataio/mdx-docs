@@ -407,6 +407,55 @@ user = xata.records().get("Posts", "myid", columns=["author.*"])
 
 </TabbedCode>
 
+## Many to Many relationships
+
+You can manage many-to-many relationships between multiple tables by using an additional `junction` table, in which each record represents a relationship between records in other tables.
+
+The [SQL endpoint](/docs/sdk/sql/overview) can be used to perform `JOIN` statements, in order to query the junction table while accessing data from the related tables.
+
+Furthermore, via the [Kysely integration](/docs/integrations/kysely) the Typescript SDK supports typed SQL statements, including `JOIN`s.
+
+An example, having two tables `authors` and `posts` and their junction table `authors_posts` in which each record defines a relationship of an author and a post. Authors have a `name` column, and posts have a `title` column.
+
+We can query for `authors.name` and `posts.title` via the junction table, retrieving all the details about each author-post relationship from the joined tables:
+
+<TabbedCode tabs={['TypeScript', 'SQL']}>
+
+```ts
+const db = new Kysely<Model<DatabaseSchema>>({
+  dialect: new XataDialect({ xata })
+});
+
+const records = await db
+  .selectFrom('posts_authors')
+  .innerJoin('posts', 'posts_authors.post', 'posts.id')
+  .innerJoin('authors', 'posts_authors.author', 'authors.id')
+  .selectAll()
+  .execute();
+```
+
+```jsonc
+SELECT name,title FROM "posts_authors"
+INNER JOIN "posts" ON "posts_authors".post = "posts".id
+INNER JOIN "authors" ON "posts_authors".author = "authors".id;
+```
+
+</TabbedCode>
+
+In the many-to-many relationship, multiple authors can be associated with the same title, and one author can be associated with multiple titles. Example output:
+
+```jsonc
+[
+  { "name": "Alexis", "title": "Scientific article" },
+  { "name": "Joan", "title": "Scientific article" },
+  { "name": "Alexis", "title": "Sports article" }
+]
+```
+
+In order to remove a relationship, the record representing the relationship in the junction table should be deleted.
+
+It is worth noting that with SQL `JOIN` we are not limited to joining using only the `id` column. You can use any column or expression criteria that fits your use case as a common denominator when joining tables.
+
 ## Filtering Records
 
 This section contains a few examples of how to use filtering. To find all supported operators and examples for them, see the [Filtering](/docs/sdk/filtering) section of the API Guide.
