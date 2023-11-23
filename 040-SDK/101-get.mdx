@@ -430,7 +430,7 @@ const records = await db
   .selectFrom('posts_authors')
   .innerJoin('posts', 'posts_authors.post', 'posts.id')
   .innerJoin('authors', 'posts_authors.author', 'authors.id')
-  .selectAll()
+  .select(['name', 'title'])
   .execute();
 ```
 
