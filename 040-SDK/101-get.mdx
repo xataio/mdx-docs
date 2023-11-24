@@ -72,7 +72,7 @@ For the REST API example, note that a POST request is used, even though the data
 
 All the requests are optional, so the simplest query request looks like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const teams = await xata.db.Teams.getMany();
@@ -80,6 +80,13 @@ const teams = await xata.db.Teams.getMany();
 
 ```python
 teams = xata.data().query("Teams")
+```
+
+```go
+client, _ := xata.NewSearchAndFilterClient()
+client, _ := data.Query(context.Background(), xata.QueryTableRequest{
+	TableName: "Teams",
+})
 ```
 
 ```jsonc
