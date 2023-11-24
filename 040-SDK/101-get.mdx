@@ -233,7 +233,7 @@ Unless you have a specific reason to prefer another method, we generally recomme
 
 You can retrieve a record with a given ID using a request like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.read('myid');
@@ -241,6 +241,17 @@ const user = await xata.db.Users.read('myid');
 
 ```python
 user = xata.records().get("Users", "myid")
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+record, _ := client.Get(context.Background(), xata.GetRecordRequest{
+		RecordRequest: xata.RecordRequest{
+			DatabaseName: xata.String("{db}"),
+			TableName:    "Users",
+		},
+		RecordID: "myid",
+	})
 ```
 
 ```jsonc
@@ -264,7 +275,7 @@ By default, the Query API returns all columns of the queried table. For link col
 
 For example, if you are only interested in the name and the city of the user, you can make a request like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.select(['name', 'city']).getMany();
@@ -274,6 +285,16 @@ const users = await xata.db.Users.select(['name', 'city']).getMany();
 users = xata.data().query("Users", {
   "columns": ["name", "city"]
 })
+```
+
+```go
+client, err := xata.NewSearchAndFilterClient()
+users, _ := client.Query(context.Background(), xata.QueryTableRequest{
+		TableName: "Users",
+		Payload: xata.QueryTableRequestPayload{
+			Columns: []string{"name", "city"},
+		},
+	})
 ```
 
 ```jsonc
@@ -317,7 +338,7 @@ It's worth noting that the special columns [id](/docs/concepts/data-model#id), [
 
 The same syntax can be used to select columns from a linked table, therefore adding new columns to the response. For example, to query all the columns of the teams table and also add all the columns of the owner user, you can use:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
@@ -326,6 +347,16 @@ const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
 ```python
 users = xata.data().query("Users", {
   "columns": ["*", "owner.*"]
+})
+```
+
+```go
+client, err := xata.NewSearchAndFilterClient()
+users, _ := client.Query(context.Background(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{"*", "owner.*"},
+  },
 })
 ```
 
@@ -348,7 +379,7 @@ users = xata.data().query("Users", {
 
 You can do this transitively as well, for example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 ```ts
 const posts = await xata.db.Posts.select([
   "title",
@@ -364,6 +395,20 @@ posts = xata.data().query("Posts", {
     "author.*",
     "author.team.*"
   ]
+})
+```
+
+```go
+client, err := xata.NewSearchAndFilterClient()
+users, _ := client.Query(context.Background(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{
+      "title",
+      "author.*",
+      "author.team.*",
+    },
+  },
 })
 ```
 
@@ -389,7 +434,7 @@ In this example, the `author` is a link column from `Posts` to `Users` and `team
 
 By default, when retrieving a record by its ID, only the ID column of linked records is included in the response. However, you have the option to request the linked columns to be expanded. In the following examples, the code is using the `.read()` method to retrieve a record with the ID `myid` from the `Posts` table. The code specifies it wants the `author` column to be expanded and to retrieve more information from the `author` linked record.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Posts.read('myid', ['author.*']);
@@ -397,6 +442,18 @@ const user = await xata.db.Posts.read('myid', ['author.*']);
 
 ```python
 user = xata.records().get("Posts", "myid", columns=["author.*"])
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+record, _ := client.Get(context.Background(), xata.GetRecordRequest{
+		RecordRequest: xata.RecordRequest{
+			DatabaseName: xata.String("{db}"),
+			TableName:    "Users",
+		},
+		RecordID: "myid",
+    Columns:  []string{"author.*"},
+	})
 ```
 
 ```jsonc
