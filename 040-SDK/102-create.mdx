@@ -284,10 +284,11 @@ users = xata.records().bulk_insert("Users", {
 
 ```go
 client, _ := xata.NewRecordsClient()
-users, _ := client.BulkInsert(context.TODO(), xata.BulkInsertRecordRequest{
+users, _ := client..BulkInsert(context.TODO(), xata.BulkInsertRecordRequest{
   RecordRequest: xata.RecordRequest{
     TableName: "Users",
   },
+  Columns: []string{"name"},
   Records: []map[string]*xata.DataInputRecordValue{
     {
       "email": xata.ValueFromString("laurence@example.com"),
