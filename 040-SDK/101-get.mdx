@@ -84,7 +84,7 @@ teams = xata.data().query("Teams")
 
 ```go
 client, _ := xata.NewSearchAndFilterClient()
-client, _ := data.Query(context.Background(), xata.QueryTableRequest{
+client, _ := data.Query(context.TODO(), xata.QueryTableRequest{
 	TableName: "Teams",
 })
 ```
@@ -245,7 +245,7 @@ user = xata.records().get("Users", "myid")
 
 ```go
 client, _ := xata.NewRecordsClient()
-record, _ := client.Get(context.Background(), xata.GetRecordRequest{
+record, _ := client.Get(context.TODO(), xata.GetRecordRequest{
 		RecordRequest: xata.RecordRequest{
 			DatabaseName: xata.String("{db}"),
 			TableName:    "Users",
@@ -289,7 +289,7 @@ users = xata.data().query("Users", {
 
 ```go
 client, err := xata.NewSearchAndFilterClient()
-users, _ := client.Query(context.Background(), xata.QueryTableRequest{
+users, _ := client.Query(context.TODO(), xata.QueryTableRequest{
 		TableName: "Users",
 		Payload: xata.QueryTableRequestPayload{
 			Columns: []string{"name", "city"},
@@ -352,7 +352,7 @@ users = xata.data().query("Users", {
 
 ```go
 client, err := xata.NewSearchAndFilterClient()
-users, _ := client.Query(context.Background(), xata.QueryTableRequest{
+users, _ := client.Query(context.TODO(), xata.QueryTableRequest{
   TableName: "Users",
   Payload: xata.QueryTableRequestPayload{
     Columns: []string{"*", "owner.*"},
@@ -400,7 +400,7 @@ posts = xata.data().query("Posts", {
 
 ```go
 client, err := xata.NewSearchAndFilterClient()
-users, _ := client.Query(context.Background(), xata.QueryTableRequest{
+users, _ := client.Query(context.TODO(), xata.QueryTableRequest{
   TableName: "Users",
   Payload: xata.QueryTableRequestPayload{
     Columns: []string{
@@ -446,7 +446,7 @@ user = xata.records().get("Posts", "myid", columns=["author.*"])
 
 ```go
 client, _ := xata.NewRecordsClient()
-record, _ := client.Get(context.Background(), xata.GetRecordRequest{
+record, _ := client.Get(context.TODO(), xata.GetRecordRequest{
 		RecordRequest: xata.RecordRequest{
 			DatabaseName: xata.String("{db}"),
 			TableName:    "Users",

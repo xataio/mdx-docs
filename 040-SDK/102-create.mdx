@@ -20,7 +20,7 @@ published: true
 
 You can create a record like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const record = await xata.db.Users.create({
@@ -33,6 +33,19 @@ const record = await xata.db.Users.create({
 record = xata.records().insert("Users", {
   "email": "keanu@example.com",
   "name": "Keanu Reeves"
+})
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+record, _ := client.Insert(context.TODO(), xata.InsertRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  Body: map[string]*xata.DataInputRecordValue{
+    "email": xata.ValueFromString("keanu@example.com"),
+    "name":  xata.ValueFromString("Keanu Reeves"),
+  },
 })
 ```
 
@@ -121,7 +134,7 @@ If you want to return more columns, you can specify them via the `columns` param
 
 If you want to specify your own ID, you can do it like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 ```ts
 const record = await xata.db.Users.create('myid', {
   email: 'keanu@example.com',
@@ -133,6 +146,20 @@ const record = await xata.db.Users.create('myid', {
 record = xata.records().insert_with_id("Users", "myid", {
   "email": "keanu@example.com",
   "name": "Keanu Reeves"
+})
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+record, err := records.InsertWithID(context.TODO(), xata.InsertRecordWithIDRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "myid",
+  Body: map[string]*xata.DataInputRecordValue{
+    "email": xata.ValueFromString("keanu@example.com"),
+    "name":  xata.ValueFromString("Keanu Reeves"),
+  },
 })
 ```
 
@@ -177,23 +204,16 @@ record = xata.records().insert("Posts", {
 ```
 
 ```go
-records, err := xata.NewRecordsClient()
-ctx := context.TODO()
-insertRecordRequest := xata.InsertRecordRequest{
-		RecordRequest: xata.RecordRequest{
-			DatabaseName: xata.String("<database_name>"),
-			TableName:    "Posts",
-		},
-		Columns: []string{
-			"title",
-			"author",
-		},
-		Body: map[string]*xata.DataInputRecordValue{
-			"title":  "Filming the Matrix",
-      "author": "rec_cd8rqcoavc42pi67lgd0",
-		},
-	}
-record, err := recordsCli.Insert(ctx, insertRecordRequest)
+client, _ := xata.NewRecordsClient()
+record, _ := client.Insert(context.TODO(), xata.InsertRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  Body: map[string]*xata.DataInputRecordValue{
+    "title": xata.ValueFromString("Filming the Matrix"),
+    "author":  xata.ValueFromString("rec_cd8rqcoavc42pi67lgd0"),
+  },
+})
 ```
 
 ```jsonc
@@ -219,7 +239,7 @@ record, err := recordsCli.Insert(ctx, insertRecordRequest)
 
 If you have multiple records to insert, you can send them in a single request via the [`/bulk` endpoint](/api-reference/db/db_branch_name/tables/table_name/bulk#bulk-insert-table-records). For example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 ```ts
 const users = await xata.db.Users.create([
   {
@@ -260,6 +280,32 @@ users = xata.records().bulk_insert("Users", {
     }
   ]
 })
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+result, _ := client.BulkInsert(context.TODO(), xata.BulkInsertRecordRequest{
+		RecordRequest: xata.RecordRequest{
+			TableName: "Users",
+		},
+		Records: []map[string]*xata.DataInputRecordValue{
+			{
+				"email": xata.ValueFromString("laurence@example.com"),
+				"name":  xata.ValueFromString("Laurence Fishburne"),
+				"team":  xata.ValueFromString("rec_cd8s4kbo8dsvsjilo1ug"),
+			},
+			{
+				"email": xata.ValueFromString("hugo@example.com"),
+				"name":  xata.ValueFromString("Hugo Weaving"),
+				"team":  xata.ValueFromString("rec_cd8s4kbo8dsvsjilo1ug"),
+			},
+			{
+				"email": xata.ValueFromString("joe@example.com"),
+				"name":  xata.ValueFromString("Joe Pantoliano"),
+				"team":  xata.ValueFromString("rec_cd8s4kbo8dsvsjilo1ug"),
+			},
+		},
+	})
 ```
 
 ```jsonc
