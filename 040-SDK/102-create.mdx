@@ -285,27 +285,27 @@ users = xata.records().bulk_insert("Users", {
 ```go
 client, _ := xata.NewRecordsClient()
 result, _ := client.BulkInsert(context.TODO(), xata.BulkInsertRecordRequest{
-		RecordRequest: xata.RecordRequest{
-			TableName: "Users",
-		},
-		Records: []map[string]*xata.DataInputRecordValue{
-			{
-				"email": xata.ValueFromString("laurence@example.com"),
-				"name":  xata.ValueFromString("Laurence Fishburne"),
-				"team":  xata.ValueFromString("rec_cd8s4kbo8dsvsjilo1ug"),
-			},
-			{
-				"email": xata.ValueFromString("hugo@example.com"),
-				"name":  xata.ValueFromString("Hugo Weaving"),
-				"team":  xata.ValueFromString("rec_cd8s4kbo8dsvsjilo1ug"),
-			},
-			{
-				"email": xata.ValueFromString("joe@example.com"),
-				"name":  xata.ValueFromString("Joe Pantoliano"),
-				"team":  xata.ValueFromString("rec_cd8s4kbo8dsvsjilo1ug"),
-			},
-		},
-	})
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  Records: []map[string]*xata.DataInputRecordValue{
+    {
+      "email": xata.ValueFromString("laurence@example.com"),
+      "name":  xata.ValueFromString("Laurence Fishburne"),
+      "team":  xata.ValueFromString("rec_cd8s4kbo8dsvsjilo1ug"),
+    },
+    {
+      "email": xata.ValueFromString("hugo@example.com"),
+      "name":  xata.ValueFromString("Hugo Weaving"),
+      "team":  xata.ValueFromString("rec_cd8s4kbo8dsvsjilo1ug"),
+    },
+    {
+      "email": xata.ValueFromString("joe@example.com"),
+      "name":  xata.ValueFromString("Joe Pantoliano"),
+      "team":  xata.ValueFromString("rec_cd8s4kbo8dsvsjilo1ug"),
+    },
+  },
+})
 ```
 
 ```jsonc

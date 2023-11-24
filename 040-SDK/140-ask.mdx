@@ -349,22 +349,22 @@ The following example uses vector search:
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
  const result = await xata.db.Tutorial.ask("How do a retrieve a single record?", {
-	rules: [
-		"Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
-		"If the user asks a how-to question, provide a code snippet in the language they asked for with TypeScript as the default.",
-		"Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with \"It doesn't look like I have enough information to answer that. Check the documentation or contact support.\"",
-		"Results should be relevant to the context provided and match what is expected for a cloud database.",
-		"If the question doesn't appear to be answerable from the context provided, but seems to be a question about TypeScript, Javascript, or REST APIs, you may answer from outside of the provided context.",
-		"Your name is DanGPT"
-	],
-	searchType: "vector",
-	vectorSearch: {
-		column: "embeddings",
-		contentColumn: "content",
-		filter: {
-			section: "guide"
-		}
-	}
+  rules: [
+    "Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
+    "If the user asks a how-to question, provide a code snippet in the language they asked for with TypeScript as the default.",
+    "Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with \"It doesn't look like I have enough information to answer that. Check the documentation or contact support.\"",
+    "Results should be relevant to the context provided and match what is expected for a cloud database.",
+    "If the question doesn't appear to be answerable from the context provided, but seems to be a question about TypeScript, Javascript, or REST APIs, you may answer from outside of the provided context.",
+    "Your name is DanGPT"
+  ],
+  searchType: "vector",
+  vectorSearch: {
+    column: "embeddings",
+    contentColumn: "content",
+    filter: {
+      section: "guide"
+    }
+  }
  })
  ```
 

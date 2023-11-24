@@ -85,7 +85,7 @@ teams = xata.data().query("Teams")
 ```go
 client, _ := xata.NewSearchAndFilterClient()
 client, _ := data.Query(context.TODO(), xata.QueryTableRequest{
-	TableName: "Teams",
+  TableName: "Teams",
 })
 ```
 
@@ -246,12 +246,12 @@ user = xata.records().get("Users", "myid")
 ```go
 client, _ := xata.NewRecordsClient()
 record, _ := client.Get(context.TODO(), xata.GetRecordRequest{
-		RecordRequest: xata.RecordRequest{
-			DatabaseName: xata.String("{db}"),
-			TableName:    "Users",
-		},
-		RecordID: "myid",
-	})
+  RecordRequest: xata.RecordRequest{
+    DatabaseName: xata.String("{db}"),
+    TableName:    "Users",
+  },
+  RecordID: "myid",
+})
 ```
 
 ```jsonc
@@ -290,11 +290,11 @@ users = xata.data().query("Users", {
 ```go
 client, err := xata.NewSearchAndFilterClient()
 users, _ := client.Query(context.TODO(), xata.QueryTableRequest{
-		TableName: "Users",
-		Payload: xata.QueryTableRequestPayload{
-			Columns: []string{"name", "city"},
-		},
-	})
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{"name", "city"},
+  },
+})
 ```
 
 ```jsonc
@@ -447,13 +447,13 @@ user = xata.records().get("Posts", "myid", columns=["author.*"])
 ```go
 client, _ := xata.NewRecordsClient()
 record, _ := client.Get(context.TODO(), xata.GetRecordRequest{
-		RecordRequest: xata.RecordRequest{
-			DatabaseName: xata.String("{db}"),
-			TableName:    "Users",
-		},
-		RecordID: "myid",
+    RecordRequest: xata.RecordRequest{
+      DatabaseName: xata.String("{db}"),
+      TableName:    "Users",
+    },
+    RecordID: "myid",
     Columns:  []string{"author.*"},
-	})
+  })
 ```
 
 ```jsonc

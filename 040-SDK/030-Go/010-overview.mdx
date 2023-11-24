@@ -30,15 +30,15 @@ export XATA_DATABASE_URL="REDACTED_DB_URL"
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
-	
-	"github.com/xataio/xata-go/xata"
+  "context"
+  "fmt"
+  "log"
+  
+  "github.com/xataio/xata-go/xata"
 )
 
 func main() {
-	workspaces, err := xata.NewWorkspacesClient()
+  workspaces, err := xata.NewWorkspacesClient()
     resp, _ := workspaces.List(context.TODO())
     fmt.Printf("%#v\n", *resp.Workspaces[0])
 }
