@@ -409,17 +409,111 @@ user = xata.records().get("Posts", "myid", columns=["author.*"])
 
 ## Many to Many relationships
 
+### Multiple relationship records per table
+
+Many-to-many relationships can be established across tables by creating multiple records in one of the tables, each record representing a relation between two entities.
+
+For example, having tables `authors` and `posts` where a post can have multiple authors and vise versa, each record in `posts` can represent a relationship with an author. Multiple records in the `posts` table can associate a post with different authors.
+
+Querying for posts and their associated author details can be performed with the Typescript SDK using the `link` column type, or via SQL using any column with common values across the two tables to `JOIN` on.
+
+The [SQL endpoint](/docs/sdk/sql/overview) can be used to perform `JOIN` statements, in order to access data from related tables.
+
+Furthermore, via the [Kysely integration](/docs/integrations/kysely) the Typescript SDK supports typed SQL `JOIN` statements.
+
+<TabbedCode tabs={['Kysely TS','TypeScript SDK','SQL']}>
+
+```ts
+const db = new Kysely<Model<DatabaseSchema>>({
+  dialect: new XataDialect({ xata })
+});
+
+const records = await db
+  .selectFrom('posts')
+  .innerJoin('authors', 'author', 'authors.id')
+  .select(['name', 'title'])
+  .execute();
+```
+
+```ts
+const posts_authors = await xata.db.posts.select(['title', 'author.name']).getMany();
+```
+
+```jsonc
+SELECT name,title FROM "posts"
+INNER JOIN "authors" ON "posts".author = "authors".id
+```
+
+</TabbedCode>
+
+Example output:
+
+<TabbedCode tabs={['Kysely TS','TypeScript SDK','SQL']}>
+
+```jsonc
+[
+  { "name": "Alexis", "title": "Scientific article" },
+  { "name": "Joan", "title": "Scientific article" },
+  { "name": "Joan", "title": "Sports article" }
+]
+```
+
+```jsonc
+[
+  {
+    "author": {
+      "id": "rec_clfpff3ivf68v40hnqag",
+      "name": "Alexis"
+    },
+    "id": "rec_clfpfl0k22og0hc0bpt0",
+    "title": "Scientific article"
+  },
+  {
+    "author": {
+      "id": "rec_clfpfg8k22og0hc0bpsg",
+      "name": "Joan"
+    },
+    "id": "rec_clfpfmok22og0hc0bptg",
+    "title": "Sports article"
+  },
+  {
+    "author": {
+      "id": "rec_clfpfg8k22og0hc0bpsg",
+      "name": "Joan"
+    },
+    "id": "rec_clg721kcdi29f8llc22g",
+    "title": "Scientific article"
+  }
+]
+```
+
+```jsonc
+[
+  { "name": "Alexis", "title": "Scientific article" },
+  { "name": "Joan", "title": "Scientific article" },
+  { "name": "Joan", "title": "Sports article" }
+]
+```
+
+</TabbedCode>
+
+With this schema design, we keep in mind that there will be multiple records in the `posts` table for the same post, in order to associate it with multiple authors.
+
+In case we prefer to keep just a single record per post in the `posts` table, we can use the `junction` table approach.
+
+### Junction tables
+
 You can manage many-to-many relationships between multiple tables by using an additional `junction` table, in which each record represents a relationship between records in other tables.
 
 The [SQL endpoint](/docs/sdk/sql/overview) can be used to perform `JOIN` statements, in order to query the junction table while accessing data from the related tables.
 
-Furthermore, via the [Kysely integration](/docs/integrations/kysely) the Typescript SDK supports typed SQL statements, including `JOIN`s.
+Furthermore, via the [Kysely integration](/docs/integrations/kysely) the Typescript SDK supports typed SQL `JOIN` statements.
 
 An example, having two tables `authors` and `posts` and their junction table `authors_posts` in which each record defines a relationship of an author and a post. Authors have a `name` column, and posts have a `title` column.
 
 We can query for `authors.name` and `posts.title` via the junction table, retrieving all the details about each author-post relationship from the joined tables:
 
-<TabbedCode tabs={['TypeScript', 'SQL']}>
+<TabbedCode tabs={['Kysely TS','TypeScript SDK','SQL']}>
 
 ```ts
 const db = new Kysely<Model<DatabaseSchema>>({
@@ -434,6 +528,10 @@ const records = await db
   .execute();
 ```
 
+```ts
+const posts_authors = await xata.db.posts_authors.select(['author.name', 'post.title']).getAll();
+```
+
 ```jsonc
 SELECT name,title FROM "posts_authors"
 INNER JOIN "posts" ON "posts_authors".post = "posts".id
@@ -444,6 +542,8 @@ INNER JOIN "authors" ON "posts_authors".author = "authors".id;
 
 In the many-to-many relationship, multiple authors can be associated with the same title, and one author can be associated with multiple titles. Example output:
 
+<TabbedCode tabs={['Kysely TS','TypeScript SDK','SQL']}>
+
 ```jsonc
 [
   { "name": "Alexis", "title": "Scientific article" },
@@ -451,6 +551,54 @@ In the many-to-many relationship, multiple authors can be associated with the sa
   { "name": "Alexis", "title": "Sports article" }
 ]
 ```
+
+```jsonc
+[
+  {
+    "author": {
+      "id": "rec_clfpff3ivf68v40hnqag",
+      "name": "Alexis"
+    },
+    "id": "rec_clfpghbivf68v40hnqb0",
+    "post": {
+      "id": "rec_clfpfl0k22og0hc0bpt0",
+      "title": "Scientific article"
+    }
+  },
+  {
+    "author": {
+      "id": "rec_clfpfg8k22og0hc0bpsg",
+      "name": "Joan"
+    },
+    "id": "rec_clfpgjjivf68v40hnqbg",
+    "post": {
+      "id": "rec_clfpfl0k22og0hc0bpt0",
+      "title": "Scientific article"
+    }
+  },
+  {
+    "author": {
+      "id": "rec_clfpff3ivf68v40hnqag",
+      "name": "Alexis"
+    },
+    "id": "rec_clfpglbivf68v40hnqh0",
+    "post": {
+      "id": "rec_clfpfmok22og0hc0bptg",
+      "title": "Sports article"
+    }
+  }
+]
+```
+
+```jsonc
+[
+  { "name": "Alexis", "title": "Scientific article" },
+  { "name": "Joan", "title": "Scientific article" },
+  { "name": "Alexis", "title": "Sports article" }
+]
+```
+
+</TabbedCode>
 
 In order to remove a relationship, the record representing the relationship in the junction table should be deleted.
 
