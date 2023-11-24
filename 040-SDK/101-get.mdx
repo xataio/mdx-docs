@@ -84,7 +84,7 @@ teams = xata.data().query("Teams")
 
 ```go
 client, _ := xata.NewSearchAndFilterClient()
-client, _ := data.Query(context.TODO(), xata.QueryTableRequest{
+teams, _ := data.Query(context.TODO(), xata.QueryTableRequest{
   TableName: "Teams",
 })
 ```
@@ -245,7 +245,7 @@ user = xata.records().get("Users", "myid")
 
 ```go
 client, _ := xata.NewRecordsClient()
-record, _ := client.Get(context.TODO(), xata.GetRecordRequest{
+user, _ := client.Get(context.TODO(), xata.GetRecordRequest{
   RecordRequest: xata.RecordRequest{
     DatabaseName: xata.String("{db}"),
     TableName:    "Users",

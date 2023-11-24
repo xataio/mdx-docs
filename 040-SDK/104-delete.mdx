@@ -79,7 +79,7 @@ users = xata.records().transaction({
 
 ```go
 client, _ := xata.NewRecordsClient()
-ops, _ := client.Transaction(context.TODO(), xata.TransactionRequest{
+users, _ := client.Transaction(context.TODO(), xata.TransactionRequest{
   RecordRequest: xata.RecordRequest{
     DatabaseName: xata.String("{db}"),
   },
