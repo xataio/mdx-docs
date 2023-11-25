@@ -11,7 +11,7 @@ published: true
 
 You can overwrite a full record with a request like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.createOrReplace('myid', { name: 'Keanu Reeves' });
@@ -20,6 +20,19 @@ const user = await xata.db.Users.createOrReplace('myid', { name: 'Keanu Reeves' 
 ```python
 user = xata.records().upsert("Users", "myid", {
   "name": "Keanu Reeves"
+})
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+user, _ := client.Upsert(context.TODO(), xata.UpsertRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "myid",
+  Body: map[string]*xata.DataInputRecordValue{
+    "name": xata.ValueFromString("Keanu Reeves"),
+  },
 })
 ```
 
@@ -39,7 +52,7 @@ Note that in the above example, the whole record was overwritten. If you want to
 
 In order to do a partial update to a record, you can use a request like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('myid', { email: 'newemail@example.com' });
@@ -52,6 +65,19 @@ user.update({ email: 'newemail@example.com' });
 ```python
 user = xata.records().update("Users", "myid", {
   "email": "newemail@example.com"
+})
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+user, _ := records.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "myid",
+  Body: map[string]*xata.DataInputRecordValue{
+    "email": xata.ValueFromString("newemail@example.com"),
+  },
 })
 ```
 
@@ -76,7 +102,7 @@ user = xata.records().update("Users", "myid", {
 
 It's also possible to update a record if it exists, or create it if it doesn't exist:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reeves' });
@@ -85,6 +111,19 @@ const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reeves' }
 ```python
 user = xata.records().upsert("Users", "myid", {
   "name": "Keanu Reeves"
+})
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+user, _ := client.Upsert(context.TODO(), xata.UpsertRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "myid",
+  Body: map[string]*xata.DataInputRecordValue{
+    "name": xata.ValueFromString("Keanu Reeves"),
+  },
 })
 ```
 
