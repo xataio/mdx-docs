@@ -513,7 +513,7 @@ An example, having two tables `authors` and `posts` and their junction table `au
 
 We can query for `authors.name` and `posts.title` via the junction table, retrieving all the details about each author-post relationship from the joined tables:
 
-<TabbedCode tabs={['Kysely TS','TypeScript SDK','SQL']}>
+<TabbedCode tabs={['Kysely','TypeScript','SQL']}>
 
 ```ts
 const db = new Kysely<Model<DatabaseSchema>>({
