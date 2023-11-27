@@ -342,7 +342,7 @@ The `version` field can be used to perform optimistic concurrency control, also 
 
 To prevent this, you can pass the `ifVersion` parameter to the PUT request. The value for `ifVersion` should be the value of `xata.version` from when you retrieved the record. For example, if you want to update the record only if the version is 0, you can send the following request:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const updatedUser = await xata.db.Users.update(
@@ -367,6 +367,22 @@ user = xata.records().update(
   },
   if_version=0
 )
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+var Ifv int = 0
+user, _ := client.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName:    "Users",
+  },
+  RecordID: "rec_c8hnbch26un1nl0rthkg",
+  Body: map[string]*xata.DataInputRecordValue{
+    "name":  xata.ValueFromString("Keanu Reeves"),
+    "email": xata.ValueFromString("keanu@xata.io"),
+  },
+  IfVersion: &Ifv,
+})
 ```
 
 ```jsonc
