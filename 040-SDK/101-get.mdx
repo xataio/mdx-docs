@@ -446,56 +446,59 @@ INNER JOIN "authors" ON "posts".author = "authors".id
 
 </TabbedCode>
 
-Example output:
-
-<TabbedCode tabs={['Kysely','TypeScript','SQL']}>
-
-```jsonc
-[
-  { "name": "Alexis", "title": "Scientific article" },
-  { "name": "Joan", "title": "Scientific article" },
-  { "name": "Joan", "title": "Sports article" }
-]
-```
-
-```jsonc
-[
-  {
-    "author": {
-      "id": "rec_clfpff3ivf68v40hnqag",
-      "name": "Alexis"
+<details>
+  <summary>Example output:</summary>
+  
+  <TabbedCode tabs={['Kysely','TypeScript','SQL']}>
+  
+  ```jsonc
+  [
+    { "name": "Alexis", "title": "Scientific article" },
+    { "name": "Joan", "title": "Scientific article" },
+    { "name": "Joan", "title": "Sports article" }
+  ]
+  ```
+  
+  ```jsonc
+  [
+    {
+      "author": {
+        "id": "rec_clfpff3ivf68v40hnqag",
+        "name": "Alexis"
+      },
+      "id": "rec_clfpfl0k22og0hc0bpt0",
+      "title": "Scientific article"
     },
-    "id": "rec_clfpfl0k22og0hc0bpt0",
-    "title": "Scientific article"
-  },
-  {
-    "author": {
-      "id": "rec_clfpfg8k22og0hc0bpsg",
-      "name": "Joan"
+    {
+      "author": {
+        "id": "rec_clfpfg8k22og0hc0bpsg",
+        "name": "Joan"
+      },
+      "id": "rec_clfpfmok22og0hc0bptg",
+      "title": "Sports article"
     },
-    "id": "rec_clfpfmok22og0hc0bptg",
-    "title": "Sports article"
-  },
-  {
-    "author": {
-      "id": "rec_clfpfg8k22og0hc0bpsg",
-      "name": "Joan"
-    },
-    "id": "rec_clg721kcdi29f8llc22g",
-    "title": "Scientific article"
-  }
-]
-```
+    {
+      "author": {
+        "id": "rec_clfpfg8k22og0hc0bpsg",
+        "name": "Joan"
+      },
+      "id": "rec_clg721kcdi29f8llc22g",
+      "title": "Scientific article"
+    }
+  ]
+  ```
+  
+  ```jsonc
+  [
+    { "name": "Alexis", "title": "Scientific article" },
+    { "name": "Joan", "title": "Scientific article" },
+    { "name": "Joan", "title": "Sports article" }
+  ]
+  ```
+  
+  </TabbedCode>
 
-```jsonc
-[
-  { "name": "Alexis", "title": "Scientific article" },
-  { "name": "Joan", "title": "Scientific article" },
-  { "name": "Joan", "title": "Sports article" }
-]
-```
-
-</TabbedCode>
+</details>
 
 With this schema design, we keep in mind that there will be multiple records in the `posts` table for the same post, in order to associate it with multiple authors.
 
