@@ -8,24 +8,19 @@ published: true
 ---
 
 <Alert status="info">
-  Please be aware that the Go SDK is still in *beta*. Not all endpoints are covered in the SDK and potential breaking
+  Please be aware that the Go SDK is still in *alpha*. Not all endpoints are covered in the SDK and potential breaking
   changes may occur before the promotion to a `1.0.0` and stability GA release.
 </Alert>
 
-Intro text + repo link: https://github.com/xataio/xata-go
-
-## Installation
-
-dependency name + go.mod
+The Go SDK is available on GitHub: https://github.com/xataio/xata-go
 
 ## Configuration
 
-The client probes the following environment variables for authentication.
+The client needs a `XATA_API_KEY` environment variables for authentication and the `.xatarc` file for the database URL, please refer to [this page](/docs/getting-started/installation#xatarc) to initialize your project with the `.xatarc` file.
 
-```bash
-export XATA_API_KEY="REDACTED_API_KEY"
-export XATA_DATABASE_URL="REDACTED_DB_URL"
-```
+## Example
+
+The following example demonstrates the basic usage of the SDK and how to pull the workspaces and list the first one:
 
 ```go
 package main
@@ -33,25 +28,34 @@ package main
 import (
   "context"
   "fmt"
-  "log"
 
   "github.com/xataio/xata-go/xata"
 )
 
 func main() {
-  workspaces, err := xata.NewWorkspacesClient()
-    resp, _ := workspaces.List(context.TODO())
-    fmt.Printf("%#v\n", *resp.Workspaces[0])
+  workspaces, _ := xata.NewWorkspacesClient()
+  resp, _ := workspaces.List(context.TODO())
+  fmt.Printf("%#v\n", *resp.Workspaces[0])
 }
 ```
 
-## Endpoint Coverage
+### Runnable Example
 
-As indicated the SDK is still in development, this also means that some endpoints are not available at the moment. You can check the coverage [here](https://github.com/xataio/xata-go/issues/1).
+You can run the snippet from above on your machine by, pulling the example code from the xataio/xata-go repository
 
-## Limitations
+```bash
+wget -O example.go "https://raw.githubusercontent.com/xataio/xata-go/main/examples/list_workspaces.go"
+go mod edit -module=example.com/mod
+go mod download github.com/xataio/xata-go@main
+```
 
-as mentioned the SDK is not fully functional yet and in active development
+Run the code with the command
 
-- can not do numeric operations https://xata-docs-pr-166.vercel.app/docs/sdk/update#numeric-operations --> workaround
-- endpoint coverage
+```bash
+XATA_API_KEY="<INSERT_YOUR_API_KEY>" go run exmaple.go
+```
+
+## Known Limitations
+
+- [Numeric operations](/docs/sdk/update#numeric-operations) are currently not supported via the update API, as a workaround you can use the transaction API [example](/docs/sdk/transaction).
+- Not all Xata endpoints are available at the alpha state of the SDK. You can check the coverage [here](https://github.com/xataio/xata-go/issues/1).
