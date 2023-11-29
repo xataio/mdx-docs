@@ -180,7 +180,7 @@ The response looks like this:
 
 </TabbedCode>
 
-For the REST API example, note that the `id`, `xata.version`, `xata.updatedAt` and `xata.createdAt` are included in the returned records. We will discuss the `meta.page` object when we talk about [paginating](#paginating-results) through the records.
+For the REST API example, note that the `id`, `xata.version`, `xata.updatedAt` and `xata.createdAt` are included in the returned records. The `meta.page` object is discussed in the section about [paginating](#paginating-results) through records.
 
 ## The TypeScript SDK functions for querying
 
@@ -220,7 +220,7 @@ const page = await xata.db.Posts.getMany({
 Both the `getAll()` and `getMany()` will produce multiple requests to the server if the query should return more than the maximum page size, combining all results in a single response. It's important to be aware of this because it can cause multiple round-trips to the server, which can affect the latency.
 The `getPaginated()` call always performs a single request, therefore it performs a single round-trip.
 
-Unless you have a specific reason to prefer another method, we generally recommend `getMany()`, as the best balance between usability and performant defaults, and it is the method that we use in our examples.
+Unless there's a specific reason to prefer another method, getMany() is generally recommended for its balance of usability and performant defaults, and it is the method used in the provided examples.
 
 ## Getting a record by ID
 
@@ -407,6 +407,208 @@ user = xata.records().get("Posts", "myid", columns=["author.*"])
 
 </TabbedCode>
 
+## Many to Many relationships
+
+### Multiple relationship records per table
+
+To create many-to-many relationships in database tables, create multiple entries in a single table, with each entry representing a relation between two distinct entities.
+
+For example, having tables `authors` and `posts` where a post can have multiple authors and vise versa, each record in `posts` can represent a relationship with an author. Multiple records in the `posts` table can associate a post with different authors.
+
+To query posts along with their author details, you can use the `link` column type in the Typescript SDK, or in SQL, use a common column value between the two tables to perform a `JOIN`.
+
+The [SQL endpoint](/docs/sdk/sql/overview) can be used to perform `JOIN` statements, in order to access data from related tables.
+
+Using the [Kysely integration](/docs/integrations/kysely) the Typescript SDK supports typed SQL `JOIN` statements.
+
+<TabbedCode tabs={['Kysely','TypeScript','SQL']}>
+
+```ts
+const db = new Kysely<Model<DatabaseSchema>>({
+  dialect: new XataDialect({ xata })
+});
+
+const records = await db
+  .selectFrom('posts')
+  .innerJoin('authors', 'author', 'authors.id')
+  .select(['name', 'title'])
+  .execute();
+```
+
+```ts
+const posts_authors = await xata.db.posts.select(['title', 'author.name']).getMany();
+```
+
+```jsonc
+SELECT name,title FROM "posts"
+INNER JOIN "authors" ON "posts".author = "authors".id
+```
+
+</TabbedCode>
+
+<details>
+  <summary>Example output:</summary>
+  
+  <TabbedCode tabs={['Kysely','TypeScript','SQL']}>
+  
+  ```jsonc
+  [
+    { "name": "Alexis", "title": "Scientific article" },
+    { "name": "Joan", "title": "Scientific article" },
+    { "name": "Joan", "title": "Sports article" }
+  ]
+  ```
+  
+  ```jsonc
+  [
+    {
+      "author": {
+        "id": "rec_clfpff3ivf68v40hnqag",
+        "name": "Alexis"
+      },
+      "id": "rec_clfpfl0k22og0hc0bpt0",
+      "title": "Scientific article"
+    },
+    {
+      "author": {
+        "id": "rec_clfpfg8k22og0hc0bpsg",
+        "name": "Joan"
+      },
+      "id": "rec_clfpfmok22og0hc0bptg",
+      "title": "Sports article"
+    },
+    {
+      "author": {
+        "id": "rec_clfpfg8k22og0hc0bpsg",
+        "name": "Joan"
+      },
+      "id": "rec_clg721kcdi29f8llc22g",
+      "title": "Scientific article"
+    }
+  ]
+  ```
+  
+  ```jsonc
+  [
+    { "name": "Alexis", "title": "Scientific article" },
+    { "name": "Joan", "title": "Scientific article" },
+    { "name": "Joan", "title": "Sports article" }
+  ]
+  ```
+  
+  </TabbedCode>
+
+</details>
+
+With this schema design, keep in mind that there will be multiple records in the `posts` table for the same post, in order to associate it with multiple authors.
+
+In case you prefer to keep just a single record per post in the `posts` table, you can use the `junction` table approach.
+
+### Junction tables
+
+You can manage many-to-many relationships between multiple tables by using an additional `junction` table, in which each record represents a relationship between records in other tables.
+
+The [SQL endpoint](/docs/sdk/sql/overview) can be used to perform `JOIN` statements, in order to query the junction table while accessing data from the related tables.
+
+Furthermore, via the [Kysely integration](/docs/integrations/kysely) the Typescript SDK supports typed SQL `JOIN` statements.
+
+An example, having two tables `authors` and `posts` and their junction table `authors_posts` in which each record defines a relationship of an author and a post. Authors have a `name` column, and posts have a `title` column.
+
+You can query for `authors.name` and `posts.title` via the junction table, retrieving all the details about each author-post relationship from the joined tables:
+
+<TabbedCode tabs={['Kysely','TypeScript','SQL']}>
+
+```ts
+const db = new Kysely<Model<DatabaseSchema>>({
+  dialect: new XataDialect({ xata })
+});
+
+const records = await db
+  .selectFrom('posts_authors')
+  .innerJoin('posts', 'posts_authors.post', 'posts.id')
+  .innerJoin('authors', 'posts_authors.author', 'authors.id')
+  .select(['name', 'title'])
+  .execute();
+```
+
+```ts
+const posts_authors = await xata.db.posts_authors.select(['author.name', 'post.title']).getAll();
+```
+
+```jsonc
+SELECT name,title FROM "posts_authors"
+INNER JOIN "posts" ON "posts_authors".post = "posts".id
+INNER JOIN "authors" ON "posts_authors".author = "authors".id;
+```
+
+</TabbedCode>
+
+In the many-to-many relationship, multiple authors can be associated with the same title, and one author can be associated with multiple titles. Example output:
+
+<TabbedCode tabs={['Kysely','TypeScript','SQL']}>
+
+```jsonc
+// Using the Kysely query builder
+[
+  { "name": "Alexis", "title": "Scientific article" },
+  { "name": "Joan", "title": "Scientific article" },
+  { "name": "Alexis", "title": "Sports article" }
+]
+```
+
+```jsonc
+// Using the Xata TypeScript SDK
+[
+  {
+    "author": {
+      "id": "rec_clfpff3ivf68v40hnqag",
+      "name": "Alexis"
+    },
+    "id": "rec_clfpghbivf68v40hnqb0",
+    "post": {
+      "id": "rec_clfpfl0k22og0hc0bpt0",
+      "title": "Scientific article"
+    }
+  },
+  {
+    "author": {
+      "id": "rec_clfpfg8k22og0hc0bpsg",
+      "name": "Joan"
+    },
+    "id": "rec_clfpgjjivf68v40hnqbg",
+    "post": {
+      "id": "rec_clfpfl0k22og0hc0bpt0",
+      "title": "Scientific article"
+    }
+  },
+  {
+    "author": {
+      "id": "rec_clfpff3ivf68v40hnqag",
+      "name": "Alexis"
+    },
+    "id": "rec_clfpglbivf68v40hnqh0",
+    "post": {
+      "id": "rec_clfpfmok22og0hc0bptg",
+      "title": "Sports article"
+    }
+  }
+]
+```
+
+```jsonc
+[
+  { "name": "Alexis", "title": "Scientific article" },
+  { "name": "Joan", "title": "Scientific article" },
+  { "name": "Alexis", "title": "Sports article" }
+]
+```
+
+</TabbedCode>
+
+To remove a relationship, delete the record representing the relationship in the junction table.
+
+When using SQL `JOIN`, you're not limited to joining using only the `id` column. You can use any column or criteria as a common factor to join tables.
+
 ## Filtering Records
 
 This section contains a few examples of how to use filtering. To find all supported operators and examples for them, see the [Filtering](/docs/sdk/filtering) section of the API Guide.
@@ -487,7 +689,7 @@ users = xata.data().query("Users", {
 
 </TabbedCode>
 
-Note that in the above, `name` is a column in the `Teams` table, and we can refer to it even when querying the `Users` table.
+Note that in the above, `name` is a column in the `Teams` table, and you can refer to it even when querying the `Users` table.
 
 To give a more complex filtering example, consider the following:
 
@@ -867,11 +1069,11 @@ page = xata.data().query("Users", {
 
 </TabbedCode>
 
-You can find more information about pagination in the [API reference](/docs/api-reference/db/db_branch_name/tables/table_name/query#pagination). When trying to make a decision between cursor and pagination styles we recommend starting with offset-based pagination since it provides more flexibility. If a table becomes very large and you need to page through it all, switch to the cursor-based method.
+You can find more information about pagination in the [API reference](/docs/api-reference/db/db_branch_name/tables/table_name/query#pagination). When trying to make a decision between cursor and pagination styles, it's recommended to start with offset-based pagination since it provides more flexibility. If a table becomes very large and you need to page through it all, switch to the cursor-based method.
 
 ## Next Steps
 
-Now that we can get retrieve data from a database, we might be interested in [creating more data](/docs/sdk/insert), [updating data](/docs/sdk/update) or [deleting data](/docs/sdk/delete). We've got guides for each of these operations.
+Now that you can get retrieve data from a database, you might be interested in [creating more data](/docs/sdk/insert), [updating data](/docs/sdk/update) or [deleting data](/docs/sdk/delete). There are guides for each of these operations.
 
 ## Using the Replica Store
 
