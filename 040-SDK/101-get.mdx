@@ -411,7 +411,7 @@ user = xata.records().get("Posts", "myid", columns=["author.*"])
 
 ### Multiple relationship records per table
 
-Many-to-many relationships can be established across tables by creating multiple records in one of the tables, each record representing a relation between two entities.
+To create many-to-many relationships in database tables, create multiple entries in a single table, with each entry representing a relation between two distinct entities.
 
 For example, having tables `authors` and `posts` where a post can have multiple authors and vise versa, each record in `posts` can represent a relationship with an author. Multiple records in the `posts` table can associate a post with different authors.
 
