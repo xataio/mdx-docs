@@ -415,7 +415,7 @@ To create many-to-many relationships in database tables, create multiple entries
 
 For example, having tables `authors` and `posts` where a post can have multiple authors and vise versa, each record in `posts` can represent a relationship with an author. Multiple records in the `posts` table can associate a post with different authors.
 
-Querying for posts and their associated author details can be performed with the Typescript SDK using the `link` column type, or via SQL using any column with common values across the two tables to `JOIN` on.
+To query posts along with their author details, you can use the `link` column type in the Typescript SDK, or in SQL, use a common column value between the two tables to perform a `JOIN`.
 
 The [SQL endpoint](/docs/sdk/sql/overview) can be used to perform `JOIN` statements, in order to access data from related tables.
 
