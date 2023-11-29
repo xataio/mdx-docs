@@ -180,7 +180,7 @@ The response looks like this:
 
 </TabbedCode>
 
-For the REST API example, note that the `id`, `xata.version`, `xata.updatedAt` and `xata.createdAt` are included in the returned records. We will discuss the `meta.page` object when we talk about [paginating](#paginating-results) through the records.
+For the REST API example, note that the `id`, `xata.version`, `xata.updatedAt` and `xata.createdAt` are included in the returned records. The `meta.page` object is discussed in the section about [paginating](#paginating-results) through records.
 
 ## The TypeScript SDK functions for querying
 
@@ -220,7 +220,7 @@ const page = await xata.db.Posts.getMany({
 Both the `getAll()` and `getMany()` will produce multiple requests to the server if the query should return more than the maximum page size, combining all results in a single response. It's important to be aware of this because it can cause multiple round-trips to the server, which can affect the latency.
 The `getPaginated()` call always performs a single request, therefore it performs a single round-trip.
 
-Unless you have a specific reason to prefer another method, we generally recommend `getMany()`, as the best balance between usability and performant defaults, and it is the method that we use in our examples.
+Unless there's a specific reason to prefer another method, getMany() is generally recommended for its balance of usability and performant defaults, and it is the method used in the provided examples.
 
 ## Getting a record by ID
 
@@ -500,9 +500,9 @@ INNER JOIN "authors" ON "posts".author = "authors".id
 
 </details>
 
-With this schema design, we keep in mind that there will be multiple records in the `posts` table for the same post, in order to associate it with multiple authors.
+With this schema design, keep in mind that there will be multiple records in the `posts` table for the same post, in order to associate it with multiple authors.
 
-In case we prefer to keep just a single record per post in the `posts` table, we can use the `junction` table approach.
+In case you prefer to keep just a single record per post in the `posts` table, you can use the `junction` table approach.
 
 ### Junction tables
 
@@ -514,7 +514,7 @@ Furthermore, via the [Kysely integration](/docs/integrations/kysely) the Typescr
 
 An example, having two tables `authors` and `posts` and their junction table `authors_posts` in which each record defines a relationship of an author and a post. Authors have a `name` column, and posts have a `title` column.
 
-We can query for `authors.name` and `posts.title` via the junction table, retrieving all the details about each author-post relationship from the joined tables:
+You can query for `authors.name` and `posts.title` via the junction table, retrieving all the details about each author-post relationship from the joined tables:
 
 <TabbedCode tabs={['Kysely','TypeScript','SQL']}>
 
@@ -689,7 +689,7 @@ users = xata.data().query("Users", {
 
 </TabbedCode>
 
-Note that in the above, `name` is a column in the `Teams` table, and we can refer to it even when querying the `Users` table.
+Note that in the above, `name` is a column in the `Teams` table, and you can refer to it even when querying the `Users` table.
 
 To give a more complex filtering example, consider the following:
 
@@ -1069,11 +1069,11 @@ page = xata.data().query("Users", {
 
 </TabbedCode>
 
-You can find more information about pagination in the [API reference](/docs/api-reference/db/db_branch_name/tables/table_name/query#pagination). When trying to make a decision between cursor and pagination styles we recommend starting with offset-based pagination since it provides more flexibility. If a table becomes very large and you need to page through it all, switch to the cursor-based method.
+You can find more information about pagination in the [API reference](/docs/api-reference/db/db_branch_name/tables/table_name/query#pagination). When trying to make a decision between cursor and pagination styles, it's recommended to start with offset-based pagination since it provides more flexibility. If a table becomes very large and you need to page through it all, switch to the cursor-based method.
 
 ## Next Steps
 
-Now that we can get retrieve data from a database, we might be interested in [creating more data](/docs/sdk/insert), [updating data](/docs/sdk/update) or [deleting data](/docs/sdk/delete). We've got guides for each of these operations.
+Now that you can get retrieve data from a database, you might be interested in [creating more data](/docs/sdk/insert), [updating data](/docs/sdk/update) or [deleting data](/docs/sdk/delete). There are guides for each of these operations.
 
 ## Using the Replica Store
 
