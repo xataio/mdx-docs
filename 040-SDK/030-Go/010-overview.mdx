@@ -39,6 +39,9 @@ func main() {
 }
 ```
 
+In the terminal, enter `go run .` to run the code.
+
+The code snippet calls `workspaces.List(ctx)` API to list all workspaces and prints the details of the first workspace with `fmt.Printf("%#v\n", *resp.Workspaces[0])`.
 ### Runnable Example
 
 You can run the snippet from above on your machine by, pulling the example code from the xataio/xata-go repository
