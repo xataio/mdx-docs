@@ -9,7 +9,7 @@ published: true
 
 The general form of a query is:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 import { getXataClient } from "./xata";
@@ -38,6 +38,26 @@ data = xata.data().query("{table_name}", {
     ...
   },
   "page": {
+    ...
+  }
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+data, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "{tabel_name}",
+  Payload: xata.QueryTableRequestPayload{
+		Columns: []string{"col_1", ".."},
+    Filter: &xata.FilterExpression{
+			// ..
+		},
+    Sort: xata.NewSortExpressionFromStringSortOrderMapList(
+			// ..
+    ),
+    Page: &xata.SearchPageConfig{
+      // ..
+		},
   }
 })
 ```
@@ -62,6 +82,7 @@ data = xata.data().query("{table_name}", {
     ...
   },
   "page": {
+    ...
   }
 }
 ```
