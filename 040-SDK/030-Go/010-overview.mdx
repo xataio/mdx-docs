@@ -20,9 +20,9 @@ The client needs a `XATA_API_KEY` environment variables for authentication and t
 
 ## Example
 
-After setting up your project and adding Xata credentials, create an example Go file. 
+After setting up your project and adding Xata credentials, create an example Go file.
 
-The following example code demonstrates using the SDK to connect to Xata, retrieve a list of workspaces, and then print out details of the first workspace in the list. 
+The following example code demonstrates using the SDK to connect to Xata, retrieve a list of workspaces, and then print out details of the first workspace in the list.
 
 In your text editor, paste the following code into your `example.go` file and save the file:
 
@@ -46,6 +46,7 @@ func main() {
 In the terminal, enter `go run .` to run the code.
 
 The code snippet calls `workspaces.List(ctx)` API to list all workspaces and prints the details of the first workspace with `fmt.Printf("%#v\n", *resp.Workspaces[0])`.
+
 ### Runnable Example
 
 You can run the snippet from above on your machine by, pulling the example code from the xataio/xata-go repository
