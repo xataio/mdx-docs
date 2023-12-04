@@ -126,7 +126,7 @@ teams, _ := data.Query(context.TODO(), xata.QueryTableRequest{
 
 The response looks like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 ```ts
 [
   {
@@ -160,6 +160,12 @@ The response looks like this:
     "more": false
   }
 }
+```
+
+```go
+// type QueryTableResponse
+Meta    *RecordsMetadata
+Records []*Record
 ```
 
 ```json
