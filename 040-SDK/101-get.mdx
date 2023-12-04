@@ -16,12 +16,12 @@ import { getXataClient } from "./xata";
 
 const client = getXataClient();
 const data = await client
-.db[table]
-.select([...])
-.filter({ ... })
-.sort({ ... })
-.page({ ... })
-.getMany();
+  .db[table]
+  .select([...])
+  .filter({ ... })
+  .sort({ ... })
+  .page({ ... })
+  .getMany();
 ```
 
 ```python
