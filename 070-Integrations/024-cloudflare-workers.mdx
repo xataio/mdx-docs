@@ -168,3 +168,101 @@ If you open the Xata UI and navigate to your database, you will see the **Posts*
 you can run the command `xata browse` to open a browser window.
 
 Click **Schema** to see the schema definition with the inferred data types:
+
+You'll also see `xata.*` [special columns](/docs/concepts/data-model#special-columns) automatically
+created and maintained by Xata.
+
+With the database schema in place, the final step is to generate the code that allows you to access and query the data
+from our application. To do this, run:
+
+```sh
+xata pull main
+```
+
+This updates the contents of `src/xata.ts` based on the schema defined on the `main` branch of your database. So, if you
+make any further changes to the schema, run `xata pull <branch>` to update the auto-generated code.
+
+### Deploying your project
+
+```
+npx wrangler deploy
+```
+
+Preview your Worker at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev.` When you visit this URL in your browser you should see "Hello World" returned.
+
+## Initializing Xata Client
+
+### Install Xata Client so we can use it to query our database from our cloudflare worker.
+
+```
+npm i @xata.io/client
+```
+
+## Query and list the posts
+
+There are two ways of initiailizing the xata client with cloudflare workers: "Service Worker" format and "ES Modules" format. We recommend using the modules syntax.
+
+### Service Workers (Deprecated)
+
+```ts title="index.ts"
+import { XataClient } from './xata';
+
+async function handler(request: Request) {
+  const xata = new XataClient({
+    // @ts-ignore
+    apiKey: XATA_API_KEY,
+    // @ts-ignore
+    branch: XATA_BRANCH
+  });
+  const posts = await xata.db.Posts.getAll();
+  return new Response(`Total Posts: ${posts.length}`);
+}
+
+// Initialize Worker
+addEventListener('fetch', (event) => {
+  event.respondWith(handler(event.request));
+});
+```
+
+### ES Module Syntax (Recommended)
+
+```ts title="index.ts"
+import { XataClient } from './xata';
+
+export interface Env {
+  XATA_BRANCH: string;
+  XATA_API_KEY: string;
+}
+
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const xata = new XataClient({
+      apiKey: env.XATA_API_KEY,
+      branch: env.XATA_BRANCH
+    });
+    const posts = await xata.db.Posts.getAll();
+    return new Response(`Total Posts: ${posts.length}`);
+  }
+};
+```
+
+## Deploying your changed project
+
+To make these envs that you've set up locally available in your remote deployment with the xata client running in cloudflare will need access to the environment variables. There are
+two ways to populate them. The first is creating them manualyl through the Cloudflare dashboard. The second is through our one click integration. We recommend the second.
+
+### Creating the env variables manually from Cloudflare dashboard
+
+If you deploy without adding the .env vars to Cloudflare, your remote endpoint will throw.
+
+- Go the Cloudflare UI
+- Go to Workers tab in the left navigation
+- Find your deployed worker (getting-started-cloudflare-workers)
+- Settings tab > Variables > Add variable
+- Refresh your deployment and the post count should be shown.
+
+### Using the one click guided workflow from the Cloudflare dashboard (Recommended)
+
+Going through this flow automatically sets the environment variables necessary to interact with your database from a remote Cloudflare worker.
+
+Your endpoint response should also be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev.`
