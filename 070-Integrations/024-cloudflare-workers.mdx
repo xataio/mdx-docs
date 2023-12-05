@@ -1,57 +1,39 @@
 ---
-title: Get started with Cloudflare and Xata
+title: Cloudflare with Xata
 navTitle: Cloudflare Workers
 keywords: ['cloudflare', 'full-text search']
-description: Use Cloudflare and Xata
-slug: getting-started/cloudflare
+description: Use Cloudflare with Xata
+slug: integrations/cloudflare
 published: true
 ---
 
-You will need a cloudflare account to deploy your application.
+[Cloudflare](https://www.cloudflare.com/en-gb/) is a content delivery and security service that optimizes website performance and mitigates security risks for sites. \[Cloudflare Workers]allow you to run code directly on Cloudflare's global network, reducing latency and improving performance. They're ideal for tasks like customizing web content, handling API requests, and modifying web traffic, all executed closer to the user for faster response times.
 
-The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree/main/apps/getting-started-cloudflare-workers) for this
-guide is available via the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
+> You need a Cloudflare account to deploy your application.
 
-## Before you begin
+The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree/main/apps/getting-started-cloudflare-workers) is available in the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
 
-Install the Xata CLI:
+### Installation
 
-```sh
-npm install -g @xata.io/cli
-```
-
-Authenticate the Xata CLI with your Xata account. If you don't already have an account, you can use the
-same workflow to sign up for a new account. Run the following command to begin the authentication workflow:
-
-```sh
-xata auth login
-```
-
-On completion, the command will create a new API key for your user account, which you should see in the \[account
-settings page within the Xata UI]\[1]. That key will also be stored locally on your computer (the location might vary for
-each OS). It looks like this:
-
-```toml
-# .config/xata/credentials
-[default]
-apiKey=YOUR_API_KEY_HERE
-```
+Will link off to getting started section maybe
 
 ## Create a new Cloudflare app
 
-1.  Create a new Cloudflare workers endpoint, accepting the default prompt options:
+1.  Create a new Cloudflare Workers endpoint:
 
     ```sh
     npm create cloudflare@latest
     ```
 
-2.  Once the command has completed, go to the `getting-started-cloudflare-workers` directory, and run the application:
+    Accept the default prompt options.
+
+2.  After the command has completed, navigate to the `getting-started-cloudflare-workers` directory, and run the application:
 
     ```sh
     $ npm run wrangler dev
     ```
 
-By default, the application will run on `http://localhost:8787`. When visiting this URL "Hello World" should be shown in your browser.
+By default, the application runs on `http://localhost:8787`. When visiting this URL "Hello World" should be shown in your browser.
 
 ## Create a new database
 
