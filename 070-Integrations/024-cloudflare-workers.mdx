@@ -1,0 +1,170 @@
+---
+title: Get started with Cloudflare and Xata
+navTitle: Cloudflare Workers
+keywords: ['cloudflare', 'full-text search']
+description: Use Cloudflare and Xata
+slug: getting-started/cloudflare
+published: true
+---
+
+You will need a cloudflare account to deploy your application.
+
+The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree/main/apps/getting-started-cloudflare-workers) for this
+guide is available via the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
+
+## Before you begin
+
+Install the Xata CLI:
+
+```sh
+npm install -g @xata.io/cli
+```
+
+Authenticate the Xata CLI with your Xata account. If you don't already have an account, you can use the
+same workflow to sign up for a new account. Run the following command to begin the authentication workflow:
+
+```sh
+xata auth login
+```
+
+On completion, the command will create a new API key for your user account, which you should see in the \[account
+settings page within the Xata UI]\[1]. That key will also be stored locally on your computer (the location might vary for
+each OS). It looks like this:
+
+```toml
+# .config/xata/credentials
+[default]
+apiKey=YOUR_API_KEY_HERE
+```
+
+## Create a new Cloudflare app
+
+1.  Create a new Cloudflare workers endpoint, accepting the default prompt options:
+
+    ```sh
+    npm create cloudflare@latest
+    ```
+
+2.  Once the command has completed, go to the `getting-started-cloudflare-workers` directory, and run the application:
+
+    ```sh
+    $ npm run wrangler dev
+    ```
+
+By default, the application will run on `http://localhost:8787`. When visiting this URL "Hello World" should be shown in your browser.
+
+## Create a new database
+
+With the Xata CLI installed and logged in and a new application in place, use the Xata CLI to create a new
+database. Accept all the prompt defaults for the following command except for the region selection, where
+you should choose the region closest to your application users:
+
+```sh
+xata init
+```
+
+<Expand title="Xata init output">
+  ```sh
+  $ 🦋 Initializing project... We will ask you some questions.
+
+You have a single workspace, using it by default: xata-workspace-hc84d7
+✔ Select a database or create a new one › <Create a new database>
+✔ New database name … getting-started-cloudflare-workers
+✔ Select a region › eu-west-1
+✔ Add .env to .gitignore? … yes
+✔ Generate code and types from your Xata database › TypeScript
+✔ Choose the output path for the generated code … src/xata.ts
+
+Setting up Xata...
+
+Created Xata config: .xatarc
+
+Creating .env file
+set XATA\*API_KEY=xau**\*\*\*\***\***\*\*\*\***\***\*\***\*\*\*\***\*\***
+set XATA_BRANCH=main
+
+Added .env file to .gitignore
+
+i Running npm install --save @xata.io/client
+
+added 2 packages, and audited 895 packages in 5s
+
+142 packages are looking for funding
+run `npm fund` for details
+
+found 0 vulnerabilities
+
+No new migrations to pull from main branch
+Generated Xata code to ./src/xata.ts
+
+✔ Project setup with Xata 🦋
+
+i Setup tables and columns at https://app.xata.io/workspaces/xata-workspace-hc84d7/dbs/getting-started-cloudflare-workers:eu-west-1
+
+i Use xata pull main to regenerate code and types from your Xata database
+
+````
+</Expand>
+
+On completion, the CLI will create `.env`, `.xatarc`, and `src/xata.ts` files within your project folder with the
+correct credentials to access your database.
+
+Your `.env` file should look something like this:
+
+```bash title=".env"
+XATA_API_KEY=YOUR_API_KEY_HERE
+XATA_BRANCH=main
+````
+
+Since you selected TypeScript support after running `xata init`, it also created files that provide typings and functions to call using Xata's
+TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows:
+
+```json
+{
+  "databaseUrl": "https://my-xata-app-database-url",
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}
+```
+
+The `src/xata.ts` file includes generated code you should typically never touch manually.
+
+## Inject into wrangler during development
+
+Create a new file called `.dev.vars` at the root of your project
+Copy these env vars into this file so you have access to them in dev mode.
+
+```
+XATA_API_KEY="xau_*********************************"
+XATA_BRANCH="main"
+```
+
+> Note the quotation marks.
+
+### Define the database schema and import CSV data
+
+You can use the \[Xata UI]\[0] to manually define your schema and add data. However, for this guide, you'll use
+the Xata CLI and a CSV file to:
+
+1.  Auto-generate a schema based on column headings for names and data types inferred from the column values
+2.  Import data to the database
+
+First, download the
+[example blog posts CSV file](https://raw.githubusercontent.com/xataio/examples/main/seed/blog-posts.csv).
+You can either do this manually or by running the following command:
+
+```sh
+curl --create-dirs -o seed/blog-posts.csv https://raw.githubusercontent.com/xataio/examples/main/seed/blog-posts.csv
+```
+
+Next, import the CSV:
+
+```sh
+xata import csv seed/blog-posts.csv --table Posts --create
+```
+
+If you open the Xata UI and navigate to your database, you will see the **Posts** table. Alternatively,
+you can run the command `xata browse` to open a browser window.
+
+Click **Schema** to see the schema definition with the inferred data types:
