@@ -87,7 +87,7 @@ results = xata.data().search_branch({"query": "new st"})
 
 ```go
 searchClient, _ := xata.NewSearchAndFilterClient()
-results, _ := cli.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
   Payload: xata.SearchBranchRequestPayload{
     Query: "new st",
   },
@@ -246,7 +246,7 @@ results = xata.data().search_branch({
 
 ```go
 searchClient, _ := xata.NewSearchAndFilterClient()
-results, _ := cli.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
   Payload: xata.SearchBranchRequestPayload{
     Query:  "new st",
     Tables: []*xata.SearchBranchRequestTablesItem{
@@ -345,7 +345,7 @@ results = xata.data().search_branch({"query": "kaanu"})
 
 ```go
 searchClient, _ := xata.NewSearchAndFilterClient()
-results, _ := cli.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
   Payload: xata.SearchBranchRequestPayload{
     Query: "kaanu",
   },
@@ -379,7 +379,7 @@ results = xata.data().search_branch({
 
 ```go
 searchClient, _ := xata.NewSearchAndFilterClient()
-results, _ := cli.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
   Payload: xata.SearchBranchRequestPayload{
     Query:     "kaanu",
     Fuzziness: xata.Int(0),
@@ -417,7 +417,7 @@ results = xata.data().search_branch({
 
 ```go
 searchClient, _ := xata.NewSearchAndFilterClient()
-results, _ := cli.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
   Payload: xata.SearchBranchRequestPayload{
     Query:     "kaanu",
     Fuzziness: xata.Int(2),

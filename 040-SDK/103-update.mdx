@@ -70,7 +70,7 @@ user = xata.records().update("Users", "myid", {
 
 ```go
 client, _ := xata.NewRecordsClient()
-user, _ := records.Update(context.TODO(), xata.UpdateRecordRequest{
+user, _ := client.Update(context.TODO(), xata.UpdateRecordRequest{
   RecordRequest: xata.RecordRequest{
     TableName: "Users",
   },

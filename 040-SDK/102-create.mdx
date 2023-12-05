@@ -151,7 +151,7 @@ record = xata.records().insert_with_id("Users", "myid", {
 
 ```go
 client, _ := xata.NewRecordsClient()
-record, err := records.InsertWithID(context.TODO(), xata.InsertRecordWithIDRequest{
+record, err := client.InsertWithID(context.TODO(), xata.InsertRecordWithIDRequest{
   RecordRequest: xata.RecordRequest{
     TableName: "Users",
   },

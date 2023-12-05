@@ -162,7 +162,7 @@ xata pull my_feature
 
 On completion, notice Xata updated our client files in `src/xata.ts` and added migration files in the `.xata/migrations` folder. The later files are needed for GitHub to pick up on the changes we've made. Each time you make changes to your database branch, you will need to run `xata pull my_feature`.
 
-### Commit your code, and create a GitHub pull request
+### Commit code and create a pull request
 
 Once you are happy with your changes you should commit your files and create a GitHub pull request for your Git branch. Xata's GitHub application will look for new files in your `.xata/migrations` folder so make sure they are included in the commit. Regardless of whether migrations are present, Xata will generate a preview branch for any pull request you deploy using a `preview-{branch_name}` naming system. This is done by forking the `main` branch, applying schema migrations from the pull request branch and copying over sample data from `main` (excluding file attachments). The Xata app bot will leave a comment with the details.
 
