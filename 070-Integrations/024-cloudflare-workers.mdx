@@ -13,7 +13,7 @@ published: true
 
 The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree/main/apps/getting-started-cloudflare-workers) is available in the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
 
-### Installation
+### Before your begin
 
 - [Install the Xata CLI and authenticate](https://xata.io/docs/getting-started/installation)
 
@@ -22,13 +22,13 @@ The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree
 Choose the hello world example and accept the default prompt options.
 
 ```sh
-npm create cloudflare@latest
+npm create cloudflare@latest xata-cloudflare
 ```
 
-After the command has completed, navigate to the `getting-started-cloudflare-workers` directory, and run the application locally:
+After the command has completed, navigate to the `xata-cloudflare` directory, and run the application locally:
 
 ```sh
-$ npm run wrangler dev
+npm run wrangler dev
 ```
 
 By default, the application runs on `http://localhost:8787`. When visiting this URL "Hello World" should be shown in your browser.
@@ -65,7 +65,7 @@ There are two ways of initiailizing Xata client in Cloudflare workers:
 
 #### ES Modules Syntax (Recommended)
 
-```ts title="index.ts"
+```ts title="src/index.ts"
 import { XataClient } from './xata';
 
 export interface Env {
@@ -89,7 +89,7 @@ export default {
 
 #### Service Workers Syntax (Deprecated)
 
-```ts title="index.ts"
+```ts title="src/index.ts"
 import { XataClient } from './xata';
 
 async function handler(request: Request) {
@@ -111,7 +111,7 @@ addEventListener('fetch', (event) => {
 
 ### Local environment variables
 
-Copy your Xata environment values into a new file called .dev.vars. This allows Cloudflare access to them in dev mode.
+Copy your Xata environment values into a new file called .dev.vars at the root of your project. This allows Cloudflare access to them in dev mode.
 
 ```bash title=".dev.vars"
 XATA_API_KEY=YOUR_API_KEY_HERE
@@ -131,11 +131,10 @@ Going through this flow automatically sets the environment variables necessary t
 
 Your endpoint response should also be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev.`
 
-#### Manual
-
-![Adding environment variables manually](images/cloudflare-manual-env.png)
+#### Manually adding environment variables
 
 1.  Navigate to the Cloudflare dashboard
 2.  Navigate to your corresponding Worker
-3.  Under Settings tab > Variables > Add variable add you environment variables
-4.  Refresh your deployment
+3.  Under Settings tab > Variables > Add variable
+
+![Adding environment variables manually](images/cloudflare-manual-env.png)
