@@ -7,18 +7,18 @@ slug: integrations/cloudflare
 published: true
 ---
 
-[Cloudflare](https://www.cloudflare.com/en-gb/) is a content delivery and security service that optimizes website performance and mitigates security risks for sites. \[Cloudflare Workers]allow you to run code directly on Cloudflare's global network, reducing latency and improving performance. They're ideal for tasks like customizing web content, handling API requests, and modifying web traffic, all executed closer to the user for faster response times.
+[Cloudflare](https://www.cloudflare.com/en-gb/) is a content delivery and security service that optimizes website performance and mitigates security risks for sites. [Cloudflare Workers](https://workers.cloudflare.com/) allow you to run code directly on Cloudflare's global network, reducing latency and improving performance. They're ideal for tasks like customizing web content, handling API requests, and modifying web traffic, all executed closer to the user for faster response times.
 
-> You need a Cloudflare account to deploy your application.
+> You'll need a Cloudflare account to deploy your application.
 
 The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree/main/apps/getting-started-cloudflare-workers) is available in the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
 
 ### Installation
 
-- [install the Xata CLI and authenticate](https://xata.io/docs/getting-started/installation)
+- [Install the Xata CLI and authenticate](https://xata.io/docs/getting-started/installation)
 
 - You will need to run `xata init` to create a new database, and have a `.env` file generated for you within your app folder. This file will contain the
-  correct credentials to access your database to be used in Cloudflare.
+  correct credentials to access your database from your Cloudflare worker.
 
 ## Create a new Cloudflare app
 
@@ -26,7 +26,7 @@ The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree
 npm create cloudflare@latest
 ```
 
-Accept the default prompt options.
+Choose the hello world example and accept the default prompt options.
 
 After the command has completed, navigate to the `getting-started-cloudflare-workers` directory, and run the application:
 
@@ -50,30 +50,14 @@ Preview your Worker at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev.` When you vi
 npm i @xata.io/client
 ```
 
-Copy environment variables
-
-After running `xata init`, you should have a `.env` file at your app root that looks something like this:
-
-```bash title=".env"
-XATA_API_KEY=YOUR_API_KEY_HERE
-XATA_BRANCH=main
-```
-
-Copy these values into a new file called .dev.vars. This allows Cloudflare access to them in dev mode.
-
-```bash title=".dev.vars"
-XATA_API_KEY=YOUR_API_KEY_HERE
-XATA_BRANCH=main
-```
-
 ## Initialize Xata Client
 
 There are two ways of initiailizing Xata client in Cloudflare workers:
 
-1.  ES Modules (Recommended)
-2.  Service Workers (Deprecated)
+1.  ES Modules Syntax (Recommended)
+2.  Service Workers Syntax (Deprecated)
 
-### ES Modules (Recommended)
+### ES Modules Syntax (Recommended)
 
 ```ts title="index.ts"
 import { XataClient } from './xata';
@@ -95,7 +79,7 @@ export default {
 };
 ```
 
-### Service Workers (Deprecated)
+### Service Workers Syntax (Deprecated)
 
 ```ts title="index.ts"
 import { XataClient } from './xata';
@@ -115,20 +99,36 @@ addEventListener('fetch', (event) => {
 });
 ```
 
-## Setting environment variables in remote environment
+## Environment variables (Local)
 
-There are two ways to make the environment variables you've defined locally available in your remote deployment:
+After running `xata init` at the beginning of this guide, you should have a `.env` file at your app root that looks something like this:
+
+```bash title=".env"
+XATA_API_KEY=YOUR_API_KEY_HERE
+XATA_BRANCH=main
+```
+
+Copy these values into a new file called .dev.vars. This allows Cloudflare access to them in dev mode.
+
+```bash title=".dev.vars"
+XATA_API_KEY=YOUR_API_KEY_HERE
+XATA_BRANCH=main
+```
+
+## Environment variables (Remote)
+
+In order to make these environment variables accessible in your worker when it is deployed remotely, there are two options:
 
 1.  Using the one click guided workflow from the Cloudflare dashboard (Recommended)
 2.  Manually through the Cloudflare dashboard
 
-### Using the one click guided workflow from the Cloudflare dashboard (Recommended)
+### One click guided workflow (Recommended)
 
 Going through this flow automatically sets the environment variables necessary to interact with your database from a remote Cloudflare worker.
 
 Your endpoint response should also be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev.`
 
-### Manually through the Cloudflare dashboard
+### Manual
 
 If you deploy without adding the .env vars to Cloudflare, your remote endpoint will error.
 
