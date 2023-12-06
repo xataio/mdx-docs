@@ -166,6 +166,8 @@ record = xata.records().update("Users", "record_id", {
 
 ### Download a file through reading a record
 
+The `base64Content` must be requested explicitly, it is not returned when selecting columns using wildcard.
+
 <TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
 ```ts
 const user = await xata.db.Users.read('record_id', ['photo.name', 'photo.base64Content']);
