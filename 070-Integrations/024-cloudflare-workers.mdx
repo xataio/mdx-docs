@@ -129,6 +129,11 @@ In order to make these environment variables accessible in your worker when it i
 
 Going through this flow automatically sets the environment variables necessary to interact with your database from a remote Cloudflare worker.
 
+1.  Navigate to the Cloudflare dashboard
+2.  Navigate to your corresponding Worker
+3.  Click Integrations
+4.  Select Xata
+
 ![Adding environment variables with our Xata Cloudflare integration](images/cloudflare-integration-env.png)
 
 Your endpoint response should also be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev.`
@@ -137,6 +142,7 @@ Your endpoint response should also be available remotely at `<YOUR_WORKER>.<YOUR
 
 1.  Navigate to the Cloudflare dashboard
 2.  Navigate to your corresponding Worker
-3.  Under Settings tab > Variables > Add variable
+3.  Click Settings
+4.  Add variable
 
 ![Adding environment variables manually](images/cloudflare-manual-env.png)
