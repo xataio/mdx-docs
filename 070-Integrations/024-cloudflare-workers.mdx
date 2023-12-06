@@ -1,8 +1,8 @@
 ---
-title: Xata with Cloudflare
+title: Xata with Cloudflare Workers
 navTitle: Cloudflare Workers
 keywords: ['cloudflare', 'integration']
-description: Xata with Cloudflare
+description: Xata with Cloudflare Workers
 slug: integrations/cloudflare
 published: true
 ---
@@ -15,28 +15,24 @@ The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree
 
 ### Installation
 
-- You will need a [Cloudflare account](https://dash.cloudflare.com/).
-
-- You will need to [install the Xata CLI and authenticate](https://xata.io/docs/getting-started/installation)
+- [install the Xata CLI and authenticate](https://xata.io/docs/getting-started/installation)
 
 - You will need to run `xata init` to create a new database, and have a `.env` file generated for you within your app folder. This file will contain the
-  correct credentials to access your database.
+  correct credentials to access your database to be used in Cloudflare.
 
 ## Create a new Cloudflare app
 
-1.  Create a new Cloudflare Workers endpoint:
+```sh
+npm create cloudflare@latest
+```
 
-    ```sh
-    npm create cloudflare@latest
-    ```
+Accept the default prompt options.
 
-    Accept the default prompt options.
+After the command has completed, navigate to the `getting-started-cloudflare-workers` directory, and run the application:
 
-2.  After the command has completed, navigate to the `getting-started-cloudflare-workers` directory, and run the application:
-
-    ```sh
-    $ npm run wrangler dev
-    ```
+```sh
+$ npm run wrangler dev
+```
 
 By default, the application runs on `http://localhost:8787`. When visiting this URL "Hello World" should be shown in your browser.
 
@@ -48,15 +44,13 @@ npx wrangler deploy
 
 Preview your Worker at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev.` When you visit this URL in your browser you should see "Hello World" returned.
 
-## Initializing Xata Client
-
-### Install Xata Client so we can use it to query our database from our Cloudflare worker.
+## Install Xata Client
 
 ```
 npm i @xata.io/client
 ```
 
-## Copy .env file vars to .dev.vars
+Copy environment variables
 
 After running `xata init`, you should have a `.env` file at your app root that looks something like this:
 
@@ -72,9 +66,9 @@ XATA_API_KEY=YOUR_API_KEY_HERE
 XATA_BRANCH=main
 ```
 
-## Query data from the worker
+## Initialize Xata Client
 
-You'll need to initialize your Xata Client in your worker. There are two ways of initiailizing Xata client in Cloudflare workers:
+There are two ways of initiailizing Xata client in Cloudflare workers:
 
 1.  ES Modules (Recommended)
 2.  Service Workers (Deprecated)
@@ -121,7 +115,7 @@ addEventListener('fetch', (event) => {
 });
 ```
 
-## Setting env vars in remote deployment
+## Setting environment variables in remote environment
 
 There are two ways to make the environment variables you've defined locally available in your remote deployment:
 
