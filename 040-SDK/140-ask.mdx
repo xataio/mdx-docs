@@ -27,7 +27,7 @@ When you use the `ask` endpoint, you can choose to continue any conversation you
 
 The `ask` endpoint has the following general form:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const result = await xata.db.Tutorial.ask('<question>', {
@@ -91,35 +91,61 @@ result = xata.data().ask(
 )
 ```
 
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+
+searchType := xata.AskTableRequestSearchTypeKeyword
+prefix := xata.PrefixExpressionPhrase
+
+result, _ := searchClient.Ask(context.TODO(), xata.AskTableRequest{
+  TableName: "Tutorial", // reference table
+  Payload: xata.AskTableRequestPayload{
+    Question:   "<question>", // question to ask
+    SearchType: &searchType,  // keyword | vector
+    Search: &xata.AskTableRequestSearch{
+      Target:   []*xata.TargetExpressionItem{}, // search target options
+      Prefix:   &prefix,                        // phrase | disabled
+      Filter:   &xata.FilterExpression{},       // search filter options
+      Boosters: []*xata.BoosterExpression{},    // search booster options
+    },
+    VectorSearch: &xata.AskTableRequestVectorSearch{
+      Column:        "embeddings",             // columns with embeddings
+      ContentColumn: "description",            // column with content
+      Filter:        &xata.FilterExpression{}, // search filter options
+    },
+  },
+})
+```
+
 ```jsonc
-   // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
-   {
-       "question": "<question>",
-       "rules": [
-           // ...array of strings with the rules for the model...,
-       ],
-       "searchType": "keyword|vector",
-       "search": {
-           "fuzziness": 0|1|2,
-           "prefix": "phrase|disabled",
-           "target": {
-               // ...search target options...
-           },
-           "filter": {
-               // ...search filter options...
-           },
-           "boosters": [
-               // ...search boosters options...
-           ]
-       },
-       "vectorSearch": {
-           "column": "<embedding column>",
-           "contentColumn": "<content column>",
-           "filter": {
-               // ...search filter options...
-           }
-       }
-   }
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
+{
+    "question": "<question>",
+    "rules": [
+        // ...array of strings with the rules for the model...,
+    ],
+    "searchType": "keyword|vector",
+    "search": {
+        "fuzziness": 0|1|2,
+        "prefix": "phrase|disabled",
+        "target": {
+            // ...search target options...
+        },
+        "filter": {
+            // ...search filter options...
+        },
+        "boosters": [
+            // ...search boosters options...
+        ]
+    },
+    "vectorSearch": {
+        "column": "<embedding column>",
+        "contentColumn": "<content column>",
+        "filter": {
+            // ...search filter options...
+        }
+    }
+}
 ```
 
 </TabbedCode>
@@ -206,7 +232,7 @@ When communicating with OpenAI, the `ask` endpoint ensures that your rules, your
 
 Each session maintains its own cached set of your context, so changes to the underlying data in your database will not affect ongoing conversations. All cached information: your context, rules, and all conversations are automatically removed after 7 days.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const result = await xata.db.Tutorial.ask('<your follow-up message>', { sessionId: '<session id>' });
@@ -214,6 +240,15 @@ const result = await xata.db.Tutorial.ask('<your follow-up message>', { sessionI
 
 ```python
 result = xata.data().ask_follow_up("Tutorial", "<your follow-up question>", "<session_id>")
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+result, _ := searchClient.AskFollowUp(context.TODO(), xata.AskFollowUpRequest{
+  TableName: "Tutorial",
+  Question:  "<your follow-up message>",
+  SessionID: "<session id>",
+})
 ```
 
 ```jsonc
@@ -233,7 +268,7 @@ To index your custom data in Xata, you can use, for example, this [web crawler](
 
 The following is the simplest example of using the `ask` endpoint:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const result = await xata.db.Tutorial.ask('What is this tutorial about?');
@@ -241,6 +276,14 @@ const result = await xata.db.Tutorial.ask('What is this tutorial about?');
 
 ```python
 result = xata.data().ask("Tutorial", "What is this tutorial about?")
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+result, _ := searchClient.Ask(context.TODO(), xata.AskRequest{
+  TableName: "Tutorial",
+  Question:  "<your follow-up message>",
+})
 ```
 
 ```jsonc
@@ -256,7 +299,7 @@ Because the search step is not specified, keyword search is being used with the 
 
 The following example tunes the rules and the search step, while still using keyword search:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const result = await xata.db.Tutorial.ask('How do I retrieve a single record?', {
@@ -314,6 +357,53 @@ result = xata.data().ask(
 )
 ```
 
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+kw := xata.AskTableRequestSearchTypeKeyword
+pep := xata.PrefixExpressionPhrase
+rules := []string{
+  "Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
+  "When you give an example, this example must exist exactly in the context given.",
+  "Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with \"It doesn't look like I have enough information to answer that. Check the documentation or contact support.\"",
+  "Your name is DanGPT",
+}
+
+result, _ := searchClient.Ask(context.TODO(), xata.AskTableRequest{
+  TableName: "Tutorial",
+  Payload: xata.AskTableRequestPayload{
+    Question:   "How do I retrieve a single record?",
+    SearchType: &kw, // keyword
+    Rules:      &rules,
+    Search: &xata.AskTableRequestSearch{
+      Fuzziness: xata.Int(2),
+      Prefix:    &pep, // phrase
+      Target: []*xata.TargetExpressionItem{
+        xata.NewTargetExpression("slug"),
+        xata.NewTargetExpressionWithColumnObject(xata.TargetExpressionItemColumn{
+          Column: "title",
+          Weight: xata.Float64(4),
+        }),
+        xata.NewTargetExpression("content"),
+        xata.NewTargetExpression("section"),
+        xata.NewTargetExpressionWithColumnObject(xata.TargetExpressionItemColumn{
+          Column: "keywords",
+          Weight: xata.Float64(4),
+        }),
+      },
+      Boosters: []*xata.BoosterExpression{
+        xata.NewBoosterExpressionFromBoosterExpressionValueBooster(&xata.BoosterExpressionValueBooster{
+          ValueBooster: &xata.ValueBooster{
+            Column: "section",
+            Value:  xata.NewValueBoosterValueFromString("guide"),
+            Factor: 10,
+          },
+        }),
+      },
+    },
+  },
+})
+```
+
 ```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
 {
@@ -349,22 +439,22 @@ The following example uses vector search:
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
  const result = await xata.db.Tutorial.ask("How do a retrieve a single record?", {
-	rules: [
-		"Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
-		"If the user asks a how-to question, provide a code snippet in the language they asked for with TypeScript as the default.",
-		"Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with \"It doesn't look like I have enough information to answer that. Check the documentation or contact support.\"",
-		"Results should be relevant to the context provided and match what is expected for a cloud database.",
-		"If the question doesn't appear to be answerable from the context provided, but seems to be a question about TypeScript, Javascript, or REST APIs, you may answer from outside of the provided context.",
-		"Your name is DanGPT"
-	],
-	searchType: "vector",
-	vectorSearch: {
-		column: "embeddings",
-		contentColumn: "content",
-		filter: {
-			section: "guide"
-		}
-	}
+  rules: [
+    "Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
+    "If the user asks a how-to question, provide a code snippet in the language they asked for with TypeScript as the default.",
+    "Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with \"It doesn't look like I have enough information to answer that. Check the documentation or contact support.\"",
+    "Results should be relevant to the context provided and match what is expected for a cloud database.",
+    "If the question doesn't appear to be answerable from the context provided, but seems to be a question about TypeScript, Javascript, or REST APIs, you may answer from outside of the provided context.",
+    "Your name is DanGPT"
+  ],
+  searchType: "vector",
+  vectorSearch: {
+    column: "embeddings",
+    contentColumn: "content",
+    filter: {
+      section: "guide"
+    }
+  }
  })
  ```
 
@@ -421,7 +511,7 @@ result = xata.data().ask(
 
 The following example shows a conversation.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const result = await xata.db.Tutorial.ask("What's the difference between summarize and aggregate?", {
@@ -479,6 +569,53 @@ result = xata.data().ask(
 )
 ```
 
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+kw := xata.AskTableRequestSearchTypeKeyword
+pep := xata.PrefixExpressionPhrase
+rules := []string{
+  "Do not answer questions about pricing or the free tier. Respond that Xata has several options available, please check https://xata.io/pricing for more information.",
+  "When you give an example, this example must exist exactly in the context given.",
+  "Only answer questions that are relating to the defined context or are general technical questions. If asked about a question outside of the context, you can respond with \"It doesn't look like I have enough information to answer that. Check the documentation or contact support.\"",
+  "Your name is DanGPT",
+}
+
+result, _ := searchClient.Ask(context.TODO(), xata.AskTableRequest{
+  TableName: "Tutorial",
+  Payload: xata.AskTableRequestPayload{
+    Question:   "What's the difference between summarize and aggregate?",
+    SearchType: &kw, // keyword
+    Rules:      &rules,
+    Search: &xata.AskTableRequestSearch{
+      Fuzziness: xata.Int(2),
+      Prefix:    &pep, // phrase
+      Target: []*xata.TargetExpressionItem{
+        xata.NewTargetExpression("slug"),
+        xata.NewTargetExpressionWithColumnObject(xata.TargetExpressionItemColumn{
+          Column: "title",
+          Weight: xata.Float64(4),
+        }),
+        xata.NewTargetExpression("content"),
+        xata.NewTargetExpression("section"),
+        xata.NewTargetExpressionWithColumnObject(xata.TargetExpressionItemColumn{
+          Column: "keywords",
+          Weight: xata.Float64(4),
+        }),
+      },
+      Boosters: []*xata.BoosterExpression{
+        xata.NewBoosterExpressionFromBoosterExpressionValueBooster(&xata.BoosterExpressionValueBooster{
+          ValueBooster: &xata.ValueBooster{
+            Column: "section",
+            Value:  xata.NewValueBoosterValueFromString("guide"),
+            Factor: 18,
+          },
+        }),
+      },
+    },
+  },
+})
+```
+
 ```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/ask
 {
@@ -521,7 +658,7 @@ From here, you might receive the following response:
 
 Now, using the `session_id` key returned in the response, we're able to continue the dialogue.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const result = await xata.db.TutorialaskContinue('cg52bk1eqh5rd5hndhq95jercs', 'Can you show me an example of both?');
@@ -529,6 +666,15 @@ const result = await xata.db.TutorialaskContinue('cg52bk1eqh5rd5hndhq95jercs', '
 
 ```python
 result = xata.data().ask_follow_up("Tutorial", "Can you show me an example of both?", "cg52bk1eqh5rd5hndhq95jercs")
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+result, _ := searchClient.AskFollowUp(context.TODO(), xata.AskFollowUpRequest{
+  TableName: "Tutorial",
+  Question:  "Can you show me an example of both?",
+  SessionID: "cg52bk1eqh5rd5hndhq95jercs",
+})
 ```
 
 ```jsonc

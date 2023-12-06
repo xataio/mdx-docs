@@ -9,7 +9,7 @@ published: true
 
 To delete a record you can execute, for example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.delete('rec_cd8s3r8avc42pi67m13g');
@@ -20,6 +20,17 @@ user.delete();
 
 ```python
 user = xata.records().delete("Users", "rec_cd8s3r8avc42pi67m13g")
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+response = client.Delete(context.TODO(), xata.DeleteRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    DatabaseName: xata.String("{db}"),
+    TableName:    "Users",
+  },
+  RecordID: "rec_cd8s3r8avc42pi67m13g",
+})
 ```
 
 ```jsonc
@@ -41,7 +52,7 @@ In case the record with the given ID doesn't exist, the REST API returns a 404 a
 
 Transactions are used when deleting multiple records:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const users = await xata.db.Users.delete(['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1oncchhigq95n2g']);
@@ -63,6 +74,25 @@ users = xata.records().transaction({
       }
     }
   ]
+})
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+users, _ := client.Transaction(context.TODO(), xata.TransactionRequest{
+  RecordRequest: xata.RecordRequest{
+    DatabaseName: xata.String("{db}"),
+  },
+  Operations: []xata.TransactionOperation{
+    xata.NewDeleteTransaction(xata.TransactionDeleteOp{
+      Table: "Users",
+      Id:    "rec_cd8s3r8avc42pi67m13g",
+    }),
+    xata.NewDeleteTransaction(xata.TransactionDeleteOp{
+      Table: "Users",
+      Id:    "rec_cgh9o1oncchhigq95n2g",
+    }),
+  },
 })
 ```
 

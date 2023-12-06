@@ -11,7 +11,7 @@ published: true
 
 You can overwrite a full record with a request like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.createOrReplace('myid', { name: 'Keanu Reeves' });
@@ -20,6 +20,19 @@ const user = await xata.db.Users.createOrReplace('myid', { name: 'Keanu Reeves' 
 ```python
 user = xata.records().upsert("Users", "myid", {
   "name": "Keanu Reeves"
+})
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+user, _ := client.Upsert(context.TODO(), xata.UpsertRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "myid",
+  Body: map[string]*xata.DataInputRecordValue{
+    "name": xata.ValueFromString("Keanu Reeves"),
+  },
 })
 ```
 
@@ -39,7 +52,7 @@ Note that in the above example, the whole record was overwritten. If you want to
 
 In order to do a partial update to a record, you can use a request like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('myid', { email: 'newemail@example.com' });
@@ -52,6 +65,19 @@ user.update({ email: 'newemail@example.com' });
 ```python
 user = xata.records().update("Users", "myid", {
   "email": "newemail@example.com"
+})
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+user, _ := client.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "myid",
+  Body: map[string]*xata.DataInputRecordValue{
+    "email": xata.ValueFromString("newemail@example.com"),
+  },
 })
 ```
 
@@ -76,7 +102,7 @@ user = xata.records().update("Users", "myid", {
 
 It's also possible to update a record if it exists, or create it if it doesn't exist:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reeves' });
@@ -85,6 +111,19 @@ const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reeves' }
 ```python
 user = xata.records().upsert("Users", "myid", {
   "name": "Keanu Reeves"
+})
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+user, _ := client.Upsert(context.TODO(), xata.UpsertRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "myid",
+  Body: map[string]*xata.DataInputRecordValue{
+    "name": xata.ValueFromString("Keanu Reeves"),
+  },
 })
 ```
 
@@ -119,7 +158,7 @@ The numeric types (int and float) support basic mathematical operations: additio
 
 Here is a simple example that increments a counter:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $increment: 1 } });
@@ -130,6 +169,19 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg", {
   "counter": {
     "$increment": 1
   }
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+user, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewUpdateTransaction(xata.TransactionUpdateOp{
+      Table:  "Users",
+      Id:     "rec_c8hnbch26un1nl0rthkg",
+      Fields: map[string]any{"counter": map[string]int{"$increment": *xata.Int(1)}},
+    }),
+  },
 })
 ```
 
@@ -156,7 +208,7 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg", {
 
 And here is an example that adds 10 to the counter:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $increment: 10 } });
@@ -167,6 +219,19 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg", {
   "counter": {
     "$increment": 10
   }
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+user, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewUpdateTransaction(xata.TransactionUpdateOp{
+      Table:  "Users",
+      Id:     "rec_c8hnbch26un1nl0rthkg",
+      Fields: map[string]any{"counter": map[string]int{"$increment": *xata.Int(10)}},
+    }),
+  },
 })
 ```
 
@@ -193,7 +258,7 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg", {
 
 And here is an example that divides the counter by 2:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', { counter: { $divide: 2 } });
@@ -204,6 +269,19 @@ user = xata.records().update("Users", "rec_c8hnbch26un1nl0rthkg", {
   "counter": {
     "$divide": 2
   }
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+user, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewUpdateTransaction(xata.TransactionUpdateOp{
+      Table:  "Users",
+      Id:     "rec_c8hnbch26un1nl0rthkg",
+      Fields: map[string]any{"counter": map[string]int{"$divide": *xata.Int(2)}},
+    }),
+  },
 })
 ```
 
@@ -303,7 +381,7 @@ The `version` field can be used to perform optimistic concurrency control, also 
 
 To prevent this, you can pass the `ifVersion` parameter to the PUT request. The value for `ifVersion` should be the value of `xata.version` from when you retrieved the record. For example, if you want to update the record only if the version is 0, you can send the following request:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
 const updatedUser = await xata.db.Users.update(
@@ -328,6 +406,21 @@ user = xata.records().update(
   },
   if_version=0
 )
+```
+
+```go
+client, _ := xata.NewRecordsClient()
+user, _ := client.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName:    "Users",
+  },
+  RecordID: "rec_c8hnbch26un1nl0rthkg",
+  Body: map[string]*xata.DataInputRecordValue{
+    "name":  xata.ValueFromString("Keanu Reeves"),
+    "email": xata.ValueFromString("keanu@xata.io"),
+  },
+  IfVersion: xata.Int(0),
+})
 ```
 
 ```jsonc

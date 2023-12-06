@@ -18,7 +18,7 @@ An embedding is a vector of floating point numbers that represents the original 
 
 Vector search works at the table level and has the following format:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const results = await xata.db.Docs.vectorSearch(
@@ -39,6 +39,20 @@ results = xata.data().vector_search("Docs", {
   "similarityFunction": "l1", # space function
   "size": 5,                  # number of results to return
   "filter": {},               # filter expression
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+results, _ := searchClient.VectorSearch(context.TODO(), xata.VectorSearchTableRequest{
+  TableName: "Docs",
+  Payload: xata.VectorSearchTableRequestPayload{
+    QueryVector:        []float64{0.1, 0.2},      // array of floats
+    Column:             "embeddings",             // column name
+    SimilarityFunction: xata.String("l1"),        // space function
+    Size:               xata.Int(5),              // number of results to return
+    Filter:             &xata.FilterExpression{}, // filter expression
+  },
 })
 ```
 
@@ -68,7 +82,7 @@ Additionally you can customize the results with these optional parameters:
 
 Here is a simple example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const results = await xata.db.Docs.vectorSearch('embeddings', [0.1, 0.2, 0.3], { size: 5 });
@@ -79,6 +93,18 @@ results = xata.data().vector_search("Docs", {
   "queryVector": [0.1, 0.2, 0.3],
   "column": "embeddings",
   "size": 5
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+results, _ := searchClient.VectorSearch(context.TODO(), xata.VectorSearchTableRequest{
+  TableName: "Docs",
+  Payload: xata.VectorSearchTableRequestPayload{
+    QueryVector:        []float64{0.1, 0.2, 0.3}, // array of floats
+    Column:             "embeddings",             // column name
+    Size:               xata.Int(5),              // number of results to return
+  },
 })
 ```
 

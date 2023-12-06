@@ -75,7 +75,7 @@ results = xata.data().search_branch({
 
 A simple example, which searches across all tables with default relevancy settings, looks like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const results = await xata.search.all('new st');
@@ -83,6 +83,15 @@ const results = await xata.search.all('new st');
 
 ```python
 results = xata.data().search_branch({"query": "new st"})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+  Payload: xata.SearchBranchRequestPayload{
+    Query: "new st",
+  },
+})
 ```
 
 ```jsonc
@@ -206,7 +215,7 @@ The metadata includes:
 
 If you'd like to search only some of the tables in the database, you can specify the tables to search in the `tables` field of the request. It expects an array, for example:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const results = await xata.search.all('new st', {
@@ -232,6 +241,19 @@ results = xata.data().search_branch({
     {"table": "Users"},
     {"table": "Posts"}
   ]
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+  Payload: xata.SearchBranchRequestPayload{
+    Query:  "new st",
+    Tables: []*xata.SearchBranchRequestTablesItem{
+      xata.NewSearchBranchRequestTablesItemFromString("Users"),
+      xata.NewSearchBranchRequestTablesItemFromString("Posts"),
+    },
+  },
 })
 ```
 
@@ -311,7 +333,7 @@ By default, Xata searches tolerate typos of one character. You can control this 
 
 For example, instead of `Keanu` you can search for `kaanu` (one letter replaced) or `kenu` (one letter missing) and still get the same result:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const results = await xata.search.all('kaanu');
@@ -319,6 +341,15 @@ const results = await xata.search.all('kaanu');
 
 ```python
 results = xata.data().search_branch({"query": "kaanu"})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+  Payload: xata.SearchBranchRequestPayload{
+    Query: "kaanu",
+  },
+})
 ```
 
 ```jsonc
@@ -333,7 +364,7 @@ results = xata.data().search_branch({"query": "kaanu"})
 
 The above matches `Keanu`. You can disable this typo tolerance by setting the `fuzziness` field to 0:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const results = await xata.search.all('kaanu', { fuzziness: 0 });
@@ -343,6 +374,16 @@ const results = await xata.search.all('kaanu', { fuzziness: 0 });
 results = xata.data().search_branch({
   "query": "kaanu",
   "fuzziness": 0
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+  Payload: xata.SearchBranchRequestPayload{
+    Query:     "kaanu",
+    Fuzziness: xata.Int(0),
+  },
 })
 ```
 
@@ -361,7 +402,7 @@ The above won't match `Keanu`.
 
 You can also increase the `fuzziness` to accept two typos per word:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const results = await xata.search.all('kaano', { fuzziness: 2 });
@@ -371,6 +412,16 @@ const results = await xata.search.all('kaano', { fuzziness: 2 });
 results = xata.data().search_branch({
   "query": "kaanu",
   "fuzziness": 2
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+  Payload: xata.SearchBranchRequestPayload{
+    Query:     "kaanu",
+    Fuzziness: xata.Int(2),
+  },
 })
 ```
 
