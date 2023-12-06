@@ -73,3 +73,4 @@ XATA_API_KEY="<INSERT_YOUR_API_KEY>" go run example.go
 
 - [Numeric operations](/docs/sdk/update#numeric-operations) are currently not supported using the update API. As a workaround, you can use the transaction API [example](/docs/sdk/transaction).
 - Not all Xata endpoints are available at the alpha state of the SDK. You can check the coverage [here](https://github.com/xataio/xata-go/issues/1).
+- There is no option to change the [consistency](/docs/concepts/data-model#consistency) at the moment, default: `strong` is used.
