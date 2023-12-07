@@ -15,23 +15,23 @@ The search index is updated asynchronously after each insert/update, meaning tha
 
 The format of a search request at the branch level (across tables) is as follows:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const results = await xata.search.all("<search phrase>", {
-    tables: [
-      {
-        table: "...",
-        target: [...],
-        filter: {...},
-        boosters: [...]
-      },
-      { ... },
-      ...
-    ],
-    fuzziness: 1,
-    prefix: "phrase",
-    highlight: {...}
+  tables: [
+    {
+      table: "...",
+      target: [...],
+      filter: {...},
+      boosters: [...]
+    },
+    { ... },
+    ...
+  ],
+  fuzziness: 1,
+  prefix: "phrase",
+  highlight: {...}
 });
 ```
 
@@ -49,6 +49,24 @@ results = xata.data().search_branch({
   "fuzziness": 1,
   "prefix": "phrase",
   "highlight": {...}
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+prefix := xata.PrefixExpressionPhrase
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+  Payload: xata.SearchBranchRequestPayload{
+    Query:  *xata.String("<search phrase>"),
+    Tables: []*xata.SearchBranchRequestTablesItem{
+      // ..
+    },
+    Fuzziness: xata.Int(1),
+    Prefix:    &prefix,
+    Highlight: &xata.HighlightExpression{
+      // ..
+    },
+  },
 })
 ```
 
@@ -281,7 +299,7 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 
 If you want to search in a single table, it's easier to use the table-level search API. It looks like this:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const results = await xata.db.Users.search("<search phrase>", {
@@ -303,6 +321,30 @@ results = xata.data().search_table("Users", {
   "fuzziness": 1,
   "prefix": "phrase",
   "highlight": {...}
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+prefix := xata.PrefixExpressionPhrase
+results, _ := searchClient.SearchTable(context.TODO(), xata.SearchTableRequest{
+  Payload: xata.SearchTableRequestPayload{
+    Query:  *xata.String("<search phrase>"),
+    Filter: &xata.FilterExpression{
+      // ..
+    },
+    Target: []*xata.TargetExpressionItem{
+      // ..
+    },
+    Boosters: []*xata.BoosterExpression{
+      // ..
+    },
+    Fuzziness: xata.Int(1),
+    Prefix:    &prefix,
+    Highlight: &xata.HighlightExpression{
+      // ..
+    },
+  },
 })
 ```
 
@@ -494,7 +536,7 @@ results = xata.data().search_branch({
 
 By default, Xata searches across all columns from the selected tables. You can restrict the search to specific columns by using the `target` field.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const results = await xata.search.all('new st', {
@@ -516,6 +558,19 @@ results = xata.data().search_branch({
       "target": ["name", "address.street"]
     }
   ]
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+results, _ := searchClient.SearchTable(context.TODO(), xata.SearchTableRequest{
+  Payload: xata.SearchTableRequestPayload{
+    Query:  *xata.String("new st"),
+    Target: []*xata.TargetExpressionItem{
+      xata.NewTargetExpression("name"),
+      xata.NewTargetExpression("address.street"),
+    },
+  },
 })
 ```
 

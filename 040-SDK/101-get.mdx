@@ -48,16 +48,16 @@ searchClient, _ := xata.NewSearchAndFilterClient()
 data, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
   TableName: "{tabel_name}",
   Payload: xata.QueryTableRequestPayload{
-		Columns: []string{"col_1", ".."},
+    Columns: []string{"col_1", ".."},
     Filter: &xata.FilterExpression{
-			// ..
-		},
+      // ..
+    },
     Sort: xata.NewSortExpressionFromStringSortOrderMapList(
-			// ..
+      // ..
     ),
     Page: &xata.SearchPageConfig{
       // ..
-		},
+    },
   }
 })
 ```

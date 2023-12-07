@@ -94,7 +94,7 @@ Let's try one more example to help clarify the concepts.
 
 Here, as above, the column is `product`. We will also want to run a calculation on `sale_price`, however, we want to add up each sale price rather than average them, so our `summary` equation will be `sum`. Our request looks like:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
   ```ts
   const records = await xata.db.sales.summarize({
     columns: ['product'],
@@ -110,6 +110,19 @@ records = xata.data().summarize("sales", {
   "summaries": {
     "total_sales": { "sum": "sale_price" }
   }
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+records, _ := searchClient.Summarize(context.TODO(), xata.SummarizeTableRequest{
+  TableName: "sales",
+  Payload: xata.SummarizeTableRequestPayload{
+    Columns:   []string{"product"},
+    Summaries: map[string]map[string]any{
+      "total_sales": {"sum": "sale_price"},
+    },
+  },
 })
 ```
 
@@ -152,7 +165,7 @@ Before we get started, keep in mind that we keep reference material that can be 
 
 In its most basic form `summarize` can be used as a "distinct" method to get the unique values or value combinations of the summarized columns.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
   ```ts
   const records = await xata.db.sales.summarize({
     columns: ['username'],
@@ -164,6 +177,16 @@ In its most basic form `summarize` can be used as a "distinct" method to get the
 records = xata.data().summarize("sales", {
   "columns": ["username"],
   "summaries": {}
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+records, _ := searchClient.Summarize(context.TODO(), xata.SummarizeTableRequest{
+  TableName: "sales",
+  Payload: xata.SummarizeTableRequestPayload{
+    Columns: []string{"username"},
+  },
 })
 ```
 
@@ -203,7 +226,7 @@ All summaries support links. If you have a link set up, you specify it using the
 
 One can specify several summaries in the same request. As long as the names are unique, do not contain special characters, and do not conflict with columns on your table, you are free to set the names as you wish.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
   ```ts
   const records = await xata.db.sales.summarize({
     summaries: {
@@ -260,6 +283,37 @@ records = xata.data().summarize("sales", {
 })
 ````
 
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+records, _ := searchClient.Summarize(context.TODO(), xata.SummarizeTableRequest{
+  Payload: xata.SummarizeTableRequestPayload{
+    Columns: []string{"product"},
+    Summaries: map[string]map[string]any{
+      // count all rows
+      "all_sales": {"count": "*"},
+
+      // count all rows where `store_id` is not null
+      "all_sales_from_store": {"count": "store_id"},
+
+      // sum the `profit` column
+      "total_profit": {"sum": "profit"},
+
+      // average the `shipping.time_days` column
+      "average_shipping_time": {"average": "shipping.time_days"},
+
+      // count the total rows where `has_arrived` is not null
+      "total_has_arrived": {"count": "has_arrived"},
+
+      // retrieve the smallest value in the `package_volume` column
+      "smallest_package": {"min": "package_volume"},
+
+      // retrieve the largest value in the `sale_price` column
+      "largest_sale_price": {"max": "sale_price"},
+    },
+  },
+})
+```
+
 ```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
@@ -294,7 +348,7 @@ records = xata.data().summarize("sales", {
 
 In the previous example, it was indicated that using `"all_sales": {"count": "*"}` yields the number of records from the chosen table. To maintain simplicity, the subsequent example demonstrates how to obtain the total count of records in the `sales` table.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
   ```ts
   const records = await xata.db.sales.summarize({
     summaries: {
@@ -315,6 +369,19 @@ records = xata.data().summarize("sales", {
 
 print(records["summaries"][0]["count"])
 ````
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+records, _ := searchClient.Summarize(context.TODO(), xata.SummarizeTableRequest{
+  TableName: "sales",
+  Payload: xata.SummarizeTableRequestPayload{
+    Columns:   []string{"product"},
+    Summaries: map[string]map[string]any{
+      "total": {"count": "*"},
+    },
+  },
+})
+```
 
 ```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
@@ -341,7 +408,7 @@ The `columns` key lets you specify how you'd like to group your data. Columns wo
 
 You may submit explicit column names, use wildcards, and reference linked columns as needed.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
   ```ts
   const records = await xata.db.sales.summarize({
     columns: [
@@ -359,6 +426,20 @@ records = xata.data().summarize("sales", {
     "username",         # group by the username field
     "user.hobbies.name" # group by a linked column
   ]
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+records, _ := searchClient.Summarize(context.TODO(), xata.SummarizeTableRequest{
+  TableName: "sales",
+  Payload: xata.SummarizeTableRequestPayload{
+    Columns: []string{
+      "settings.*",        // group by all columns in the `settings` object
+      "username",          // group by the username field
+      "user.hobbies.name", // group by a linked column
+    },
+  },
 })
 ```
 
@@ -387,7 +468,7 @@ Keep in mind: `filter` does **not** support filtering on the result of a summary
 
 Sort lets you decide how you'd like your results sorted. You may sort on `columns` you've explicitly referenced, as well as on `summaries` you've requested. When wanting to sort by a summary, you use the name you've chosen.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
   ```ts
   const records = await xata.db.sales.summarize({
     columns: {"store_name"},
@@ -415,6 +496,27 @@ records = xata.data().summarize("sales", {
     # if total_sales is equal for two rows, order them by the store_name
     {"store_name": "asc"}
   ]
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+records, _ := searchClient.Summarize(context.TODO(), xata.SummarizeTableRequest{
+  TableName: "sales",
+  Payload: xata.SummarizeTableRequestPayload{
+    Columns:   []string{"store_name"},
+    Summaries: map[string]map[string]any{
+      "total": {"count": "*"},
+    },
+    Sort: xata.NewSortExpressionFromStringSortOrderMapList(
+      []map[string]xata.SortOrder{
+        // put the highest total_sales at the top
+        {"total_sales": xata.SortOrderDesc},
+        // if total_sales is equal for two rows, order them by the store_name
+        {"store_name": xata.SortOrderAsc},
+      },
+    ),
+  },
 })
 ```
 
