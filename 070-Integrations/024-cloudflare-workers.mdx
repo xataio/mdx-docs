@@ -11,13 +11,6 @@ published: true
 
 The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree/main/apps/getting-started-cloudflare-workers) is available in the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
 
-<ArticleVideo
-  platform="html"
-  src="https://github.com/xataio/mdx-docs/raw/main/070-Integrations/videos/cf-integration.mp4"
-  autoplay
-  loop
-/>
-
 ### Before you begin
 
 - Ensure you [install the Xata CLI and authenticate](https://xata.io/docs/getting-started/installation)
@@ -139,15 +132,17 @@ Going through this flow automatically sets the environment variables necessary t
 3.  Click Integrations
 4.  Select Xata
 
-![Adding environment variables with our Xata Cloudflare integration](images/cloudflare-integration-env.png)
+<ArticleVideo
+  platform="html"
+  src="https://github.com/xataio/mdx-docs/raw/main/070-Integrations/videos/cf-integration.mp4"
+  autoplay
+  loop
+/>
 
 Your endpoint response should also be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev.`
 
 #### Manually adding environment variables
 
-1.  Navigate to the Cloudflare dashboard
-2.  Navigate to your corresponding Worker
-3.  Click Settings
-4.  Add variable
+Please follow [Cloudflare's docs](https://developers.cloudflare.com/workers/configuration/environment-variables/#add-environment-variables-via-the-dashboard) for manually adding environment variables via the dashboard.
 
 ![Adding environment variables manually](images/cloudflare-manual-env.png)
