@@ -13,8 +13,8 @@ The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree
 
 You can integrate Xata with Cloudflare using the following methods:
 
-- Using the Cloudflare dashboard (UI method): This approach involves using the Cloudflare dashboard for configuration.
-- Using the Wrangler (CLI method): Alternatively, you can use Cloudflare's CLI tool, [Wrangler](https://developers.cloudflare.com/workers/wrangler/), for a command-line based integration.
+- [Using the Cloudflare dashboard (UI method)](/docs/integrations/cloudflare/#integrate-using-the-dashboard): This approach involves using the Cloudflare dashboard for configuration.
+- [Using the Wrangler (CLI method)](/docs/integrations/cloudflare/#integrate-using-the-cli): Alternatively, you can use Cloudflare's CLI tool, [Wrangler](https://developers.cloudflare.com/workers/wrangler/), for a command-line based integration.
 
 ## Integrate using the dashboard
 
@@ -25,11 +25,9 @@ To integrate a Cloudflare Worker with an existing Xata database, follow these st
 3.  Choose a Worker from your Cloudflare account to integrate with.
 4.  Click **Integrations**.
 5.  Select the Xata card and click **Add Integration**. You're redirected to the "Add Xata to Worker" flow.
-
-![One click Xata Cloudflare integration](images/cloudflare-integration-env.png)
-
-6. Follow the flow to grant permissions, authorize Cloudflare, and configure your secrets. Choose a Xata workspace to connect with, and select the desired database and branch.
-7. Click _Add Integration_.
+    ![Guided Xata Cloudflare integration](images/cloudflare-integration-env.png)
+6.  Follow the flow to grant permissions, authorize Cloudflare, and configure your secrets. Choose a Xata workspace to connect with, and select the desired database and branch.
+7.  Click **Add Integration**.
 
 The secrets are added to the environment variables of the Worker. Your endpoint response should be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev`
 
@@ -157,7 +155,7 @@ XATA_BRANCH=main
 
 To add environment variables to a remotely deployed Worker, you have two options:
 
-- It's recommended, you use the guided integration workflow [UI method](/docs/integrations/cloudflare/integrate-using-the-dashboard) available through the Cloudflare dashboard. This automatically sets the environment variables necessary to interact with your database from a remote Cloudflare worker. Your endpoint response should be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev`
+- It's recommended, you use the guided integration workflow [UI method](/docs/integrations/cloudflare/#integrate-using-the-dashboard) available through the Cloudflare dashboard. This automatically sets the environment variables necessary to interact with your database from a remote Cloudflare worker. Your endpoint response should be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev`
 - Alternatively, you can set the variables manually via the Cloudflare dashboard. Follow [Cloudflare's docs](https://developers.cloudflare.com/workers/configuration/environment-variables/#add-environment-variables-via-the-dashboard) for manually adding environment variables via the dashboard.
 
   ![Adding environment variables manually](images/cloudflare-manual-env.png)
