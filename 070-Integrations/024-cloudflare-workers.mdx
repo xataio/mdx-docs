@@ -16,9 +16,9 @@ You can integrate Xata with Cloudflare using the following methods:
 - Using the Cloudflare dashboard (UI method): This approach involves using the Cloudflare dashboard for configuration.
 - Using the Wrangler (CLI method): Alternatively, you can use Cloudflare's CLI tool, [Wrangler](https://developers.cloudflare.com/workers/wrangler/), for a command-line based integration.
 
-## Integrate using Cloudflare dashboard
+## Integrate using the dashboard
 
-Integrate a Cloudflare Worker with an existing Xata database by using the dashboard, with th e folowing:
+To integrate a Cloudflare Worker with an existing Xata database, follow these steps in the Cloudflare dashboard:
 
 1.  Navigate to the [Cloudflare dashboard](https://dash.cloudflare.com/).
 2.  Click **Workers & Pages** > **Overview**
@@ -155,9 +155,9 @@ XATA_BRANCH=main
 
 ### Setting remote environment variables
 
-To make the environment variables accessible in your Worker when it is deployed remotely, you have two options:
+To add environment variables to a remotely deployed Worker, you have two options:
 
-- It's recommended, you use the one-click guided workflow available in the Cloudflare dashboard. This automatically sets the environment variables necessary to interact with your database from a remote Cloudflare worker. Your endpoint response should be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev`
+- It's recommended, you use the guided integration workflow [UI method](/docs/integrations/cloudflare/integrate-using-the-dashboard) available through the Cloudflare dashboard. This automatically sets the environment variables necessary to interact with your database from a remote Cloudflare worker. Your endpoint response should be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev`
 - Alternatively, you can set the variables manually via the Cloudflare dashboard. Follow [Cloudflare's docs](https://developers.cloudflare.com/workers/configuration/environment-variables/#add-environment-variables-via-the-dashboard) for manually adding environment variables via the dashboard.
 
   ![Adding environment variables manually](images/cloudflare-manual-env.png)
