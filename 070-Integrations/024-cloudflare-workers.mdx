@@ -7,9 +7,35 @@ slug: integrations/cloudflare
 published: true
 ---
 
-[Cloudflare](https://www.cloudflare.com/en-gb/) is a content delivery and security service that optimizes website performance and mitigates security risks for sites. [Cloudflare Workers](https://workers.cloudflare.com/) enable you to run code directly on Cloudflare's global network to reduce latency and improve performance and can be used for tasks like customizing web content, handling API requests, and modifying web traffic, for overall faster response times.
+[Cloudflare](https://www.cloudflare.com/en-gb/) is a content delivery and security service that optimizes website performance and mitigates security risks for sites. [Cloudflare Workers](https://workers.cloudflare.com/) enable you to run code directly on Cloudflare's network to reduce latency and improve performance, and can be used for tasks like customizing web content, handling API requests, and modifying web traffic, for faster response times.
 
 The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree/main/apps/getting-started-cloudflare-workers) is available in the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
+
+You can integrate Xata with Cloudflare using the following methods:
+
+- Using the Cloudflare dashboard (UI method): This approach involves using the Cloudflare dashboard for configuration.
+- Using the Wrangler (CLI method): Alternatively, you can use Cloudflare's CLI tool, [Wrangler](https://developers.cloudflare.com/workers/wrangler/), for a command-line based integration.
+
+## Integrate using Cloudflare dashboard
+
+Integrate a Cloudflare Worker with an existing Xata database by using the dashboard, with th e folowing:
+
+1.  Navigate to the [Cloudflare dashboard](https://dash.cloudflare.com/).
+2.  Click **Workers & Pages** > **Overview**
+3.  Choose a Worker from your Cloudflare account to integrate with.
+4.  Click **Integrations**.
+5.  Select the Xata card and click **Add Integration**. You're redirected to the "Add Xata to Worker" flow.
+
+![One click Xata Cloudflare integration](images/cloudflare-integration-env.png)
+
+6. Follow the flow to grant permissions, authorize Cloudflare, and configure your secrets. Choose a Xata workspace to connect with, and select the desired database and branch.
+7. Click _Add Integration_.
+
+The secrets are added to the environment variables of the Worker. Your endpoint response should be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev`
+
+## Integrate using the CLI
+
+The following covers setting up a "Hello World" sample Cloudflare app and integrating it with Xata, using the Xata client and Wrangler.
 
 ### Before you begin
 
@@ -58,7 +84,7 @@ XATA_BRANCH=main
 - Replace `<YOUR_API_KEY_HERE>` with your generated API key, accessible from the _Account Settings_ page in the Xata UI.
 - Specify your preferred branch in the `XATA_BRANCH` variable.
 
-### Initialize Xata client
+### Initialize the Xata client
 
 There are two methods for initializing the Xata client in Cloudflare Workers:
 
@@ -111,6 +137,10 @@ addEventListener('fetch', (event) => {
 });
 ```
 
+## Environment variables
+
+Environment variables keep API keys and sensitive data safe, allowing you to easily manage and change app settings.
+
 ### Add local environment variables
 
 Create a file named `.dev.vars` in your project's root directory and add your Xata environment values. This file enables Cloudflare to access these values when running in development mode.
@@ -123,29 +153,16 @@ XATA_BRANCH=main
 - Replace `<YOUR_API_KEY_HERE>` with your generated API key, accessible from the _Account Settings_ page in the Xata UI.
 - Specify your preferred branch in the `XATA_BRANCH` variable.
 
-### Remote environment variables
+### Setting remote environment variables
 
-To make The environment variables accessible in your Worker when it is deployed remotely, you have the following options:
+To make the environment variables accessible in your Worker when it is deployed remotely, you have two options:
 
-- Use the one-click guided workflow provided in the Cloudflare dashboard (recommended).
-- Alternatively, you can set the variables manually via the Cloudflare dashboard.
+- It's recommended, you use the one-click guided workflow available in the Cloudflare dashboard. This automatically sets the environment variables necessary to interact with your database from a remote Cloudflare worker. Your endpoint response should be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev`
+- Alternatively, you can set the variables manually via the Cloudflare dashboard. Follow [Cloudflare's docs](https://developers.cloudflare.com/workers/configuration/environment-variables/#add-environment-variables-via-the-dashboard) for manually adding environment variables via the dashboard.
 
-#### One click guided workflow (Recommended)
+  ![Adding environment variables manually](images/cloudflare-manual-env.png)
 
-Going through this flow automatically sets the environment variables necessary to interact with your database from a remote Cloudflare worker.
+## Related resources
 
-1.  Navigate to the Cloudflare dashboard.
-2.  Click **Workers & Pages**.
-3.  Navigate to your corresponding Worker.
-4.  Click **Integrations**
-5.  Select Xata.
-
-![One click Xata Cloudflare integration](images/cloudflare-integration-env.png)
-
-Your endpoint response should be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev.`
-
-#### Manually adding environment variables
-
-Follow [Cloudflare's docs](https://developers.cloudflare.com/workers/configuration/environment-variables/#add-environment-variables-via-the-dashboard) for manually adding environment variables via the dashboard.
-
-![Adding environment variables manually](images/cloudflare-manual-env.png)
+- [Cloudflare Workers](https://developers.cloudflare.com/workers/)
+- [Cloudflare Workers environment variables](https://developers.cloudflare.com/workers/configuration/environment-variables/)
