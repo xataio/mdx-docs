@@ -7,9 +7,9 @@ slug: integrations/cloudflare
 published: true
 ---
 
-[Cloudflare](https://www.cloudflare.com/en-gb/) is a content delivery and security service that optimizes website performance and mitigates security risks for sites. [Cloudflare Workers](https://workers.cloudflare.com/) enable you to run code directly on Cloudflare's network to reduce latency and improve performance, and can be used for tasks like customizing web content, handling API requests, and modifying web traffic, for faster response times.
+[Cloudflare](https://www.cloudflare.com/en-gb/) is a content delivery network that optimizes website performance and mitigates security risks for sites. [Cloudflare Workers](https://workers.cloudflare.com) enable you to run code directly on Cloudflare's network to reduce latency and improve performance, and can be used for tasks like customizing web content, handling API requests, or modifying web traffic.
 
-The completed [Cloudflare and Xata code](https://github.com/xataio/examples/tree/main/apps/getting-started-cloudflare-workers) is available in the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
+A complete [Cloudflare and Xata starter](https://github.com/xataio/examples/tree/main/apps/getting-started-cloudflare-workers) is available in the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
 
 ### Before you begin
 
@@ -43,7 +43,7 @@ A file called `.xatarc` should also be generated at the project root, with the f
 }
 ```
 
-> **Warning**: You'll need to move these vars into a file called `.dev.vars` at your project root for local development. This file enables Cloudflare to access these values when running in development mode. For more information, see their [documentation](https://developers.cloudflare.com/workers/configuration/environment-variables/#interact-with-environment-variables-locally).
+> **Warning**: You'll need to move these vars into a file called `.dev.vars` at your project root for local development. This file enables Cloudflare to access these values when running in development mode. For more information, see [Cloudflare's documentation](https://developers.cloudflare.com/workers/configuration/environment-variables/#interact-with-environment-variables-locally).
 
 You should end up with a `.dev.vars` file that looks like this at your project root:
 
@@ -131,7 +131,7 @@ To integrate a Cloudflare Worker with an existing Xata database, follow these st
 6.  Follow the flow to grant permissions, authorize Cloudflare, and configure your secrets. Choose a Xata workspace to connect with, and select the desired database and branch.
 7.  Click **Add Integration**.
 
-The secrets are added to the environment variables of the Worker. Your endpoint response should be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev`
+The secrets are added to the environment variables of the Worker. Your endpoint response should be available remotely at `<YOUR_WORKER>.<YOUR_SUBDOMAIN>.workers.dev`.
 
 #### Manually adding environment variables
 
