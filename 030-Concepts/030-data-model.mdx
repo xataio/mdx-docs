@@ -238,9 +238,7 @@ produced by any other machine learning model. Once you store the embeddings, you
 
 ### object
 
-> **Warning**: The `object` type will be [deprecated](#what-is-the-deprecation-period) from June 14th, 2023 and will no longer be available after December 13th, 2023. If you are using the `object` type in your workspace, we strongly encourage you to review your implementations and update them accordingly, replacing the `object` type with suitable alternatives as recommended in our [migration options](#object-type-migration) documentation.
-
-The `object` type represents a group of columns. Objects can also be nested multiple times by adding a column of type `object` inside the object. Set `unique` to make sure the objects you insert are unique.
+**Warning**: The `object` type is no longer supported since December 13th, 2023. If you are using the `object` type in your workspace, we strongly encourage you to review your implementations and update them accordingly, replacing the `object` type with suitable alternatives as recommended in our [migration options](#object-type-migration) documentation.
 
 ### link
 
@@ -272,7 +270,7 @@ To insert the value for a `link` column, use the target record ID as the value. 
 
 The `file` type is the representation of a file in the Xata database. For every file, the column stores JSON objects with a predefined schema. The file object is used to upload a file, retrieve its content, as well as update or query its metadata.
 
-The object consists of the following fields:
+The file object consists of the following fields:
 
 - `name` refers to the file name.
 - `mediaType` follows the definition provided by RFC 6838. Xata may utilize it as a hint, but it does not validate the content against the declared media type. If the value is missing, the default is set to `application/octet-stream`.
@@ -666,11 +664,8 @@ This is the Xata data model as it stands today. Knowing what's available to you,
 
 ## Object type migration
 
-The `object` type will sunset on December 13th, 2023 as mentioned [here](#object). We recommend you explore various migration options to transition away from this type.
-
-### What is the deprecation period?
-
-During the deprecation period, we recommend that users move away from using `object` columns and explore alternative schema options, which are listed below. While it is still possible to create a schema with `object` columns and input `object` values during this period, we discourage their usage. At the end of the deprecation period, any existing object columns will be automatically flattened.
+The `object` type is unsupported since December 13th, 2023 as mentioned [here](#object). We recommend you explore various migration options to transition away from this type.
+For a migration case, we listed three options for you to explore and change your schema.
 
 ### Option 1: Flatten your schema
 
