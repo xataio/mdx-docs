@@ -123,7 +123,7 @@ xata import csv my.csv --create --table my_second_table --columns=id,name,team,c
 
 With this method, each record's unique ID will be set using the `id` column from our CSV file. You should ensure that the id values are unique in the CSV file, otherwise the rows with the same id will be overwritten in the order they are read from the file.
 
-In order to link records across tables, specify the "link" column type. The column's name must correspond to an existing table with matching name. The column's values must exist as record ids in the linked table.
+To link records across tables, specify the `link` column type. The name of the column must match the name of an existing table and the column's values must exist as record IDs in the linked table.
 
 ```shell
 xata import csv my.csv --create --table my_second_table --columns=id,my_first_table --types=string,link
