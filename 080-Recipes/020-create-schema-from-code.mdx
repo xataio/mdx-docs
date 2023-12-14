@@ -68,9 +68,16 @@ xata init --schema /path/to/json_file.json
           "type": "string"
         },
         {
-          "name": "image",
+          "name": "avatar",
           "type": "file",
           "file": {
+            "defaultPublicAccess": true
+          }
+        },
+        {
+          "name": "photos",
+          "type": "file[]",
+          "file[]": {
             "defaultPublicAccess": true
           }
         },

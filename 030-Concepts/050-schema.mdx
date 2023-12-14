@@ -36,9 +36,16 @@ Let's look at a JSON representation of a sample Xata schema to understand how it
           }
         },
         {
-          "name": "image",
+          "name": "avatar",
           "type": "file",
           "file": {
+            "defaultPublicAccess": true
+          }
+        },
+        {
+          "name": "photos",
+          "type": "file[]",
+          "file[]": {
             "defaultPublicAccess": true
           }
         }
