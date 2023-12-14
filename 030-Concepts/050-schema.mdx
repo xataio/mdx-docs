@@ -34,6 +34,20 @@ Let's look at a JSON representation of a sample Xata schema to understand how it
           "link": {
             "table": "users"
           }
+        },
+        {
+          "name": "avatar",
+          "type": "file",
+          "file": {
+            "defaultPublicAccess": true
+          }
+        },
+        {
+          "name": "photos",
+          "type": "file[]",
+          "file[]": {
+            "defaultPublicAccess": true
+          }
         }
       ]
     },
@@ -79,6 +93,7 @@ These fields are **optional**:
 - `unique`: A boolean value answering the question "is every value in this column expected to be unique?"
 - `notNull`: A boolean value answering the question "is this column exected to have data?"
 - `defaultValue`: The default value of the column, if nothing is provided.
+- `file`: Specific to [file attachments](/docs/concepts/file-attachments), the `file` field will allow you to provide the `defaultPublicAccess` of files added to that record.
 
 ## Loading the Schema from a File
 
