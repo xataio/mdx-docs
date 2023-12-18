@@ -687,7 +687,7 @@ details.
 let posts = null;
 if (search) {
   const { records } = await xata.db.Posts.search(search, { fuzziness: 2 });
-  posts = records
+  posts = records;
 } else {
   posts = await xata.db.Posts.getAll();
 }
