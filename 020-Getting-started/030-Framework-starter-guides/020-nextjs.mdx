@@ -512,7 +512,8 @@ const xata = getXataClient();
 export default async function Home({ searchParams }: { searchParams: { q: string } }) {
   let posts = null;
   if (searchParams.q) {
-    posts = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 });
+    const { records } = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 });
+    posts = records;
   } else {
     posts = await xata.db.Posts.getAll();
   }
@@ -560,7 +561,8 @@ details.
 export default async function Home({ searchParams }: { searchParams: { q: string } }) {
   let posts = null;
   if (searchParams.q) {
-    posts = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 });
+    const { records } = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 });
+    posts = records;
   } else {
     posts = await xata.db.Posts.getAll();
   }
