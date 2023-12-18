@@ -282,6 +282,36 @@ photos = xata.data().query("Users", {
 
 </TabbedCode>
 
+The `base64Content` and ` signedUrl` will only be returned when requested explicitly. They are not included by default when requesting all fields using wildcard.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const photos = await xata.db.Users.select(['name', 'photo.base64Content', 'photo.signedUrl', 'photo.*'])
+  .filter({ 'photo.mediaType': 'image/png' })
+  .sort('photo.size', 'desc')
+  .getMany();
+```
+
+```python
+photos = xata.data().query("Users", {
+  "columns": ["name", "photo.base64Content", "photo.signedUrl", "photo.*"],
+  "filter": { "photo.mediaType": "image/png" },
+  "sort": { "photo.size": "desc" }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+
+{
+  "columns": ["name", "photo.base64Content", "photo.signedUrl", "photo.*"],
+  "filter": { "photo.mediaType": "image/png" },
+  "sort": { "photo.size": "desc" }
+}
+```
+
+</TabbedCode>
+
 ## File (binary) APIs
 
 Since all record APIs use JSON for both request and response body, the file content needs to be encoded. For reasons like performance or data size on the wire, encoding the content might not be desired.
