@@ -300,7 +300,7 @@ photos = xata.data().query("Users", {
 })
 ```
 
-````jsonc
+```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
 
 {
@@ -308,6 +308,7 @@ photos = xata.data().query("Users", {
   "filter": { "photo.mediaType": "image/png" },
   "sort": { "photo.size": "desc" }
 }
+```
 
 </TabbedCode>
 
