@@ -325,7 +325,7 @@ Similar to the other Xata APIs, the file APIs require the Authorization header a
 <TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
 ```ts
 await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id' }, file);
-````
+```
 
 ```python
 response = xata.files().put("table_name", "record_id", "column_name", file_content)
