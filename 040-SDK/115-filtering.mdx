@@ -1245,3 +1245,70 @@ records = xata.data().query("Posts", {
 ```
 
 </TabbedCode>
+
+## Examples
+
+We will walk through various examples to demonstrate the use cases of the different filtering options and operators.
+For the example we use an access log of a web server, saved in a table called `access_logs`.
+
+```csv
+ip,timestamp,method,url_path,version,status_code,bytes,referrer,user_agent,response_time
+233.223.117.90,27/Dec/2037:12:00:00 +0530,DELETE,usr/admin,HTTP/1.0,502,4963,-,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/89.0.4380.0 Safari/537.36 Edg/89.0.759.0,45
+162.253.4.179,27/Dec/2037:12:00:00 +0530,GET,usr/admin/developer,HTTP/1.0,200,5041,http://www.parker-miller.org/tag/list/list/privacy/,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/87.0.4280.141 Safari/537.36,3885
+252.156.232.172,27/Dec/2037:12:00:00 +0530,POST,usr/register,HTTP/1.0,404,5028,-,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/87.0.4280.88 Safari/537.36 OPR/73.0.3856.329,3350
+182.215.249.159,27/Dec/2037:12:00:00 +0530,PUT,usr/register,HTTP/1.0,304,4936,http://www.parker-miller.org/tag/list/list/privacy/,Mozilla/5.0 (Android 10; Mobile; rv:84.0) Gecko/84.0 Firefox/84.0,767
+160.36.208.51,27/Dec/2037:12:00:00 +0530,POST,usr,HTTP/1.0,304,4979,http://www.parker-miller.org/tag/list/list/privacy/,Mozilla/5.0 (Linux; Android 10; ONEPLUS A6000) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/86.0.4240.198 Mobile Safari/537.36 OPR/61.2.3076.56749,84
+255.231.52.33,27/Dec/2037:12:00:00 +0530,PUT,usr/admin/developer,HTTP/1.0,403,5054,http://www.parker-miller.org/tag/list/list/privacy/,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/87.0.4280.88 Safari/537.36 OPR/73.0.3856.329,3629
+238.217.83.154,27/Dec/2037:12:00:00 +0530,DELETE,usr/register,HTTP/1.0,304,5152,-,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/89.0.4380.0 Safari/537.36 Edg/89.0.759.0,4679
+119.170.1.203,27/Dec/2037:12:00:00 +0530,GET,usr,HTTP/1.0,303,5011,http://www.parker-miller.org/tag/list/list/privacy/,Mozilla/5.0 (Linux; Android 10; ONEPLUS A6000) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/87.0.4280.141 Mobile Safari/537.36,4541
+59.107.116.6,27/Dec/2037:12:00:00 +0530,POST,usr,HTTP/1.0,502,5008,-,Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML; like Gecko) Version/7.0.3 Safari/7046A194A,1213
+```
+
+The data source is [kaggle](https://www.kaggle.com/datasets/vishnu0399/server-logs/data?select=logfiles.log) and licensed as [public domain](https://creativecommons.org/publicdomain/zero/1.0/).
+For illustration purposes, the data has been trimmed to 1000 records and converted to a CSV for a convenient [import](/docs/csv-data/import-data). The file can be downloaded [here]().
+
+### Multiple exact matches
+
+In the following query we want to fetch all records that have the status_code exactly `502` and the HTTP method `DELETE`.
+In order to combine both filter conditions, we must use the `$all` operator.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
+```ts
+const records = await xata.db.access_logs
+  .filter({
+    $all: [{ status_code: { $is: 502 } }, { method: { $is: 'DELETE' } }]
+  })
+  .getMany();
+```
+
+```python
+records = xata.data().query("access_logs", {
+  "filter": {
+    "$all": [
+        { "status_code": { "$is": 502 } },
+        { "method": { "$is": "DELETE" } },
+    ]
+  }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"access_logs\" WHERE (status_code = 502) AND (method = \"DELETE\") LIMIT 20;"
+}
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+
+{
+  "filter": {
+    "$all": [{ "status_code": { "$is": 502 } }, { "method": { "$is": "DELETE" } }]
+  }
+}
+```
+
+</TabbedCode>
