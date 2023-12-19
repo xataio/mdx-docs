@@ -725,7 +725,7 @@ const records = await xata.db.Users.filter({
 
 // or
 const records = await xata.db.Users.filter({
-  name: { $endsWith: 'Reave' }
+  name: { $endsWith: 'Reeves' }
 }).getMany();
 ```
 
@@ -734,6 +734,16 @@ records = xata.data().query("Users", {
   "filter": {
     "name": {
       "$startsWith": "Keanu"
+    }
+  }
+})
+
+# or
+
+records = xata.data().query("Users", {
+  "filter": {
+    "name": {
+      "$endsWith": "Reeves"
     }
   }
 })
@@ -762,6 +772,16 @@ records = xata.data().query("Users", {
   "filter": {
     "name": {
       "$startsWith": "Keanu"
+    }
+  }
+}
+
+// or
+
+{
+  "filter": {
+    "name": {
+      "$endsWith": "Reeves"
     }
   }
 }
@@ -1240,6 +1260,164 @@ records = xata.data().query("Posts", {
     "social->linkedin->shared": {
       "$gt": 5
     }
+  }
+}
+```
+
+</TabbedCode>
+
+## Examples
+
+The examples provided illustrate how to use various filtering options and operators in different use cases.
+In this example, use the web server's access log, which is stored in a table named `access_logs`.
+
+```csv
+ip,timestamp,method,url_path,version,status_code,bytes,referrer,user_agent,response_time
+233.223.117.90,27/Dec/2037:12:00:00 +0530,DELETE,usr/admin,HTTP/1.0,502,4963,-,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/89.0.4380.0 Safari/537.36 Edg/89.0.759.0,45
+162.253.4.179,27/Dec/2037:12:00:00 +0530,GET,usr/admin/developer,HTTP/1.0,200,5041,http://www.parker-miller.org/tag/list/list/privacy/,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/87.0.4280.141 Safari/537.36,3885
+252.156.232.172,27/Dec/2037:12:00:00 +0530,POST,usr/register,HTTP/1.0,404,5028,-,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/87.0.4280.88 Safari/537.36 OPR/73.0.3856.329,3350
+182.215.249.159,27/Dec/2037:12:00:00 +0530,PUT,usr/register,HTTP/1.0,304,4936,http://www.parker-miller.org/tag/list/list/privacy/,Mozilla/5.0 (Android 10; Mobile; rv:84.0) Gecko/84.0 Firefox/84.0,767
+160.36.208.51,27/Dec/2037:12:00:00 +0530,POST,usr,HTTP/1.0,304,4979,http://www.parker-miller.org/tag/list/list/privacy/,Mozilla/5.0 (Linux; Android 10; ONEPLUS A6000) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/86.0.4240.198 Mobile Safari/537.36 OPR/61.2.3076.56749,84
+255.231.52.33,27/Dec/2037:12:00:00 +0530,PUT,usr/admin/developer,HTTP/1.0,403,5054,http://www.parker-miller.org/tag/list/list/privacy/,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/87.0.4280.88 Safari/537.36 OPR/73.0.3856.329,3629
+238.217.83.154,27/Dec/2037:12:00:00 +0530,DELETE,usr/register,HTTP/1.0,304,5152,-,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/89.0.4380.0 Safari/537.36 Edg/89.0.759.0,4679
+119.170.1.203,27/Dec/2037:12:00:00 +0530,GET,usr,HTTP/1.0,303,5011,http://www.parker-miller.org/tag/list/list/privacy/,Mozilla/5.0 (Linux; Android 10; ONEPLUS A6000) AppleWebKit/537.36 (KHTML; like Gecko) Chrome/87.0.4280.141 Mobile Safari/537.36,4541
+59.107.116.6,27/Dec/2037:12:00:00 +0530,POST,usr,HTTP/1.0,502,5008,-,Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML; like Gecko) Version/7.0.3 Safari/7046A194A,1213
+```
+
+The dataset, available on [Kaggle](https://www.kaggle.com/datasets/vishnu0399/server-logs/data?select=logfiles.log), consists of server logs and is licensed under the [public domain](https://creativecommons.org/publicdomain/zero/1.0/).
+In this example, the data has been trimmed to 1000 records and converted to a CSV for a convenient [import](/docs/csv-data/import-data). The file can be downloaded [here]().
+
+### Multiple exact matches
+
+In the upcoming query, you'll retrieve all records that have a status_code of exactly `502` and use the HTTP method `DELETE`.
+To combine both filter conditions, you must use the `$all` operator.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
+```ts
+const records = await xata.db.access_logs
+  .filter({
+    $all: [{ status_code: { $is: 502 } }, { method: { $is: 'DELETE' } }]
+  })
+  .getMany();
+```
+
+```python
+records = xata.data().query("access_logs", {
+  "filter": {
+    "$all": [
+        { "status_code": { "$is": 502 } },
+        { "method": { "$is": "DELETE" } },
+    ]
+  }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"access_logs\" WHERE (status_code = 502) AND (method = \"DELETE\") LIMIT 20;"
+}
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+
+{
+  "filter": {
+    "$all": [{ "status_code": { "$is": 502 } }, { "method": { "$is": "DELETE" } }]
+  }
+}
+```
+
+</TabbedCode>
+
+### Nested operators
+
+This example demonstrates how to use multiple operators.
+You want to get all records that:
+
+- IP range starts with `202.8.*` or `29.171.152.*`
+- Attempted to log in on URL path `usr/login`
+- HTTP methods are `PUT` or `POST`
+- Did not produce the status code `200`
+
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
+```ts
+const records = await xata.db.access_logs
+  .filter({
+    $all: [
+      {
+        // IP range starts with 202.8.* or 29.171.152.*
+        $any: [{ ip: { $startsWith: '202.8.' } }, { ip: { $startsWith: '29.171.152.' } }]
+      },
+      // Attempted to log in with PUT or POST
+      { method: { $any: ['PUT', 'POST'] } },
+      // Log in url_path exact match
+      { url_path: { $is: 'usr/login' } },
+      {
+        // Did not produce the status code 200
+        $not: {
+          status_code: { $is: 200 }
+        }
+      }
+    ]
+  })
+  .getMany();
+```
+
+```python
+records = xata.data().query("access_logs", {
+  "filter": {
+    "$all": [
+        { # IP range starts with `202.8.*` or `29.171.152.*`
+          "$any": [
+            { "ip": { "$startsWith": "202.8." } },
+            { "ip": { "$startsWith": "29.171.152." } },
+          ]
+        },
+        # Attempted to log in with PUT or POST
+        { "method": { "$any": ["PUT", "POST"] } },
+        # Log in url_path exact match
+        { "url_path": { "$is": "usr/login" } },
+        { # Did not produce the status code `200`
+          "$not": {
+            "status_code": { "$is": 200 },
+          }
+        }
+    ]
+  }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"access_logs\" WHERE ((ip ~ $1) OR (ip ~ $2)) AND (method IN ($2, $3)) AND (url_path = $4) AND (status_code != $5) LIMIT 20;"
+  "params": ["202.8.", "29.171.152.", "PUT", "POST", "usr/login", 200]
+}
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+
+{
+  "filter": {
+    "$all": [
+      {
+        "$any": [{ "ip": { "$startsWith": "202.8." } }, { "ip": { "$startsWith": "29.171.152." } }]
+      },
+      { "method": { "$any": ["PUT", "POST"] } },
+      { "url_path": { "$is": "usr/login" } },
+      {
+        "$not": {
+          "status_code": { "$is": 200 }
+        }
+      }
+    ]
   }
 }
 ```
