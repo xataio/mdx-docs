@@ -725,7 +725,7 @@ const records = await xata.db.Users.filter({
 
 // or
 const records = await xata.db.Users.filter({
-  name: { $endsWith: 'Reave' }
+  name: { $endsWith: 'Reeves' }
 }).getMany();
 ```
 
@@ -734,6 +734,16 @@ records = xata.data().query("Users", {
   "filter": {
     "name": {
       "$startsWith": "Keanu"
+    }
+  }
+})
+
+# or
+
+records = xata.data().query("Users", {
+  "filter": {
+    "name": {
+      "$endsWith": "Reeves"
     }
   }
 })
@@ -762,6 +772,16 @@ records = xata.data().query("Users", {
   "filter": {
     "name": {
       "$startsWith": "Keanu"
+    }
+  }
+}
+
+// or
+
+{
+  "filter": {
+    "name": {
+      "$endsWith": "Reeves"
     }
   }
 }
@@ -1307,6 +1327,97 @@ records = xata.data().query("access_logs", {
 {
   "filter": {
     "$all": [{ "status_code": { "$is": 502 } }, { "method": { "$is": "DELETE" } }]
+  }
+}
+```
+
+</TabbedCode>
+
+### Nested operators
+
+This example will demonstrate how to use multiple operators.
+We want to get all records that:
+
+- IP range starts with `202.8.*` or `29.171.152.*`
+- attempted to login on URL path `usr/login`
+- HTTP methods are `PUT` or `POST`
+- did not produce the status code `200`
+
+<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+
+```ts
+const records = await xata.db.access_logs
+  .filter({
+    $all: [
+      {
+        // IP range starts with `202.8.*` or `29.171.152.*`
+        $any: [{ ip: { $startsWith: '202.8.' } }, { ip: { $startsWith: '29.171.152.' } }]
+      },
+      // attempted to login with PUT or POST
+      { method: { $any: ['PUT', 'POST'] } },
+      // login url_path exact match
+      { url_path: { $is: 'usr/login' } },
+      {
+        // did not produce the status code `200`
+        $not: {
+          status_code: { $is: 200 }
+        }
+      }
+    ]
+  })
+  .getMany();
+```
+
+```python
+records = xata.data().query("access_logs", {
+  "filter": {
+    "$all": [
+        { # IP range starts with `202.8.*` or `29.171.152.*`
+          "$any": [
+            { "ip": { "$startsWith": "202.8." } },
+            { "ip": { "$startsWith": "29.171.152." } },
+          ]
+        },
+        # attempted to login with PUT or POST
+        { "method": { "$any": ["PUT", "POST"] } },
+        # login url_path exact match
+        { "url_path": { "$is": "usr/login" } },
+        { # did not produce the status code `200`
+          "$not": {
+            "status_code": { "$is": 200 },
+          }
+        }
+    ]
+  }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"access_logs\" WHERE ((ip ~ $1) OR (ip ~ $2)) AND (method IN ($2, $3)) AND (url_path = $4) AND (status_code != $5) LIMIT 20;"
+  "params": ["202.8.", "29.171.152.", "PUT", "POST", "usr/login", 200]
+}
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+
+{
+  "filter": {
+    "$all": [
+      {
+        "$any": [{ "ip": { "$startsWith": "202.8." } }, { "ip": { "$startsWith": "29.171.152." } }]
+      },
+      { "method": { "$any": ["PUT", "POST"] } },
+      { "url_path": { "$is": "usr/login" } },
+      {
+        "$not": {
+          "status_code": { "$is": 200 }
+        }
+      }
+    ]
   }
 }
 ```
