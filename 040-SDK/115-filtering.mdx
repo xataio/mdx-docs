@@ -1268,8 +1268,8 @@ records = xata.data().query("Posts", {
 
 ## Examples
 
-We will walk through various examples to demonstrate the use cases of the different filtering options and operators.
-For the example we use an access log of a web server, saved in a table called `access_logs`.
+The examples provided illustrate how to use various filtering options and operators in different use cases.
+In this example, use the web server's access log, which is stored in a table named `access_logs`.
 
 ```csv
 ip,timestamp,method,url_path,version,status_code,bytes,referrer,user_agent,response_time
@@ -1284,13 +1284,13 @@ ip,timestamp,method,url_path,version,status_code,bytes,referrer,user_agent,respo
 59.107.116.6,27/Dec/2037:12:00:00 +0530,POST,usr,HTTP/1.0,502,5008,-,Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML; like Gecko) Version/7.0.3 Safari/7046A194A,1213
 ```
 
-The data source is [kaggle](https://www.kaggle.com/datasets/vishnu0399/server-logs/data?select=logfiles.log) and licensed as [public domain](https://creativecommons.org/publicdomain/zero/1.0/).
-For illustration purposes, the data has been trimmed to 1000 records and converted to a CSV for a convenient [import](/docs/csv-data/import-data). The file can be downloaded [here]().
+The dataset, available on [Kaggle](https://www.kaggle.com/datasets/vishnu0399/server-logs/data?select=logfiles.log), consists of server logs and is licensed under the [public domain](https://creativecommons.org/publicdomain/zero/1.0/).
+In this example, the data has been trimmed to 1000 records and converted to a CSV for a convenient [import](/docs/csv-data/import-data). The file can be downloaded [here]().
 
 ### Multiple exact matches
 
-In the following query we want to fetch all records that have the status_code exactly `502` and the HTTP method `DELETE`.
-In order to combine both filter conditions, we must use the `$all` operator.
+In the upcoming query, you'll retrieve all records that have a status_code of exactly `502` and use the HTTP method `DELETE`.
+To combine both filter conditions, you must use the `$all` operator.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
@@ -1336,12 +1336,12 @@ records = xata.data().query("access_logs", {
 ### Nested operators
 
 This example will demonstrate how to use multiple operators.
-We want to get all records that:
+You want to get all records that:
 
 - IP range starts with `202.8.*` or `29.171.152.*`
-- attempted to login on URL path `usr/login`
+- Attempted to log in on URL path `usr/login`
 - HTTP methods are `PUT` or `POST`
-- did not produce the status code `200`
+- Did not produce the status code `200`
 
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
 
@@ -1350,15 +1350,15 @@ const records = await xata.db.access_logs
   .filter({
     $all: [
       {
-        // IP range starts with `202.8.*` or `29.171.152.*`
+        // IP range starts with 202.8.* or 29.171.152.*
         $any: [{ ip: { $startsWith: '202.8.' } }, { ip: { $startsWith: '29.171.152.' } }]
       },
-      // attempted to login with PUT or POST
+      // Attempted to log in with PUT or POST
       { method: { $any: ['PUT', 'POST'] } },
-      // login url_path exact match
+      // Log in url_path exact match
       { url_path: { $is: 'usr/login' } },
       {
-        // did not produce the status code `200`
+        // Did not produce the status code 200
         $not: {
           status_code: { $is: 200 }
         }
@@ -1378,11 +1378,11 @@ records = xata.data().query("access_logs", {
             { "ip": { "$startsWith": "29.171.152." } },
           ]
         },
-        # attempted to login with PUT or POST
+        # Attempted to log in with PUT or POST
         { "method": { "$any": ["PUT", "POST"] } },
-        # login url_path exact match
+        # Log in url_path exact match
         { "url_path": { "$is": "usr/login" } },
-        { # did not produce the status code `200`
+        { # Did not produce the status code `200`
           "$not": {
             "status_code": { "$is": 200 },
           }
