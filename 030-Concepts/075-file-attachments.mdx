@@ -124,6 +124,7 @@ Within the Xata UI you can make files public by default for the column by settin
 
 <Alert status="warning">
 **Public object caching**
+
 When a public object gets cached, changing permissions will not invalidate the cached entry.
 The file is still accessible through old URLs until the cache entry expires in 2h. Xata advises greatest caution when
 configuring public access, because in practice there is a delay in changing the permissions back from public to
@@ -190,3 +191,60 @@ img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbut
 ````
 
 </TabbedCode>
+
+
+### Upload URLs
+
+An upload URL offers authenticated access to upload/update a file without requiring an API key. The URL contains an expiring signature allowing anyone holding the URL to upload a file during the configured duration. Similar to signed URLs, they need to be requested directly and do not come along with the default request on the record.
+Http `PUT` is the only valid method for a request using the upload URL.
+Note that an upload URL targets a specific file, therefore multiple uploads using the same URL will replace the content of the same file rather than creating multiple files.
+
+<TabbedCode tabs={['TypeScript', 'Python']}>
+
+```ts
+// Returns the upload URL for records[0].photo.uploadUrl
+const records = await xata.db.Users.select(['id', 'name', 'photo.*', 'photo.uploadUrl']).getMany();
+
+// Returns an empty string for records[0].photo.uploadUrl
+const records = await xata.db.Users.getMany();
+```
+
+```python
+# Returns the signed URL for records[0].photo.uploadUrl
+records = xata.data().query("Users", {
+  "columns": ["id", "name", 'photo.*', 'photo.uploadUrl']
+})
+
+# Returns an empty string for records[0].photo.uploadUrl
+records = xata.data().query("Users")
+```
+
+</TabbedCode>
+
+Upload URLs have a configurable time to live (TTL), which specifies when access to the URL expires. The default is 24h. You can modify the timeout duration of the upload URL for each file by adjusting the `uploadUrlTimeout` field within the file object. The value represents a duration in seconds.
+
+Use upload URLs when you need temporary write access without revealing the API key, such as exposing uploads in a web application.
+
+<TabbedCode tabs={['TypeScript', 'Python']}>
+  ```ts
+  // Set the timeout to 10 minutes for the photo upload URL
+  const user = await xata.db.Users.update('record_id', {
+    photo: {
+      uploadUrlTimeout: 600 // In seconds
+    }
+  });
+
+````
+
+```python
+# Set the timeout to 10 minutes for the photo upload URL
+user = xata.records().update("Users", "record_id", {
+  "photo": {
+    "uploadUrlTimeout": 600 # In seconds
+  }
+})
+
+````
+
+</TabbedCode>
+
