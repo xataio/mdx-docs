@@ -15,7 +15,7 @@ Xata's pricing model is designed to cater to different user needs, from individu
 
 The concurrency limit refers to the number of queries that can run simultaneously. It's the cap on how many requests Xata processes at once. Unlike a "connections limit", this doesn't count the total connections, but only the active queries. Xata doesn't limit the number of connections.
 
-Xata sets specific limits to balance workloads across different store types. The concurrency limit depends on the plan and are allocated to each branch:
+Xata sets specific limits to balance workloads across different store types. The concurrency limit depends on the plan and is allocated to each branch:
 
 - **Free plan:** 15 parallel requests (6 primary + 9 from replicas) to the database
 - **Pro plan:** 45 parallel requests (18 primary + 27 from replicas) to the database
