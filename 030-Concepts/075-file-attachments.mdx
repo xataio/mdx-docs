@@ -242,7 +242,7 @@ Use upload URLs when you need temporary write access without revealing the API k
 # Set the timeout to 10 minutes for the photo upload URL
 user = xata.records().update("Users", "record_id", {
   "photo": {
-    "uploadUrlTimeout": 600 # In seconds
+    "uploadUrlTimeout": 600 # Time in seconds
   }
 })
 
