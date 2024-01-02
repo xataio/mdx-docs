@@ -193,7 +193,9 @@ img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbut
 
 ### Upload URLs
 
-An upload URL offers authenticated access to upload/update a file without requiring an API key. The URL contains an expiring signature allowing anyone holding the URL to upload a file during the configured duration. Similar to signed URLs, they need to be requested directly and do not come along with the default request on the record.
+An upload URL provides a secure and authenticated method to upload or update a file without requiring an API key. This URL includes a time-limited signature, that ensures that only users with the URL can upload a file within a set timeframe. 
+
+The URLs are similar to signed URLs in that they must be specifically requested and are not automatically included with a standard record request. This improves security by controlling access and limiting the window during which uploads can occur.
 
 Http `PUT` is the only valid method for a request using the upload URL.
 
