@@ -199,7 +199,7 @@ The URLs are similar to signed URLs in that they must be specifically requested 
 
 HTTP `PUT` is the only valid method for a request using the upload URL.
 
-Note that an upload URL targets a specific file, therefore multiple uploads using the same URL will replace the content of the same file rather than creating multiple files.
+An upload URL is assigned to a specific file. Subsequent uploads using the same URL will overwrite the existing file content, instead of generating additional files. Every time the URL is used, it updates the same specific file it's linked to.
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
   ```ts
