@@ -9,8 +9,8 @@ published: true
 
 Xata provides three different ways to upload files to a file column within a database.
 
-- [Upload URLs](#upload-urls), when requested from an existing file object, provide a temporary, secure URL to upload files to. They can be used client-side and are good when dealing with large files through a client interface like a browser. This method comes at the downside of requiring extra steps across the client and server.
-- [Record APIs](#record-apis) provide the easiest way to upload files, and are the only methods that allow uploading files during the same step as creating a record. The downside is that they only support small files and will likely run over the limits of serverless functions from providers like Vercel.
+- [Upload URLs](#upload-urls), when requested from an existing file object, provide a temporary, secure URL to upload files to. Because they don't require an API key they can be used client-side and are good when dealing with large files through a client interface like a browser. This method comes at the downside of requiring extra steps across the client and server side.
+- [Record APIs](#record-apis) provide the easiest way to upload files, and are the only methods that allow uploading files during the same step as creating a record. The downside is that they only support file payloads under 20MB and will likely run over the limits of serverless functions from providers like Vercel which can be much lower.
 - [Binary APIs](#file-binary-apis) allow for uploading large files on an existing record. Unfortunately, unlike Upload URLs, they must be called server side, which will likely run over the limits of serverless functions from providers like Vercel. This makes their usefulness limited to scenarios where you control the environment completely, like uploading large files from a local machine.
 
 Xata recommends using Upload URLs for most scenarios. Record and Binary APIs exist for more specific situations where you know the size of your data or have complete control over the hosting infrastructure.
@@ -36,7 +36,7 @@ A server-side API route (heavily simplified, and not accounting for your particu
 const record = await xata.db.myTableName.create(
   { name, myFileColumnName: { name: name, mediaType: fileType, base64Content: '' } },
   // Request an uploadUrl from the created record. We'll use this client-side to update the record.
-  ['*', 'myFileColumnName.uploadUrl']
+  ['myFileColumnName.uploadUrl']
 );
 
 // Return the record, which has the `uploadUrl`.
