@@ -277,6 +277,7 @@ The file object consists of the following fields:
 - `base64Content` represents the file content encoded using base64 encoding.
 - `enablePublicUrl` is an optional boolean field that indicates whether Xata should generate a public access URL for this file. The default value is false.
 - `signedUrlTimeout` is an optional integer field that sets the time to live for a signed URL. The value is measured in seconds and the default is set to 1 minute.
+- `uploadUrlTimeout` is an optional integer field that sets the time to live for an upload URL. The value is measured in seconds and the default is set to 24 hours.
 
 All the fields above are input fields and can be used in insert or update requests. For example:
 
@@ -295,7 +296,8 @@ When reading or querying a file object, Xata adds a set of read only fields:
 - `size` - represents the file's size in bytes. It's important to note that this size refers to the original file, not the size of the base64 encoding.
 - `version` - keeps track of the updates made to the specific file.
 - `url` - a generated URL that provides direct access to the file. Depending on the `enablePublicUrl` flag, this URL can either be accessible to the public or require the Xata API key for access.
-- `signedUrl` - an access URL generated with a signature. This URL allows access without a key but has an expiration time determined by the duration configured in `signedUrlTimeout`.
+- `signedUrl` - a download URL generated with a signature. This URL allows read access without a key but has an expiration time determined by the duration configured in `signedUrlTimeout`. The field is generated on demand and needs to be explicitly requested in the query.
+- `uploadUrl` - an upload URL generated with a signature. This URL allows write only access without a key but has an expiration time determined by the duration configured in `uploadUrlTimeout`. The field is generated on demand and needs to be explicitly requested in the query.
 - `attributes` - a JSON object that stores key-value properties specific to the file's media type. For instance, recognized image types will have properties like height and width stored within the attributes.
 
 When the file field is requested in a query, the returned file object will look like the following:
@@ -307,6 +309,7 @@ When the file field is requested in a query, the returned file object will look 
     "mediaType": "image/png",
     "enablePublicUrl": true,
     "signedUrlTimeout": 60,
+    "uploadUrlTimeout": 86400,
     "size": 1885,
     "version": 1,
     "url": "https://eu-west-1.storage.xata.sh/nj42n37o4l3dd19fe6vsh4plkk",
@@ -318,7 +321,7 @@ When the file field is requested in a query, the returned file object will look 
 }
 ```
 
-The object fields, with the exception of `base64Content`, `url` and `signedUrl`, can be used in query filers and summaries.
+The object fields, with the exception of `base64Content`, `url`, `signedUrl` and `uploadUrl`, can be used in query filters and summaries.
 
 The `file` column type does not support constraints like `not null` or `unique` or parameters like default value. The default value for a `file` column is `null`.
 

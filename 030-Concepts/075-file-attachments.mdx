@@ -51,18 +51,18 @@ Authenticated URLs are private URLs that can be used to access a file with a val
 These URLs are especially useful if you need quick, high-throughput, and concurrent download access, with cached data.
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
-  ```ts
-  // Disallow this User photo to be accessed publicly at any time by the URL alone
-  const user = await xata.db.Users.update('record_id', {
-    photo: {
-      enablePublicUrl: false
-    }
-  });
+
+```ts
+// Disallow this User photo to be accessed publicly at any time by the URL alone
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    enablePublicUrl: false
+  }
+});
 
 // Retrieve the private URL on the file in the "photo" column
 const { url } = user.photo.transform({ quality: 50 });
-
-````
+```
 
 ```python
 # Disallow this User photo to be accessed publicly at any time by the URL alone
@@ -76,7 +76,7 @@ user = xata.records().update("Users", "record_id", {
 img = xata.files().transform("<photo.signedUrl>", {
   "quality": 50
 })
-````
+```
 
 </TabbedCode>
 
@@ -89,18 +89,18 @@ You can use the public URL directly without writing code. For instance:
 https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94 is available publicly.
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
-  ```ts
-  // Allow this user's photo to be accessed publicly at any time by the URL alone
-  const user = await xata.db.Users.update('record_id', {
-    photo: {
-      enablePublicUrl: true
-    }
-  });
+
+```ts
+// Allow this user's photo to be accessed publicly at any time by the URL alone
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    enablePublicUrl: true
+  }
+});
 
 // Retrieve the public URL on the file in the "photo" column
 const { url } = user.photo.transform({ quality: 50 });
-
-````
+```
 
 ```python
 # Allow this user's photo to be accessed publicly at any time by the URL alone
@@ -114,7 +114,7 @@ user = xata.records().update("Users", "record_id", {
 img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "quality": 50
 })
-````
+```
 
 </TabbedCode>
 
@@ -123,7 +123,7 @@ Within the Xata UI you can make files public by default for the column by settin
 ![Entire columns can be made public by default](images/column-access-public.png)
 
 <Alert status="warning">
-**Public object caching**
+  **Public object caching**
 When a public object gets cached, changing permissions will not invalidate the cached entry.
 The file is still accessible through old URLs until the cache entry expires in 2h. Xata advises greatest caution when
 configuring public access, because in practice there is a delay in changing the permissions back from public to
@@ -162,18 +162,18 @@ Signed URLs have a configurable time to live (TTL), which specifies when access 
 Use signed URLs when you need temporary access without revealing the API key, such as rendering an image without disclosing a permanent image URL.
 
 <TabbedCode tabs={['TypeScript', 'Python']}>
-  ```ts
-  // Set the timeout to 10 minutes for this user's photo
-  const user = await xata.db.Users.update('record_id', {
-    photo: {
-      signedUrlTimeout: 600 // In seconds
-    }
-  });
+
+```ts
+// Set the timeout to 10 minutes for this user's photo
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    signedUrlTimeout: 600 // In seconds
+  }
+});
 
 // Retrieve the signed URL on the file in the "photo" column
 const { signedUrl } = user.photo.transform({ quality: 50 });
-
-````
+```
 
 ```python
 # Set the timeout to 10 minutes for this user's photo
@@ -187,6 +187,67 @@ user = xata.records().update("Users", "record_id", {
 img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "quality": 50
 })
-````
+```
 
 </TabbedCode>
+
+### Upload URLs
+
+An upload URL provides a secure and authenticated method to upload or update a file without requiring an API key. This URL includes a time-limited signature, that ensures that only users with the URL can upload a file within a set time frame.
+
+The URLs are similar to signed URLs in that they must be specifically requested and are not automatically included with a standard record request. This improves security by controlling access and limiting the window during which uploads can occur.
+
+HTTP `PUT` is the only valid method for a request using the upload URL.
+
+An upload URL is assigned to a specific file. Subsequent uploads using the same URL will overwrite the existing file content, instead of generating additional files. Every time the URL is used, it updates the same specific file it's linked to.
+
+<TabbedCode tabs={['TypeScript', 'Python']}>
+
+```ts
+// Returns the upload URL for records[0].photo.uploadUrl
+const records = await xata.db.Users.select(['id', 'name', 'photo.*', 'photo.uploadUrl']).getMany();
+
+// Returns an empty string for records[0].photo.uploadUrl
+const records = await xata.db.Users.getMany();
+```
+
+```python
+# Returns the signed URL for records[0].photo.uploadUrl
+records = xata.data().query("Users", {
+  "columns": ["id", "name", 'photo.*', 'photo.uploadUrl']
+})
+
+# Returns an empty string for records[0].photo.uploadUrl
+records = xata.data().query("Users")
+```
+
+</TabbedCode>
+
+Upload URLs have a configurable time to live (TTL), which specifies when access to the URL expires. The default is 24h. You can modify the timeout duration of the upload URL for each file by adjusting the `uploadUrlTimeout` field within the file object. The value represents a duration in seconds.
+
+Use upload URLs when you need temporary write access without revealing the API key, such as exposing uploads in a web application.
+
+<TabbedCode tabs={['TypeScript', 'Python']}>
+
+```ts
+// Set the timeout to 10 minutes for the photo upload URL
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    uploadUrlTimeout: 600 // Time in seconds
+  }
+});
+```
+
+```python
+# Set the timeout to 10 minutes for the photo upload URL
+user = xata.records().update("Users", "record_id", {
+  "photo": {
+    "uploadUrlTimeout": 600 # Time in seconds
+  }
+})
+
+```
+
+</TabbedCode>
+
+The SDK documentation for file attachments contains [a more detailed pattern](/docs/sdk/file-attachments#upload-urls) for using an `uploadUrl` in a typical web scenario. The [sample gallery app](https://github.com/xataio/sample-nextjs-chakra-gallery-app) repo on Github also documents a complete example of the pattern for Next.js.

@@ -7,6 +7,91 @@ slug: sdk/file-attachments
 published: true
 ---
 
+Xata provides three different ways to upload files to a file column within a database.
+
+- [Upload URLs](#upload-urls), when requested from an existing file object, provide a temporary, secure URL to upload files to. Because they don't require an API key they can be used client-side and are good when dealing with large files through a client interface like a browser. This method comes at the downside of requiring extra steps across the client and server side.
+- [Record APIs](#record-apis) provide the easiest way to upload files, and are the only methods that allow uploading files during the same step as creating a record. The downside is that they only support file payloads under 20MB and will likely run over the limits of serverless functions from providers like Vercel which can be much lower.
+- [Binary APIs](#file-binary-apis) allow for uploading large files on an existing record. Unfortunately, unlike Upload URLs, they must be called server side, which will likely run over the limits of serverless functions from providers like Vercel. This makes their usefulness limited to scenarios where you control the environment completely, like uploading large files from a local machine.
+
+Xata recommends using Upload URLs for most scenarios. Record and Binary APIs exist for more specific situations where you know the size of your data or have complete control over the hosting infrastructure.
+
+## Upload URLs
+
+Xata provides a secure method to gain temporary upload URLs to upload or update files on existing records. They are the recommended pattern for uploading large files through a web browser or when you want to transfer a file client side. Upload URLs allow you to bypass the size restrictions of many server-side function hosts like Vercel and send files directly to Xata within its larger [REST API limits](/docs/rest-api/limits#file-attachments-limits).
+
+The only negative to using upload URLs versus the file or binary APIs is that this method requires multiple steps (creating, then updating the record), usually across both the server and the client.
+
+A typical pattern for a JavaScript application follows:
+
+1. On the server side create a record with an empty file using `xata.db.myTableName.create()`, simultaneously requesting an `uploadUrl` from that newly created, but empty file.
+2. On the server, pass a response with the file's `uploadUrl` to the client.
+3. On the client, upload the file using a `PUT` request against the `uploadUrl` given, making sure to account for any cleanup necessary if the upload fails.
+
+A server-side API route (heavily simplified, and not accounting for your particular framework) might look like this:
+
+```ts title="app/api/create-record.ts"
+// ... Your api route code
+
+// Create an empty record with no base64 content on a `myTableName` table. The column for the file is `myFileColumnName`.
+const record = await xata.db.myTableName.create(
+  { name, myFileColumnName: { name: name, mediaType: fileType, base64Content: '' } },
+  // Request an uploadUrl from the created record. We'll use this client-side to update the record.
+  ['myFileColumnName.uploadUrl']
+);
+
+// Return the record, which has the `uploadUrl`.
+return Response(record.toSerializable());
+```
+
+On the client side, you would typically have a `handleSubmit` function that calls the API created above.
+
+```ts title="app/upload.tsx"
+const handleSubmit = async (e) => {
+  // Grab the form data
+  const formData = new FormData();
+  const fileObj = file;
+  formData.append('fileType', fileObj.type);
+
+  try {
+    // This route creates new image and tag records in Xata
+    // If you look at the api route code, you'll see that we're not actually
+    // uploading the image here. Instead, we're creating a record in the database
+    // with a temporary, empty image. We do this because we need to generate a
+    // pre-signed URL for the image upload.
+    const response = await fetch('/api/create-record', {
+      method: 'POST',
+      body: formData
+    });
+    if (response.status !== 200) {
+      throw new Error("Couldn't create image record");
+    }
+
+    const record = await response.json();
+
+    // The response include a pre-signed uploadUrl on the record. Below, we then send a file
+    // directly to Xata on the client side using the PUT request. This lets us upload
+    // large files that would otherwise exceed the limit for serverless functions on
+    // services like Vercel.
+
+    if (response.status === 200) {
+      try {
+        await fetch(record.myFileColumnName.uploadUrl, { method: 'PUT', body: file });
+      } catch (error) {
+        // Delete the record (using a separate API route)
+        await fetch(`/api/delete-record/${record.id}`, { method: 'DELETE' });
+        throw new Error("Couldn't upload image because the image wasn't accepted");
+      }
+    } else {
+      throw new Error("Couldn't upload image because the record wasn't created");
+    }
+  } catch (error) {
+    throw new Error("Couldn't upload image because the record wasn't created");
+  }
+};
+```
+
+A full example of the above pattern in a Next.js application is available in our [Gallery app](https://github.com/xataio/sample-nextjs-chakra-gallery-app) repo on GitHub.
+
 ## Record APIs
 
 All Xata record APIs can be used to create, read, update, delete and query files.
