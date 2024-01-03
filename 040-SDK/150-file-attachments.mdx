@@ -34,7 +34,7 @@ A server-side API route (heavily simplified, and not accounting for your particu
 
 // Create an empty record with no base64 content on a `myTableName` table. The column for the file is `myFileColumnName`.
 const record = await xata.db.myTableName.create(
-  { name, myFileColumnName: { name: name, mediaType: fileType, base64Content: '' } },
+  { name, myFileColumnName: { name: name, mediaType: 'image/png', base64Content: '' } },
   // Request an uploadUrl from the created record. We'll use this client-side to update the record.
   ['myFileColumnName.uploadUrl']
 );
