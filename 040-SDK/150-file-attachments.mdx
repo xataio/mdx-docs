@@ -450,7 +450,7 @@ records, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
 
 </TabbedCode>
 
-The `base64Content` and ` signedUrl` will only be returned when requested explicitly. They are not included by default when requesting all fields using wildcard.
+Fields `base64Content` and `signedUrl` within the `photo` object are retrieved only when they are explicitly specified in the request. If you use a wildcard to request all fields of the photo object, these specific fields will not be included automatically. You must list them individually to retrieve their values.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 ```ts
