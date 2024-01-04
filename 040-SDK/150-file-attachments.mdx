@@ -474,7 +474,7 @@ records, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
   TableName: "Users",
   Payload: xata.QueryTableRequestPayload{
     Columns: []string{"name", "photo.base64Content", "photo.signedUrl", "photo.*"},
-    // Nested filters currently are not support yet in xata-go
+    // Nested filters are currently not supported in xata-go
     Sort: xata.NewSortExpressionFromStringSortOrderMap(map[string]xata.SortOrder{
       "photo.size": xata.SortOrderDesc,
     }),
