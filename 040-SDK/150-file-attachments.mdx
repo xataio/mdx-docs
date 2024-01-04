@@ -365,7 +365,12 @@ await user.update({ photos: [{id: 'id_to_keep_1'}, {id: 'id_to_keep_2'} ] });
 ````
 
 ```python
-record = xata.records().update("Users", "record_id", {"photos": [{id: 'id_to_keep_1'}, {id: 'id_to_keep_2'} ]})
+record = xata.records().update("Users", "record_id", {
+  "photos": [
+    {"id": "id_to_keep_1"},
+    {"id": "id_to_keep_2"}
+  ]
+})
 ````
 
 ```jsonc
