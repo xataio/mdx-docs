@@ -98,18 +98,18 @@ All Xata record APIs can be used to create, read, update, delete and query files
 
 ### Upload a file through inserting a new record
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
-  ```ts
-  const record = await xata.db.Users.create({
-    name: 'Keanu',
-    photo: {
-      name: 'file.png',
-      mediaType: 'image/png',
-      base64Content:
-        'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
-    }
-  });
-  ```
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+```ts
+const record = await xata.db.Users.create({
+  name: 'Keanu',
+  photo: {
+    name: 'file.png',
+    mediaType: 'image/png',
+    base64Content:
+      'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+  }
+});
+```
 
 ```python
 record = xata.records().insert("Users", {
@@ -119,6 +119,23 @@ record = xata.records().insert("Users", {
     "mediaType": "image/png",
     "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC",
   }
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+record, _ := recordsClient.Insert(context.TODO(), xata.InsertRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  Body: map[string]*xata.DataInputRecordValue{
+    "name":  xata.ValueFromString("Keanu"),
+    "photo": xata.ValueFromInputFile(xata.InputFile{
+      Name:          "file.png",
+      MediaType:     xata.String("image/png"),
+      Base64Content: xata.String("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"),
+    }),
+  },
 })
 ```
 
@@ -139,7 +156,7 @@ record = xata.records().insert("Users", {
 
 ### Update a file through updating a record
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('record_id', {
@@ -164,6 +181,21 @@ record = xata.records().update("Users", "record_id", {
   "photo": {
     "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
   }
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+record, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "record_id",
+  Body: map[string]*xata.DataInputRecordValue{
+    "photo": xata.ValueFromInputFile(xata.InputFile{
+      Base64Content: xata.String("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"),
+    }),
+  },
 })
 ```
 
@@ -253,13 +285,24 @@ record = xata.records().update("Users", "record_id", {
 
 The `base64Content` must be requested explicitly, it is not returned when selecting columns using wildcard.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'CURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
 ```ts
 const user = await xata.db.Users.read('record_id', ['photo.name', 'photo.base64Content']);
 ```
 
 ```python
 user = xata.records().get("Users", "record_id", columns=["photo.name", "photo.base64Content"])
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+user, _ := recordsClient.Get(context.Background(), xata.GetRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "record_id",
+  Columns: []string{"photo.name", "photo.base64Content"},
+})
 ```
 
 ```sh
@@ -407,13 +450,24 @@ Similar to the other Xata APIs, the file APIs require the Authorization header a
 
 `file` column type:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
 ```ts
 await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id' }, file);
 ```
 
 ```python
+// file_content = bytes
 response = xata.files().put("table_name", "record_id", "column_name", file_content)
+```
+
+```go
+filesClient, _ := xata.NewFilesClient()
+file, _ := filesClient.Put(context.TODO(), xata.PutFileRequest{
+  TableName:  "table_name",
+  RecordID:   "record_id",
+  ColumnName: "column_name",
+  Data:       []byte(`data`), // file content
+})
 ```
 
 ```sh
@@ -430,13 +484,24 @@ curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables
 Column type is `file[]` (file array).
 The `fileId` is optional and a unique id will be automatically generated if not provided.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
 ```ts
 await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id', fileId: 'id' }, file);
 ```
 
 ```python
 response = xata.files().put_item("table_name", "record_id", "column_name", "file_id", file_content)
+```
+
+```go
+filesClient, _ := xata.NewFilesClient()
+file, _ := filesClient.PutItem(context.TODO(), xata.PutFileItemRequest{
+  TableName:  "table_name",
+  RecordID:   "record_id",
+  ColumnName: "column_name",
+  FileID:     "file_id",
+  Data:       []byte(`data`), // file content
+})
 ```
 
 ```sh
@@ -452,13 +517,22 @@ curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables
 
 `file` column type:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
 ```ts
 const file = await xata.files.download({ table: 'table_name', column: 'column_name', record: 'record_id' });
 ```
 
-```sh
+```python
 file = xata.files().get("table_name", "record_id", "column_name")
+```
+
+```go
+filesClient, _ := xata.NewFilesClient()
+file, _ := filesClient.Get(context.TODO(), xata.GetFileRequest{
+  TableName:  "table_name",
+  RecordID:   "record_id",
+  ColumnName: "column_name",
+})
 ```
 
 ```sh
@@ -471,7 +545,7 @@ curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/
 
 `file[]` (file array) column type:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
 ```ts
 const file = await xata.files.download({
   table: 'table_name',
@@ -483,6 +557,16 @@ const file = await xata.files.download({
 
 ```python
 file = xata.files().get_item("table_name", "record_id", "column_name", "file_id")
+```
+
+```go
+filesClient, _ := xata.NewFilesClient()
+file, _ := filesClient.GetItem(context.TODO(), xata.GetFileItemRequest{
+  TableName:  "table_name",
+  RecordID:   "record_id",
+  ColumnName: "column_name",
+  FileID:     "file_id",
+})
 ```
 
 ```sh
@@ -498,13 +582,23 @@ curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/
 Column type is `file[]` (file array).
 `fileId` is required to identify the array item to be deleted.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
 ```ts
 await xata.files.delete({ table: 'table_name', column: 'column_name', record: 'record_id', fileId: 'id' });
 ```
 
 ```python
 response = xata.files().delete_item("table_name", "record_id", "column_name", "file_id")
+```
+
+```go
+filesClient, _ := xata.NewFilesClient()
+file, _ := filesClient.DeleteItem(context.TODO(), xata.DeleteFileItemRequest{
+  TableName:  "table_name",
+  RecordID:   "record_id",
+  ColumnName: "column_name",
+  FileID:     "file_id",
+})
 ```
 
 ```sh
