@@ -72,10 +72,8 @@ user = xata.records().update("Users", "record_id", {
   }
 })
 
-# Get the transformed image of the User with the signed URL
-img = xata.files().transform("<photo.signedUrl>", {
-  "quality": 50
-})
+# Retrieve the private URL on the file in the "photo" column
+url = xata.files().transform_url("<photo.signedUrl>", {"quality": 50})
 ```
 
 </TabbedCode>
@@ -110,10 +108,8 @@ user = xata.records().update("Users", "record_id", {
   }
 })
 
-# Get the transformed image
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
-  "quality": 50
-})
+# Retrieve the public URL on the file in the "photo" column
+url = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {"quality": 50})
 ```
 
 </TabbedCode>
