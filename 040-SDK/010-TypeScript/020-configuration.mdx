@@ -38,6 +38,24 @@ const xata = new XataClient({ apiKey: XATA_API_KEY });
 
 In case your runtime does not provide a built-in Fetch API (such as with versions prior to Node 18), you will need to pass a fetch implementation to the `fetch ` constructor parameter of the XataClient in the `xata.ts` / `xata.js `file in your project.
 
+## Passing options to fetch
+
+Some frameworks, like Next.js, support additional fetch options which allow you to configure the caching and revalidating behavior for each fetch request on the server.
+
+The Xata SDK supports the `fetchOptions` parameter for passing options to fetch.
+
+This parameter can be used to configure cache revalidation at a timed interval:
+
+```ts
+const records = xata.db.users.getMany({ pagination: { size: 10 }, fetchOptions: { next: { revalidate: '3060' } } });
+```
+
+or, to disable the cache for a fetch request:
+
+```ts
+const records = xata.db.users.getMany({ pagination: { size: 10 }, fetchOptions: { cache: 'no-store' } });
+```
+
 ## Updating the schema
 
 The command `xata codegen` updates the schema for the Xata client. Applying schema changes from the CLI, such as using the command `xata schema edit`, will automatically run codegen to update your client. However, in case schema changes have been applied from the web UI, you should run `xata codegen` to update your existing client with the latest schema.
