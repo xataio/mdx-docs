@@ -153,7 +153,7 @@ Within the Xata UI you can make files public by default for the column by settin
 ![Entire columns can be made public by default](images/column-access-public.png)
 
 <Alert status="warning">
-  **Public object caching** When a public object gets cached, changing permissions will not invalidate the cached entry.
+  **Public object caching** Changing the permissions of a cached public object does not remove it from the cache. The cached version remains unaffected.
   The file is still accessible through old URLs until the cache entry expires in 2h. Xata advises greatest caution when
   configuring public access, because in practice there is a delay in changing the permissions back from public to
   private.
