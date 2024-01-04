@@ -216,7 +216,7 @@ record, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
 In the following example the `photos` column is of type `file[]` (file array).
 The existing file ids from the array must be present in the update.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
 const user = await xata.db.Users.update('record_id', {
@@ -260,6 +260,27 @@ record = xata.records().update("Users", "record_id", {
         "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
     }
   ]
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+record, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "record_id",
+  Body: map[string]*xata.DataInputRecordValue{
+    "photos": xata.ValueFromInputFileArray(xata.InputFileArray{
+      {
+        Id: xata.String("existing_file_id"),
+      },
+      {
+        Name:          xata.String("new_id"),
+        Base64Content: xata.String("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"),
+      },
+    }),
+  },
 })
 ```
 
