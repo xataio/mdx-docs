@@ -456,7 +456,7 @@ await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'r
 ```
 
 ```python
-// file_content = bytes
+# file_content = bytes
 response = xata.files().put("table_name", "record_id", "column_name", file_content)
 ```
 
@@ -490,6 +490,7 @@ await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'r
 ```
 
 ```python
+# file_content = bytes
 response = xata.files().put_item("table_name", "record_id", "column_name", "file_id", file_content)
 ```
 
