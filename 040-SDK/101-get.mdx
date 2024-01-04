@@ -315,7 +315,7 @@ users = xata.data().query("Users", {
 ```
 
 ```go
-client, err := xata.NewSearchAndFilterClient()
+client, _ := xata.NewSearchAndFilterClient()
 users, _ := client.Query(context.TODO(), xata.QueryTableRequest{
   TableName: "Users",
   Payload: xata.QueryTableRequestPayload{

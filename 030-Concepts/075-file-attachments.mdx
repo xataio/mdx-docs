@@ -119,19 +119,17 @@ Within the Xata UI you can make files public by default for the column by settin
 ![Entire columns can be made public by default](images/column-access-public.png)
 
 <Alert status="warning">
-  **Public object caching**
-When a public object gets cached, changing permissions will not invalidate the cached entry.
-The file is still accessible through old URLs until the cache entry expires in 2h. Xata advises greatest caution when
-configuring public access, because in practice there is a delay in changing the permissions back from public to
-private.
-
+  **Public object caching** When a public object gets cached, changing permissions will not invalidate the cached entry.
+  The file is still accessible through old URLs until the cache entry expires in 2h. Xata advises greatest caution when
+  configuring public access, because in practice there is a delay in changing the permissions back from public to
+  private.
 </Alert>
 
 ### Signed URLs
 
 A signed URL offers authenticated access to a file without requiring an API key. The URL contains the key (signature) within it, so anyone holding the URL can get access to the file. Because of their on demand nature, signed URLs need to be requested directly and do not come along with the default request on the record.
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go']}>
 
 ```ts
 // Returns the signed URL for records[0].photo.signedUrl
@@ -142,13 +140,31 @@ const records = await xata.db.Users.getMany();
 ```
 
 ```python
-# Returns the signed URL for records[0].photo.signedUrl
+# Returns the signed URL for records[0]["photo"]["signedUrl"]
 records = xata.data().query("Users", {
-  "columns": ["id", "name", 'photo.*', 'photo.signedUrl']
+  "columns": ["id", "name", "photo.*", "photo.signedUrl"]
 })
 
-# Returns an empty string for records[0].photo.signedUrl
+# Returns an empty string for records[0]["photo"]["signedUrl"]
 records = xata.data().query("Users")
+```
+
+```go
+client, _ := xata.NewSearchAndFilterClient()
+
+// Returns the signed URL for records[0]["photo"]["signedUrl"]
+records, _ := client.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{"id", "name", "photo.*", "photo.signedUrl"},
+  },
+})
+
+// Returns an empty string for records[0]["photo"]["signedUrl"]
+records, _ := client.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{},
+})
 ```
 
 </TabbedCode>
@@ -197,7 +213,7 @@ HTTP `PUT` is the only valid method for a request using the upload URL.
 
 An upload URL is assigned to a specific file. Subsequent uploads using the same URL will overwrite the existing file content, instead of generating additional files. Every time the URL is used, it updates the same specific file it's linked to.
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go']}>
 
 ```ts
 // Returns the upload URL for records[0].photo.uploadUrl
@@ -208,13 +224,31 @@ const records = await xata.db.Users.getMany();
 ```
 
 ```python
-# Returns the signed URL for records[0].photo.uploadUrl
+# Returns the signed URL for records[0]["photo"]["uploadUrl"]
 records = xata.data().query("Users", {
-  "columns": ["id", "name", 'photo.*', 'photo.uploadUrl']
+  "columns": ["id", "name", "photo.*", "photo.uploadUrl"]
 })
 
-# Returns an empty string for records[0].photo.uploadUrl
+# Returns an empty string for records[0]["photo"]["uploadUrl"]
 records = xata.data().query("Users")
+```
+
+```go
+client, _ := xata.NewSearchAndFilterClient()
+
+// Returns the signed URL for records[0]["photo"]["uploadUrl"]
+records, _ := client.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{"id", "name", "photo.*", "photo.uploadUrl"},
+  },
+})
+
+// Returns an empty string for records[0]["photo"]["uploadUrl"]
+records, _ := client.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{},
+})
 ```
 
 </TabbedCode>
