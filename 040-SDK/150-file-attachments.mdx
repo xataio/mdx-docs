@@ -382,7 +382,7 @@ record = xata.records().update("Users", "record_id", {"photos": [{id: 'id_to_kee
 
 Here is an example of retrieving access URLs for all files from the photo column, that are `image/png`, sorted by file size:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 ```ts
 const photos = await xata.db.Users.select(['name', 'photo.url', 'photo.size'])
   .filter({ 'photo.mediaType': 'image/png' })
@@ -395,6 +395,20 @@ photos = xata.data().query("Users", {
   "columns": ["name", "photo.url", "photo.size"],
   "filter": { "photo.mediaType": "image/png" },
   "sort": { "photo.size": "desc" }
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+records, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{"name", "photo.url", "photo.size"},
+    // Nested filters currently are not support yet in xata-go
+    Sort: xata.NewSortExpressionFromStringSortOrderMap(map[string]xata.SortOrder{
+      "photo.size": xata.SortOrderDesc,
+    }),
+  },
 })
 ```
 
@@ -412,7 +426,7 @@ photos = xata.data().query("Users", {
 
 The `base64Content` and ` signedUrl` will only be returned when requested explicitly. They are not included by default when requesting all fields using wildcard.
 
-<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 ```ts
 const photos = await xata.db.Users.select(['name', 'photo.base64Content', 'photo.signedUrl', 'photo.*'])
   .filter({ 'photo.mediaType': 'image/png' })
@@ -425,6 +439,20 @@ photos = xata.data().query("Users", {
   "columns": ["name", "photo.base64Content", "photo.signedUrl", "photo.*"],
   "filter": { "photo.mediaType": "image/png" },
   "sort": { "photo.size": "desc" }
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+records, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{"name", "photo.base64Content", "photo.signedUrl", "photo.*"},
+    // Nested filters currently are not support yet in xata-go
+    Sort: xata.NewSortExpressionFromStringSortOrderMap(map[string]xata.SortOrder{
+      "photo.size": xata.SortOrderDesc,
+    }),
+  },
 })
 ```
 
