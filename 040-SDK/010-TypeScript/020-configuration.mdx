@@ -47,7 +47,7 @@ The Xata SDK supports the `fetchOptions` parameter for passing options to fetch.
 This parameter can be used to configure cache revalidation at a timed interval:
 
 ```ts
-const records = xata.db.users.getMany({ pagination: { size: 10 }, fetchOptions: { next: { revalidate: '3060' } } });
+const records = xata.db.users.getMany({ pagination: { size: 10 }, fetchOptions: { next: { revalidate: '3600' } } });
 ```
 
 or, to disable the cache for a fetch request:
