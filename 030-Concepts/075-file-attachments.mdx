@@ -291,7 +291,7 @@ Upload URLs have a configurable time to live (TTL), which specifies when access 
 
 Use upload URLs when you need temporary write access without revealing the API key, such as exposing uploads in a web application.
 
-<TabbedCode tabs={['TypeScript', 'Python']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go']}>
 
 ```ts
 // Set the timeout to 10 minutes for the photo upload URL
@@ -309,7 +309,22 @@ user = xata.records().update("Users", "record_id", {
     "uploadUrlTimeout": 600 # Time in seconds
   }
 })
+```
 
+```go
+// Set the timeout to 10 minutes for the photo upload URL
+recordsClient, _ := xata.NewRecordsClient()
+user, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "record_id",
+  Body: map[string]*xata.DataInputRecordValue{
+    "photo": xata.ValueFromInputFile(xata.InputFile{
+      UploadUrlTimeout: xata.Int(600), // Time in seconds
+    }),
+  },
+})
 ```
 
 </TabbedCode>
