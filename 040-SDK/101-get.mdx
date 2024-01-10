@@ -983,7 +983,29 @@ users = xata.data().query("Users", {
 
 Note that random sorting does not apply to a specific column, hence the special column name `"*"`.
 
-## Paginating Results
+You can sort nested JSON fields in SQL by using the `->` operator and enclosing the JSON key in quotes.
+
+<TabbedCode tabs={['TypeScript','Python','SQL']}>
+
+```ts
+const { users } = await xata.sql<UsersRecord>`SELECT * FROM \"Users\" ORDER BY properties->'address' DESC LIMIT 20`;
+```
+
+```python
+records = xata.sql().query("SELECT * FROM \"Users\" ORDER BY properties->'address' DESC LIMIT 20;")
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" ORDER BY properties->'address' DESC LIMIT 20;"
+}
+```
+
+</TabbedCode>
+
+## Paginating results
 
 This section doesn't apply to the TypeScript SDK, because it is offering a higher-level abstraction over the pagination mechanism. See the
 [query functions](/docs/sdk/get#the-typescript-sdk-functions-for-querying) section. Only REST API examples are provided in this section.
