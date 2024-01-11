@@ -316,9 +316,9 @@ Now, you're ready to integrate Xata into the Remix codebase. Start by stripping 
 `app/routes/_index.tsx`, to a bare template:
 
 ```tsx title="app/routes/_index.tsx"
-import { V2_MetaFunction } from '@remix-run/node';
+import { MetaFunction } from '@remix-run/node';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [{ title: 'Xata and Remix' }];
 };
 
@@ -335,11 +335,11 @@ Next, update the page to get all the posts using Xata, and
 list them within the page:
 
 ```tsx title="app/routes/_index.tsx" {1-3,9-17,20,24-43}
-import { V2_MetaFunction, json } from '@remix-run/node';
+import { MetaFunction, json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { getXataClient } from 'src/xata';
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [{ title: 'Xata and Remix' }];
 };
 
@@ -390,7 +390,7 @@ First, update the `@remix-run/node` to also bring in `json`, and a new import fr
 will be covered shortly. The auto-generated `getXataClient` is also imported.
 
 ```tsx
-import { V2_MetaFunction, json } from '@remix-run/node';
+import { MetaFunction, json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { getXataClient } from 'src/xata';
 ```
@@ -480,11 +480,11 @@ Create a new file, `app/routes/posts.$slug.tsx`, where the Remix framework uses 
 the name of the slug:
 
 ```tsx title="app/routes/posts.$slug.tsx"
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { getXataClient } from 'src/xata';
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const xata = getXataClient();
 
   const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
@@ -494,7 +494,7 @@ export async function loader({ params }: LoaderArgs) {
   });
 }
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [{ title: `${data?.post?.title} - Xata and Remix` }];
 };
 
@@ -520,16 +520,16 @@ export default function Post() {
 
 Let's walk through what this does.
 
-The imports are mostly the same as the landing page with the addition of the `LoaderArgs` import:
+The imports are mostly the same as the landing page with the addition of the `LoaderFunctionArgs` import:
 
 ```tsx
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node';
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { getXataClient } from 'src/xata';
 ```
 
-The `loader` function does the same job as the landing page but is updated to take parameters of type `LoaderArgs`.
-The `params` property on `LoaderArgs` gives you the slug value from the URL via `params.slug`.
+The `loader` function does the same job as the landing page but is updated to take parameters of type `LoaderFunctionArgs`.
+The `params` property on `LoaderFunctionArgs` gives you the slug value from the URL via `params.slug`.
 
 Use the `getXataClient` function to get a Xata client instance, and then use the
 [`filter` function](/docs/sdk/get#the-typescript-sdk-functions-for-querying) on the
@@ -539,7 +539,7 @@ record where the `slug` column equals the value of `params.slug`. Use the
 the first (and only) Post result and return the post, again using the Remix `json` help function.
 
 ```tsx
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const xata = getXataClient();
 
   const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
@@ -550,12 +550,12 @@ export async function loader({ params }: LoaderArgs) {
 }
 ```
 
-Use the values returned from the `loader` within the `V2_MetaFunction` function to display the Post's title
+Use the values returned from the `loader` within the `MetaFunction` function to display the Post's title
 within the page's title. This function differs from the landing page version by taking a parameter containing a `data` property.
 The value in `data` is the payload returned from the `loader` function. So, the Post's `title` value can be extracted and used:
 
 ```tsx
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [{ title: `${data?.post?.title} - Xata and Remix` }];
 };
 ```
@@ -599,13 +599,13 @@ any configuration to enable search, just need to use the
 Let's add this functionality to the landing page:
 
 ```tsx title="app/routes/_index.tsx" {1,7-24,27,31-40}
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node'
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { getXataClient } from 'src/xata'
 
 ...
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const xata = getXataClient()
 
   const url = new URL(request.url)
@@ -648,17 +648,17 @@ export default function Index() {
 
 Here's a breakdown of what's happening in the code above.
 
-First, update the `@remix-run/node` import to include `LoaderArgs`. Then, update the `loader` function to accept
-the `request` property from the `LoaderArgs` parameter.
+First, update the `@remix-run/node` import to include `LoaderFunctionArgs`. Then, update the `loader` function to accept
+the `request` property from the `LoaderFunctionArgs` parameter.
 
 ```tsx {1,7}
-import { LoaderArgs, V2_MetaFunction, json } from '@remix-run/node'
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { getXataClient } from 'src/xata'
 
 ...
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   ...
 }
 ```
@@ -679,7 +679,7 @@ details.
 Update the return value of `loader` to return both `posts` and `search`.
 
 ```tsx
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const xata = getXataClient();
 
   const url = new URL(request.url);
