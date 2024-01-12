@@ -28,11 +28,17 @@ guide is available via the [Xata `examples` repo](https://github.com/xataio/exam
 
 Install the Xata CLI:
 
+<TabbedCode tabs={['Shell', 'PowerShell']}>
+
 ```sh
 npm install -g @xata.io/cli
 ```
 
-> If you are installing the Xata CLI on Windows using Powershell, you may need to wrap this part of the install command in quotes: `'@xata.io/cli'`
+```sh
+npm install -g '@xata.io/cli'
+```
+
+</TabbedCode>
 
 Once installed, authenticate the Xata CLI with your Xata account. If you don't already have an account, you can use the
 same workflow to sign up for a new account. Run the following command to begin the authentication workflow:
@@ -173,9 +179,17 @@ First, download the
 [example blog posts CSV file](https://raw.githubusercontent.com/xataio/examples/main/seed/blog-posts.csv).
 You can either do this manually or by running the following command:
 
+<TabbedCode tabs={['Shell', 'PowerShell']}>
+
 ```sh
 curl --create-dirs -o seed/blog-posts.csv https://raw.githubusercontent.com/xataio/examples/main/seed/blog-posts.csv
 ```
+
+```sh
+curl.exe --create-dirs -o seed/blog-posts.csv https://raw.githubusercontent.com/xataio/examples/main/seed/blog-posts.csv
+```
+
+</TabbedCode>
 
 Next, import the CSV:
 
