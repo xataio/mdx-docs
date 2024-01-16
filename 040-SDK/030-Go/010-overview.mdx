@@ -23,8 +23,27 @@ go get github.com/xataio/xata-go@latest
 ## Configuration
 
 The client requires the `XATA_API_KEY` environment variable for [authentication](/docs/rest-api/authentication). You can configure your workspace, region, and branch in two ways:
-Via the environment variables, `XATA_WORKSPACE_ID`, `XATA_BRANCH` or `XATA_REGION`, where only the workspace Id is mandatory. Branc defaults to `main` and region to `us-east-1`, (browse [available regions](/docs/getting-started/available-regions)).
-Or secondly, the `.xatarc` file. Refer to [our installation guide](/docs/getting-started/installation#xatarc) to initialize your project with the `.xatarc` file.
+### Using environment variables
+
+To configure the environment, begin by setting the `XATA_WORKSPACE_ID`. Use the following command in the terminal:
+
+      ```sh
+      export XATA_WORKSPACE_ID="your_workspace_id"
+      ```
+
+- `XATA_WORKSPACE_ID`: This is variable to mandatory.
+- `XATA_BRANCH`: This is _optional_. If unspecified, `XATA_BRANCH` defaults to `main`.  
+- `XATA_REGION`: This is _optional_. Explore [available regions](/docs/getting-started/available-regions) for additional options to `us-east-1`. If unspecified, `XATA_REGION` defaults to `us-east-1`
+   
+After setting the environment variables in your terminal, your Go application can access them using the [os package](https://pkg.go.dev/os), typically with `os.Getenv`. For example:
+    ```go
+    workspaceID := os.Getenv("XATA_WORKSPACE_ID")
+    branch := os.Getenv("XATA_BRANCH")
+    region := os.Getenv("XATA_REGION")
+    ```
+
+### Using the `.xatarc` file
+Alternatively, you can configure settings using the `.xatarc` file. To initialize your project with the `.xatarc` file, refer to the [installation guide](/docs/getting-started/installation#xatarc).
 
 ## Example
 
