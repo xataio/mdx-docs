@@ -22,7 +22,19 @@ go get github.com/xataio/xata-go@latest
 
 ## Configuration
 
-The client needs a `XATA_API_KEY` environment variables for authentication and the `.xatarc` file for the database URL. Refer to [our installation guide](/docs/getting-started/installation#xatarc) to initialize your project with the `.xatarc` file.
+The client requires the `XATA_API_KEY` environment variable for [authentication](/docs/rest-api/authentication). You can configure your workspace, region, and branch in two ways:
+
+### Using environment variables
+
+The following environment variables are available to configure your connection params:
+
+- `XATA_WORKSPACE_ID`: This is variable to mandatory.
+- `XATA_BRANCH`: This is _optional_, if unspecified, defaults to `main`.
+- `XATA_REGION`: This is _optional_, if unspecified, defaults to `us-east-1`. Explore all [available regions](/docs/getting-started/available-regions) in Xata.
+
+### Using the `.xatarc` file
+
+Alternatively, you can configure settings using the `.xatarc` file. To initialize your project with the `.xatarc` file, refer to the [installation guide](/docs/getting-started/installation#xatarc).
 
 ## Example
 
