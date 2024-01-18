@@ -15,7 +15,7 @@ It has zero dependencies and can run in [Node.js](https://nodejs.org/en/docs), [
 
 We recommend installing the [Xata CLI](/docs/getting-started/cli) globally and importing the Xata Client from the [code generated](/docs/getting-started/cli#codegen) by the CLI.
 
-When initializing the Xata CLI with the command `xata init` in a project, the `@xata.io/client` package is installed locally using the current project's package manager. In the event  
+When initializing the Xata CLI with the command `xata init` in a project, the `@xata.io/client` package is installed locally using the current project's package manager. In the event
 a package manager can't be determined, the Xata CLI will prompt you to manually install the `@xata.io/client` package.
 
 ## Usage
@@ -62,9 +62,9 @@ import { getXataClient } from './xata';
 
 const xata = getXataClient();
 
-export default function Page({ params }: { params: { slug: string } }) {
+export default async function Page({ params }: { params: { slug: string } }) {
   // Pull records from the "users" table
-  const records = xata.db.users.getMany();
+  const records = await xata.db.users.getMany();
 
   // Serialize that content, turning any objects into strings
   const serializedRecords = records.toSerializable();
