@@ -101,7 +101,7 @@ xata = XataClient(db_url="https://test-12345.us-east-1.xata.sh/db/Planes:feature
 
 Another options is to specify the `branch_name` in the SDK. If you specify `db_url` and `branch_name`, the latter will be ignored.
 
-If you want to change the branch for a single request, you can do so with all [workspace](/docs/contexts) endpoints, by setting the `branch_name`:
+If you want to change the branch for a single request, you can do so with all [workspace endpoints](/docs/rest-api/contexts#workspace-api), by setting the `branch_name`:
 
 ```python
 xata.records().insert("Planes", record, branch_name="feature-042")
