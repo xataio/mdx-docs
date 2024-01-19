@@ -91,6 +91,15 @@ client = XataClient()
 ```
 </TabbedCode>
 
+### Committing files
+
+To push and share your application on public repositories for others to use your project with their own Xata database, we recommend commiting the schema file generated with the command `xata schema dump -f schema.json`.
+Add instructions to your project's readme file for users to initiate a new database using the schema file `xata init --schema schema.json`. This command will also generate the client file `src/xata.ts` using the user's own database URL. In this case, the `.xatarc` file does not need to be committed.
+
+To upload your github repository as-is to a hosting provider such as Vercel or Netlify, the Xata client file `src/client.ts` should be committed in your repo. As long as your API key is not exposed, you should not worry about DDOS attacks on your Xata database due to exposing the URL. Unauthenticated requests do not count against your branch [rate limits](/docs/concepts/pricing#concurrency-limit).
+
+The `.env` file should not be committed as it contains the API key. We recommend adding it to .gitignore.
+
 ## Working with client SDKs
 
 Xata offers a set of client SDKs to help you build your application. The SDKs are available for the following languages:
