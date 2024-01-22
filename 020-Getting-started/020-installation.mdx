@@ -91,14 +91,27 @@ client = XataClient()
 ```
 </TabbedCode>
 
-### Committing files
+### Committing files to your repository
 
-To push and share your application on public repositories for others to use your project with their own Xata database, we recommend commiting the schema file generated with the command `xata schema dump -f schema.json`.
-Add instructions to your project's readme file for users to initiate a new database using the schema file `xata init --schema schema.json`. This command will also generate the client file `src/xata.ts` using the user's own database URL. In this case, the `.xatarc` file does not need to be committed.
+For collaborative development in a common Workspace it is important to set up your local environment so that it can be replicated by others. Commit these specific files to your project's repository:
 
-To deploy your GitHub repository on hosting services like Vercel or Netlify, ensure you include the `src/client.ts` file from the Xata client in your repo. Not exposing your API key, ensures your Xata database is safe from DDoS attacks, even if the URL is visible. Remember, requests made without authentication won’t impact your Xata database's [rate limits](/docs/concepts/pricing#concurrency-limit). Exposing the `src/client.ts` file doesn't pose a risk to your database’s limits or security.
+- `.xata`: This folder holds the migration files, managing changes to the database schema over time.
+- `.xatarc`: This file contains essential configuration information for your database setup.
+- `src/xata.ts`: Includes the Xata client and API integration, responsible for interacting with the Xata service from code.
 
-It is recommended to exclude the `.env` file from your repository commits, as it contains your API key. Add the `.env` file to your `.gitignore` to ensure it is not accidentally committed and remains secure.
+Committing these files to your project's repository, enables Workspace members to replicate your local setup by adding their own `XATA_API_KEY` to their `.env` file.
+
+When creating templates or examples for public use and cloning, avoid committing files that contain specific database API endpoint and client files. Configuration files such as `src/xata.ts`,`.xatarc` and the `.xata` migrations folder are tied to a specific database.
+
+In order to share code in a way that is agnostic to the Xata database and workspace in use, do the following:
+
+1. Export your database schema to `schema.json` using the command `xata schema dump -f schema.json`.
+
+2. Avoid sharing `src/xata.ts`, `.xatarc` and `.xata` which contain endpoint-specific information. Instead, share only the `schema.json` file.
+
+3. Users can set up their database with your schema configuration using the command `xata init --schema schema.json`. The command initializes a database using the schema information stored in your `schema.json` file, and generates the `src/xata.ts` and `.xatarc` files and the `.xata` folder for their own database setup. This approach avoids sharing sensitive configuration files and ensures the confidentiality of your database URL.
+
+In your project's README, you can provide instructions on how to recreate the database with the above step. Additionally, you can also instruct users to import data into their database using CSV files. For more details, refer to the docs on [importing CSV data](/docs/csv-data/import-data-cli).
 
 ## Working with client SDKs
 
