@@ -112,15 +112,15 @@ Committing these files to your project's repository, enables Workspace members t
 
 To deploy your GitHub repository on hosting services like Vercel or Netlify, ensure you include the `src/client.ts` file from the Xata client in your repo. Not exposing your API key, ensures your Xata database is safe from DDoS attacks, even if the URL is visible. Remember, requests made without authentication won’t impact your Xata database's [rate limits](/docs/concepts/pricing#concurrency-limit). Exposing the `src/client.ts` file doesn't pose a risk to your database’s limits or security.
 
-When creating templates or examples for public use and cloning, it is best to avoid committing files that contain specific database API endpoint and client files. Configuration files such as `src/xata.ts`,`.xatarc` and the `.xata` migrations folder are tied to a specific database.
+When creating templates or examples for public use and cloning, it is best to avoid committing files that have details specific to a database, like API endpoints and client configurations. Configuration files such as `src/xata.ts`,`.xatarc` and the `.xata` migrations folder are linked to a specific database.
 
-In order to share code in a way that is agnostic to the Xata database and workspace in use, do the following:
+To share code in a way that is agnostic to the Xata database and workspace in use, do the following:
 
 1. Export your database schema to `schema.json` using the command `xata schema dump -f schema.json`.
 
-2. Avoid sharing `src/xata.ts`, `.xatarc` and `.xata` which contain endpoint-specific information. Instead, share only the `schema.json` file.
+2. Avoid sharing `src/xata.ts`, `.xatarc`, and `.xata` which contain endpoint-specific information. Instead, share only the `schema.json` file.
 
-3. Users can set up their database with your schema configuration using the command `xata init --schema schema.json`. The command initializes a database using the schema information stored in your `schema.json` file, and generates the `src/xata.ts` and `.xatarc` files and the `.xata` folder for their own database setup. This approach avoids sharing sensitive configuration files and ensures the confidentiality of your database URL.
+3. Users can set up their database with your schema configuration using the command `xata init --schema schema.json`. The command initializes a database using the schema information from your `schema.json` file. It then generates the `src/xata.ts` and `.xatarc` files, along with the `.xata` folder, for their own specific database setup. This approach prevents the sharing of sensitive configuration files and ensures the confidentiality of your database URL.
 
 In your project's README, you can provide instructions on how to recreate the database with the above step. Additionally, you can also instruct users to import data into their database using CSV files. For more details, refer to the docs on [importing CSV data](/docs/csv-data/import-data-cli).
 
