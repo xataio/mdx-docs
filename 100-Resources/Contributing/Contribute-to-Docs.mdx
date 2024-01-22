@@ -1,0 +1,126 @@
+---
+title: Docs contributor guide
+keywords: ['contribute']
+description: Participate in improving Xata's developer documentation.
+slug: contribute/docs
+published: true
+---
+
+This guide is for anyone interested in improving existing Xata docs or creating new info.
+
+Xata's developer documentation follows a [docs-as-code](https://www.writethedocs.org/guide/docs-as-code/) approach, where documentation is crafted using tools similar to code development. To contribute, you can suggest changes by forking the documentation GitHub repositories and [creating pull requests (PRs)](https://docs-template.consensys.io/contribute/submit-a-contribution). This collaborative process allows for open contributions, testing, and review of the documentation.
+
+> Note: Basic Git, GitHub, and Markdown knowledge is assumed. The documentation site is hosted on Vercel, uses MDX syntax, and has heavy use of linters such as ES linter, prettier, and remark.
+
+## Submit a docs PR
+
+1.  Fork the `mdx-docs` repository on GitHub to create your copy.
+
+2.  Clone your forked repository to your local machine using Git.
+
+3.  Create a new branch for your changes: git checkout -b my-docs-update.
+
+4.  Make the necessary changes to the documentation files using a Markdown editor.
+
+5.  Add and commit your changes: git add . and git commit -m "Update documentation".
+
+6.  Push the changes to your forked repository: git push origin my-docs-update.
+
+7.  Go to the mdx-docs repository on GitHub and create a new pull request from your branch.
+
+8.  Provide a clear title and description for your PR, explaining the purpose of your changes.
+
+9.  Submit the PR, and it will be reviewed by the Xata team.
+
+10. Make any requested changes during the review process and collaborate until your PR is approved.
+
+11. Once the PR meets all requirements and is approved by the team, it is merged into the `main` branch, and the changes become part of the official Xata documentation.
+
+## Linting
+
+Linting rules are enforced to ensure consistency and readability across the codebase. The docs use ESLint, Prettier, and Remark for linting. These tools are essential for keeping the code clean and consistent.
+
+Contributors are advised to run pnpm install in their local development environment. This step ensures that all necessary linting packages are installed and configured, allowing for real-time linting error detection.
+
+### Troubleshooting linting issues
+
+## Style guide
+
+### MDX syntax
+
+This guide provides in-depth guidance on how to create and format documents using MDX (Markdown Extended) for Xata's documentation. It comprehensively covers the crucial aspects of using frontmatter, structuring your documents effectively, and incorporating unique elements specific to MDX. This ensures that all documentation created for Xata adheres to a consistent standard, leveraging the capabilities of MDX to enhance the clarity and functionality of the content
+
+### Writing
+
+#### Language and style
+
+##### Spelling
+
+Use [American English spelling](https://www.merriam-webster.com/) is used consistently in the text.
+Correct punctuation is used in the text.
+
+##### Grammar
+
+American English grammar is used consistently in the text.
+
+Slang or non-English words are not used in the text.
+
+##### Date formats
+
+Follow advice of day Month year for date formats, for example, 3 October 2019. When the format day Month year causes a presentation or clarity issue, use Month day, year (for example, October 3, 2019) instead.
+
+##### Acronyms and abbreviations
+
+Acronyms are expanded on first use.
+
+##### Titles
+
+Write titles use sentence case. Titles and headings have consistent styling.
+Titles focus on the user tasks instead of the feature.
+Titles should be descriptive but not to long. Aim for titles between 3-8 words long and have less than 50 characters.
+Titles of for procedures should begin with a gerund, for example, "Configuring", "Using", or "Installing".
+
+##### Admonition
+
+Admonitions serve as cues to direct the reader's attention towards specific information. It's advisable to use admonitions sparingly and avoid clustering multiple admonitions closely together. If you find the need for multiple admonitions, consider reorganizing the content by integrating less critical points into the main narrative.
+
+Here are the accepted types of admonitions:
+
+NOTE: This provides extra guidance or advice to enhance product setup, performance, or supportability.
+
+IMPORTANT: It conveys advisory details crucial for task completion, and users should pay close attention.
+
+WARNING: This communicates potential risks such as system damage, data loss, or support-related issues if the reader ignores the admonition. It includes an explanation of the problem, its cause, and a viable solution. If possible, it offers preventive measures or directs users to additional resources.
+
+TIP: This suggests alternative approaches that may not be immediately apparent. It simplifies the application of described techniques and procedures, catering to specific requirements. While beneficial for users' understanding of the product's capabilities, it's not essential for product usage.
+
+#### Tone
+
+#### Accessibility
+
+Use Clear and Simple Language
+Avoid Jargon: Use plain language and define technical terms when they are first used.
+Short Sentences: Keep sentences short and to the point to enhance readability.
+
+❌
+✅
+
+Structured and Logical Organization
+Logical Flow: Organize content in a logical sequence, making it easier to follow.
+Headings and Subheadings: Use descriptive headings and subheadings to break text into manageable sections.
+
+Text Formatting
+Bullet Points and Lists: Use bullet points or numbered lists for step-by-step instructions or to highlight important points.
+
+Include Alternative Text for Images
+Descriptive Alt Text: Provide alternative text for images, diagrams, and charts to describe what the image represents, especially if it contains important information.
+
+Use Accessible Colors and Contrast
+High Contrast: Ensure there is sufficient contrast between text and background colors.
+Color-Blind Friendly: Avoid using color as the only means to convey information.
+
+Provide Captions
+Video Content: Include captions for images, videos, and transcripts for audio content, ensuring accessibility for individuals with hearing impairments.
+
+Inclusive and Diverse Representation
+Avoid Bias: Be mindful of cultural diversity and inclusivity in language and examples.
