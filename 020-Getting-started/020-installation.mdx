@@ -101,7 +101,9 @@ For collaborative development in a common Workspace it is important to set up yo
 
 Committing these files to your project's repository, enables Workspace members to replicate your local setup by adding their own `XATA_API_KEY` to their `.env` file.
 
-When creating templates or examples for public use and cloning, avoid committing files that contain specific database API endpoint and client files. Configuration files such as `src/xata.ts`,`.xatarc` and the `.xata` migrations folder are tied to a specific database.
+To upload your github repository as-is to a hosting provider such as Vercel or Netlify, the Xata client file `src/client.ts` should be committed in your repo. As long as your API key is not exposed, you should not worry about DDOS attacks on your Xata database due to exposing the URL. Unauthenticated requests do not count against your branch [rate limits](/docs/concepts/pricing#concurrency-limit).
+
+When creating templates or examples for public use and cloning, it is best to avoid committing files that contain specific database API endpoint and client files. Configuration files such as `src/xata.ts`,`.xatarc` and the `.xata` migrations folder are tied to a specific database.
 
 In order to share code in a way that is agnostic to the Xata database and workspace in use, do the following:
 
@@ -119,6 +121,7 @@ Xata offers a set of client SDKs to help you build your application. The SDKs ar
 
 - [TypeScript SDK](/docs/sdk/typescript/overview): type-safe SDK for Node.js, V8 and Deno
 - [Python SDK](/docs/sdk/python/overview): in progress SDK client for Python 3.8+
+- [Go SDK](/docs/sdk/go/overview): alpha version SDK for Golang
 
 ## Trying out the JavaScript SDK within the web application
 
