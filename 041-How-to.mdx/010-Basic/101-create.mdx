@@ -13,12 +13,12 @@ keywords:
     'TypeScript client',
     'insert'
   ]
-description: Use the Xata SDK with TypeScript or JSON to create records
+description: Use the Xata SDK to create records
 slug: sdk/insert
 published: true
 ---
 
-You can create a record like this:
+To add a new record to your database, choose the appropriate code snippet from the Xata SDK that matches the programming language or format you are using.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
@@ -69,22 +69,24 @@ record, _ := client.Insert(context.TODO(), xata.InsertRecordRequest{
 
 </TabbedCode>
 
-The TypeScript SDK returns the created record. The response looks like this:
+The SDK returns the created record and the response looks like the following:
 
-<TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
   ```ts
   {
     "email": "keanu@example.com",
-    "id": "rec_cd8rqcoavc42pi67lgd0",
+    "id": "rec_c8hnbch26un1nl0rthkg",
     "name": "Keanu Reeves",
     "bio": NULL,
     "address": NULL,
   }
 ```
 
-```json
+```python
 {
   "id": "rec_c8hnbch26un1nl0rthkg",
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves",
   "xata": {
     "version": 0,
     "createdAt": "2023-05-15T08:21:31.96526+01:00",
@@ -93,11 +95,26 @@ The TypeScript SDK returns the created record. The response looks like this:
 }
 ```
 
-```json
+```go
+{
+  "id": "rec_c8hnbch26un1nl0rthkg",
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves",
+  "xata": {
+    "version": 0,
+    "createdAt": "2023-05-15T08:21:31.96526+01:00",
+    "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+  }
+}
+```
+
+```jsonc
 {
   "records": [
     {
       "id": "rec_c8hnbch26un1nl0rthkg",
+      "email": "keanu@example.com",
+      "name": "Keanu Reeves",
       "xata": {
         "version": 0,
         "createdAt": "2023-05-15T08:21:31.96526+01:00",
@@ -111,6 +128,8 @@ The TypeScript SDK returns the created record. The response looks like this:
 ```json
 {
   "id": "rec_c8hnbch26un1nl0rthkg",
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves",
   "xata": {
     "version": 0,
     "createdAt": "2023-05-15T08:21:31.96526+01:00",
@@ -121,18 +140,18 @@ The TypeScript SDK returns the created record. The response looks like this:
 
 </TabbedCode>
 
-In the above the API returns a [special set of columns](/docs/concepts/data-model#special-columns):
+In the above, the API returns a [special set of columns](/docs/concepts/data-model#special-columns):
 
-- [`id`](/docs/concepts/data-model#id) is the ID of the record, which Xata generates automatically. The generated records are globally unique and sortable. This means that sorting by the IDs you sort by the insertion order.
-- [`xata.version`](/docs/concepts/data-model#xataversion) is the version of the record. It is automatically incremented any time the record is updated and can be used for optimistic locking.
+- [`id`](/docs/concepts/data-model#id) is the ID of the record, which Xata generates automatically. The generated records are globally unique and sortable. This means that when you sort by the IDs, you are effectively sorting by the order in which the records were inserted.
+- [`xata.version`](/docs/concepts/data-model#xataversion) is the version of the record. It is automatically incremented every time the record is updated, and it can be used for optimistic locking purposes.
 - [`xata.createdAt`](/docs/concepts/data-model#xatacreatedat) is the timestamp when the record was created.
 - [`xata.updatedAt`](/docs/concepts/data-model#xataupdatedat) is the timestamp of last record update.
 
-If you want to return more columns, you can specify them via the `columns` parameter.
+If you want to return more columns, you can specify them using the `columns` parameter.
 
 ## Creating a record with a given ID
 
-If you want to specify your own ID, you can do it like this:
+If you want to specify your own ID, you can do using the following:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 ```ts
@@ -182,7 +201,78 @@ record, err := client.InsertWithID(context.TODO(), xata.InsertRecordWithIDReques
 
 </TabbedCode>
 
-In the REST API example, note the change from `POST` to `PUT`. The `createOnly` query parameter signals Xata to return an error in case a record with the given ID already exists.
+In the REST API example, note the change from `POST` to `PUT`. The `createOnly` query parameter ensures that Xata reports an error if a record with the specified ID already exists.
+
+The SDK returns the record and the response looks like the following:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
+  ```ts
+  {
+    "id": "myid",
+    "email": "keanu@example.com",
+    "name": "Keanu Reeves",
+    "bio": NULL,
+    "address": NULL,
+  }
+```
+
+```python
+{
+  "id": "myid",
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves",
+  "xata": {
+    "version": 0,
+    "createdAt": "2023-05-15T08:21:31.96526+01:00",
+    "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+  }
+}
+```
+
+```go
+{
+  "id": "myid",
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves",
+  "xata": {
+    "version": 0,
+    "createdAt": "2023-05-15T08:21:31.96526+01:00",
+    "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+  }
+}
+```
+
+```jsonc
+{
+  "records": [
+    {
+      "id": "myid",
+      "email": "keanu@example.com",
+      "name": "Keanu Reeves",
+      "xata": {
+        "version": 0,
+        "createdAt": "2023-05-15T08:21:31.96526+01:00",
+        "updatedAt": "2023-05-15T08:21:31.96526+01:00"
+      }
+    }
+  ]
+}
+```
+
+```json
+{
+  "id": "myid",
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves",
+  "xata": {
+    "version": 0,
+    "createdAt": "2023-05-15T08:21:31.96526+01:00",
+    "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+  }
+}
+```
+
+</TabbedCode>
 
 ## Creating a record with a linked field
 
@@ -354,10 +444,10 @@ users, _ := client.BulkInsert(context.TODO(), xata.BulkInsertRecordRequest{
 
 </TabbedCode>
 
-It is possible to provide IDs for each of the records. If records with the same IDs already exist, the bulk operation is cancelled and an error is returned.
+It is possible to provide IDs for each of the records. If records with the same IDs already exist, the bulk operation is canceled and an error is returned.
 
-`file` and `file[]` (file array) columns are not permitted in bulk requests.
+The `file` and `file[]` (file array) columns are not permitted in bulk requests.
 
-## Next Steps
+## Next steps
 
-Great! We can insert data into our databases. Let's now explore how we [get data](/docs/sdk/get) from a database. Alternatively, we can also look into [updating data](/docs/sdk/update) or [deleting data](/docs/sdk/delete). We've got guides for each of these operations.
+Now that you can insert data into your database, use the docs on [getting data](/docs/sdk/get) from a database. You can also look into [updating data](/docs/sdk/update) or [deleting data](/docs/sdk/delete).

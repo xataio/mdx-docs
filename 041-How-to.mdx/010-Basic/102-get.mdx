@@ -7,7 +7,7 @@ slug: sdk/get
 published: true
 ---
 
-The general form of a query is:
+To retrieve data from your database, use the relevant code snippet from the Xata SDK corresponding to your chosen programming language or data format.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
@@ -216,7 +216,7 @@ Records []*Record
 
 For the REST API example, note that the `id`, `xata.version`, `xata.updatedAt` and `xata.createdAt` are included in the returned records. The `meta.page` object is discussed in the section about [paginating](#paginating-results) through records.
 
-## The TypeScript SDK functions for querying
+## Functions for querying
 
 The `getFirst()` method returns the first record matching the query, in ascending order of the `id` string field. In case there are no matching records it returns `null`.
 Alternatively, the `getFirstOrThrow()` method can be used to throw a `"No results found."` console error in case there are no results to return.

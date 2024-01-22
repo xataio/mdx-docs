@@ -1,8 +1,8 @@
 ---
 title: Similarity / vector search
-navTitle: Vector searching records
+navTitle: Similarity search
 keywords: ['search', 'searching', 'vector search', 'similarity']
-description: Analyze records using Xata SDK too perform calculations and get insights
+description: Use the Xata vector API to perform similarity search on your data based on embeddings
 slug: sdk/vector-search
 published: true
 ---
@@ -119,7 +119,7 @@ results, _ := searchClient.VectorSearch(context.TODO(), xata.VectorSearchTableRe
 
 </TabbedCode>
 
-Note: Currently this endpoint executes exact vector search. We are planning to add approximate vector search in the future, which scales better to large datasets.
+> Note: Currently this endpoint executes exact vector search. We are planning to add approximate vector search in the future, which scales better to large datasets.
 
 ## Example Using OpenAI Text Embeddings
 
