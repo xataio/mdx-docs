@@ -222,9 +222,21 @@ WHERE people.id=emails.id;
 
 By assigning aliases, you can distinguish between columns with similar names and manage them effectively.
 
-### Unsupported commands
+### Supported commands
 
-The following commands are not supported in Xata:
+Xata supports the following essential Data Manipulation Language (DML) SQL commands, which are fundamental for managing and manipulating data within database tables:
+
+- `SELECT`: This command is used to retrieve data from a database. It allows you to select one or more columns of a table, with various options for filtering, sorting, and grouping the data.
+
+- `INSERT`: This command is used to add new records (rows) to a table. It specifies the table to insert into and the values for the new row.
+
+- `DELETE`: This command removes existing records from a table. It can be used with conditions to specify which records should be deleted.
+
+- `UPDATE`: This command modifies existing records in a table such as correcting errors or updating information. Like DELETE, it can be used with conditions to specify which records should be updated and how.
+
+#### Unsupported commands
+
+The following table provides examples of commands that are currently **not supported** in Xata:
 
 | Command type                           | Description                                             | Unsupported commands                                                          |
 | -------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------- |
