@@ -224,13 +224,14 @@ By assigning aliases, you can distinguish between columns with similar names and
 
 ### Unsupported commands
 
-Certain commands are not supported in Xata:
+The following commands are not supported in Xata:
 
-- Data definition language (DDL) commands such as `CREATE`, `DROP`, `ALTER` and `TRUNCATE` are not supported.
-
-- Data control language (DCL) commands such as `GRANT` and `REVOKE` are not supported.
-
-- Transaction control language (TCL) commands such as `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ROLLBACK TO SAVEPOINT`, and `SET TRANSACTION` are not supported.
+| Command type                           | Description                                             | Unsupported commands                                                          |
+| -------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Data Definition Language (DDL)**     | Used for defining or altering database structures       | `CREATE`, `DROP`, `ALTER`, `TRUNCATE`                                         |
+| **Data Manipulation Language (DML)**   | Typically used for data manipulation                    | `UPSERT`, `SEQUENCE`                                                          |
+| **Data Control Language (DCL)**        | Manages user permissions and access control             | `GRANT`, `REVOKE`                                                             |
+| **Transaction Control Language (TCL)** | Crucial for managing the state of database transactions | `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ROLLBACK TO SAVEPOINT`, `SET TRANSACTION` |
 
 ### Connection methods
 
