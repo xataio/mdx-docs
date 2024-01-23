@@ -1,4 +1,4 @@
-# Contributor code of conduct
+# Contributor Code of conduct
 
 ## Our pledge
 
@@ -78,7 +78,7 @@ unprofessional or unwelcome in the community.
 
 **Consequence**: A private, written warning from community leaders, providing
 clarity around the nature of the violation and an explanation of why the
-behavior was inappropriate. A public apology may be requested.
+behavior was inappropriate.
 
 ### 2. Warning
 
