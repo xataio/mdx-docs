@@ -222,15 +222,28 @@ WHERE people.id=emails.id;
 
 By assigning aliases, you can distinguish between columns with similar names and manage them effectively.
 
-### Unsupported commands
+### Supported commands
 
-Certain commands are not supported in Xata:
+Xata supports the following essential Data Manipulation Language (DML) SQL commands, which are fundamental for managing and manipulating data within database tables:
 
-- Data definition language (DDL) commands such as `CREATE`, `DROP`, `ALTER` and `TRUNCATE` are not supported.
+- `SELECT`: This command is used to retrieve data from a database. It allows you to select one or more columns of a table, with various options for filtering, sorting, and grouping the data.
 
-- Data control language (DCL) commands such as `GRANT` and `REVOKE` are not supported.
+- `INSERT`: This command is used to add new records (rows) to a table. It specifies the table to insert into and the values for the new row.
 
-- Transaction control language (TCL) commands such as `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ROLLBACK TO SAVEPOINT`, and `SET TRANSACTION` are not supported.
+- `DELETE`: This command removes existing records from a table. It can be used with conditions to specify which records should be deleted.
+
+- `UPDATE`: This command modifies existing records in a table such as correcting errors or updating information. Like DELETE, it can be used with conditions to specify which records should be updated and how.
+
+#### Unsupported commands
+
+The following table provides examples of commands that are currently **not supported** in Xata:
+
+| Command type                           | Description                                             | Unsupported commands                                                          |
+| -------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Data Definition Language (DDL)**     | Used for defining or altering database structures       | `CREATE`, `DROP`, `ALTER`, `TRUNCATE`                                         |
+| **Data Manipulation Language (DML)**   | Typically used for data manipulation                    | `UPSERT`, `SEQUENCE`                                                          |
+| **Data Control Language (DCL)**        | Manages user permissions and access control             | `GRANT`, `REVOKE`                                                             |
+| **Transaction Control Language (TCL)** | Crucial for managing the state of database transactions | `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ROLLBACK TO SAVEPOINT`, `SET TRANSACTION` |
 
 ### Connection methods
 
