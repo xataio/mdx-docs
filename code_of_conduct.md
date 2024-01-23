@@ -1,4 +1,4 @@
-# Contributor Covenant Code of Conduct
+# Contributor code of conduct
 
 ## Our pledge
 
@@ -73,7 +73,7 @@ the consequences for any action they deem in violation of this Code of Conduct:
 
 ### 1. Correction
 
-**Community Impact**: Use of inappropriate language or other behavior deemed
+**Community impact**: Use of inappropriate language or other behavior deemed
 unprofessional or unwelcome in the community.
 
 **Consequence**: A private, written warning from community leaders, providing
@@ -82,7 +82,7 @@ behavior was inappropriate. A public apology may be requested.
 
 ### 2. Warning
 
-**Community Impact**: A violation through a single incident or series
+**Community impact**: A violation through a single incident or series
 of actions.
 
 **Consequence**: A warning with consequences for continued behavior. No
@@ -94,7 +94,7 @@ permanent ban.
 
 ### 3. Temporary ban
 
-**Community Impact**: A serious violation of community standards, including
+**Community impact**: A serious violation of community standards, including
 sustained inappropriate behavior.
 
 **Consequence**: A temporary ban from any sort of interaction or public
@@ -105,7 +105,7 @@ Violating these terms may lead to a permanent ban.
 
 ### 4. Permanent ban
 
-**Community Impact**: Demonstrating a pattern of violation of community
+**Community impact**: Demonstrating a pattern of violation of community
 standards, including sustained inappropriate behavior, harassment of an
 individual, or aggression toward or disparagement of classes of individuals.
 
