@@ -10,9 +10,9 @@ published: true
 Xata natively provides text-based search for your database with the following core features:
 
 - Fuzzy matching to account for typos.
-- Table and column targets to run your query against
+- Limit queries to specific table and column targets.
 - Pre-search filters to search only a subset of your data.
-- Weight and boosts allow specific columns to impact relevancy of search scores.
+- Weights and boosts allow specific columns to impact relevancy of search scores.
 - Search results provide highlight markup so you can style partial matches inside returned content.
 
 As you insert record into Xata tables, they are automatically indexed for full-text search immediately. You can run a search using the SDKs `search()` function or by using the [REST endpoint directly](/docs/api-reference/db/db_branch_name/tables/table_name/search#free-text-search-in-a-table). While the `/query` endpoint exists only at the table level, the `/search` endpoint exists both at the database branch and the table level, because it is possible to search across multiple tables.
