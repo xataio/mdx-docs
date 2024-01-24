@@ -29,34 +29,31 @@ The format of a search request at the branch level (across tables) has the follo
 const results = await xata.search.all("search phrase", {
   tables: [
     {
-      table: "...",
-      target: [...],
-      filter: {...},
-      boosters: [...]
+      table: "Actor",
+      target: ["name"],
+      filter: {"city": "New York"},
+      boosters: [{ numericBooster: { column: 'lifetimeBoxOffice', factor: 3 } }]
     },
     { ... },
-    ...
   ],
   fuzziness: 1,
-  prefix: "phrase",
-  highlight: {...}
+  prefix: "phrase"
 });
 ```
 
 ```python
 results = xata.data().search_branch({
-  "query": "<search phrase>",
+  "query": "search phrase",
   "tables": [{
-    "table": "...",
-    "filter": {...},
-    "target": [...],
-    "boosters": [...]
+    "table": "Actor",
+    "target": ["name"],
+    "filter": {"city": "New York"},
+    "boosters": [{ "numericBooster": { "column": "lifetimeBoxOffice", "factor": 3 } }]
   }, {
     ...
   }],
   "fuzziness": 1,
-  "prefix": "phrase",
-  "highlight": {...}
+  "prefix": "phrase"
 })
 ```
 
@@ -71,9 +68,6 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
     },
     Fuzziness: xata.Int(1),
     Prefix:    &prefix,
-    Highlight: &xata.HighlightExpression{
-      // ..
-    },
   },
 })
 ```
@@ -84,16 +78,15 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 {
   "query": "<search phrase>",
   "tables": [{
-    "table": "...",
-    "filter": {...},
-    "target": [...],
-    "boosters": [...]
+    "table": "Actor",
+    "target": ["name"],
+    "filter": {"city": "New York"},
+    "boosters": [{ "numericBooster": { "column": "lifetimeBoxOffice", "factor": 3 } }]
   }, {
     ...
   }],
   "fuzziness": 1,
-  "prefix": "phrase",
-  "highlight": {...}
+  "prefix": "phrase"
 }
 ```
 
@@ -147,11 +140,12 @@ Note the `xata.highlight` field in the example below which marks the search term
   "totalCount": 1,
   "records": [
     {
+      "name": "Keanu Reeves",
+      "id": "rec_c8stghniqa4ckd0ao9q0",
       "city": "New York City",
       "country": "United States",
       "email": "keanu@example.com",
-      "full_name": "Keanu Reeves",
-      "id": "rec_c8stghniqa4ckd0ao9q0",
+      "lifetimeBoxOffice": 500000000,
       "xata": {
         "highlight": {
           "city": ["<em>New York</em> City"]
