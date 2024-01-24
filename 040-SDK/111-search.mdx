@@ -130,7 +130,7 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 
 </TabbedCode>
 
-### Hightlight matches in the search response
+### Highlight matching strings in the search response
 
 Regardless of client, the above search will return results in the below shape. Each result adds an additional `xata` object which contains metadata about the search that includes:
 
@@ -169,7 +169,7 @@ Note the `xata.highlight.address` field in the example below which marks the sea
 }
 ```
 
-## Restricting Search By Tables
+## Restricting search by tables
 
 If you want to search only some tables in the database, provide the `tables` parameter as part of the request. It expects an array, for example:
 
