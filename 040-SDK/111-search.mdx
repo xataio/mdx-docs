@@ -15,7 +15,7 @@ Xata natively provides text-based search for your database with the following co
 - Weights and boosts allow specific columns to impact relevancy of search scores.
 - Search results provide highlight markup so you can style partial matches inside returned content.
 
-As you insert records into Xata tables, they are automatically indexed for full text-search immediately. You can run a search using the SDKs `search()` function or by using the [REST endpoint directly](/docs/api-reference/db/db_branch_name/tables/table_name/search#free-text-search-in-a-table). While the `/query` endpoint exists only at the table level, the `/search` endpoint exists both at the database branch and the table level, because it is possible to search across multiple tables.
+As you insert records into Xata tables, they are automatically indexed for full-text search immediately. You can run a search using the SDK's `search()` function or by using the [REST endpoint directly](/docs/api-reference/db/db_branch_name/tables/table_name/search#free-text-search-in-a-table). While the `/query` endpoint exists only at the table level, the `/search` endpoint exists both at the database branch and the table level, because it is possible to search across multiple tables.
 
 The search index is updated asynchronously after each insert/update, meaning that the search results are eventually consistent with the results that you get from the `/query` endpoint. Another fundamental difference to the `/query` endpoint is that `/search` doesn't support following links across tables. This means that for linked records you can filter by the ID of the linked record, but not any of its other columns. If you need to filter or search by linked tables, other than by the ID, it is recommended that you denormalize the data into its own table.
 
@@ -26,7 +26,7 @@ The format of a search request at the branch level (across tables) has the follo
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
-const results = await xata.search.all("<search phrase>", {
+const results = await xata.search.all("search phrase", {
   tables: [
     {
       table: "...",
@@ -99,23 +99,23 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 
 </TabbedCode>
 
-At its simplest, a search call against all tables in your database looks like this:
+At its simplest, a search for the term `New York` against all tables in your database looks like this:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts
-const results = await xata.search.all('new st');
+const results = await xata.search.all('new york');
 ```
 
 ```python
-results = xata.data().search_branch({"query": "new st"})
+results = xata.data().search_branch({"query": "new york"})
 ```
 
 ```go
 searchClient, _ := xata.NewSearchAndFilterClient()
 results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
   Payload: xata.SearchBranchRequestPayload{
-    Query: "new st",
+    Query: "new york",
   },
 })
 ```
@@ -124,7 +124,7 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
 
 {
-  "query": "new st"
+  "query": "new york"
 }
 ```
 
@@ -140,28 +140,24 @@ Regardless of client, the above search will return results in the below shape. E
 - The `highlight` field, which contains the highlighted search terms.
 - The `totalCount`, which is the total number of matches for a search query.
 
-Note the `xata.highlight.address` field in the example below which marks the search term `New Set` with surrounding `<em>` tags.
+Note the `xata.highlight` field in the example below which marks the search term `New York` with surrounding `<em>` tags.
 
-```json
+```json {11-13}}
 {
   "totalCount": 1,
   "records": [
     {
-      "address": {
-        "street": "123 New St",
-        "zipcode": 12345
-      },
+      "city": "New York City",
+      "country": "United States",
       "email": "keanu@example.com",
       "full_name": "Keanu Reeves",
       "id": "rec_c8stghniqa4ckd0ao9q0",
       "xata": {
         "highlight": {
-          "address": {
-            "street": ["123 <em>New St</em>"]
-          }
+          "city": ["<em>New York</em> City"]
         },
         "score": 0.2876821,
-        "table": "Users",
+        "table": "Actors",
         "version": 0
       }
     }
@@ -175,60 +171,60 @@ If you want to search only some tables in the database, provide the `tables` par
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
-```ts
-const results = await xata.search.all('new st', {
-  tables: ['Users', 'Posts']
+```ts {2}
+const results = await xata.search.all('search term', {
+  tables: ['Actors', 'Movies']
 });
 
 // equivalent to:
-const results = await xata.search.all('new st', {
-  tables: [{ table: 'Users' }, { table: 'Posts' }]
+const results = await xata.search.all('search term', {
+  tables: [{ table: 'Actors' }, { table: 'Movies' }]
 });
 ```
 
-```python
+```python {3}
 results = xata.data().search_branch({
-  "query": "new st",
-  "tables": ["Users", "Posts"]
+  "query": "search term",
+  "tables": ["Actors", "Movies"]
 })
 
 # equivalent to:
 results = xata.data().search_branch({
-  "query": "new st",
+  "query": "search term",
   "tables": [
-    {"table": "Users"},
-    {"table": "Posts"}
+    {"table": "Actors"},
+    {"table": "Movies"}
   ]
 })
 ```
 
-```go
+```go {5-8}
 searchClient, _ := xata.NewSearchAndFilterClient()
 results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
   Payload: xata.SearchBranchRequestPayload{
-    Query:  "new st",
+    Query:  "search term",
     Tables: []*xata.SearchBranchRequestTablesItem{
-      xata.NewSearchBranchRequestTablesItemFromString("Users"),
-      xata.NewSearchBranchRequestTablesItemFromString("Posts"),
+      xata.NewSearchBranchRequestTablesItemFromString("Actors"),
+      xata.NewSearchBranchRequestTablesItemFromString("Movies"),
     },
   },
 })
 ```
 
-```jsonc
+```jsonc {5}
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
 
 {
-  "query": "new st",
-  "tables": ["Users", "Posts"]
+  "query": "search term",
+  "tables": ["Actors", "Movies"]
 }
 
 // equivalent to:
 {
-  "query": "new st",
+  "query": "search term",
   "tables": [
-    { "table": "Users" },
-    { "table": "Posts" }
+    { "table": "Actors" },
+    { "table": "Movies" }
   ]
 }
 ```
@@ -237,12 +233,12 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 
 ## Search a single table only
 
-If you want to search in a single table only, it can be easier to search off the table object directly. In this case `xata.db.Users` searches against the `Users` table.
+If you want to search in a single table only, it can be easier to search off the table object directly. In this case `xata.db.Actors` searches against the `Actors` table.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
-```ts
-const results = await xata.db.Users.search("<search phrase>", {
+```ts {1}
+const results = await xata.db.Actors.search("search term", {
   target: [...],
   filter: {...},
   boosters: [...],
@@ -252,9 +248,9 @@ const results = await xata.db.Users.search("<search phrase>", {
 });
 ```
 
-```python
-results = xata.data().search_table("Users", {
-  "query": "<search phrase>",
+```python {1}
+results = xata.data().search_table("Actors", {
+  "query": "search term",
   "filter": {...},
   "target": [...],
   "boosters": [...],
@@ -269,7 +265,7 @@ searchClient, _ := xata.NewSearchAndFilterClient()
 prefix := xata.PrefixExpressionPhrase
 results, _ := searchClient.SearchTable(context.TODO(), xata.SearchTableRequest{
   Payload: xata.SearchTableRequestPayload{
-    Query:  *xata.String("<search phrase>"),
+    Query:  *xata.String("search term"),
     Filter: &xata.FilterExpression{
       // ..
     },
@@ -288,10 +284,10 @@ results, _ := searchClient.SearchTable(context.TODO(), xata.SearchTableRequest{
 })
 ```
 
-```jsonc
+```jsonc {1}
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/search
 {
-  "query": "<search phrase>",
+  "query": "search term",
   "filter": {...},
   "target": [...],
   "boosters": [...],
@@ -425,43 +421,43 @@ Filtering allows you to filter out records before passing them through the searc
 The filtering is applied at the table level. For example:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
-```ts
-const results = await xata.search.all("new st", {
+```ts {5-7}
+const results = await xata.search.all("Search term", {
 tables: [
     {
-      table: "Users",
+      table: "Actors",
       filter: {
-        "address.city": "New York",
+        "city": "New York",
       },
     },
   ],
 });
 ```
 
-```python
+```python {6-8}
 results = xata.data().search_branch({
-  "query": "kaanu",
+  "query": "Search term",
   "tables": [
     {
-      "table": "Users",
+      "table": "Actors",
       "filter": {
-        "address.city": "New York"
+        "city": "New York"
       }
     }
   ]
 })
 ```
 
-```jsonc
+```jsonc {8-10}
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
 
 {
-  "query": "new st",
+  "query": "new york",
   "tables": [
     {
-      "table": "Users",
+      "table": "Actors",
       "filter": {
-        "address.city": "New York"
+        "city": "New York"
       }
     }
   ]
@@ -476,51 +472,51 @@ By default, Xata searches across all columns from the selected tables. You can r
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
-```ts
-const results = await xata.search.all('new st', {
+```ts {5}
+const results = await xata.search.all('search term', {
   tables: [
     {
-      table: 'Users',
-      target: ['name', 'address.street']
+      table: 'Actors',
+      target: ['name', 'city']
     }
   ]
 });
 ```
 
-```python
+```python {6}
 results = xata.data().search_branch({
-  "query": "kaanu",
+  "query": "search term",
   "tables": [
     {
-      "table": "Users",
-      "target": ["name", "address.street"]
+      "table": "Actors",
+      "target": ["name", "city"]
     }
   ]
 })
 ```
 
-```go
+```go {5-8}
 searchClient, _ := xata.NewSearchAndFilterClient()
 results, _ := searchClient.SearchTable(context.TODO(), xata.SearchTableRequest{
   Payload: xata.SearchTableRequestPayload{
-    Query:  *xata.String("new st"),
+    Query:  *xata.String("search term"),
     Target: []*xata.TargetExpressionItem{
       xata.NewTargetExpression("name"),
-      xata.NewTargetExpression("address.street"),
+      xata.NewTargetExpression("city"),
     },
   },
 })
 ```
 
-```jsonc
+```jsonc {8}
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
 
 {
-  "query": "new st",
+  "query": "new york",
   "tables": [
     {
-      "table": "Users",
-      "target": ["name", "address.street"]
+      "table": "Actors",
+      "target": ["name", "city"]
     }
   ]
 }
@@ -534,12 +530,12 @@ The search API provides a configurable page size and offset-based pagination. To
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
-```ts
-const results = await xata.search.all('new st', {
+```ts {8-11}
+const results = await xata.search.all('search term', {
   tables: [
     {
-      table: 'Users',
-      target: ['name', 'address.street']
+      table: 'Actors',
+      target: ['name', 'city']
     }
   ],
   page: {
@@ -549,13 +545,13 @@ const results = await xata.search.all('new st', {
 });
 ```
 
-```python
+```python {9-12}
 results = xata.data().search_branch({
-  "query": "new st",
+  "query": "search term",
   "tables": [
     {
-      "table": "Users",
-      "target": ["name", "address.street"]
+      "table": "Actors",
+      "target": ["name", "city"]
     }
   ],
   "page": {
@@ -565,15 +561,15 @@ results = xata.data().search_branch({
 })
 ```
 
-```jsonc
+```jsonc {11-14}
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
 
 {
-  "query": "new st",
+  "query": "new york",
   "tables": [
     {
-      "table": "Users",
-      "target": ["name", "address.street"]
+      "table": "Actors",
+      "target": ["name", "city"]
     }
   ],
   "page": {
@@ -600,30 +596,30 @@ You can assign an integer weight to each column. The default weight is 1. The hi
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
-```ts
-const results = await xata.search.all('matrix', {
+```ts {5}
+const results = await xata.search.all('search term', {
   tables: [
     {
-      table: 'Posts',
-      target: [{ column: 'title', weight: 5 }, { column: 'labels', weight: 2 }, '*']
+      table: 'Movies',
+      target: [{ column: 'title', weight: 5 }, { column: 'genre', weight: 2 }, '*']
     }
   ]
 });
 ```
 
-```python
+```python {6-16}
 results = xata.data().search_branch({
-  "query": "matrix",
+  "query": "search term",
   "tables": [
     {
-      "table": "Posts",
+      "table": "Movies",
       "target": [
         {
           "column": "title",
           "weight": 5
         },
         {
-          "column": "labels",
+          "column": "genre",
           "weight": 2
         },
         "*"
@@ -633,21 +629,21 @@ results = xata.data().search_branch({
 })
 ```
 
-```jsonc
+```jsonc {8-18}
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
 
 {
-  "query": "matrix",
+  "query": "search term",
   "tables": [
     {
-      "table": "Posts",
+      "table": "Movies",
       "target": [
         {
           "column": "title",
           "weight": 5
         },
         {
-          "column": "labels",
+          "column": "genre",
           "weight": 2
         },
         "*"
@@ -659,7 +655,7 @@ results = xata.data().search_branch({
 
 </TabbedCode>
 
-In the above example, all columns are still targeted (`*` is included in `target`) but the `titles` and `labels` columns are boosted.
+In the above example, all columns are still targeted (`*` is included in `target`) but the `title` and `genre` columns are boosted.
 
 ### Numeric Booster
 
@@ -667,23 +663,23 @@ The numeric booster allows making use of numeric columns to influence the releva
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
-```ts
-const results = await xata.search.all('matrix', {
+```ts {5}
+const results = await xata.search.all('search term', {
   tables: [
     {
-      table: 'Posts',
+      table: 'Movies',
       boosters: [{ numericBooster: { column: 'views', factor: 3 } }]
     }
   ]
 });
 ```
 
-```python
+```python {6-13}
 results = xata.data().search_branch({
-  "query": "matrix",
+  "query": "search term",
   "tables": [
     {
-      "table": "Posts",
+      "table": "Movies",
       "boosters": [
         {
           "numericBooster": {
@@ -697,14 +693,14 @@ results = xata.data().search_branch({
 })
 ```
 
-```jsonc
+```jsonc {8-15}
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
 
 {
-  "query": "matrix",
+  "query": "search term",
   "tables": [
     {
-      "table": "Posts",
+      "table": "Movies",
       "boosters": [
         {
           "numericBooster": {
@@ -739,23 +735,23 @@ The modifier parameter options are:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
-```ts
-const results = await xata.search.all('matrix', {
+```ts {5}
+const results = await xata.search.all('search term', {
   tables: [
     {
-      table: 'Posts',
+      table: 'Movies',
       boosters: [{ numericBooster: { column: 'views', factor: 3, modifier: 'square' } }]
     }
   ]
 });
 ```
 
-```python
+```python {6-14}
 results = xata.data().search_branch({
-  "query": "matrix",
+  "query": "search term",
   "tables": [
     {
-      "table": "Posts",
+      "table": "Movies",
       "boosters": [
         {
           "numericBooster": {
@@ -770,14 +766,14 @@ results = xata.data().search_branch({
 })
 ```
 
-```jsonc
+```jsonc {8-16}
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
 
 {
-  "query": "matrix",
+  "query": "search term",
   "tables": [
     {
-      "table": "Posts",
+      "table": "Movies",
       "boosters": [
         {
           "numericBooster": {
@@ -798,32 +794,32 @@ In this example, the `views` column is multiplied with the factor of 3, then the
 
 ### Exact value booster
 
-The exact value booster allows boosting the relevancy of records that have an exact value in a column. This can be useful to boost, for example, articles in a given category. A common scenario is to use exact value boosts to "pin" a particular result at the top of the results.
+The exact value booster allows boosting the relevancy of records that have an exact value in a column. This can be useful to boost, for example, movies in a given genre. A common scenario is to use exact value boosts to "pin" a particular result at the top of the results.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
-```ts
-const results = await xata.search.all('matrix', {
+```ts {5}
+const results = await xata.search.all('search term', {
   tables: [
     {
-      table: 'Posts',
-      boosters: [{ valueBooster: { column: 'labels', value: 'movies', factor: 5 } }]
+      table: 'Movies',
+      boosters: [{ valueBooster: { column: 'genre', value: 'action', factor: 5 } }]
     }
   ]
 });
 ```
 
-```python
+```python {6-14}
 results = xata.data().search_branch({
-  "query": "matrix",
+  "query": "search term",
   "tables": [
     {
-      "table": "Posts",
+      "table": "Movies",
       "boosters": [
         {
           "valueBooster": {
-            "column": "labels",
-            "value": "movies",
+            "column": "genre",
+            "value": "action",
             "factor": 5
           }
         }
@@ -833,19 +829,19 @@ results = xata.data().search_branch({
 })
 ```
 
-```jsonc
+```jsonc {8-16}
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
 
 {
-  "query": "matrix",
+  "query": "search term",
   "tables": [
     {
-      "table": "Posts",
+      "table": "Movies",
       "boosters": [
         {
           "valueBooster": {
-            "column": "labels",
-            "value": "movies",
+            "column": "genre",
+            "value": "action",
             "factor": 5
           }
         }
@@ -857,19 +853,19 @@ results = xata.data().search_branch({
 
 </TabbedCode>
 
-In the above example, records that have the label "movies" in the `labels` column will receive a boost factor of 5 added to their relevancy score.
+In the above example, records that have the value `action` in the `genre` column will receive a boost factor of 5 added to their relevancy score.
 
 ### Date booster
 
-The date booster allows boosting the relevancy of records that have a date in a column depending on the proximity of the matching date to a provided date. This can be used to boost, for example, more recent articles. In the below example we'll use Xata's internal `xata.createdAt` object that is available on all records.
+The date booster allows boosting the relevancy of records that have a date in a column depending on the proximity of the matching date to a provided date. This can be used to boost, for example, more recent movies added to the database. In the below example we'll use Xata's internal `xata.createdAt` object that is available on all records.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
-```ts
-const results = await xata.search.all('matrix', {
+```ts {7-12}
+const results = await xata.search.all('search term', {
   tables: [
     {
-      table: 'Posts',
+      table: 'Movies',
       boosters: [
         {
           dateBooster: {
@@ -885,12 +881,12 @@ const results = await xata.search.all('matrix', {
 });
 ```
 
-```python
+```python {8-13}
 results = xata.data().search_branch({
-  "query": "matrix",
+  "query": "search term",
   "tables": [
     {
-      "table": "Posts",
+      "table": "Movies",
       "boosters": [
         {
           "dateBooster": {
@@ -906,14 +902,14 @@ results = xata.data().search_branch({
 })
 ```
 
-```jsonc
+```jsonc {10-15}
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
 
 {
-  "query": "matrix",
+  "query": "search term",
   "tables": [
     {
-      "table": "Posts",
+      "table": "Movies",
       "boosters": [
         {
           "dateBooster": {
@@ -934,7 +930,7 @@ results = xata.data().search_branch({
 The date booster is configured via `origin`, `scale`, and `decay` parameters. The further away from the `origin`,
 the more the score decays. The decay function uses an exponential function. The exponential function returns a value between 0 and 1, which is added to the score. This value can be multiplied by the `factor` parameter in order to provide a bigger impact.
 
-With the parameters applied from the previous example this will boost posts from 30 days ago by 50% of what
+With the parameters applied from the previous example this will boost movies from 30 days ago by 50% of what
 the equivalent post from today would score.
 
 The parameter definitions are:
