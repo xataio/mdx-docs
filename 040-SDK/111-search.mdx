@@ -132,6 +132,7 @@ for (const res of results.records) {
   console.log(res.record);
   /*
   {
+    "totalCount": 1,
     "email": "carrie@example.com",
     "id": "rec_cd8s4c0avc42pi67m14g",
     "name": "Carrie-Anne Moss",
@@ -228,6 +229,7 @@ The metadata includes:
 - the relevancy `score` of the result. See [Relevancy control](#relevancy-control) for more information.
 - the `version` of the record.
 - the `highlight` field, which contains the highlighted search terms.
+- the `totalCount`, which is the total number of matches for a search query.
 
 ## Restricting Search By Tables
 
