@@ -266,50 +266,58 @@ const result = await xata.transactions.run([
       fields: { email: 'trinity@matrix.com', name: 'Trinity' }
     }
   }
+  // Additional transactions can be added here
 ]);
 ```
 
 ```python
-result = xata.transactions.run([
-  {
-    "update": {
-      "table": "Users",
-      "id": "rec_cmf56ugvjdkilkpcdeu0",
-      "fields": {"email": "neo@matrix.com", "name": "Neo"}
-    }
-  },
-  {
-    "update": {
-      "table": "Users",
-      "id": "rec_cmf572veoo9ahn3r96p0",
-      # Include the fields to update for this record
-    }
-  },
-  # Additional transactions can be added here
-])
+result = xata.records().transactions({
+  "operations": [
+    {
+      "update": {
+        "table": "Users",
+        "id": "rec_cmf56ugvjdkilkpcdeu0",
+        "fields": {"email": "neo@matrix.com", "name": "Neo"}
+      }
+    },
+    {
+      "update": {
+        "table": "Users",
+        "id": "rec_cmf572veoo9ahn3r96p0",
+        "fields": {"email": "trinity@matrix.com", "name": "Trinity"},
+      }
+    },
+    # Additional transactions can be added here
+  ]
+})
 ```
 
 ```go
-result, _ := xata.transactions.Run(context.TODO(), []xata.Transaction{
-  {
-    Update: xata.UpdateTransaction{
+recordsClient, _ := xata.NewRecordsClient()
+result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewUpdateTransaction(xata.TransactionUpdateOp{
       Table: "Users",
       ID:    "rec_cmf56ugvjdkilkpcdeu0",
-      Fields: map[string]interface{}{"email": "neo@matrix.com", "name": "Neo"},
-    },
-  },
-  {
-    Update: xata.UpdateTransaction{
+      Fields: map[string]any{
+        "email": xata.String("neo@matrix.com"),
+        "name":  xata.String("Neo"),
+      },
+    }),
+    xata.NewUpdateTransaction(xata.TransactionUpdateOp{
       Table: "Users",
       ID:    "rec_cmf572veoo9ahn3r96p0",
-      // Include the fields to update for this record
-    },
+      Fields: map[string]any{
+        "email": xata.String("trinity@matrix.com"),
+        "name":  xata.String("Trinity"),
+      },
+    }),
   },
-  // Additional transactions can be added here
 })
 ```
 
 ```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
 {
   "transactions": [
     {
@@ -322,8 +330,8 @@ result, _ := xata.transactions.Run(context.TODO(), []xata.Transaction{
     {
       "update": {
         "table": "Users",
-        "id": "rec_cmf572veoo9ahn3r96p0"
-        // Include the fields to update for this record
+        "id": "rec_cmf572veoo9ahn3r96p0",
+        "fields": { "email": "trinity@matrix.com", "name": "Trinity" }
       }
     }
     // Additional transactions can be added here

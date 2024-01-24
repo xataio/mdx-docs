@@ -69,19 +69,19 @@ record, _ := client.Insert(context.TODO(), xata.InsertRecordRequest{
 
 </TabbedCode>
 
-Note, the create method fails if the record ID already exists.
+<Alert status="info">the create method fails if the record ID already exists.</Alert>
 
 The SDK returns the created record. The response looks like this:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'SQL', 'JSON']}>
-  ```ts
-  {
-    "email": "keanu@example.com",
-    "id": "rec_cd8rqcoavc42pi67lgd0",
-    "name": "Keanu Reeves",
-    "bio": NULL,
-    "address": NULL,
-  }
+```ts
+{
+  "email": "keanu@example.com",
+  "id": "rec_cd8rqcoavc42pi67lgd0",
+  "name": "Keanu Reeves",
+  "bio": NULL,
+  "address": NULL,
+}
 ```
 
 ```json
