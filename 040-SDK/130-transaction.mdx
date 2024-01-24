@@ -246,6 +246,101 @@ As with insert operations, update supports `ifVersion`.
 Update operations can be used on operations from the same transaction, and will return an error if the ID is not found in the
 database.
 
+For performing multiple updates in bulk, you can use the following code snippet:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
+
+```ts
+const result = await xata.transactions.run([
+  {
+    update: {
+      table: 'Users',
+      id: 'rec_cmf56ugvjdkilkpcdeu0',
+      fields: { email: 'neo@matrix.com', name: 'Neo' }
+    }
+  },
+  {
+    update: {
+      table: 'Users',
+      id: 'rec_cmf572veoo9ahn3r96p0',
+      fields: { email: 'trinity@matrix.com', name: 'Trinity' }
+    }
+  }
+  // Additional transactions can be added here
+]);
+```
+
+```python
+result = xata.records().transactions({
+  "operations": [
+    {
+      "update": {
+        "table": "Users",
+        "id": "rec_cmf56ugvjdkilkpcdeu0",
+        "fields": {"email": "neo@matrix.com", "name": "Neo"}
+      }
+    },
+    {
+      "update": {
+        "table": "Users",
+        "id": "rec_cmf572veoo9ahn3r96p0",
+        "fields": {"email": "trinity@matrix.com", "name": "Trinity"},
+      }
+    },
+    # Additional transactions can be added here
+  ]
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewUpdateTransaction(xata.TransactionUpdateOp{
+      Table: "Users",
+      ID:    "rec_cmf56ugvjdkilkpcdeu0",
+      Fields: map[string]any{
+        "email": xata.String("neo@matrix.com"),
+        "name":  xata.String("Neo"),
+      },
+    }),
+    xata.NewUpdateTransaction(xata.TransactionUpdateOp{
+      Table: "Users",
+      ID:    "rec_cmf572veoo9ahn3r96p0",
+      Fields: map[string]any{
+        "email": xata.String("trinity@matrix.com"),
+        "name":  xata.String("Trinity"),
+      },
+    }),
+  },
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
+{
+  "transactions": [
+    {
+      "update": {
+        "table": "Users",
+        "id": "rec_cmf56ugvjdkilkpcdeu0",
+        "fields": { "email": "neo@matrix.com", "name": "Neo" }
+      }
+    },
+    {
+      "update": {
+        "table": "Users",
+        "id": "rec_cmf572veoo9ahn3r96p0",
+        "fields": { "email": "trinity@matrix.com", "name": "Trinity" }
+      }
+    }
+    // Additional transactions can be added here
+  ]
+}
+```
+
+</TabbedCode>
+
 ### deletes
 
 A delete is used to remove records. Delete can operate on records from the same transaction, and will not cancel a transaction
