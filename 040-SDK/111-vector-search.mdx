@@ -79,7 +79,6 @@ Additionally you can customize the results with these optional parameters:
 - `similarityFunction` - the function used to measure the distance between two points. It can be one of the following: `cosineSimilarity`, `l1`, `l2`. The default is `cosineSimilarity` for which you can expect a score between 0 and 2. Because `cosineSimilarity` returns a value between -1 and 1, but relevance scores must not be below 0, we add 1 for the final score.
 - `size` - the number of results to return. The default is 10.
 - `filter` - a filter expression that can be used to filter before applying the search (pre-filter). See [Filtering](/docs/sdk/filtering) for more details.
-- `totalCount` - represents the overall number of records matching the search.
 
 Here is a simple example:
 
@@ -119,6 +118,13 @@ results, _ := searchClient.VectorSearch(context.TODO(), xata.VectorSearchTableRe
 ```
 
 </TabbedCode>
+
+The results of a vector search query returns a set of records from the specified table, that are most similar to the provided query vector. The response includes the following:
+
+- `totalCount`: The total number of records matching the query vector.
+- `results`: An array of the most relevant records. Each item in `results` includes the `id` and `score`.
+- `id`: A unique identifier for the record.
+- `score`: A similarity score (usually between 0 and 1) indicating how closely the record's vector matches the query vector.
 
 Note: Currently this endpoint executes exact vector search. We are planning to add approximate vector search in the future, which scales better to large datasets.
 
