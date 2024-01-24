@@ -169,7 +169,7 @@ Note the `xata.highlight.address` field in the example below which marks the sea
 }
 ```
 
-## Restricting search by tables
+## Restrict searches to specific tables
 
 If you want to search only some tables in the database, provide the `tables` parameter as part of the request. It expects an array, for example:
 
@@ -235,7 +235,7 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 
 </TabbedCode>
 
-## Searching in a single table
+## Search a single table only
 
 If you want to search in a single table only, it can be easier to search off the table object directly. In this case `xata.db.Users` searches against the `Users` table.
 
@@ -418,7 +418,7 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 
 The above will match records containing `Keanu`.
 
-## Filtering
+## Filter records before search is performed
 
 Filtering allows you to filter out records before passing them through the search algorithm. The filtering syntax is the same as for the query API, with the limitation that you cannot filter by linked columns.
 
