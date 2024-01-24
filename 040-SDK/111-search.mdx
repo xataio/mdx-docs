@@ -130,14 +130,14 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 
 </TabbedCode>
 
-### Search response with highlights
+### Hightligt matches in the search response
 
-Regardless of client, the above search will return results in the below shape. The returned result adds an additional `xata` field which contains metadata about the search that includes:
+Regardless of client, the above search will return results in the below shape. Each result adds an additional `xata` object which contains metadata about the search that includes:
 
-- the table in which the result was found.
-- the relevancy `score` of the result. See [Relevancy control](#relevancy-control) for more information.
-- the `version` of the record.
-- the `highlight` field, which contains the highlighted search terms.
+- The table in which the result was found.
+- The relevancy `score` of the result. See [Relevancy control](#relevancy-control) for more information.
+- The `version` of the record.
+- The `highlight` field, which contains the highlighted search terms.
 
 Note the `xata.highlight.address` field with marks our search term (`New Set`) with surrounding `<em>` tags.
 
