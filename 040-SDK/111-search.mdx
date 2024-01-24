@@ -15,6 +15,8 @@ Xata natively provides text-based search for your database with the following co
 - Weights and boosts allow specific columns to impact relevancy of search scores.
 - Search results provide highlight markup so you can style partial matches inside returned content.
 
+![Xata's website search is powered by Xata search](./images/search.png)
+
 As you insert records into Xata tables, they are automatically indexed for full-text search immediately. You can run a search using the SDK's `search()` function or by using the [REST endpoint directly](/docs/api-reference/db/db_branch_name/tables/table_name/search#free-text-search-in-a-table). While the `/query` endpoint exists only at the table level, the `/search` endpoint exists both at the database branch and the table level, because it is possible to search across multiple tables.
 
 The search index is updated asynchronously after each insert/update, meaning that the search results are eventually consistent with the results that you get from the `/query` endpoint. Another fundamental difference to the `/query` endpoint is that `/search` doesn't support following links across tables. This means that for linked records you can filter by the ID of the linked record, but not any of its other columns. If you need to filter or search by linked tables, other than by the ID, it is recommended that you denormalize the data into its own table.
