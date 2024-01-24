@@ -130,7 +130,7 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 
 </TabbedCode>
 
-### Hightligt matches in the search response
+### Hightlight matches in the search response
 
 Regardless of client, the above search will return results in the below shape. Each result adds an additional `xata` object which contains metadata about the search that includes:
 
@@ -138,6 +138,7 @@ Regardless of client, the above search will return results in the below shape. E
 - The relevancy `score` of the result. See [Relevancy control](#relevancy-control) for more information.
 - The `version` of the record.
 - The `highlight` field, which contains the highlighted search terms.
+- The `totalCount`, which is the total number of matches for a search query.
 
 Note the `xata.highlight.address` field with marks our search term (`New Set`) with surrounding `<em>` tags.
 
@@ -379,9 +380,7 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 
 </TabbedCode>
 
-With the `fuzziness` set to `0` the misspelling will no longer match for `Keanu`.
-
-You can also increase the `fuzziness` to accept a larger amount of typos.
+With the `fuzziness` set to `0` the misspelling will no longer match for `Keanu`. You can also increase the `fuzziness` to accept a larger amount of typos.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
@@ -531,9 +530,7 @@ results, _ := searchClient.SearchTable(context.TODO(), xata.SearchTableRequest{
 
 ## Pagination
 
-The search API provides a configurable page size and offset-based pagination. To skip pages set the offset to a multiple of the page size.
-
-For example, here we retrieve the second page of up to `10` search results:
+The search API provides a configurable page size and offset-based pagination. To skip pages set the offset to a multiple of the page size. For example, here we retrieve the second page of up to `10` search results:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 

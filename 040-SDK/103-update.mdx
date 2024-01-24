@@ -313,7 +313,7 @@ The following operations are supported:
 - `$multiply` - multiplies the current value by N
 - `$divide` - divides the current value by N
 
-## Updating a Linked Record
+## Updating a linked record
 
 The SDK provides a method to update one or multiple columns in a Linked record via reference from the current table:
 
@@ -458,7 +458,7 @@ The way to treat this error depends on your application. You might be able to re
 
 ## Updating multiple records
 
-Multiple record update operations can be performed in a single call using the [Transaction](/docs/sdk/transaction) API.
+If you have multiple records to update, you can send them in a single call using the [`/transactions` endpoint](/docs/sdk/transaction). The Xata transactions API allows bulk updates where specified fields of records are modified. These updates require an ID. By default updates will fail when the IDs are not found in the database. However, enabling the `upsert` flag to `true` allows the creation of new records missing IDs. For more details, refer to the [transactions updates documentation](https://xata.io/docs/sdk/transaction#updates).
 
 ## Next Steps
 
