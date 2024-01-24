@@ -246,6 +246,93 @@ As with insert operations, update supports `ifVersion`.
 Update operations can be used on operations from the same transaction, and will return an error if the ID is not found in the
 database.
 
+For performing multiple updates in bulk, you can use the following code snippet:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
+
+```ts
+const result = await xata.transactions.run([
+  {
+    update: {
+      table: 'Users',
+      id: 'rec_cmf56ugvjdkilkpcdeu0',
+      fields: { email: 'neo@matrix.com', name: 'Neo' }
+    }
+  },
+  {
+    update: {
+      table: 'Users',
+      id: 'rec_cmf572veoo9ahn3r96p0',
+      fields: { email: 'trinity@matrix.com', name: 'Trinity' }
+    }
+  }
+]);
+```
+
+```python
+result = xata.transactions.run([
+  {
+    "update": {
+      "table": "Users",
+      "id": "rec_cmf56ugvjdkilkpcdeu0",
+      "fields": {"email": "neo@matrix.com", "name": "Neo"}
+    }
+  },
+  {
+    "update": {
+      "table": "Users",
+      "id": "rec_cmf572veoo9ahn3r96p0",
+      # Include the fields to update for this record
+    }
+  },
+  # Additional transactions can be added here
+])
+```
+
+```go
+result, _ := xata.transactions.Run(context.TODO(), []xata.Transaction{
+  {
+    Update: xata.UpdateTransaction{
+      Table: "Users",
+      ID:    "rec_cmf56ugvjdkilkpcdeu0",
+      Fields: map[string]interface{}{"email": "neo@matrix.com", "name": "Neo"},
+    },
+  },
+  {
+    Update: xata.UpdateTransaction{
+      Table: "Users",
+      ID:    "rec_cmf572veoo9ahn3r96p0",
+      // Include the fields to update for this record
+    },
+  },
+  // Additional transactions can be added here
+})
+```
+
+```jsonc
+{
+  "transactions": [
+    {
+      "update": {
+        "table": "Users",
+        "id": "rec_cmf56ugvjdkilkpcdeu0",
+        "fields": { "email": "neo@matrix.com", "name": "Neo" }
+      }
+    },
+    {
+      "update": {
+        "table": "Users",
+        "id": "rec_cmf572veoo9ahn3r96p0"
+        // Include the fields to update for this record
+      }
+    }
+    // Additional transactions can be added here
+  ]
+}
+```
+
+</TabbedCode>
+
 ### deletes
 
 A delete is used to remove records. Delete can operate on records from the same transaction, and will not cancel a transaction

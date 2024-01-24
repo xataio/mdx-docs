@@ -358,7 +358,7 @@ users, _ := client.BulkInsert(context.TODO(), xata.BulkInsertRecordRequest{
 
 The bulk create method fails if the record ID already exists.
 
-It is possible to provide IDs for each of the records. If records with the same IDs already exist, the bulk operation is canceled and an error is returned. The bulk create method fails if the record ID already exists.
+It is possible to provide IDs for each of the records. If records with the same IDs already exist, the bulk operation is canceled and an error is returned.
 
 The `file` and `file[]` (file array) columns are not permitted in bulk requests.
 

@@ -152,63 +152,6 @@ user, _ := client.Upsert(context.TODO(), xata.UpsertRecordRequest{
 
 </TabbedCode>
 
-## Bulk update
-
-If you have multiple records to update, you can send them using the [`/transactions` endpoint](/docs/sdk/transaction). The Xata transactions API allows bulk updates where specified fields of records are modified. These updates require an ID and will fail if the IDs aren't found in the database. For more details, refer to the [transactions updates documentation](https://xata.io/docs/sdk/transaction#updates).
-
-Alternatively, you can send them in a single request via the [`/bulk` endpoint](/api-reference/db/db_branch_name/tables/table_name/bulk#bulk-insert-table-records). For example:
-
-<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
-
-```ts
-const updatedUsers = await xata.db.Users.bulkUpdate([
-  { email: 'neo@matrix.com', updates: { name: 'Neo' } },
-  { email: 'trinity@matrix.com', updates: { name: 'Trinity' } }
-]);
-```
-
-```python
-updated_users = xata.records().bulk_update("Users", {
-  "records": [
-    {"email": "neo@matrix.com", "updates": {"name": "Neo"}},
-    {"email": "trinity@matrix.com", "updates": {"name": "Trinity"}}
-  ]
-})
-```
-
-```go
-client, _ := xata.NewRecordsClient()
-updatedUsers, _ := client.BulkUpdate(context.TODO(), xata.BulkUpdateRecordRequest{
-  TableName: "Users",
-  Records: []map[string]*xata.DataInputRecordValue{
-    {"email": xata.ValueFromString("neo@matrix.com"), "updates": {"name": xata.ValueFromString("Neo")}},
-    {"email": xata.ValueFromString("trinity@matrix.com"), "updates": {"name": xata.ValueFromString("Trinity")}}
-  },
-})
-```
-
-```jsonc
-// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
-
-{
-  "statement": "UPDATE \"Users\" SET name = CASE email WHEN $1 THEN $2 WHEN $3 THEN $4 ELSE name END WHERE email IN ($1, $3);",
-  "params": ["neo@matrix.com", "Neo", "trinity@matrix.com", "Trinity"]
-}
-```
-
-```jsonc
-// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/bulk
-
-{
-  "updates": [
-    { "email": "neo@matrix.com", "name": "Neo" },
-    { "email": "trinity@matrix.com", "name": "Trinity" }
-  ]
-}
-```
-
-</TabbedCode>
-
 ## Numeric operations
 
 The numeric types (int and float) support basic mathematical operations: addition, subtraction, multiplication, and division. These operations are performed in a transaction, which means they are atomic.
@@ -370,7 +313,7 @@ The following operations are supported:
 - `$multiply` - multiplies the current value by N
 - `$divide` - divides the current value by N
 
-## Updating a Linked Record
+## Updating a linked record
 
 The SDK provides a method to update one or multiple columns in a Linked record via reference from the current table:
 
@@ -515,7 +458,7 @@ The way to treat this error depends on your application. You might be able to re
 
 ## Updating multiple records
 
-Multiple record update operations can be performed in a single call using the [Transaction](/docs/sdk/transaction) API.
+If you have multiple records to update, you can send them in a single call using the [`/transactions` endpoint](/docs/sdk/transaction). The Xata transactions API allows bulk updates where specified fields of records are modified. These updates require an ID and will fail if the IDs aren't found in the database. For more details, refer to the [transactions updates documentation](https://xata.io/docs/sdk/transaction#updates).
 
 ## Next Steps
 
