@@ -6,38 +6,29 @@ slug: contribute/docs
 published: true
 ---
 
-This guide is for anyone interested in improving existing Xata docs or creating new info.
+This guide is for anyone interested in improving existing Xata documentation or creating new information.
 
-Xata's developer documentation follows a [docs-as-code](https://www.writethedocs.org/guide/docs-as-code/) approach, where documentation is crafted using tools similar to code development. To contribute, you can suggest changes by forking the documentation GitHub repositories and [creating pull requests (PRs)](submit-a-contribution). This collaborative process allows for open contributions, testing, and review of the documentation.
+Xata's developer documentation follows a [docs-as-code](https://www.writethedocs.org/guide/docs-as-code/) approach, where documentation is crafted using tools similar to code development. To contribute, you can suggest changes by forking the documentation GitHub repositories and creating pull requests (PRs). This collaborative process allows for open contributions, testing, and review of the documentation.
 
 <Alert status="info">
-  The documentation site is hosted on Vercel, uses MDX syntax, and has heavy use of linters such as ES linter, prettier,
-  and remark. Basic Git and Markdown knowledge is assumed.
+  The documentation site is hosted on Vercel and uses MDX syntax. It also employs various linters, including ES linter,
+  Prettier, and Remark, to maintain code quality and consistency in the content. Basic Git and Markdown knowledge is
+  assumed when working with this project.
 </Alert>
 
-## Submit a docs PR
+## Submit a docs pull request
 
-1.  Fork the `mdx-docs` repository on GitHub to create your copy.
-
-2.  Clone your forked repository to your local machine using Git.
-
-3.  Create a new branch for your changes: git checkout -b my-docs-update.
-
-4.  Make the necessary changes to the documentation files using a Markdown editor.
-
-5.  Add and commit your changes: git add . and git commit -m "Update documentation".
-
-6.  Push the changes to your forked repository: git push origin my-docs-update.
-
-7.  Go to the mdx-docs repository on GitHub and create a new pull request from your branch.
-
-8.  Provide a clear title and description for your PR, explaining the purpose of your changes.
-
-9.  Submit the PR, and it will be reviewed by the Xata Docs team.
-
-10. Make any requested changes during the review process and collaborate until your PR is approved.
-
-11. Once the PR meets all requirements and is approved by the team, it is merged into the `main` branch, and the changes become part of the official Xata documentation.
+1.  **Fork repository:** Fork the [`mdx-docs`](https://github.com/xataio/mdx-docs) repository on GitHub to create your copy.
+2.  **Clone repository:** Clone your forked repository to your local machine using Git. Navigate to the cloned `mdx-docs` repository and add the upstream repository as a remote using `git remote add upstream <upstream-repo-url>`.
+3.  **Create branch:** Create a new branch for your changes using `git checkout -b <my-docs-update>`. You can create any branch name, but including the issue number or a brief description is recommended.
+4.  **Edit documentation:** Make necessary changes to documentation files, considering Markdown and MDX syntax.
+5.  **Commit changes:** Add and commit your changes using `git add .` and `git commit -m "Update documentation"` with an informative commit message.
+6.  **Push to fork:** Push changes to your forked repository with git push origin my-docs-update.
+7.  **Create pull request:** Visit the `mdx-docs` repository on GitHub, and create a new pull request from your branch.
+8.  **Provide details:** Add a clear title and description for your PR, explaining the purpose of your changes.
+9.  **Submit PR:** Submit the pull request, and it will be reviewed by the Xata Docs team.
+10. **Collaborate:** Collaborate during the review process, make requested changes, and work towards PR approval.
+11. **Approval and merge:** Once your PR meets all requirements and is approved by the team, it will be merged into the main branch, and your changes will become part of the official Xata documentation.
 
 ## Linting
 
@@ -45,13 +36,22 @@ Linting rules are enforced to ensure consistency and readability across the code
 
 Contributors are advised to `run pnpm install` in their local development environment. This step ensures that all necessary linting packages are installed and configured, allowing for real-time linting error detection.
 
-Apply the linter
+### Apply the linter
 
-1.  `cd` into the `mdx-docs` repo
+To ensure your pull request passes checks, apply the linter by navigating to the root directory of the `mdx-docs` repository and running `pnpm install`. Failure to do so will result in a failed build.
 
-### Troubleshoot linting errors
+### Troubleshoot linting
 
-^^^## Style guide
+To fix issues from linting, locate the exact error message that references the specific number. Examine the code or documentation related to the error and ensure the syntax and usage align with coding and documentation standards.
+If the error persists, contact us in Discord or use community resources for guidance.
+
+## Build preview
+
+After your pull request clears all checks, Vercel creates a build preview. The Xatabot then adds a link to this preview in your pull request. To review the changes you've made, click on the link, navigate to the **Docs** tab, and search for the page you've updated.
+
+## Style guide
+
+The style guide provides guidance on formatting and writing for Xata documentation. The Formatting Style Guide focuses on visual presentation, covering headings, fonts, bullet points, tables, and diagrams to ensure consistency and clarity. The Writing Style Guide addresses language, emphasizing clear, concise, and plain language use while avoiding unnecessary jargon and technical terms.
 
 ### MDX syntax
 
@@ -59,23 +59,25 @@ Refer to the [docs repository](https://github.com/xataio/mdx-docs?tab=readme-ov-
 
 ### Writing
 
+The following offers guidance on writing in our technical documentation. We follow common language rules found in [technical documentation style guides](https://github.com/MicrosoftDocs/microsoft-style-guide/tree/main).
+
 #### Language and style
 
-Xata documentation is written with a casual yes business focused style Use [American English spelling](https://www.merriam-webster.com/) is used consistently in the text. American English grammar is used consistently in the text. Refrain from using slang or non-English words in the text.
+Use [American English spelling](https://www.merriam-webster.com/) is used consistently in the text. American English grammar is used consistently in the text. Refrain from using slang, idioms, phrasal verbs, or non-English words in the text.
 
-##### Date formats
-
-Follow advice of "Month day, year" for date formats, for example, January 1, 2023.
-
-##### Titles
+#### Titles
 
 When creating titles, use sentence case and maintain consistent styling for all titles and headings. Titles should prioritize user tasks rather than features and be descriptive yet concise. Aim for titles with 3-10 words, not exceeding 50 characters. For procedural headings, start with an action verb such, for example "Use," "Import", and "Install."
 
-##### Acronyms and abbreviations
+#### Date formats
+
+Follow advice of "Month day, year" for date formats, for example, January 1, 2023.
+
+#### Acronyms and abbreviations
 
 Expand acronyms on first use. More common acronyms that may be general knowledge do not need to be expanded
 
-##### Admonition
+#### Admonitions
 
 Admonitions serve as cues to direct the reader's attention towards specific information. It's advisable to use admonitions sparingly and avoid clustering multiple admonitions closely together. If you find the need for multiple admonitions, consider reorganizing the content by integrating less critical points into the main narrative.
 
@@ -87,9 +89,9 @@ Here are the accepted types of admonitions forr Xata documentation:
 
 - **Danger:** This suggests alternative approaches that may not be immediately apparent. It simplifies the application of described techniques and procedures, catering to specific requirements. While beneficial for users' understanding of the product's capabilities, it's not essential for product usage.
 
-#### Accessibility
+### Accessibility
 
-##### Use clear and simple language
+#### Use clear and simple language
 
 - **Avoid jargon:** Use plain language and define technical terms when they are first used.
 - **Short sentences:** Keep sentences short and to the point to enhance readability.
@@ -99,19 +101,19 @@ Here are the accepted types of admonitions forr Xata documentation:
 
 ✅ To set up a PostgreSQL database, use the `initdb` command. This command creates the main directories, makes configuration files, and adds the starting catalog to the database.
 
-##### Use structured and logical organization
+#### Use structured and logical organization
 
 - **Logical flow:** Organize content in a logical sequence, making it easier to follow.
 - **Headings and subheadings:** Use descriptive headings and subheadings to break text into manageable sections, but do not make them too long.
 
-##### Format text correctly
+#### Format text correctly
 
 - **Bullet points and lists:** Use bullet points or numbered lists for step-by-step instructions or to highlight important points.
 
-##### Include alternative text for media
+#### Include alternative text for media
 
 - **Descriptive alt text:** Provide alternative text for images, diagrams, and videos to describe what the image represents, especially if it contains important information.
 
-##### Inclusive and diverse representation
+#### Inclusive and diverse representation
 
 - **Avoid bias:** Be mindful of cultural diversity and inclusivity in language and examples.
