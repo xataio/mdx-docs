@@ -8,7 +8,7 @@ published: true
 
 This guide is for anyone interested in improving existing Xata docs or creating new info.
 
-Xata's developer documentation follows a [docs-as-code](https://www.writethedocs.org/guide/docs-as-code/) approach, where documentation is crafted using tools similar to code development. To contribute, you can suggest changes by forking the documentation GitHub repositories and [creating pull requests (PRs)](https://docs-template.consensys.io/contribute/submit-a-contribution). This collaborative process allows for open contributions, testing, and review of the documentation.
+Xata's developer documentation follows a [docs-as-code](https://www.writethedocs.org/guide/docs-as-code/) approach, where documentation is crafted using tools similar to code development. To contribute, you can suggest changes by forking the documentation GitHub repositories and [creating pull requests (PRs)](submit-a-contribution). This collaborative process allows for open contributions, testing, and review of the documentation.
 
 <Alert status="info">
   The documentation site is hosted on Vercel, uses MDX syntax, and has heavy use of linters such as ES linter, prettier,
@@ -45,51 +45,47 @@ Linting rules are enforced to ensure consistency and readability across the code
 
 Contributors are advised to `run pnpm install` in their local development environment. This step ensures that all necessary linting packages are installed and configured, allowing for real-time linting error detection.
 
-### Troubleshooting linting errors
+Apply the linter
 
-# Style guide
+1.  `cd` into the `mdx-docs` repo
+
+### Troubleshoot linting errors
+
+^^^## Style guide
 
 ### MDX syntax
 
-Refer to [docs repository](https://github.com/xataio/mdx-docs?tab=readme-ov-file) for guidance on how to create and format documents using MDX (Markdown Extended) for Xata's documentation. It covers some of the aspects of using frontmatter, structuring your documents effectively, and incorporating unique elements specific to MDX.
+Refer to the [docs repository](https://github.com/xataio/mdx-docs?tab=readme-ov-file) for guidance on how to create and format documents using MDX (Markdown Extended) for Xata's documentation. It covers some of the aspects of using frontmatter, structuring your documents effectively, and incorporating unique elements specific to MDX.
 
 ### Writing
 
 #### Language and style
 
-Xata documentation is written with a casual yes business focused style
-
-##### Spelling
-
-Use [American English spelling](https://www.merriam-webster.com/) is used consistently in the text.
-
-##### Grammar
-
-American English grammar is used consistently in the text. Refrain from using slang or non-English words in the text.
+Xata documentation is written with a casual yes business focused style Use [American English spelling](https://www.merriam-webster.com/) is used consistently in the text. American English grammar is used consistently in the text. Refrain from using slang or non-English words in the text.
 
 ##### Date formats
 
 Follow advice of "Month day, year" for date formats, for example, January 1, 2023.
 
-##### Acronyms and abbreviations
-
-Expand acronyms on first use. More common acronyms that may be general knowledge do not need to be expanded
-
 ##### Titles
 
 When creating titles, use sentence case and maintain consistent styling for all titles and headings. Titles should prioritize user tasks rather than features and be descriptive yet concise. Aim for titles with 3-10 words, not exceeding 50 characters. For procedural headings, start with an action verb such, for example "Use," "Import", and "Install."
+
+##### Acronyms and abbreviations
+
+Expand acronyms on first use. More common acronyms that may be general knowledge do not need to be expanded
 
 ##### Admonition
 
 Admonitions serve as cues to direct the reader's attention towards specific information. It's advisable to use admonitions sparingly and avoid clustering multiple admonitions closely together. If you find the need for multiple admonitions, consider reorganizing the content by integrating less critical points into the main narrative.
 
-Here are the accepted types of admonitions:
+Here are the accepted types of admonitions forr Xata documentation:
 
-**Info:** This provides extra guidance or advice to enhance product setup, performance, or supportability. It conveys advisory details crucial for task completion, and users should pay close attention.
+- **Info:** This provides extra guidance or advice to enhance product setup, performance, or supportability. It conveys advisory details crucial for task completion, and users should pay close attention.
 
-**Warning:** This communicates potential risks such as system damage, data loss, or support-related issues if the reader ignores the admonition. It includes an explanation of the problem, its cause, and a viable solution. If possible, it offers preventive measures or directs users to additional resources.
+- **Warning:** This communicates potential risks such as system damage, data loss, or support-related issues if the reader ignores the admonition. It includes an explanation of the problem, its cause, and a viable solution. If possible, it offers preventive measures or directs users to additional resources.
 
-**Danger:** This suggests alternative approaches that may not be immediately apparent. It simplifies the application of described techniques and procedures, catering to specific requirements. While beneficial for users' understanding of the product's capabilities, it's not essential for product usage.
+- **Danger:** This suggests alternative approaches that may not be immediately apparent. It simplifies the application of described techniques and procedures, catering to specific requirements. While beneficial for users' understanding of the product's capabilities, it's not essential for product usage.
 
 #### Accessibility
 
@@ -99,9 +95,9 @@ Here are the accepted types of admonitions:
 - **Short sentences:** Keep sentences short and to the point to enhance readability.
 
 **Example:**
-❌ To initialize a PostgreSQL database, it is imperative that one executes the initdb command, which establishes the necessary environment by creating the primary directory structure, generating the configuration files, and populating the database with the initial catalog.
+❌ To initialize a PostgreSQL database, it is cruicial that one executes the `initdb` command, which establishes the necessary environment by creating the primary directory structure, generating the configuration files, and populating the database with the initial catalog.
 
-✅ To set up a PostgreSQL database, use the initdb command. This command creates the main directories, makes configuration files, and adds the starting catalog to the database.
+✅ To set up a PostgreSQL database, use the `initdb` command. This command creates the main directories, makes configuration files, and adds the starting catalog to the database.
 
 ##### Use structured and logical organization
 
