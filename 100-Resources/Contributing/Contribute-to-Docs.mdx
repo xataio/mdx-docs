@@ -11,7 +11,8 @@ This guide is for anyone interested in improving existing Xata docs or creating 
 Xata's developer documentation follows a [docs-as-code](https://www.writethedocs.org/guide/docs-as-code/) approach, where documentation is crafted using tools similar to code development. To contribute, you can suggest changes by forking the documentation GitHub repositories and [creating pull requests (PRs)](https://docs-template.consensys.io/contribute/submit-a-contribution). This collaborative process allows for open contributions, testing, and review of the documentation.
 
 <Alert status="info">
-Basic Git, GitHub, and Markdown knowledge is assumed. The documentation site is hosted on Vercel, uses MDX syntax, and has heavy use of linters such as ES linter, prettier, and remark.
+  Basic Git, GitHub, and Markdown knowledge is assumed. The documentation site is hosted on Vercel, uses MDX syntax, and
+  has heavy use of linters such as ES linter, prettier, and remark.
 </Alert>
 
 ## Submit a docs PR
@@ -44,15 +45,19 @@ Linting rules are enforced to ensure consistency and readability across the code
 
 Contributors are advised to `run pnpm install` in their local development environment. This step ensures that all necessary linting packages are installed and configured, allowing for real-time linting error detection.
 
-## Style guide
+### Troubleshooting linting errors
+
+\#Style guide
 
 ### MDX syntax
 
-This guide provides some guidance on how to create and format documents using MDX (Markdown Extended) for Xata's documentation. It covers some of the aspects of using frontmatter, structuring your documents effectively, and incorporating unique elements specific to MDX. This ensures that all documentation created for Xata adheres to a consistent standard. 
+Refer to [docs repository](https://github.com/xataio/mdx-docs?tab=readme-ov-file) for guidance on how to create and format documents using MDX (Markdown Extended) for Xata's documentation. It covers some of the aspects of using frontmatter, structuring your documents effectively, and incorporating unique elements specific to MDX.
 
 ### Writing
 
 #### Language and style
+
+Xata documentation is written with a casual yes business focused style
 
 ##### Spelling
 
@@ -64,7 +69,7 @@ American English grammar is used consistently in the text. Refrain from using sl
 
 ##### Date formats
 
-Follow advice of "Month day, year" for date formats, for example, January 1, 2023. 
+Follow advice of "Month day, year" for date formats, for example, January 1, 2023.
 
 ##### Acronyms and abbreviations
 
@@ -86,12 +91,12 @@ Here are the accepted types of admonitions:
 
 **Danger:** This suggests alternative approaches that may not be immediately apparent. It simplifies the application of described techniques and procedures, catering to specific requirements. While beneficial for users' understanding of the product's capabilities, it's not essential for product usage.
 
-
 #### Accessibility
 
 ##### Use clear and simple language
-* **Avoid jargon:** Use plain language and define technical terms when they are first used.
-* **Short sentences:** Keep sentences short and to the point to enhance readability.
+
+- **Avoid jargon:** Use plain language and define technical terms when they are first used.
+- **Short sentences:** Keep sentences short and to the point to enhance readability.
 
 **Example:**
 ❌ To initialize a PostgreSQL database, it is imperative that one executes the initdb command, which establishes the necessary environment by creating the primary directory structure, generating the configuration files, and populating the database with the initial catalog.
@@ -99,14 +104,18 @@ Here are the accepted types of admonitions:
 ✅ To set up a PostgreSQL database, use the initdb command. This command creates the main directories, makes configuration files, and adds the starting catalog to the database.
 
 ##### Use structured and logical organization
-* **Logical flow:** Organize content in a logical sequence, making it easier to follow.
-* **Headings and subheadings:** Use descriptive headings and subheadings to break text into manageable sections, but do not make them too long.
+
+- **Logical flow:** Organize content in a logical sequence, making it easier to follow.
+- **Headings and subheadings:** Use descriptive headings and subheadings to break text into manageable sections, but do not make them too long.
 
 ##### Format text correctly
-* **Bullet points and lists:** Use bullet points or numbered lists for step-by-step instructions or to highlight important points.
+
+- **Bullet points and lists:** Use bullet points or numbered lists for step-by-step instructions or to highlight important points.
 
 ##### Include alternative text for media
-* **Descriptive alt text:** Provide alternative text for images, diagrams, and videos to describe what the image represents, especially if it contains important information.
+
+- **Descriptive alt text:** Provide alternative text for images, diagrams, and videos to describe what the image represents, especially if it contains important information.
 
 ##### Inclusive and diverse representation
-* **Avoid bias:** Be mindful of cultural diversity and inclusivity in language and examples.
+
+- **Avoid bias:** Be mindful of cultural diversity and inclusivity in language and examples.
