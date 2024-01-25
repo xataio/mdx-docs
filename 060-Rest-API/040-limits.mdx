@@ -86,18 +86,20 @@ The REST API may return HTTP response code `429` as a throttling error when the 
 - **Request rate limit**: Total number of atomic HTTP requests submitted per second to any API endpoint under a branch
 - **Concurrency limit**: Number of requests executing in parallel at any given moment within a certain Store of a branch
 
-For more information on rate limits, see our [docs](/docs/concepts/pricing).
+For more information on the available tiers, refer to our Pricing [page](/pricing) and [docs](/docs/concepts/pricing).
 
 #### Store types
 
 Xata uses store types with individual concurrency limits:
 
-| Store type                     | Concurrent requests | Endpoints                                                  |
-| ------------------------------ | ------------------- | ---------------------------------------------------------- |
-| Consistent transactional store | 2                   | `data`, `bulk`, `transaction`, `query`, `summarize`        |
-| Read replicas store            | 3                   | `query`, `summarize` _with option_ `consistency: eventual` |
-| Search & Analytics store       | 5                   | `aggregate`, `search`, `ask`, `vectorSearch`               |
-| File attachments store         | 2                   | `data`, `file`                                             |
+| Store type                     | Free tier concurrency | Pro tier concurrency  | Endpoints                                                  |
+| ------------------------------ | --------------------- | --------------------- | ---------------------------------------------------------- |
+| Consistent transactional store | 6                     | 18                    | `data`, `bulk`, `transaction`, `query`, `summarize`        |
+| Read replicas store            | 9                     | 27                    | `query`, `summarize` _with option_ `consistency: eventual` |
+| Search & Analytics store       | 15                    | 45                    | `aggregate`, `search`, `ask`, `vectorSearch`               |
+| File attachments store         | 6                     | 18                    | `data`, `file`                                             |
+
+Custom concurrency limits are offered with [Enterprise plans](/pricing).
 
 In the event the concurrency limit in a store is exceeded, requests to it are throttled internally with a timeout of 100ms. After reaching the timeout, the API errors with HTTP response code `429`.
 
