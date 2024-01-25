@@ -382,7 +382,7 @@ const results = await xata.search.all('kaano', { fuzziness: 2 });
 
 ```python
 results = xata.data().search_branch({
-  "query": "kaanu",
+  "query": "kaano",
   "fuzziness": 2
 })
 ```
@@ -391,7 +391,7 @@ results = xata.data().search_branch({
 searchClient, _ := xata.NewSearchAndFilterClient()
 results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
   Payload: xata.SearchBranchRequestPayload{
-    Query:     "kaanu",
+    Query:     "kaano",
     Fuzziness: xata.Int(2),
   },
 })
