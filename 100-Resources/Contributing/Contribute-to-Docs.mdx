@@ -10,7 +10,9 @@ This guide is for anyone interested in improving existing Xata docs or creating 
 
 Xata's developer documentation follows a [docs-as-code](https://www.writethedocs.org/guide/docs-as-code/) approach, where documentation is crafted using tools similar to code development. To contribute, you can suggest changes by forking the documentation GitHub repositories and [creating pull requests (PRs)](https://docs-template.consensys.io/contribute/submit-a-contribution). This collaborative process allows for open contributions, testing, and review of the documentation.
 
-> Note: Basic Git, GitHub, and Markdown knowledge is assumed. The documentation site is hosted on Vercel, uses MDX syntax, and has heavy use of linters such as ES linter, prettier, and remark.
+<Alert status="info">
+Basic Git, GitHub, and Markdown knowledge is assumed. The documentation site is hosted on Vercel, uses MDX syntax, and has heavy use of linters such as ES linter, prettier, and remark.
+</Alert>
 
 ## Submit a docs PR
 
@@ -38,17 +40,15 @@ Xata's developer documentation follows a [docs-as-code](https://www.writethedocs
 
 ## Linting
 
-Linting rules are enforced to ensure consistency and readability across the codebase. The docs use ESLint, Prettier, and Remark for linting. These tools are essential for keeping the code clean and consistent.
+Linting rules are enforced to ensure consistency and readability across the codebase. The documentation uses ESLint, Prettier, and Remark for linting. These tools are essential for keeping the code clean and consistent.
 
-Contributors are advised to run pnpm install in their local development environment. This step ensures that all necessary linting packages are installed and configured, allowing for real-time linting error detection.
-
-### Troubleshooting linting issues
+Contributors are advised to `run pnpm install` in their local development environment. This step ensures that all necessary linting packages are installed and configured, allowing for real-time linting error detection.
 
 ## Style guide
 
 ### MDX syntax
 
-This guide provides in-depth guidance on how to create and format documents using MDX (Markdown Extended) for Xata's documentation. It comprehensively covers the crucial aspects of using frontmatter, structuring your documents effectively, and incorporating unique elements specific to MDX. This ensures that all documentation created for Xata adheres to a consistent standard, leveraging the capabilities of MDX to enhance the clarity and functionality of the content
+This guide provides some guidance on how to create and format documents using MDX (Markdown Extended) for Xata's documentation. It covers some of the aspects of using frontmatter, structuring your documents effectively, and incorporating unique elements specific to MDX. This ensures that all documentation created for Xata adheres to a consistent standard. 
 
 ### Writing
 
@@ -57,28 +57,28 @@ This guide provides in-depth guidance on how to create and format documents usin
 ##### Spelling
 
 Use [American English spelling](https://www.merriam-webster.com/) is used consistently in the text.
-Correct punctuation is used in the text.
+
+❌
+✅
 
 ##### Grammar
 
-American English grammar is used consistently in the text.
-
-Slang or non-English words are not used in the text.
+American English grammar is used consistently in the text. Refrain from using slang or non-English words in the text.
 
 ##### Date formats
 
-Follow advice of day Month year for date formats, for example, 3 October 2019. When the format day Month year causes a presentation or clarity issue, use Month day, year (for example, October 3, 2019) instead.
+Follow advice of "Month day, year" for date formats, for example, January 1, 2023. 
 
 ##### Acronyms and abbreviations
 
-Acronyms are expanded on first use.
+Expand acronyms on first use. More common acronyms that may be general knowledge do not need to be expanded
 
 ##### Titles
 
 Write titles use sentence case. Titles and headings have consistent styling.
 Titles focus on the user tasks instead of the feature.
 Titles should be descriptive but not to long. Aim for titles between 3-8 words long and have less than 50 characters.
-Titles of for procedures should begin with a gerund, for example, "Configuring", "Using", or "Installing".
+Titles of for procedures should begin with a verb, for example, "Configure", "Use", or "Install".
 
 ##### Admonition
 
@@ -86,7 +86,7 @@ Admonitions serve as cues to direct the reader's attention towards specific info
 
 Here are the accepted types of admonitions:
 
-NOTE: This provides extra guidance or advice to enhance product setup, performance, or supportability.
+ This provides extra guidance or advice to enhance product setup, performance, or supportability.
 
 IMPORTANT: It conveys advisory details crucial for task completion, and users should pay close attention.
 
@@ -94,7 +94,6 @@ WARNING: This communicates potential risks such as system damage, data loss, or 
 
 TIP: This suggests alternative approaches that may not be immediately apparent. It simplifies the application of described techniques and procedures, catering to specific requirements. While beneficial for users' understanding of the product's capabilities, it's not essential for product usage.
 
-#### Tone
 
 #### Accessibility
 
@@ -102,8 +101,7 @@ Use Clear and Simple Language
 Avoid Jargon: Use plain language and define technical terms when they are first used.
 Short Sentences: Keep sentences short and to the point to enhance readability.
 
-❌
-✅
+
 
 Structured and Logical Organization
 Logical Flow: Organize content in a logical sequence, making it easier to follow.
