@@ -105,12 +105,16 @@ It's also possible to update a record if it exists, or create it if it doesn't e
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
 
 ```ts
-const user = await xata.db.Users.createOrUpdate('myid', { name: 'Keanu Reeves' });
+const user = await xata.db.Users.createOrUpdate('myid', {
+  name: 'Keanu Reeves',
+  email: 'keanu@example.com'
+});
 ```
 
 ```python
 user = xata.records().upsert("Users", "myid", {
-  "name": "Keanu Reeves"
+  "name": "Keanu Reeves",
+  "email": "keanu@example.com",
 })
 ```
 
@@ -123,6 +127,7 @@ user, _ := client.Upsert(context.TODO(), xata.UpsertRecordRequest{
   RecordID: "myid",
   Body: map[string]*xata.DataInputRecordValue{
     "name": xata.ValueFromString("Keanu Reeves"),
+    "email": xata.ValueFromString("keanu@example.com"),
   },
 })
 ```
@@ -131,8 +136,8 @@ user, _ := client.Upsert(context.TODO(), xata.UpsertRecordRequest{
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "INSERT INTO \"Users\" (id, name) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET name = $3 RETURNING *;",
-  "params": ["rec_c8hnbch26un1nl0rthkg", "susan", "Keanu Reeves"]
+  "statement": "INSERT INTO \"Users\" (id, name, email) VALUES ($1, $2, $3) ON CONFLICT (id) DO UPDATE SET name = $2, email = $3 RETURNING *;",
+  "params": ["rec_c8hnbch26un1nl0rthkg", "Keanu Reeves", "keanu@example.com"]
 }
 ```
 
@@ -141,12 +146,7 @@ user, _ := client.Upsert(context.TODO(), xata.UpsertRecordRequest{
 
 {
   "email": "keanu@example.com",
-  "full_name": "Keanu Reeves",
-  "address": {
-    "street": "123 Main St",
-    "zipcode": 12345
-  },
-  "team": "rec_c8hng2h26un90p8sr7k0"
+  "name": "Keanu Reeves"
 }
 ```
 
@@ -343,13 +343,9 @@ user.xata;
 
 ```python
 {
-  "address": {
-    "street": "123 New St",
-    "zipcode": 12345
-  },
-  "email": "keanu@example.com",
-  "fname": "Keanu Reeves",
   "id": "rec_c8hnbch26un1nl0rthkg",
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves",
   "xata": {
     "version": 2,
     "createdAt": "2023-05-15T08:21:31.96526+01:00",
@@ -360,13 +356,9 @@ user.xata;
 
 ```json
 {
-  "address": {
-    "street": "123 New St",
-    "zipcode": 12345
-  },
-  "email": "keanu@example.com",
-  "fname": "Keanu Reeves",
   "id": "rec_c8hnbch26un1nl0rthkg",
+  "email": "keanu@example.com",
+  "name": "Keanu Reeves",
   "xata": {
     "version": 2,
     "createdAt": "2023-05-15T08:21:31.96526+01:00",
@@ -388,7 +380,7 @@ const updatedUser = await xata.db.Users.update(
   'rec_c8hnbch26un1nl0rthkg',
   {
     name: 'Keanu Reeves',
-    email: 'keanu@xata.io'
+    email: 'keanu@example.com'
   },
   {
     ifVersion: 0
@@ -402,7 +394,7 @@ user = xata.records().update(
   "rec_c8hnbch26un1nl0rthkg",
   {
     "name": 'Keanu Reeves',
-    "email": 'keanu@xata.io'
+    "email": 'keanu@example.com'
   },
   if_version=0
 )
@@ -417,7 +409,7 @@ user, _ := client.Update(context.TODO(), xata.UpdateRecordRequest{
   RecordID: "rec_c8hnbch26un1nl0rthkg",
   Body: map[string]*xata.DataInputRecordValue{
     "name":  xata.ValueFromString("Keanu Reeves"),
-    "email": xata.ValueFromString("keanu@xata.io"),
+    "email": xata.ValueFromString("keanu@example.com"),
   },
   IfVersion: xata.Int(0),
 })
@@ -428,7 +420,7 @@ user, _ := client.Update(context.TODO(), xata.UpdateRecordRequest{
 
 {
   "statement": "UPDATE \"Users\" SET email = $1, name = $2 WHERE id = $3 AND \"xata.version\" = $4 RETURNING *;",
-  "params": ["keanu@xata.io", "Keanu Reeves", "rec_c8hnbch26un1nl0rthkg", 0]
+  "params": ["keanu@example.com", "Keanu Reeves", "rec_c8hnbch26un1nl0rthkg", 0]
 }
 ```
 
@@ -436,7 +428,7 @@ user, _ := client.Update(context.TODO(), xata.UpdateRecordRequest{
 // PUT https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?ifVersion=0
 
 {
-  "email": "keanu@xata.io",
+  "email": "keanu@example.com",
   "name": "Keanu Reeves"
 }
 ```
