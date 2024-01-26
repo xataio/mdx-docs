@@ -328,7 +328,7 @@ users, _ := client.Query(context.TODO(), xata.QueryTableRequest{
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-  "statement": "SELECT name,city from \"Users\" LIMIT 20;"
+  "statement": "SELECT name, city from \"Users\" LIMIT 20;"
 }
 ```
 
@@ -346,9 +346,7 @@ A sample response will look like this:
 
 ```json
 {
-  "address": {
-    "city": "New York"
-  },
+  "city": "New York",
   "id": "myid",
   "name": "Keanu Reeves",
   "xata": {
@@ -1055,13 +1053,12 @@ Returns only the first two records:
 {
   "records": [
     {
-      "address": {
-        "street": "123 Main St",
-        "zipcode": 12345
-      },
+      "id": "rec_c8hnbch26un1nl0rthkg",
       "email": "keanu@example.com",
       "full_name": "Keanu Reeves",
-      "id": "rec_c8hnbch26un1nl0rthkg",
+      "street": "123 Main St",
+      "zipcode": 12345,
+      "city": "New York",
       "team": {
         "id": "rec_c8hng2h26un90p8sr7k0"
       },
@@ -1072,10 +1069,12 @@ Returns only the first two records:
       }
     },
     {
-      "address": null,
+      "id": "rec_c8hnnh126unff00ifhhg",
       "email": "laurence@example.com",
       "full_name": "Laurence Fishburne",
-      "id": "rec_c8hnnh126unff00ifhhg",
+      "street": null,
+      "zipcode": null,
+      "city": null,
       "team": {
         "id": "rec_c8hng2h26un90p8sr7k0"
       },
