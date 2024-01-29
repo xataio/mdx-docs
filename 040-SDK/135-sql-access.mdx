@@ -148,37 +148,44 @@ Response:
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const user = { name: "Keanu Reeves", email: "keanu@example.com" };
-const { records: [record] } = await xata.sql<TeamsRecord>`INSERT INTO "Users" (name, email) VALUES (${user.name}, ${user.email})`;
+const records = await xata.sql({
+  statement: `INSERT INTO "Users" (name, email) VALUES ($1, $2)`,
+  params: [user.name, user.email],
+});
 ```
+
 ```python
+name = "Keanu Reeves"
+email = "keanu@example.com"
 records = xata.sql().query(
   "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
-  ["Keanu Reeves", "keanu@example.com"]
+  params = [name, email]
 )
 ```
+
 ```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
 
 {
-"statement": "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
-"params": ["Keanu Reeves", "keanu@example.com"]
+  "statement": "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
+  "params": ["Keanu Reeves", "keanu@example.com"]
 }
+```
 
-````
 </TabbedCode>
 
 ### Delete record using a parameterized query
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
-const user = { id: "my-user-id" };
-await xata.sql<TeamsRecord>`DELETE FROM "Users" WHERE id=${user.id})`;
+const user = { id: "my-record-id" };
+await xata.sql({ statement: `DELETE FROM "Users" WHERE id=$1`, params: [user.id] });
 ````
 
 ```python
 xata.sql().query(
-  "DELETE FROM \"Users\" WHERE id=$1",
-  ["my-record-id"]
+  statement = "DELETE FROM \"Users\" WHERE id=$1",
+  params = ["my-record-id"]
 )
 ```
 
@@ -188,6 +195,34 @@ xata.sql().query(
 {
   "statement": "DELETE FROM  \"Users\" WHERE id=$1",
   "params": ["my-record-id"]
+}
+```
+
+</TabbedCode>
+
+### Query records from the replica store
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const response = await xata.sql<UsersRecord>({
+  statement: `SELECT * FROM "Users" LIMIT 10;`,
+  consistency: "eventual",
+});
+````
+
+```python
+xata.sql().query(
+  statement = "SELECT * FROM \"Users\" LIMIT 10;",
+  consistency = "eventual"
+)
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" LIMIT 10;",
+  "consistency": "eventual"
 }
 ```
 
