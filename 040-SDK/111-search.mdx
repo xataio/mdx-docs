@@ -17,7 +17,9 @@ Xata natively provides text-based search for your database with the following co
 
 ![Xata's website search is powered by Xata search](./images/search.png)
 
-As you insert records into Xata tables, they are automatically indexed for full-text search immediately. You can run a search using the SDK's `search()` function or by using the [REST endpoint directly](/docs/api-reference/db/db_branch_name/tables/table_name/search#free-text-search-in-a-table). The REST API provides two endpoints behind the scenes to power our SDK:
+As you insert records into Xata tables, they are automatically replicated from the Transactional store to the eventually consistent Search store.
+
+You can run a search using one of the SDKs or the [REST endpoint directly](/docs/api-reference/db/db_branch_name/tables/table_name/search#free-text-search-in-a-table). The REST API provides two endpoints behind the scenes to power our SDK:
 
 - The `/query` allows search at the table level.
 - The `/search` endpoint exists both at the database branch and the table level, and it allows searching across multiple tables. While powerful, searching this way does not follow links across tables, other than returning the linked ID. You will need subsequent queries (likely using `.get()`) to pull data from a linked ID.
