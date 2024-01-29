@@ -148,7 +148,7 @@ Response:
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const user = { name: "Keanu Reeves", email: "keanu@example.com" };
-const records = await xata.sql<UsersRecord>`INSERT INTO "Users" (name, email) VALUES (${user.name}, ${user.email})`;
+const { records } = await xata.sql<UsersRecord>`INSERT INTO "Users" (name, email) VALUES (${user.name}, ${user.email})`;
 ```
 
 ```python
