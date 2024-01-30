@@ -205,7 +205,7 @@ const response = await xata.sql<UsersRecord>({
   statement: `SELECT * FROM "Users" LIMIT 10;`,
   consistency: "eventual",
 });
-````
+```
 
 ```python
 xata.sql().query(
