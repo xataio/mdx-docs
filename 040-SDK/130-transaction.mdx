@@ -7,7 +7,7 @@ slug: sdk/transaction
 published: true
 ---
 
-The transactions endpoint lets you execute multiple operations together as a single unit. In this guide, we'll run through why transactions are important and run through Xata's transactions endpoint.
+The transactions endpoint allows you to execute multiple operations together as a single unit. In this guide, we'll run through why transactions are important and run through Xata's transactions endpoint.
 
 Our transactions endpoint is still in beta. This means that the core functionality is stable, but the API itself might change. There are also many new capabilities that we - and our existing users - would like to add to the endpoint.
 
@@ -230,6 +230,8 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 
 </TabbedCode>
 
+### ifVersion
+
 We also support the `ifVersion` flag to avoid overwriting unexpected versions of the record.
 
 If an insert fails for any reason; invalid data, unknown table, ifVersion conflicts, the transaction will return an error.
@@ -343,15 +345,137 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 
 ### deletes
 
-A delete is used to remove records. Delete can operate on records from the same transaction, and will not cancel a transaction
+Delete is used to remove records. Delete can operate on records from the same transaction, and will not cancel a transaction
 if no record is found.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+```ts
+const result = await xata.transactions.run([
+  {
+    insert: {
+      table: 'titles',
+      record: { id: 'rec_cfl4g6v838og05h0iv6g', originalTitle: 'A new film' },
+      createOnly: true
+    }
+  }
+]);
+```
+
+```python
+result = xata.records().transaction({
+  "operations": [
+    {
+      "insert": {
+        "table": "titles",
+        "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "A new film" },
+        "createOnly": True
+      }
+    }
+  ]
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewInsertTransaction(xata.TransactionInsertOp{
+      Table: "titles",
+      Record: map[string]any{
+        "id":            xata.String("rec_cfl4g6v838og05h0iv6g"),
+        "originalTitle": xata.String("A new film"),
+      },
+      CreateOnly: xata.Bool(true),
+    }),
+  },
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
+{
+  "operations": [
+    {
+      "insert": {
+        "table": "titles",
+        "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "A new film" },
+        "createOnly": true
+      }
+    }
+  ]
+}
+```
+
+</TabbedCode>
 
 ### gets
 
-A get is used to retrieve a record by id. A get operation can retrieve records created in the same transaction but will not cancel
+Get is used to retrieve a record by ID. A get operation can retrieve records created in the same transaction but will not cancel
 a transaction if no record is found.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+
+```ts
+const result = await xata.transactions.run([
+  {
+    gets: {
+      table: 'titles',
+      record: { id: 'rec_cfl4g6v838og05h0iv6g', originalTitle: 'A new film' },
+      createOnly: true
+    }
+  }
+]);
+```
+
+```python
+result = xata.records().transaction({
+  "operations": [
+    {
+      "get": {
+        "table": "titles",
+        "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "A new film" },
+        "createOnly": True
+      }
+    }
+  ]
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewGetTransaction(xata.TransactionGetOp{
+      Table: "titles",
+      Record: map[string]any{
+        "id":            xata.String("rec_cfl4g6v838og05h0iv6g"),
+        "originalTitle": xata.String("A new film"),
+      },
+      CreateOnly: xata.Bool(true),
+    }),
+  },
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
+{
+  "operations": [
+    {
+      "get": {
+        "table": "titles",
+        "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "A new film" },
+        "createOnly": true
+      }
+    }
+  ]
+}
+```
+
+</TabbedCode>
 
 ## Limitations
 
 - A maximum of 1000 operations are allowed in a single transaction. If you exceed this limit, you will receive an error message.
-- Inserting and updating content to file and file\[] (file array) columns is not permitted with transactions.
+- Inserting and updating content to `file` and `file\[]` (file array) columns is not permitted with transactions.
+- To avoid the SQL proxy timeout, delete in small batches. It is recommended to delete no more than 10,000 records per batch. You can use a nested `SELECT` statement to manage batch sizes efficiently and prevent timeouts.
