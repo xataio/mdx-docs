@@ -47,8 +47,8 @@ same workflow to sign up for a new account. Run the following command to begin t
 xata auth login
 ```
 
-Upon completion, the command will generate a new API key for your user account. You should be able to view this key in the [account
-settings page within the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for
+Upon completion, the command will generate a new API key for your user account. You should be able to view this key in the ["Account
+Settings" page in the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for
 each OS). It looks like this:
 
 ```toml
@@ -66,7 +66,7 @@ Run the following command and accept all the prompt defaults:
 npm create astro@latest -- --template with-tailwindcss xata-astro
 ```
 
-<Expand title="npm create astro output">
+<Expand title="Output for command: npm create astro">
 
 ```sh
 $ npm create astro@latest -- --template with-tailwindcss xata-astro
@@ -130,7 +130,7 @@ you should choose the region closest to your application users:
 xata init
 ```
 
-<Expand title="xata init output">
+<Expand title="Output for command: xata init">
 
 ```sh
 $ xata init
@@ -242,7 +242,7 @@ Next, import the CSV:
 xata import csv seed/blog-posts.csv --table Posts --create
 ```
 
-<Expand title="xata import csv output">
+<Expand title="Output for command: xata import csv">
 
 ```sh
 $ xata import csv seed/blog-posts.csv --table Posts --create
@@ -271,7 +271,7 @@ from our Astro application. To do this, run:
 xata pull main
 ```
 
-<Expand title="xata pull main output">
+<Expand title="Output for command: xata pull main">
 
 ```sh
 $ xata pull main
@@ -445,7 +445,7 @@ let posts = await xata.db.Posts.getAll();
 Finally, update the UI to display the result of the `getAll` call. If no Post records are present (`posts.length === 0`), show a message
 saying, "No blog posts found". Otherwise, loop through the `posts` using `posts.map` and access the columns of
 each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
-the blog post was published, `slug` to link to individual blog posts (which we'll use later), `title` for the title of
+the blog post was published, `slug` to link to individual blog posts (which you'll use later), `title` for the title of
 the post, and `description` for the textual description of the post:
 
 ```tsx
@@ -773,7 +773,7 @@ If you enjoyed this guide, you could continue working on improving the applicati
 - Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
   use that new field
 
-You can also explore some of the features we've covered in more detail:
+You can explore some of the features covered in more detail:
 
 - [Getting records](/docs/sdk/get)
 - [Filtering records](/docs/sdk/filtering)

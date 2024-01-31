@@ -65,7 +65,7 @@ Begin by creating a new Remix application, accepting the default prompt options:
 npx create-remix@latest xata-remix
 ```
 
-<Expand title="npx create-remix output">
+<Expand title="Output for command: npx create-remix">
 
 ```sh
 $ npx create-remix@latest xata-remix
@@ -98,15 +98,14 @@ By default, the application will run on `http://localhost:3000`.
 
 ## Create a new database
 
-With the Xata CLI installed and logged in and a new Remix application in place, use the Xata CLI to create a new
-database. Accept all the prompt defaults for the following command except for the region selection where
+Once you have the Xata CLI installed, are logged in, and have set up a new Remix application, you are ready to use the Xata CLI to generate a new database. Accept all the prompt defaults for the following command except for the region selection where
 you should choose the region closest to your application users:
 
 ```sh
 xata init
 ```
 
-<Expand title="xata init output">
+<Expand title="Output for command: xata init">
 
 ```sh
 xata init
@@ -205,7 +204,7 @@ Next, import the CSV:
 xata import csv seed/blog-posts.csv --table Posts --create
 ```
 
-<Expand title="xata import csv output">
+<Expand title="Output for command: xata import csv">
 
 ```sh
 $ xata import csv seed/blog-posts.csv --table Posts --create
@@ -234,7 +233,7 @@ from our Remix application. To do this, run:
 xata pull main
 ```
 
-<Expand title="xata pull main output">
+<Expand title="Output for command: xata pull main">
 
 ```sh
 $ xata pull main

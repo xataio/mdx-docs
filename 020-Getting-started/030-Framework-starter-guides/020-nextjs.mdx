@@ -41,15 +41,15 @@ npm install -g '@xata.io/cli'
 </TabbedCode>
 
 Once installed, authenticate the Xata CLI with your Xata account. If you don't already have an account, you can use the
-same workflow to signup for a new account. Run the following command to begin the authentication workflow:
+same workflow to sign up for a new account. Run the following command to begin the authentication workflow:
 
 ```sh
 xata auth login
 ```
 
-On completion, the command will create a new API key for your user account, which you should see in the [account
-settings page within the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for
-each OS). It looks like this:
+Once completed, the command will create a new API key for your user account, which you should see in the ["Account
+Settings" page in the Xata UI][1]. That key will also be stored locally on your computer (the location might vary for
+depending on your operating system). It looks like this:
 
 ```toml
 # .config/xata/credentials
@@ -59,13 +59,13 @@ apiKey=YOUR_API_KEY_HERE
 
 ## Create a new Next.js app
 
-Let's begin by creating a new Next.js application:
+Begin by creating a new Next.js application:
 
 ```sh
 npx create-next-app@latest --typescript xata-nextjs
 ```
 
-<Expand title="npx create-next-app output">
+<Expand title="Output for command: npx create-next-app">
 
 ```sh
 $ npx create-next-app@latest --typescript xata-nextjs
@@ -120,15 +120,14 @@ By default, the application will run on `http://localhost:3000`.
 
 ## Create a new database
 
-With the Xata CLI installed and logged in and a new Next.js application in place, use the Xata CLI to create a new
-database. Accept all the prompt defaults for the following command except for the region selection, where
+Once you have the Xata CLI installed, are logged in, and have set up a new Next JS application, you are ready to use the Xata CLI to generate a new database. Accept all the prompt defaults for the following command except for the region selection, where
 you should choose the region closest to your application users:
 
 ```sh
 xata init
 ```
 
-<Expand title="xata init output">
+<Expand title="Output for command: xata init">
 
 ```sh
 $ xata init
@@ -183,8 +182,8 @@ XATA_API_KEY=YOUR_API_KEY_HERE
 XATA_BRANCH=main
 ```
 
-Since we selected TypeScript support, it also created files that provide typings and functions to call using Xata's
-TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows:
+Since you selected TypeScript support, it also created files that provide typings and functions to call using Xata's
+TypeScript SDK. This will also be referenced in the `.xatarc` file as follows:
 
 ```json
 {
@@ -195,12 +194,11 @@ TypeScript SDK. This will additionally be referenced in the `.xatarc` file as fo
 }
 ```
 
-The `src/xata.ts` file includes generated code you should typically never touch manually.
+The `src/xata.ts` file includes generated code you should typically never manually configure.
 
 ## Define the database schema and import CSV data
 
-You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide, we'll walk through
-using the Xata CLI and a CSV file to:
+You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide, you'll use the Xata CLI and a CSV file to:
 
 1.  Auto-generate a schema based on column headings for names and data types inferred from the column values
 2.  Import data to the database
@@ -227,7 +225,7 @@ Next, import the CSV:
 xata import csv seed/blog-posts.csv --table Posts --create
 ```
 
-<Expand title="xata import csv output">
+<Expand title="Output for command: xata import csv">
 
 ```sh
 $ xata import csv seed/blog-posts.csv --table Posts --create
@@ -256,7 +254,7 @@ from our Next.js application. To do this, run:
 xata pull main
 ```
 
-<Expand title="xata pull main output">
+<Expand title="Output for command: xata pull main">
 
 ```sh
 $ xata pull main
@@ -267,7 +265,7 @@ Generated Xata code to ./src/xata.ts
 
 </Expand>
 
-This updates the contents of `src/xata.ts` based on the schema defined on the `main` branch of our database. So, if you
+This updates the contents of `src/xata.ts` based on the schema defined on the `main` branch of our database. If you
 make any further changes to the schema, run `xata pull <branch>` to update the auto-generated code.
 
 ## Basic styling and layout
@@ -371,7 +369,7 @@ import { getXataClient } from '@/xata';
 const xata = getXataClient();
 ```
 
-Then, in the `Home` function, use the `xata` client instance to get all the posts stored in the database. You achieve this via the auto-generated `Posts` property, which exposes a number of helper functions. In this case, we use the [`getAll`](/docs/sdk/get#the-typescript-sdk-functions-for-querying) function to get all the Post records.
+Then, in the `Home` function, use the `xata` client instance to get all the posts stored in the database. You achieve this via the auto-generated `Posts` property, which exposes a number of helper functions. In this case, use the [`getAll`](/docs/sdk/get#the-typescript-sdk-functions-for-querying) function to get all the Post records.
 
 ```tsx
 export default async function Home() {
@@ -388,10 +386,10 @@ export default async function Home() {
   documentation](/docs/sdk/get#the-typescript-sdk-functions-for-querying) for more information.
 </Alert>
 
-Finally, we update the UI to display the result of the `getAll` call. If no Post records are present (`posts.length === 0`), we show a message
-saying, "No blog posts found". Otherwise, we loop through the `posts` using `posts.map` and access the columns of
+Finally, update the UI to display the result of the `getAll` call. If no Post records are present (`posts.length === 0`), the message
+"No blog posts found" is displayed. Otherwise, loop through the `posts` using `posts.map` and access the columns of
 each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
-the blog post was published, `slug` to link to individual blog posts (which we'll use later), `title` for the title of
+the blog post was published, `slug` to link to individual blog posts (which you'll use later), `title` for the title of
 the post, and `description` for the textual description of the post:
 
 ```tsx
@@ -424,7 +422,7 @@ presently exist. That's the next step in this guide.
 
 ## Query and show a single posts
 
-To handle the single posts identified by a `slug` we need to make use of Next.js
+To handle the single post identified by a `slug`, use Next.js
 [dynamic routes](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes).
 
 Create a new file, `src/app/posts/[slug]/page.tsx`, where the Next.js framework uses the directory `[slug]` to capture
@@ -515,8 +513,8 @@ The single blog post page will look as follows:
 
 The last piece of functionality to be added to the application is full-text fuzzy search of blog posts.
 
-When you insert data into a Xata database, it is automatically indexed for full-text search. So we don't need to change
-any configuration to enable search, we just need to use the [TypeScript SDK search feature](/docs/sdk/search).
+When you insert data into a Xata database, it is automatically indexed for full-text search. You don't need to change
+any configuration to enable search, you just need to use the [TypeScript SDK search feature](/docs/sdk/search).
 
 Let's add this functionality to the landing page:
 
@@ -590,7 +588,7 @@ export default async function Home({ searchParams }: { searchParams: { q: string
 The third and last change is to add a `<form>` to the page to allow a search value to be entered and submitted. The
 default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
 string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
-a `GET` request in the format `?q={q-value}`. Since this is precisely the behavior we need, and we've already updated
+a `GET` request in the format `?q={q-value}`. Since this is precisely the behavior you need, and you've already updated
 the page function to accept the object with a `searchParams` property, everything is in place.
 
 ```tsx
@@ -645,7 +643,7 @@ If you enjoyed this guide, you could continue working on improving the applicati
 - Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
   use that new field
 
-You can also explore some of the features we've covered in more detail:
+You can explore some of the features covered in more detail:
 
 - [Getting records](/docs/sdk/get)
 - [Filtering records](/docs/sdk/filtering)
