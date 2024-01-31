@@ -18,3 +18,47 @@ The guides demonstrate the following features:
 - Generating TypeScript code with database branching
 - Querying and filtering
 - Using full-text fuzzy search
+
+## What you need to start?
+
+Each getting started guides requires you to install the Xata CLI, authenticate it, and store the CLI API key locally.
+
+### Xata CLI
+
+The [Xata command line interface (CLI)](/docs/getting-started/installation) allows you to work with your Xata serverless database directly from your command line and is important for integrating Xata's capabilities into your project. Using the CLI, you can manage your database, schemas, and data.
+
+To install the Xata CLI, use the following command:
+
+<TabbedCode tabs={['Shell', 'PowerShell']}>
+
+```sh
+npm install -g @xata.io/cli
+```
+
+```sh
+npm install -g '@xata.io/cli'
+```
+
+</TabbedCode>
+
+To learn more about the Xata CLI, refer to [documentation](<(/docs/getting-started/installation)>)
+
+### Authentication
+
+Authentication links the CLI to your Xata account, enabling you to perform database operations securely. If you are not yet a Xata user, the authentication process also guides you through creating a new account.
+You can use the command `xata auth login` to initiate authentication. Following authentication, an API key specific to your account is generated.
+The generated API key ensures communication between your CLI and the Xata databases you'll manage.
+
+The key is stored locally on your computer. The exact storage location can vary depending on your operating system. Typically, the API key is stored in a configuration file, with the following format:
+
+```toml
+# Path: .config/xata/credentials
+[default]
+apiKey=YOUR_API_KEY_HERE
+```
+
+The CLI makes it easier to manage your database activities directly from the terminal. By authenticating the CLI and securely storing your API key locally, you ensure that your database operations are protected and that only authorized users can access your data.
+
+## Next steps
+
+Select either [Astro](/docs/getting-started/astro), [Next.js](/docs/getting-started/nextjs), [Nuxt](/docs/getting-started/nuxt), [Remix](/docs/getting-started/remix), [SolidStart](/docs/getting-started/solidstart), or [SvelteKit](/docs/getting-started/sveltekit) to begin building a blog application with Xata.

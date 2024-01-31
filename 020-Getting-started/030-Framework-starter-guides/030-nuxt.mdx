@@ -65,7 +65,7 @@ Begin by creating a new Nuxt application, accepting the default prompt options:
 npx nuxi@latest init xata-nuxt
 ```
 
-<Expand title="npx nuxi@latest init xata-nuxt">
+<Expand title="Output for command: npx nuxi@latest init xata-nuxt">
 
 ```sh
 $ npx nuxi@latest init xata-nuxt
@@ -91,15 +91,14 @@ By default, the application will run on `http://localhost:3000/`.
 
 ## Create a new database
 
-With the Xata CLI installed and logged in and a new Nuxt application in place, use the Xata CLI to create a new
-database. Accept all the prompt defaults for the following command except for the region selection, where
+Once you have the Xata CLI installed, are logged in, and have set up a new Nuxt application, you are ready to use the Xata CLI to generate a new database. Accept all the prompt defaults for the following command except for the region selection, where
 you should choose the region closest to your application users:
 
 ```sh
 xata init
 ```
 
-<Expand title="xata init output">
+<Expand title="Output for command: xata init">
 
 ```sh
 $ 🦋 Initializing project... We will ask you some questions.
@@ -197,7 +196,7 @@ Next, import the CSV:
 xata import csv seed/blog-posts.csv --table Posts --create
 ```
 
-<Expand title="xata import csv output">
+<Expand title="Output for command: xata import csv">
 
 ```sh
 $ xata import csv seed/blog-posts.csv --table Posts --create
@@ -226,7 +225,7 @@ from our Nuxt application. To do this, run:
 xata pull main
 ```
 
-<Expand title="xata pull main output">
+<Expand title="Output for command: xata pull main">
 
 ```sh
 $ xata pull main
