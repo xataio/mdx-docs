@@ -163,14 +163,12 @@ try {
 
 ### inserts
 
-Inserts can be used to insert records across any number of tables in your database. As with the insert endpoints,
-you can explicitly set an ID, or omit it and have Xata auto-generate one for you. Either way, on a successful transaction,
-Xata will return the ID to you.
+The `insert` operation allows you to add new records to any table in your database. You have the option to either set an explicit ID for each record or allow Xata to auto-generate one. If successful, Xata returns the ID of the inserted record.
 
-By default, if a record exists with the same explicit ID, Xata will overwrite the record. You can adjust this behavior by
-setting `createOnly` to `true` for the operation.
+By default, inserting a record with an existing ID will overwrite the old record. You can change this default behavior by setting `createOnly` to `true`. This ensures that the operation only creates new records and does not overwrite existing ones.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+
 ```ts
 const result = await xata.transactions.run([
   {
@@ -230,11 +228,76 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 
 </TabbedCode>
 
-### ifVersion
+#### ifVersion
 
-We also support the `ifVersion` flag to avoid overwriting unexpected versions of the record.
+The `ifVersion` parameter is used to control updates based on the version of the record. It prevents updates to a record unless the version matches the specified `ifVersion`.
+We support the `ifVersion` flag to avoid overwriting unexpected versions of the record.
 
-If an insert fails for any reason; invalid data, unknown table, ifVersion conflicts, the transaction will return an error.
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+
+```ts
+const result = await xata.transactions.run([
+  {
+    insert: {
+      table: 'titles',
+      where: { id: 'rec_cfl4g6v838og05h0iv6g', version: ifVersion },
+      record: { originalTitle: 'An updated title' }
+    }
+  }
+]);
+```
+
+```python
+
+result = xata.records().transaction({
+  "operations": [
+    {
+      "insert": {
+        "table": "titles",
+        "where": { "id": "rec_cfl4g6v838og05h0iv6g", "version": if_version },
+        "record": { "originalTitle": "An updated title" }
+      }
+    }
+  ]
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewInsertTransaction(xata.TransactionInsertOp{
+      Table: "titles",
+      Where: map[string]any{
+        "id":      xata.String("rec_cfl4g6v838og05h0iv6g"),
+        "version": xata.Int(ifVersion),
+      },
+      Record: map[string]any{
+        "originalTitle": xata.String("An updated title"),
+      },
+    }),
+  },
+})
+```
+
+```json
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
+{
+  "operations": [
+    {
+      "insert": {
+        "table": "titles",
+        "where": { "id": "rec_cfl4g6v838og05h0iv6g", "version": ifVersion },
+        "record": { "originalTitle": "An updated title" }
+      }
+    }
+  ]
+}
+```
+
+</TabbedCode>
+
+If an insert fails for any reason; invalid data, unknown table, `ifVersion` conflicts, the transaction will return an error.
 
 ### updates
 
@@ -352,12 +415,18 @@ if no record is found.
 ```ts
 const result = await xata.transactions.run([
   {
-    insert: {
+    delete: {
       table: 'titles',
-      record: { id: 'rec_cfl4g6v838og05h0iv6g', originalTitle: 'A new film' },
-      createOnly: true
+      record: { id: 'rec_cfl4g6v00023' },
+    }
+  }, 
+  {
+    delete: {
+      table: 'titles',
+      record: { id: 'rec_cfl4g6v00056' },
     }
   }
+  // Additional transactions can be added here
 ]);
 ```
 
@@ -365,13 +434,19 @@ const result = await xata.transactions.run([
 result = xata.records().transaction({
   "operations": [
     {
-      "insert": {
+      "delete": {
         "table": "titles",
-        "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "A new film" },
-        "createOnly": True
+        "where": { "id": "rec_cfl4g6v00023" }
       }
+    },
+    {
+    delete: {
+      table: 'titles',
+      record: { id: 'rec_cfl4g6v00056' },
     }
+  },
   ]
+  # Additional transactions can be added here
 })
 ```
 
@@ -379,15 +454,20 @@ result = xata.records().transaction({
 recordsClient, _ := xata.NewRecordsClient()
 result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
-    xata.NewInsertTransaction(xata.TransactionInsertOp{
+    xata.NewDeleteTransaction(xata.TransactionDeleteOp{
       Table: "titles",
-      Record: map[string]any{
-        "id":            xata.String("rec_cfl4g6v838og05h0iv6g"),
-        "originalTitle": xata.String("A new film"),
+      Where: map[string]any{
+        "id": xata.String("rec_cfl4g6v00023"),
       },
-      CreateOnly: xata.Bool(true),
     }),
-  },
+    xata.NewDeleteTransaction(xata.TransactionDeleteOp{
+      Table: "titles",
+      Where: map[string]any{
+        "id": xata.String("rec_cfl4g6v00056"),
+    },
+  }),
+   // Additional transactions can be added here
+  ,
 })
 ```
 
@@ -396,12 +476,18 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 {
   "operations": [
     {
-      "insert": {
+      "delete": {
         "table": "titles",
-        "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "A new film" },
-        "createOnly": true
+        "where": { "id": "rec_cfl4g6v00023" }
+      }
+    },
+    {
+      "delete": {
+        "table": "titles",
+        "where": { "id": "rec_cfl4g6v00056" }
       }
     }
+    // Additional transactions can be added here
   ]
 }
 ```
@@ -418,10 +504,15 @@ a transaction if no record is found.
 ```ts
 const result = await xata.transactions.run([
   {
-    gets: {
+    get: {
       table: 'titles',
-      record: { id: 'rec_cfl4g6v838og05h0iv6g', originalTitle: 'A new film' },
-      createOnly: true
+      where: { id: 'rec_cfl4g6v00023' }
+    }
+  },
+  {
+    get: {
+      table: 'titles',
+      where: { id: 'rec_cfl4g6v00056' }
     }
   }
 ]);
@@ -433,8 +524,13 @@ result = xata.records().transaction({
     {
       "get": {
         "table": "titles",
-        "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "A new film" },
-        "createOnly": True
+        "where": { "id": "rec_cfl4g6v00023" }
+      }
+    },
+    {
+      "get": {
+        "table": "titles",
+        "where": { "id": "rec_cfl4g6v00056" }
       }
     }
   ]
@@ -447,11 +543,15 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
     xata.NewGetTransaction(xata.TransactionGetOp{
       Table: "titles",
-      Record: map[string]any{
-        "id":            xata.String("rec_cfl4g6v838og05h0iv6g"),
-        "originalTitle": xata.String("A new film"),
+      Where: map[string]any{
+        "id": xata.String("rec_cfl4g6v00023"),
       },
-      CreateOnly: xata.Bool(true),
+    }),
+    xata.NewGetTransaction(xata.TransactionGetOp{
+      Table: "titles",
+      Where: map[string]any{
+        "id": xata.String("rec_cfl4g6v00056"),
+      },
     }),
   },
 })
@@ -464,8 +564,13 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
     {
       "get": {
         "table": "titles",
-        "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "A new film" },
-        "createOnly": true
+        "where": { "id": "rec_cfl4g6v00023" }
+      }
+    },
+    {
+      "get": {
+        "table": "titles",
+        "where": { "id": "rec_cfl4g6v00056" }
       }
     }
   ]
@@ -478,4 +583,4 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 
 - A maximum of 1000 operations are allowed in a single transaction. If you exceed this limit, you will receive an error message.
 - Inserting and updating content to `file` and `file\[]` (file array) columns is not permitted with transactions.
-- To avoid the SQL proxy timeout, delete in small batches. It is recommended to delete no more than 10,000 records per batch. You can use a nested `SELECT` statement to manage batch sizes efficiently and prevent timeouts.
+- To avoid the SQL proxy timeout, delete in small batches. It is recommended to delete no more than 10,000 records per batch.

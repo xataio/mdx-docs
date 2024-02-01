@@ -127,8 +127,24 @@ users, _ := client.Transaction(context.TODO(), xata.TransactionRequest{
 
 </TabbedCode>
 
-[Transactions](/docs/sdk/transaction) will not fail a delete operation if no record is found. All operations in a transaction must succeed otherwise it is rolled back.
-To avoid the SQL proxy's 60-second timeout, delete in small batches. It is recommended to delete no more than 10,000 records per batch. You can use a nested `SELECT` statement to manage batch sizes efficiently and prevent timeouts.
+To delete multiple records we recommend using transactions. [Transactions](/docs/sdk/transaction#delete) will not fail a delete operation if a record is not found. All operations in a transaction must succeed otherwise it is rolled back.
+
+To avoid the SQL proxy's 60-second timeout, delete in small batches. We recommend deleting no more than 10,000 records per batch. You can use a nested `SELECT` statement to manage batch sizes efficiently and prevent timeouts. For example, as in the following:
+
+```sql
+DELETE FROM titles
+WHERE id IN (
+    SELECT id
+    FROM titles
+    WHERE originalTitle ILIKE '%Matrix%'
+    LIMIT 10000
+);
+```
+
+- `SELECT id`: Specifies that only the `id` column will be retrieved in the query.
+- `FROM titles`: The subquery operates on the `titles` table.
+- `WHERE originalTitle ILIKE '%Matrix%'`: Filters rows based on a case-insensitive partial match in the `originalTitle` column.
+- `LIMIT 10000`: Restricts the number of results to a maximum of 10,000 rows.
 
 ## Next Steps
 
