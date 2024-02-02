@@ -9,8 +9,6 @@ published: true
 
 Xata offers general purpose file attachment capabilities. In order to simplify the management of large binary objects and to improve the developer experience, Xata integrates files support directly into the database itself. The aim is to offer a unified, seamless experience by exposing file support under one API, security model, and SDK. Using this approach, the [queries](/docs/sdk/get), [filters](/docs/sdk/filtering), [summaries](/docs/sdk/summarize), [aggregations](/docs/sdk/aggregate) from the SDK can also be used on the files' metadata. The metadata (file name, media type, tags) is also indexed for [search](/docs/sdk/search) so it can be included in search results.
 
-![Add the file column type to start working with files](images/file-attachments-add.jpg)
-
 ## Schema
 
 To support file attachments, Xata provides two column types:
@@ -149,8 +147,6 @@ user, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
 </TabbedCode>
 
 Within the Xata UI you can make files public by default for the column by setting `Make files public by default` when creating the column. This can also be done programtically by setting a parameter on the file column in the [schema](/docs/concepts/schema).
-
-![Entire columns can be made public by default](images/column-access-public.png)
 
 <Alert status="warning">
   **Public object caching** Changing the permissions of a cached public object does not remove it from the cache. The

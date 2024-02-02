@@ -31,8 +31,6 @@ While the above architecture is a very common one in the industry, it hasn’t b
 
 As we’ve seen above, we call the combination of PostgreSQL + Elasticsearch and the associated services a “cell”. The cells are grouped into regions and form our **data plane**.
 
-![Xata global regions](/images/global-regions.png)
-
 Besides the cells, the regions contain other services:
 
 - An API Gateway service exists in each region and is responsible for routing between cells and enforcing the rate limits.
