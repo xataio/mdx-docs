@@ -7,7 +7,7 @@ slug: integrations/airbyte
 published: true
 ---
 
-[Airbyte](https://airbyte.com/) is an ETL platform to connect your databases and data warehouses. Xata has [contributed](https://github.com/airbytehq/airbyte/pull/24192) a [Destination Connector](https://docs.airbyte.com/integrations/destinations/xata/) that enables you to ingest data from various sources into your Xata workspace. Under the hood, the connector leverages the [BulkProcessor](/docs/python-sdk/bulk-processor) of the [Python SDK](/docs/python-sdk/overview).
+[Airbyte](https://airbyte.com/) is an ETL platform another change to connect your databases and data warehouses. Xata has [contributed](https://github.com/airbytehq/airbyte/pull/24192) a [Destination Connector](https://docs.airbyte.com/integrations/destinations/xata/) that enables you to ingest data from various sources into your Xata workspace. Under the hood, the connector leverages the [BulkProcessor](/docs/python-sdk/bulk-processor) of the [Python SDK](/docs/python-sdk/overview).
 
 The connector operates in upsert mode, if a record does not have a property `id`, then the record is created otherwise the record is overwritten.
 
