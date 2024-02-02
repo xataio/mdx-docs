@@ -22,8 +22,6 @@ Everything else that falls under the context of a workspace is operable with Xat
 
 Bound by the [REST API limits](/rest-api/limits), each workspace in Xata can contain a number of databases and each database can have a number of tables and branches . When interacting with Xata properties within the bounds of a workspace, we use the workspace-level API. This is accessible at a domain that is visible to you in your workspace's management section.
 
-![Managing a workspace in Xata](images/manage-workspace.png)
-
 For example, the general form of the database API is:
 
 ```text
@@ -60,13 +58,9 @@ The following are tools for API development and management. Insomnia serves as a
 
 [Insomnia](https://insomnia.rest/) is a leading open-source API Client, and collaborative API design platform for REST, SOAP, GraphQL, and GRPC.
 
-![Xata API in Insomnia](images/insomnia.png)
-
 ### Postman
 
 [Postman](https://www.postman.com/) makes API development easy, offering tools to simplify each step of the API building process and streamlines collaboration so you can test APIs faster.
-
-![Xata API in Postman](images/postman.png)
 
 > To authenticate using Postman, select the authorization type `Bearer Token` and paste your Xata API key in the _Token_ section.
 
@@ -75,5 +69,3 @@ The following are tools for API development and management. Insomnia serves as a
 With [OpenAPI Codegen](https://github.com/fabien0102/openapi-codegen) you can generate TypeScript fetcher functions or typed react-query hooks from your OpenAPI schema.
 
 > ⚠️ Using generated react-query components in this context will leak your API key! The REST API must always be called in a server-side environment!
-
-![Xata API with openapi-codegen](images/openapi-codegen.png)
