@@ -17,8 +17,6 @@ If you just want to build apps and use the Xata serverless service, you **do not
 
 Xata is a global multi-tenant system, composed of **cells**, each living in a region. At the high level, one Xata **cell** implements the following architecture:
 
-![Xata cell](/images/xata-cell.png)
-
 - The data is stored in PostgreSQL, which is considered the source of truth.
 - The PostgreSQL logical replication events are written in a Kafka queue, from where they can be read by multiple consumers.
 - One of these consumers indexes the data into Elasticsearch.

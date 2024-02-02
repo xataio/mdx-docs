@@ -11,8 +11,6 @@ published: true
 
 What is offered in Xata and then link to the more in-depth docs.
 
-![Xata cell](/images/xata-cell.png)
-
 - The data is stored in PostgreSQL, which is considered the source of truth.
 - The PostgreSQL logical replication events are written in a Kafka queue, from where they can be read by multiple consumers.
 - One of these consumers indexes the data into Elasticsearch.
