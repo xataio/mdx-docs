@@ -17,8 +17,6 @@ If you just want to build apps and use the Xata serverless service, you **do not
 
 Xata is a global multi-tenant system, composed of **cells**, each living in a region. At the high level, one Xata **cell** implements the following architecture:
 
-![Xata cell](/images/xata-cell.png)
-
 - The data is stored in PostgreSQL, which is considered the source of truth.
 - The PostgreSQL logical replication events are written in a Kafka queue, from where they can be read by multiple consumers.
 - One of these consumers indexes the data into Elasticsearch.
@@ -30,8 +28,6 @@ While the above architecture is a very common one in the industry, it hasn’t b
 ## Going global
 
 As we’ve seen above, we call the combination of PostgreSQL + Elasticsearch and the associated services a “cell”. The cells are grouped into regions and form our **data plane**.
-
-![Xata global regions](/images/global-regions.png)
 
 Besides the cells, the regions contain other services:
 
@@ -102,8 +98,6 @@ There are multiple benefits to having database branches, which is why lately the
 - enable standardized workflows for applying schema migrations safely.
 
 The last one is particularly interesting because migrating database schemas is usually easy with small amounts of data, but becomes very painful when dealing with large amounts of data. In the NoSQL wave of DB products, this issue was avoided by going schemaless. However, not having a schema introduces its own class of problems, so lately the pendulum is swinging back toward databases with strict schemas.
-
-![Migration Request](/images/migration-screenshot.png)
 
 One reason why migrations are difficult at scale is that `ALTER` statements can lock the database table. If an `ALTER` statement takes an exclusive table lock and it takes, say, one minute to execute, it essentially means one minute of downtime for your application, which is usually unacceptable. In PostgreSQL some `ALTER` statements are “safe”, meaning that they don’t take an exclusive lock, or if they take a lock they hold it for a very small amount of time. Simple migrations like adding a column or dropping a column are usually safe in PostgreSQL, but if that column has constraints, then the operation might become unsafe.
 
