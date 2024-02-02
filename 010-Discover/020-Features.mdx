@@ -1,0 +1,30 @@
+---
+title: Features
+navTitle: Features
+keywords: ['cloud service']
+description: Xata paves the way for scalability, efficient data operations, and accelerated app development
+slug: discover/features
+published: true
+---
+
+# Features
+
+What is offered in Xata and then link to the more in-depth docs.
+
+![Xata cell](/images/xata-cell.png)
+
+- The data is stored in PostgreSQL, which is considered the source of truth.
+- The PostgreSQL logical replication events are written in a Kafka queue, from where they can be read by multiple consumers.
+- One of these consumers indexes the data into Elasticsearch.
+- The Xata API layer offers a RESTful API offering both the functionality of the relational database (PostgreSQL) with the advanced search and analytics from the search engine/columnar store (Elasticsearch).
+- On top of this API, Xata has client SDKs and a web interface.
+
+While the above architecture is a very common one in the industry, it hasn’t been —until now— productized in a service, which means a lot of teams were forced to either implement something similar to the above or live with reduced functionality.
+
+## Going global
+
+As we’ve seen above, we call the combination of PostgreSQL + Elasticsearch and the associated services a “cell”. The cells are grouped into regions and form our **data plane**.
+
+![Xata global regions](/images/global-regions.png)
+
+Besides the cells, the regions contain other services:

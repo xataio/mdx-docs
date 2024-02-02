@@ -1,0 +1,31 @@
+---
+title: Logging
+navTitle: Logging
+keywords: ['schema', 'import']
+description: Programatically create a database schema
+slug: recipes/ga
+published: true
+---
+
+The Xata CLI allows you to create a database schema programatically by using `xata init` with the `--schema` parameter and a properly formatted JSON file. For example. Given the JSON file below, we could create `Posts`, `Users` and `Teams` tables into a new database.
+
+```sh
+xata init --schema /path/to/json_file.json
+```
+
+```json
+{
+  "tables": [
+    {
+      "name": "Posts",
+      "columns": [
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "labels",
+          "type": "multiple"
+        },
+        {
+```

@@ -1,0 +1,36 @@
+---
+title: What is Xata
+navTitle: What is Xata?
+keywords: ['cloud service']
+description: Xata paves the way for scalability, efficient data operations, and accelerated app development
+slug: discover/how-it-works
+published: true
+---
+
+# How Xata works
+
+Xata is a new type of cloud service: it offers an abstraction layer on top of multiple data stores in order to make application development and operations simpler. We call this type of service a [Serverless Data Platform](/docs/concepts/serverless-data-platform). This document explains the internal architecture of the Xata service, which can be useful to build a correct mental model of Xata. It can also be useful if you want to replicate the same architecture for yourself, which would give you some of the benefits of using Xata.
+
+If you just want to build apps and use the Xata serverless service, you **do not** need to read this document. We’re solving these problems so that you don’t have to.
+
+## Overview
+
+Xata is a global multi-tenant system, composed of **cells**, each living in a region. At the high level, one Xata **cell** implements the following architecture:
+
+![Xata cell](/images/xata-cell.png)
+
+- The data is stored in PostgreSQL, which is considered the source of truth.
+- The PostgreSQL logical replication events are written in a Kafka queue, from where they can be read by multiple consumers.
+- One of these consumers indexes the data into Elasticsearch.
+- The Xata API layer offers a RESTful API offering both the functionality of the relational database (PostgreSQL) with the advanced search and analytics from the search engine/columnar store (Elasticsearch).
+- On top of this API, Xata has client SDKs and a web interface.
+
+While the above architecture is a very common one in the industry, it hasn’t been —until now— productized in a service, which means a lot of teams were forced to either implement something similar to the above or live with reduced functionality.
+
+## Going global
+
+As we’ve seen above, we call the combination of PostgreSQL + Elasticsearch and the associated services a “cell”. The cells are grouped into regions and form our **data plane**.
+
+![Xata global regions](/images/global-regions.png)
+
+Besides the cells, the regions contain other services:
