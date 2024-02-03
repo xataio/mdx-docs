@@ -127,9 +127,14 @@ users, _ := client.Transaction(context.TODO(), xata.TransactionRequest{
 
 </TabbedCode>
 
-To delete multiple records we recommend using transactions. [Transactions](/docs/sdk/transaction#delete) will not fail a delete operation if a record is not found. All operations in a transaction must succeed otherwise it is rolled back.
+To delete multiple records from the API, we recommend using transactions. [Transactions](/docs/sdk/transaction#delete) will not fail a delete operation if a record is not found. All operations in a transaction must succeed otherwise it is rolled back.
 
-To avoid the SQL proxy's 60-second timeout, delete in small batches. We recommend deleting no more than 10,000 records per batch. You can use a nested `SELECT` statement to manage batch sizes efficiently and prevent timeouts. For example, as in the following:
+Alternatively, you can use the `DELETE` statement via the [SQL proxy](/docs/sdk/sql/overview).
+
+<Alert status="warning">
+  When dealing with a large number of records, there is a 60-second timeout. To avoid the SQL proxy's timeout, delete in
+  small batches. We recommend limiting each deletion batch to a maximum of 10,000 records.
+</Alert>
 
 ```sql
 DELETE FROM titles
