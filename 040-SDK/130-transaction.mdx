@@ -360,7 +360,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
     xata.NewUpdateTransaction(xata.TransactionUpdateOp{
       Table: "Users",
-      ID:    "rec_cmf56ugvjdkilkpcdeu0",
+      Id:    "rec_cmf56ugvjdkilkpcdeu0",
       Fields: map[string]any{
         "email": xata.String("neo@matrix.com"),
         "name":  xata.String("Neo"),
@@ -368,7 +368,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
     }),
     xata.NewUpdateTransaction(xata.TransactionUpdateOp{
       Table: "Users",
-      ID:    "rec_cmf572veoo9ahn3r96p0",
+      Id:    "rec_cmf572veoo9ahn3r96p0",
       Fields: map[string]any{
         "email": xata.String("trinity@matrix.com"),
         "name":  xata.String("Trinity"),
@@ -442,9 +442,9 @@ result = xata.records().transaction({
         "table": 'titles',
         "record": { "id": "rec_cfl4g6v00056" },
       }
-  },
+    },
+    # You can add additional transactions
   ]
-  # You can add additional transactions
 })
 ```
 
@@ -529,7 +529,7 @@ result = xata.records().transaction({
         "id": "rec_cfl4g6v00056",
         "columns": ["id", "originalTitle"]
       }
-    }
+    },
   ]
 })
 ```
@@ -539,16 +539,14 @@ recordsClient, _ := xata.NewRecordsClient()
 result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
     xata.NewGetTransaction(xata.TransactionGetOp{
-      Table: "titles",
-      Where: map[string]any{
-        "id": xata.String("rec_cfl4g6v00023"),
-      },
+      Table:   "titles",
+      Id:      xata.String("rec_cfl4g6v00023"),
+      Columns: []string{"id", "originalTitle"},
     }),
     xata.NewGetTransaction(xata.TransactionGetOp{
-      Table: "titles",
-      Where: map[string]any{
-        "id": xata.String("rec_cfl4g6v00056"),
-      },
+      Table:    "titles",
+      Id:       xata.String("rec_cfl4g6v00056"),
+      Columns: []string{"id", "originalTitle"},
     }),
   },
 })
