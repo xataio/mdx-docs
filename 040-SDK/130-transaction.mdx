@@ -374,6 +374,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
         "name":  xata.String("Trinity"),
       },
     }),
+    // You can add additional transactions
   },
 })
 ```
@@ -437,10 +438,10 @@ result = xata.records().transaction({
       }
     },
     {
-    "delete": {
-      "table": 'titles',
-      "record": { "id": "rec_cfl4g6v00056" },
-    }
+      "delete": {
+        "table": 'titles',
+        "record": { "id": "rec_cfl4g6v00056" },
+      }
   },
   ]
   # You can add additional transactions
@@ -453,18 +454,14 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
     xata.NewDeleteTransaction(xata.TransactionDeleteOp{
       Table: "titles",
-      Where: map[string]any{
-        "id": xata.String("rec_cfl4g6v00023"),
-      },
+      Id:    xata.String("rec_cfl4g6v00023"),
     }),
     xata.NewDeleteTransaction(xata.TransactionDeleteOp{
       Table: "titles",
-      Where: map[string]any{
-        "id": xata.String("rec_cfl4g6v00056"),
-    },
-  }),
-   // You can add additional transactions
-  ,
+      Id:    xata.String("rec_cfl4g6v00056"),
+    }),
+    // You can add additional transactions
+  }
 })
 ```
 
