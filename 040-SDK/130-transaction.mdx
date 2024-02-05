@@ -254,8 +254,8 @@ result = xata.records().transaction({
     {
       "insert": {
         "table": "titles",
-        "where": { "id": "rec_cfl4g6v838og05h0iv6g", "version": if_version },
-        "record": { "originalTitle": "An updated title" }
+        "record": {"id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "An updated title"},
+        "ifVersion": 0
       }
     }
   ]
@@ -267,13 +267,11 @@ recordsClient, _ := xata.NewRecordsClient()
 result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
     xata.NewInsertTransaction(xata.TransactionInsertOp{
-      Table: "titles",
-      Where: map[string]any{
-        "id":      xata.String("rec_cfl4g6v838og05h0iv6g"),
-        "version": xata.Int(ifVersion),
-      },
-      Record: map[string]any{
+      Table:     "titles",
+      IfVersion: xata.Int(0),
+      Record:    map[string]any{
         "originalTitle": xata.String("An updated title"),
+        "id":            xata.String("rec_cfl4g6v838og05h0iv6g"),
       },
     }),
   },
@@ -362,7 +360,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
     xata.NewUpdateTransaction(xata.TransactionUpdateOp{
       Table: "Users",
-      ID:    "rec_cmf56ugvjdkilkpcdeu0",
+      Id:    "rec_cmf56ugvjdkilkpcdeu0",
       Fields: map[string]any{
         "email": xata.String("neo@matrix.com"),
         "name":  xata.String("Neo"),
@@ -370,12 +368,13 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
     }),
     xata.NewUpdateTransaction(xata.TransactionUpdateOp{
       Table: "Users",
-      ID:    "rec_cmf572veoo9ahn3r96p0",
+      Id:    "rec_cmf572veoo9ahn3r96p0",
       Fields: map[string]any{
         "email": xata.String("trinity@matrix.com"),
         "name":  xata.String("Trinity"),
       },
     }),
+    // You can add additional transactions
   },
 })
 ```
@@ -439,13 +438,13 @@ result = xata.records().transaction({
       }
     },
     {
-    "delete": {
-      "table": 'titles',
-      "record": { "id": "rec_cfl4g6v00056" },
-    }
-  },
+      "delete": {
+        "table": 'titles',
+        "record": { "id": "rec_cfl4g6v00056" },
+      }
+    },
+    # You can add additional transactions
   ]
-  # You can add additional transactions
 })
 ```
 
@@ -455,18 +454,14 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
     xata.NewDeleteTransaction(xata.TransactionDeleteOp{
       Table: "titles",
-      Where: map[string]any{
-        "id": xata.String("rec_cfl4g6v00023"),
-      },
+      Id:    xata.String("rec_cfl4g6v00023"),
     }),
     xata.NewDeleteTransaction(xata.TransactionDeleteOp{
       Table: "titles",
-      Where: map[string]any{
-        "id": xata.String("rec_cfl4g6v00056"),
-    },
-  }),
-   // You can add additional transactions
-  ,
+      Id:    xata.String("rec_cfl4g6v00056"),
+    }),
+    // You can add additional transactions
+  }
 })
 ```
 
@@ -534,7 +529,7 @@ result = xata.records().transaction({
         "id": "rec_cfl4g6v00056",
         "columns": ["id", "originalTitle"]
       }
-    }
+    },
   ]
 })
 ```
@@ -544,16 +539,14 @@ recordsClient, _ := xata.NewRecordsClient()
 result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
     xata.NewGetTransaction(xata.TransactionGetOp{
-      Table: "titles",
-      Where: map[string]any{
-        "id": xata.String("rec_cfl4g6v00023"),
-      },
+      Table:   "titles",
+      Id:      xata.String("rec_cfl4g6v00023"),
+      Columns: []string{"id", "originalTitle"},
     }),
     xata.NewGetTransaction(xata.TransactionGetOp{
-      Table: "titles",
-      Where: map[string]any{
-        "id": xata.String("rec_cfl4g6v00056"),
-      },
+      Table:    "titles",
+      Id:       xata.String("rec_cfl4g6v00056"),
+      Columns: []string{"id", "originalTitle"},
     }),
   },
 })
