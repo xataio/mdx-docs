@@ -231,7 +231,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 #### ifVersion
 
 The `ifVersion` parameter is used to control updates based on the version of the record. It prevents updates to a record unless the version matches the specified `ifVersion`.
-We support the `ifVersion` flag to avoid overwriting unexpected versions of the record.
+You can use the `ifVersion` flag to avoid overwriting unexpected versions of the record.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
@@ -240,8 +240,8 @@ const result = await xata.transactions.run([
   {
     insert: {
       table: 'titles',
-      where: { id: 'rec_cfl4g6v838og05h0iv6g', version: ifVersion },
-      record: { originalTitle: 'An updated title' }
+      record: { id: 'rec_cfl4g6v838og05h0iv6g', originalTitle: 'An updated title' },
+      ifVersion: 0
     }
   }
 ]);
@@ -287,8 +287,8 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
     {
       "insert": {
         "table": "titles",
-        "where": { "id": "rec_cfl4g6v838og05h0iv6g", "version": ifVersion },
-        "record": { "originalTitle": "An updated title" }
+        "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "An updated title" },
+        "ifVersion": 0
       }
     }
   ]
@@ -297,14 +297,13 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 
 </TabbedCode>
 
-If an insert fails for any reason; invalid data, unknown table, `ifVersion` conflicts, the transaction will return an error.
+If an insert fails for any reason, such as invalid data, an unknown table, or `ifVersion` conflicts, the transaction will return an error.
 
-### updates
+### update
 
-Updates can be used to update records in any number of tables in your database. The update operation requires an ID parameter
-explicitly defined. The operation will only replace the fields explicitly specified in your operation. The update operation
-also supports the `upsert` flag. Off by default, but if set to `true`, the update operation will insert the record if no
-record is found with the provided ID.
+Use `update` to modify records across any number of tables in your database. For an `update` operation to work, you must explicitly define an ID parameter. This operation only updates the fields you have specifically mentioned.
+
+Additionally, the `update` operation includes an `upsert` option, which is disabled by default. If enabled, set to `true`, and no existing record matches the provided ID, the operation will insert a new record instead.
 
 As with insert operations, update supports `ifVersion`.
 
@@ -331,7 +330,7 @@ const result = await xata.transactions.run([
       fields: { email: 'trinity@matrix.com', name: 'Trinity' }
     }
   }
-  // Additional transactions can be added here
+  // You can add additional transactions
 ]);
 ```
 
@@ -352,7 +351,7 @@ result = xata.records().transaction({
         "fields": {"email": "trinity@matrix.com", "name": "Trinity"},
       }
     },
-    # Additional transactions can be added here
+    # You can add additional transactions
   ]
 })
 ```
@@ -399,16 +398,16 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
         "fields": { "email": "trinity@matrix.com", "name": "Trinity" }
       }
     }
-    // Additional transactions can be added here
+    // You can add additional transactions
   ]
 }
 ```
 
 </TabbedCode>
 
-### deletes
+### delete
 
-Delete is used to remove records. Delete can operate on records from the same transaction, and will not cancel a transaction
+Use `delete` to remove multiple records. Delete can operate on records from the same transaction, and will not cancel a transaction
 if no record is found.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
@@ -425,8 +424,8 @@ const result = await xata.transactions.run([
       table: 'titles',
       record: { id: 'rec_cfl4g6v00056' },
     }
-  }
-  // Additional transactions can be added here
+  },
+  // You can add additional transactions
 ]);
 ```
 
@@ -436,17 +435,17 @@ result = xata.records().transaction({
     {
       "delete": {
         "table": "titles",
-        "where": { "id": "rec_cfl4g6v00023" }
+        "record": { "id": "rec_cfl4g6v00023" }
       }
     },
     {
-    delete: {
-      table: 'titles',
-      record: { id: 'rec_cfl4g6v00056' },
+    "delete": {
+      "table": 'titles',
+      "record": { "id": "rec_cfl4g6v00056" },
     }
   },
   ]
-  # Additional transactions can be added here
+  # You can add additional transactions
 })
 ```
 
@@ -466,7 +465,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
         "id": xata.String("rec_cfl4g6v00056"),
     },
   }),
-   // Additional transactions can be added here
+   // You can add additional transactions
   ,
 })
 ```
@@ -478,26 +477,25 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
     {
       "delete": {
         "table": "titles",
-        "where": { "id": "rec_cfl4g6v00023" }
+        "id": "rec_cfl4g6v00023"
       }
     },
     {
       "delete": {
         "table": "titles",
-        "where": { "id": "rec_cfl4g6v00056" }
+        "id": "rec_cfl4g6v00056"
       }
     }
-    // Additional transactions can be added here
+    // You can add additional transactions
   ]
 }
 ```
 
 </TabbedCode>
 
-### gets
+### get
 
-Get is used to retrieve a record by ID. A get operation can retrieve records created in the same transaction but will not cancel
-a transaction if no record is found.
+Use `get` to fetch multiple records using IDs. It can retrieve records generated within the same transaction. If no record is found, the operation does not result in a canceled transaction.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
@@ -506,13 +504,15 @@ const result = await xata.transactions.run([
   {
     get: {
       table: 'titles',
-      where: { id: 'rec_cfl4g6v00023' }
+      id: 'rec_cfl4g6v00023',
+      columns: ['id', 'originalTitle']
     }
   },
   {
     get: {
       table: 'titles',
-      where: { id: 'rec_cfl4g6v00056' }
+      id: 'rec_cfl4g6v00056',
+      columns: ['id', 'originalTitle']
     }
   }
 ]);
@@ -524,13 +524,15 @@ result = xata.records().transaction({
     {
       "get": {
         "table": "titles",
-        "where": { "id": "rec_cfl4g6v00023" }
+        "id": "rec_cfl4g6v00023",
+        "columns": ["id", "originalTitle"]
       }
     },
     {
       "get": {
         "table": "titles",
-        "where": { "id": "rec_cfl4g6v00056" }
+        "id": "rec_cfl4g6v00056",
+        "columns": ["id", "originalTitle"]
       }
     }
   ]
@@ -564,13 +566,15 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
     {
       "get": {
         "table": "titles",
-        "where": { "id": "rec_cfl4g6v00023" }
+        "id": "rec_cfl4g6v00023",
+        "columns": ["id", "originalTitle"]
       }
     },
     {
       "get": {
         "table": "titles",
-        "where": { "id": "rec_cfl4g6v00056" }
+        "id": "rec_cfl4g6v00056",
+        "columns": ["id", "originalTitle"]
       }
     }
   ]
@@ -583,4 +587,4 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 
 - A maximum of 1000 operations are allowed in a single transaction. If you exceed this limit, you will receive an error message.
 - Inserting and updating content to `file` and `file\[]` (file array) columns is not permitted with transactions.
-- To avoid the SQL proxy timeout, delete in small batches. It is recommended to delete no more than 10,000 records per batch.
+- To prevent timeouts with the SQL proxy during transaction deletions, delete records in small batches. Each batch should not exceed 10,000 records.

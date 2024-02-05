@@ -129,7 +129,7 @@ users, _ := client.Transaction(context.TODO(), xata.TransactionRequest{
 
 To delete multiple records from the API, we recommend using transactions. [Transactions](/docs/sdk/transaction#delete) will not fail a delete operation if a record is not found. All operations in a transaction must succeed otherwise it is rolled back.
 
-Alternatively, you can use the `DELETE` statement via the [SQL proxy](/docs/sdk/sql/overview).
+Alternatively, you can use the `DELETE` statement via the [SQL proxy](/docs/sdk/sql/overview), like in the following example:
 
 <Alert status="warning">
   When dealing with a large number of records, there is a 60-second timeout. To avoid the SQL proxy's timeout, delete in
@@ -137,18 +137,19 @@ Alternatively, you can use the `DELETE` statement via the [SQL proxy](/docs/sdk/
 </Alert>
 
 ```sql
-DELETE FROM titles
+DELETE FROM "titles"
 WHERE id IN (
     SELECT id
     FROM titles
-    WHERE originalTitle ILIKE '%Matrix%'
+    WHERE "originalTitle" ILIKE '%Matrix%'
+    ORDER BY "xata.createdAt" ASC
     LIMIT 10000
 );
 ```
 
 - `SELECT id`: Specifies that only the `id` column will be retrieved in the query.
 - `FROM titles`: The subquery operates on the `titles` table.
-- `WHERE originalTitle ILIKE '%Matrix%'`: Filters rows based on a case-insensitive partial match in the `originalTitle` column.
+- `WHERE "originalTitle" ILIKE '%Matrix%'`: Filters rows based on a case-insensitive partial match in the `originalTitle` column.
 - `LIMIT 10000`: Restricts the number of results to a maximum of 10,000 rows.
 
 ## Next Steps
