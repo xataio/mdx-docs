@@ -267,13 +267,11 @@ recordsClient, _ := xata.NewRecordsClient()
 result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
     xata.NewInsertTransaction(xata.TransactionInsertOp{
-      Table: "titles",
-      Where: map[string]any{
-        "id":      xata.String("rec_cfl4g6v838og05h0iv6g"),
-        "version": xata.Int(ifVersion),
-      },
-      Record: map[string]any{
+      Table:     "titles",
+      IfVersion: xata.Int(0),
+      Record:    map[string]any{
         "originalTitle": xata.String("An updated title"),
+        "id":            xata.String("rec_cfl4g6v838og05h0iv6g"),
       },
     }),
   },
