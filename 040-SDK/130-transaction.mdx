@@ -254,8 +254,8 @@ result = xata.records().transaction({
     {
       "insert": {
         "table": "titles",
-        "where": { "id": "rec_cfl4g6v838og05h0iv6g", "version": if_version },
-        "record": { "originalTitle": "An updated title" }
+        "record": {"id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "An updated title"},
+        "ifVersion": 0
       }
     }
   ]
