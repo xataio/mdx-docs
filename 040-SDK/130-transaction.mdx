@@ -7,7 +7,7 @@ slug: sdk/transaction
 published: true
 ---
 
-The transactions endpoint lets you execute multiple operations together as a single unit. In this guide, we'll run through why transactions are important and run through Xata's transactions endpoint.
+The transactions endpoint allows you to execute multiple operations together as a single unit. In this guide, we'll run through why transactions are important and run through Xata's transactions endpoint.
 
 Our transactions endpoint is still in beta. This means that the core functionality is stable, but the API itself might change. There are also many new capabilities that we - and our existing users - would like to add to the endpoint.
 
@@ -163,14 +163,12 @@ try {
 
 ### inserts
 
-Inserts can be used to insert records across any number of tables in your database. As with the insert endpoints,
-you can explicitly set an ID, or omit it and have Xata auto-generate one for you. Either way, on a successful transaction,
-Xata will return the ID to you.
+The `insert` operation allows you to add new records to any table in your database. You have the option to either set an explicit ID for each record or allow Xata to auto-generate one. If successful, Xata returns the ID of the inserted record.
 
-By default, if a record exists with the same explicit ID, Xata will overwrite the record. You can adjust this behavior by
-setting `createOnly` to `true` for the operation.
+By default, inserting a record with an existing ID will overwrite the old record. You can change this default behavior by setting `createOnly` to `true`. This ensures that the operation only creates new records and does not overwrite existing ones.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+
 ```ts
 const result = await xata.transactions.run([
   {
@@ -230,16 +228,80 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 
 </TabbedCode>
 
-We also support the `ifVersion` flag to avoid overwriting unexpected versions of the record.
+#### ifVersion
 
-If an insert fails for any reason; invalid data, unknown table, ifVersion conflicts, the transaction will return an error.
+The `ifVersion` parameter is used to control updates based on the version of the record. It prevents updates to a record unless the version matches the specified `ifVersion`.
+You can use the `ifVersion` flag to avoid overwriting unexpected versions of the record.
 
-### updates
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
-Updates can be used to update records in any number of tables in your database. The update operation requires an ID parameter
-explicitly defined. The operation will only replace the fields explicitly specified in your operation. The update operation
-also supports the `upsert` flag. Off by default, but if set to `true`, the update operation will insert the record if no
-record is found with the provided ID.
+```ts
+const result = await xata.transactions.run([
+  {
+    insert: {
+      table: 'titles',
+      record: { id: 'rec_cfl4g6v838og05h0iv6g', originalTitle: 'An updated title' },
+      ifVersion: 0
+    }
+  }
+]);
+```
+
+```python
+
+result = xata.records().transaction({
+  "operations": [
+    {
+      "insert": {
+        "table": "titles",
+        "record": {"id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "An updated title"},
+        "ifVersion": 0
+      }
+    }
+  ]
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewInsertTransaction(xata.TransactionInsertOp{
+      Table:     "titles",
+      IfVersion: xata.Int(0),
+      Record:    map[string]any{
+        "originalTitle": xata.String("An updated title"),
+        "id":            xata.String("rec_cfl4g6v838og05h0iv6g"),
+      },
+    }),
+  },
+})
+```
+
+```json
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
+{
+  "operations": [
+    {
+      "insert": {
+        "table": "titles",
+        "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "An updated title" },
+        "ifVersion": 0
+      }
+    }
+  ]
+}
+```
+
+</TabbedCode>
+
+If an insert fails for any reason, such as invalid data, an unknown table, or `ifVersion` conflicts, the transaction will return an error.
+
+### update
+
+Use `update` to modify records across any number of tables in your database. For an `update` operation to work, you must explicitly define an ID parameter. This operation only updates the fields you have specifically mentioned.
+
+Additionally, the `update` operation includes an `upsert` option, which is disabled by default. If enabled, set to `true`, and no existing record matches the provided ID, the operation will insert a new record instead.
 
 As with insert operations, update supports `ifVersion`.
 
@@ -266,7 +328,7 @@ const result = await xata.transactions.run([
       fields: { email: 'trinity@matrix.com', name: 'Trinity' }
     }
   }
-  // Additional transactions can be added here
+  // You can add additional transactions
 ]);
 ```
 
@@ -287,7 +349,7 @@ result = xata.records().transaction({
         "fields": {"email": "trinity@matrix.com", "name": "Trinity"},
       }
     },
-    # Additional transactions can be added here
+    # You can add additional transactions
   ]
 })
 ```
@@ -298,7 +360,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
   Operations: []xata.TransactionOperation{
     xata.NewUpdateTransaction(xata.TransactionUpdateOp{
       Table: "Users",
-      ID:    "rec_cmf56ugvjdkilkpcdeu0",
+      Id:    "rec_cmf56ugvjdkilkpcdeu0",
       Fields: map[string]any{
         "email": xata.String("neo@matrix.com"),
         "name":  xata.String("Neo"),
@@ -306,12 +368,13 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
     }),
     xata.NewUpdateTransaction(xata.TransactionUpdateOp{
       Table: "Users",
-      ID:    "rec_cmf572veoo9ahn3r96p0",
+      Id:    "rec_cmf572veoo9ahn3r96p0",
       Fields: map[string]any{
         "email": xata.String("trinity@matrix.com"),
         "name":  xata.String("Trinity"),
       },
     }),
+    // You can add additional operations
   },
 })
 ```
@@ -334,24 +397,187 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
         "fields": { "email": "trinity@matrix.com", "name": "Trinity" }
       }
     }
-    // Additional transactions can be added here
+    // You can add additional operations
   ]
 }
 ```
 
 </TabbedCode>
 
-### deletes
+### delete
 
-A delete is used to remove records. Delete can operate on records from the same transaction, and will not cancel a transaction
+Use `delete` to remove multiple records. Delete can operate on records from the same transaction, and will not cancel a transaction
 if no record is found.
 
-### gets
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+```ts
+const result = await xata.transactions.run([
+  {
+    delete: {
+      table: 'titles',
+      record: { id: 'rec_cfl4g6v00023' },
+    }
+  }, 
+  {
+    delete: {
+      table: 'titles',
+      record: { id: 'rec_cfl4g6v00056' },
+    }
+  },
+  // You can add additional operations
+]);
+```
 
-A get is used to retrieve a record by id. A get operation can retrieve records created in the same transaction but will not cancel
-a transaction if no record is found.
+```python
+result = xata.records().transaction({
+  "operations": [
+    {
+      "delete": {
+        "table": "titles",
+        "record": { "id": "rec_cfl4g6v00023" }
+      }
+    },
+    {
+      "delete": {
+        "table": 'titles',
+        "record": { "id": "rec_cfl4g6v00056" },
+      }
+    },
+    # You can add additional operations
+  ]
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewDeleteTransaction(xata.TransactionDeleteOp{
+      Table: "titles",
+      Id:    xata.String("rec_cfl4g6v00023"),
+    }),
+    xata.NewDeleteTransaction(xata.TransactionDeleteOp{
+      Table: "titles",
+      Id:    xata.String("rec_cfl4g6v00056"),
+    }),
+    // You can add additional operations
+  }
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
+{
+  "operations": [
+    {
+      "delete": {
+        "table": "titles",
+        "id": "rec_cfl4g6v00023"
+      }
+    },
+    {
+      "delete": {
+        "table": "titles",
+        "id": "rec_cfl4g6v00056"
+      }
+    }
+    // You can add additional operations
+  ]
+}
+```
+
+</TabbedCode>
+
+### get
+
+Use `get` to fetch multiple records using IDs. It can retrieve records generated within the same transaction. If no record is found, the operation does not result in a canceled transaction.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+
+```ts
+const result = await xata.transactions.run([
+  {
+    get: {
+      table: 'titles',
+      id: 'rec_cfl4g6v00023',
+      columns: ['id', 'originalTitle']
+    }
+  },
+  {
+    get: {
+      table: 'titles',
+      id: 'rec_cfl4g6v00056',
+      columns: ['id', 'originalTitle']
+    }
+  }
+]);
+```
+
+```python
+result = xata.records().transaction({
+  "operations": [
+    {
+      "get": {
+        "table": "titles",
+        "id": "rec_cfl4g6v00023",
+        "columns": ["id", "originalTitle"]
+      }
+    },
+    {
+      "get": {
+        "table": "titles",
+        "id": "rec_cfl4g6v00056",
+        "columns": ["id", "originalTitle"]
+      }
+    },
+  ]
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
+  Operations: []xata.TransactionOperation{
+    xata.NewGetTransaction(xata.TransactionGetOp{
+      Table:   "titles",
+      Id:      xata.String("rec_cfl4g6v00023"),
+      Columns: []string{"id", "originalTitle"},
+    }),
+    xata.NewGetTransaction(xata.TransactionGetOp{
+      Table:    "titles",
+      Id:       xata.String("rec_cfl4g6v00056"),
+      Columns: []string{"id", "originalTitle"},
+    }),
+  },
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
+{
+  "operations": [
+    {
+      "get": {
+        "table": "titles",
+        "id": "rec_cfl4g6v00023",
+        "columns": ["id", "originalTitle"]
+      }
+    },
+    {
+      "get": {
+        "table": "titles",
+        "id": "rec_cfl4g6v00056",
+        "columns": ["id", "originalTitle"]
+      }
+    }
+  ]
+}
+```
+
+</TabbedCode>
 
 ## Limitations
 
 - A maximum of 1000 operations are allowed in a single transaction. If you exceed this limit, you will receive an error message.
-- Inserting and updating content to file and file\[] (file array) columns is not permitted with transactions.
+- Inserting and updating content to `file` and `file\[]` (file array) columns is not permitted with transactions.
+- To prevent timeouts with the SQL proxy during delete operations with a transaction, delete records in small batches. Each batch should not exceed 10,000 records.
