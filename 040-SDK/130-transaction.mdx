@@ -374,7 +374,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
         "name":  xata.String("Trinity"),
       },
     }),
-    // You can add additional transactions
+    // You can add additional operations
   },
 })
 ```
@@ -397,7 +397,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
         "fields": { "email": "trinity@matrix.com", "name": "Trinity" }
       }
     }
-    // You can add additional transactions
+    // You can add additional operations
   ]
 }
 ```
@@ -424,7 +424,7 @@ const result = await xata.transactions.run([
       record: { id: 'rec_cfl4g6v00056' },
     }
   },
-  // You can add additional transactions
+  // You can add additional operations
 ]);
 ```
 
@@ -443,7 +443,7 @@ result = xata.records().transaction({
         "record": { "id": "rec_cfl4g6v00056" },
       }
     },
-    # You can add additional transactions
+    # You can add additional operations
   ]
 })
 ```
@@ -460,7 +460,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
       Table: "titles",
       Id:    xata.String("rec_cfl4g6v00056"),
     }),
-    // You can add additional transactions
+    // You can add additional operations
   }
 })
 ```
@@ -481,7 +481,7 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
         "id": "rec_cfl4g6v00056"
       }
     }
-    // You can add additional transactions
+    // You can add additional operations
   ]
 }
 ```
@@ -580,4 +580,4 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 
 - A maximum of 1000 operations are allowed in a single transaction. If you exceed this limit, you will receive an error message.
 - Inserting and updating content to `file` and `file\[]` (file array) columns is not permitted with transactions.
-- To prevent timeouts with the SQL proxy during transaction deletions, delete records in small batches. Each batch should not exceed 10,000 records.
+- To prevent timeouts with the SQL proxy during delete operations with a transaction, delete records in small batches. Each batch should not exceed 10,000 records.
