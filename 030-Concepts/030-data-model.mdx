@@ -617,7 +617,7 @@ You can set a default value for every data type. For each data type, you can ass
 
 You can add constraints to protect the integrity of your data. We support the following constraints:
 
-- `unique`: All values of a column must be different within the same table. In case of creating or updating a record with a value that does not satisfy the uniqueness contraint, the record operation will be rejected with an error.
+- `unique`: All values of a column must be different within the same table. In case of creating or updating a record with a value that does not satisfy the uniqueness constraint, the record operation will be rejected with an error.
 - `notNull`: Column value cannot be NULL. Requests to create or update a record are rejected with an error if they set this column to NULL. When `notNull` is set, you must also set a default value for the column using `defaultValue`. In case no value is set for this column when creating a record, **the defaultValue will be applied**.
 
 Limitations: You can add constraints only to new columns of empty tables.
@@ -663,7 +663,7 @@ Using `consistency: eventual` is beneficial if you are not bound to real time da
 
 ## Conclusion
 
-This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/concepts/schema).
+This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/docs/concepts/schema).
 
 ## Object type migration
 
