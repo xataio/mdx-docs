@@ -1,11 +1,18 @@
 ---
 title: Data branching workflow with GitHub
-navTitle: Branching workflow
+navTitle: GitHub branching workflow
 keywords: ['Vercel', 'GitHub', 'branch', 'Netlify']
 description: Learn about core the Xata workflow, branching, and migrations using GitHub with Netlify or Vercel
 slug: getting-started/workflow
 published: true
 ---
+
+<Alert status="warning">
+  **This feature is in a beta state**. We are currently rebuilding our migration strategy to incorporate
+  [pgroll](https://github.com/xataio/pgroll) alongside native Postgres support. Until then, migrations and branching as
+  documented below are limited in scope. Specifically, the GitHub integration does not work within a monorepo with
+  multiple Xata databases, and File attachments within records will not get copied to generated preview branches.
+</Alert>
 
 This guide introduces the core Xata workflow and outlines the process of configuring a project for branching and migrations using GitHub in conjunction with Netlify or Vercel. After completing the configuration, pull requests created in GitHub will generate Xata database previews that link to preview deployments in either Vercel or Netlify. After merging the pull requests, Xata will perform database migrations in sync with your code, resulting in the deployment of changes to production.
 
