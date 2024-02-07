@@ -1,6 +1,6 @@
 ---
 title: Documentation contributor guide
-navTitle: Docs contribution guide
+navTitle: Docs contributor guide
 keywords: ['contribute']
 description: Participate in improving Xata's developer documentation.
 slug: contribute/docs
@@ -21,15 +21,16 @@ Xata's developer documentation follows a [docs-as-code](https://www.writethedocs
 
 1.  **Fork repository:** Fork the [`mdx-docs`](https://github.com/xataio/mdx-docs) repository on GitHub to create your copy.
 2.  **Clone repository:** Clone your forked repository to your local machine using Git. Navigate to the cloned `mdx-docs` repository and add the upstream repository as a remote using `git remote add upstream <upstream-repo-url>`.
-3.  **Create branch:** Create a new branch for your changes using `git checkout -b <my-docs-update>`. You can create any branch name, but including the issue number or a brief description is recommended.
-4.  **Edit documentation:** Make necessary changes to documentation files, considering Markdown and MDX syntax.
-5.  **Commit changes:** Add and commit your changes using `git add .` and `git commit -m "Update documentation"` with an informative commit message.
-6.  **Push to fork:** Push changes to your forked repository with `git push origin my-docs-update`.
-7.  **Create pull request:** Visit the `mdx-docs` repository on GitHub, and create a new pull request from your branch.
-8.  **Provide details:** Add a clear title and description for your PR, explaining the purpose of your changes.
-9.  **Submit PR:** Submit the pull request, and it will be reviewed by the Xata Docs team.
-10. **Collaborate:** Collaborate during the review process, make requested changes, and work towards PR approval.
-11. **Approval and merge:** Once your PR meets all requirements and is approved by the team, it will be merged into the main branch, and your changes will become part of the official Xata documentation.
+3.  **Install linter:** Run `pnpm install` to lint your code and align with style standards. If this is not done your pull request will fail some checks.
+4.  **Create branch:** Create a new branch for your changes using `git checkout -b <my-docs-update>`. You can create any branch name, but including the issue number or a brief description is recommended.
+5.  **Edit documentation:** Make necessary changes to documentation files, considering Markdown and MDX syntax.
+6.  **Commit changes:** Add and commit your changes using `git add .` and `git commit -m "Update documentation"` with an informative commit message.
+7.  **Push to fork:** Push changes to your forked repository with `git push origin my-docs-update`.
+8.  **Create pull request:** Visit the `mdx-docs` repository on GitHub, and create a new pull request from your branch.
+9.  **Provide details:** Add a clear title and description for your PR, explaining the purpose of your changes.
+10. **Submit PR:** Submit the pull request, and it will be reviewed by the Xata Docs team.
+11. **Collaborate:** Collaborate during the review process, make requested changes, and work towards PR approval.
+12. **Approval and merge:** Once your PR meets all requirements and is approved by the team, it will be merged into the main branch, and your changes will become part of the official Xata documentation.
 
 ## Linting
 
@@ -43,12 +44,32 @@ To ensure your pull request passes checks, apply the linter by navigating to the
 
 ### Troubleshoot linting
 
-To fix issues from linting, locate the exact error message that references the specific number. Examine the code or documentation related to the error and ensure the syntax and usage align with coding and documentation standards.
+To fix issues from linting, locate the exact error message that references the specific line number of tf the error. Examine the code or documentation related to the error and ensure the syntax and usage align with coding and documentation standards.
 If the error persists, contact us in [Discord](https://xata.io/discord) or use community resources for guidance.
+
+After adding and committing code changes, the linter may identify errors. For instance, in the following example, an error is found on **line 62**, along with four additional warnings.
+
+[Linting errors](images/linting-error.png)
+
+To resolve the issue, go to **line 62** in your code, correct the error, then add, commit, and push the changes to create a pull request.
 
 ## Build preview
 
 After your pull request clears all checks, Vercel creates a build preview. The Xatabot then adds a link to this preview in your pull request. To review the changes you've made, click on the link, navigate to the **Docs** tab, and search for the page you've updated.
+
+### Preview changes in Visual Studio Code
+
+You can use Visual Studio Code (VS Code) to write documentation. VS Code includes a built-in Markdown previewer that you can use to view your changes locally.
+
+To access the Markdown Preview in Visual Studio Code, follow these steps:
+
+Open the Markdown file you want to preview. Select from the following methods based on your operating system:
+
+- **Mac OS:** Press **⌘** + **Shift** + **P**.
+- **Linux:** Press **Ctrl** + **Shift** + **P**
+- **Windows:** Press **Ctrl** + **Shift** + **P**
+
+Type "Markdown Preview" and select **Markdown: Open Preview** from the list that appears. Click the **Open Preview** icon located in the top right corner of the editor title bar or right-click the Markdown file and select **Open Preview** from the context menu.
 
 ## Style guide
 

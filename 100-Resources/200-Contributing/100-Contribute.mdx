@@ -34,11 +34,6 @@ Our source code and documentation are hosted on [GitHub](https://github.com/xata
 
 If your preferred programming language doesn't currently have a Xata SDK, we encourage you to develop one and welcome the contribution.
 
-### OpenAPI specification
-
-Our API is defined via [OpenAPI specifications](https://github.com/OAI/OpenAPI-Specification). For a comprehensive understanding and further details on these specifications, refer to the [documentation](/docs/rest-api/contexts).
-You can pull the [OpenAPI specifications](/docs/rest-api/contexts#openapi-specifications) or go to the [REST API](/docs/api-reference/user#get-user-details) for more information.
-
 ### Issues and labels
 
 To help you get started, we have labeled issues as "**good first issue**" for newcomers and "**help wanted**" for tasks of varying complexity. These labels serve as guides to find suitable tasks. Comment on any issue that is of interest and contact us on Discord to learn more about the context.
@@ -50,17 +45,40 @@ Bug reports help us enhance the platform and are greatly appreciated. If you enc
 - **If you're a developer:** Use our contributing guide for developers to start. It provides information on setting up the development environment, coding standards, and the contribution process.
 - **If you're interested in writing documentation:** Explore our documentation guidelines. These guidelines ensure that your documentation contributions align with our standards.
 
+### OpenAPI specification
+
+Our API is defined via [OpenAPI specifications](https://github.com/OAI/OpenAPI-Specification). For a comprehensive understanding and further details on these specifications, refer to our [documentation](/docs/rest-api/contexts).
+You can pull the [OpenAPI specifications](/docs/rest-api/contexts#openapi-specifications) or navigate to the [REST API](/docs/api-reference/user#get-user-details) for more information.
+
+To get started working with the API, familiarize yourself with the [API documentation](). Set up authentication to securly make API requests. You can start with a simple `GET` request to test it. For example:
+
+```sh
+curl -X GET "https://api.example.com/workspaces" -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+- Replace the URL and `YOUR_ACCESS_TOKEN` with your actual details.
+
+To make a request, verify your setup by fetching workspaces with the authenticated `GET` request. This ensures your authentication method is correctly configured.
+
+After the initial request, explore more complex API functionalities as detailed in our [documentation](/docs/api-reference/user#get-user-details), including endpoints for user details and other operations.
+
+For exploration of the Xata API with your preferred tools, see our [documentation](/docs/rest-api/contexts#openapi-specifications) on OpenAPI specifications.
+
 ## Contribute to docs
 
-Our documentation is a crucial part of Xata, and we welcome contributions from individuals who are passionate about clear and informative documentation. You can find our documentation source code on GitHub.
-To maintain the quality in our documentation, we appreciate your help in identifying and addressing bugs and documentation gaps. If you encounter any issues while using Xata or reading our docs, don't hesitate to report them. Open a new issue in GitHub, providing as much detail as possible. This includes steps to reproduce the issue, expected behavior, and actual behavior. You can use the **Edit on GitHub** button located on each page underneath the page title or clone the repository. To learn more, refer to the docs [contributor guide](/docs/contribute/docs).
+Documentation is a crucial part of Xata, and we welcome contributions that help improve clarity and information. You can find our documentation source code on [GitHub](https://github.com/xataio/mdx-docs).
+To maintain the quality of our documentation, we appreciate your help in identifying and addressing bugs as well as documentation gaps. If you encounter any issues while using Xata or reading our docs, don't hesitate to report them. Open a [new issue](https://github.com/xataio/mdx-docs/issues/new/choose) in GitHub, providing as much detail as possible. This includes steps to reproduce the issue, expected behavior, and actual behavior.
+
+You can use the **Edit on GitHub** button located on each page, underneath the page title, or [clone the repository](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories).
+
+To learn more, refer to the [Documentation contributor guide](/docs/contribute/docs).
 
 ## Create content
 
 Beyond code and documentation, you can contribute by creating valuable content. Share your expertise or experience using Xata by creating tutorials, blog posts, or other educational materials. Your content can help the community better understand and use Xata's capabilities.
 By participating in the Xata community and making meaningful contributions, you not only enhance the platform but also have the opportunity to earn recognition.
 
-We encourage you to explore the various avenues of contribution that align with your interests. Your contributions play a pivotal role in the growth and success of Xata. Join our community and collaborate to make Xata even better.
+We encourage you to explore the various contribution avenues that align with your interests. Your contributions play a pivotal role in the growth and success of Xata. Join our community and collaborate to make Xata even better.
 
 ## Recognizing contributors
 
