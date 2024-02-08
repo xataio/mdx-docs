@@ -53,10 +53,14 @@ You can pull the [OpenAPI specifications](/docs/rest-api/contexts#openapi-specif
 To get started working with the API, familiarize yourself with the [API documentation](/docs/rest-api/contexts). Set up authentication to securely make API requests. You can start with a simple `GET` request to test it. For example:
 
 ```sh
-curl -X GET "https://api.example.com/workspaces" -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+curl -X GET "https://{workspace-display-name}-{workspace-id}.{region}.xata.sh/db/{dbname}" -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
-- Replace the URL and `YOUR_ACCESS_TOKEN` with your actual details.
+- Replace the URL and `YOUR_ACCESS_TOKEN` with your API key details.
+- Replace `{workspace-display-name}` with your workspace identification.
+- Replace `{workspace-id}` with the unique 6-character alphanumeric code.
+- Replace `{region}` with the configured database hosting region.
+- Replace `{dbname}` with the name of the database being accessed.
 
 To make a request, verify your setup by fetching workspaces with the authenticated `GET` request. This ensures your authentication method is correctly configured.
 
@@ -71,7 +75,7 @@ To maintain the quality of our documentation, we appreciate your help in identif
 
 You can use the **Edit on GitHub** button located on each page, underneath the page title, or [clone the repository](https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories).
 
-![](images/edit-page.png)
+![Edit this page](images/edit-page.png)
 
 To learn more, refer to the [Documentation contributor guide](/docs/contribute/docs).
 

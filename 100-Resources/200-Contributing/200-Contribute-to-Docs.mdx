@@ -21,7 +21,7 @@ Xata's developer documentation follows a [docs-as-code](https://www.writethedocs
 
 1.  **Fork repository:** Fork the [`mdx-docs`](https://github.com/xataio/mdx-docs) repository on GitHub to create your copy.
 2.  **Clone repository:** Clone your forked repository to your local machine using Git. Navigate to the cloned `mdx-docs` repository and add the upstream repository as a remote using `git remote add upstream <upstream-repo-url>`.
-3.  **Install linter:** Run `pnpm install` to lint your code and align with style standards. If this is not done your pull request will fail some checks.
+3.  (_Optional_)  **Install linter:** Run `pnpm install` to lint your code and align with style standards. If this is not done your pull request will fail some checks.
 4.  **Create branch:** Create a new branch for your changes using `git checkout -b <my-docs-update>`. You can create any branch name, but including the issue number or a brief description is recommended.
 5.  **Edit documentation:** Make necessary changes to documentation files, considering Markdown and MDX syntax.
 6.  **Commit changes:** Add and commit your changes using `git add .` and `git commit -m "Update documentation"` with an informative commit message.
@@ -44,7 +44,7 @@ To ensure your pull request passes checks, apply the linter by navigating to the
 
 ### Troubleshoot linting
 
-To fix issues from linting, locate the exact error message that references the specific line number of tf the error. Examine the code or documentation related to the error and ensure the syntax and usage align with coding and documentation standards.
+To fix issues from linting, review the error message that references the specific line number of the error. Examine the code or documentation related to the error and ensure the syntax and usage align with coding and documentation standards.
 If the error persists, contact us in [Discord](https://xata.io/discord) or use community resources for guidance.
 
 After adding and committing code changes, the linter may identify errors. For instance, in the following example, an error is found on **line 62**, along with four additional warnings.
