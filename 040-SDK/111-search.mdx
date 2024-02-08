@@ -140,7 +140,7 @@ Regardless of client, the above search will return results in the below shape. E
 
 Note the `xata.highlight` field in the example below which marks the search term `New York` with surrounding `<em>` tags.
 
-```json {12-14}}
+```json {12-14}
 {
   "totalCount": 1,
   "records": [
@@ -299,6 +299,56 @@ results, _ := searchClient.SearchTable(context.TODO(), xata.SearchTableRequest{
 </TabbedCode>
 
 In other words, the table level settings from the branch-level search API (`filter`, `target`, `boosters`) are top level settings in the per-table search API.
+
+### Search response with file attachments
+
+File attachment metadata is available by default in [search](/docs/sdk/search) results. All metadata fields including the `url`,`signedUrl` and `uploadUrl` are returned as part of matching documents, but not the file content. Note that the `url` value is accessible only when [enablePublicUrl](/docs/concepts/file-attachments#public-urls) is set to `true` in the file's configuration.
+
+<details open>
+  <summary>Example Search response</summary>
+```json {9-24}
+{
+  "totalCount": 1,
+  "records": [
+    {
+      "table": "Users",
+      "record": {
+        "id": "rec_cn2baqiit8nelj83jag0",
+        "name": "Keanu Reeves",
+        "photo": {
+          "name": "img.jpg",
+          "mediaType": "image/jpeg",
+          "enablePublicUrl": true,
+          "signedUrlTimeout": 600,
+          "uploadUrlTimeout": 86400,
+          "size": 1,
+          "version": 0,
+          "url": "https://us-east-1.storage.xata.sh/f13f4im2411tpd9njp32mgt9fc",
+          "signedUrl": "https://us-east-1.xata.sh/file/...",
+          "uploadUrl": "https://q867qv.us-east-1.upload.xata.sh/file/...",
+          "attributes": {
+            "height": 3205,
+            "width": 2561
+          }
+        },
+        "xata": {
+          "createdAt": "2024-02-08T11:05:14.344Z",
+          "highlight": {
+            "name": [
+              "<em>Keanu</em> Reeves"
+            ]
+          },
+          "score": 0.2876821,
+          "table": "Users",
+          "updatedAt": "2024-02-08T12:03:57.044Z",
+          "version": 1
+        }
+      }
+    }
+  ]
+}
+```
+</details>
 
 ## Fuzziness and typo tolerance
 

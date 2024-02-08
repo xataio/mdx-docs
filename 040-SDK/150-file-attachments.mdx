@@ -494,6 +494,93 @@ records, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
 
 </TabbedCode>
 
+### File attachments within search results
+
+File attachment metadata is also available by default in [search](/docs/sdk/search) results. All metadata fields including the `url`,`signedUrl` and `uploadUrl` are returned as part of matching documents, but not the file content. Note that the `url` value is accessible only when [enablePublicUrl](/docs/concepts/file-attachments#public-urls) is set to `true` in the file's configuration.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+```ts
+const results = await xata.search.all('Keanu', {
+  tables: ['Users']
+});
+```
+
+```python
+results = xata.data().search_branch({
+  "query": "Keanu",
+  "tables": ["Users"]
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+  Payload: xata.SearchBranchRequestPayload{
+    Query:  "Keanu",
+    Tables: []*xata.SearchBranchRequestTablesItem{
+      xata.NewSearchBranchRequestTablesItemFromString("Users"),
+    },
+  },
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
+
+{
+  "query": "Keanu",
+  "tables": ["Users"]
+}
+```
+
+</TabbedCode>
+
+<details open>
+  <summary>Example Search response</summary>
+```json
+{
+  "totalCount": 1,
+  "records": [
+    {
+      "table": "Users",
+      "record": {
+        "id": "rec_cn2baqiit8nelj83jag0",
+        "name": "Keanu Reeves",
+        "photo": {
+          "name": "img.jpg",
+          "mediaType": "image/jpeg",
+          "enablePublicUrl": true,
+          "signedUrlTimeout": 600,
+          "uploadUrlTimeout": 86400,
+          "size": 1,
+          "version": 0,
+          "url": "https://us-east-1.storage.xata.sh/f13f4im2411tpd9njp32mgt9fc",
+          "signedUrl": "https://us-east-1.xata.sh/file/...",
+          "uploadUrl": "https://q867qv.us-east-1.upload.xata.sh/file/...",
+          "attributes": {
+            "height": 3205,
+            "width": 2561
+          }
+        },
+        "xata": {
+          "createdAt": "2024-02-08T11:05:14.344Z",
+          "highlight": {
+            "name": [
+              "<em>Keanu</em> Reeves"
+            ]
+          },
+          "score": 0.2876821,
+          "table": "Users",
+          "updatedAt": "2024-02-08T12:03:57.044Z",
+          "version": 1
+        }
+      }
+    }
+  ]
+}
+```
+</details>
+
 ## File (binary) APIs
 
 Since all record APIs use JSON for both request and response body, the file content needs to be encoded. For reasons like performance or data size on the wire, encoding the content might not be desired.
