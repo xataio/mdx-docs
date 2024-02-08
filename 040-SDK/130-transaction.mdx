@@ -7,11 +7,7 @@ slug: sdk/transaction
 published: true
 ---
 
-The transactions endpoint allows you to execute multiple operations together as a single unit. In this guide, we'll run through why transactions are important and run through Xata's transactions endpoint.
-
-Our transactions endpoint is still in beta. This means that the core functionality is stable, but the API itself might change. There are also many new capabilities that we - and our existing users - would like to add to the endpoint.
-
-If you're burning to give feedback or get access, you can find more details at the bottom of this page.
+The single-call transaction endpoint allows you to execute multiple operations together as a single call. In this guide, we'll run through why transactions are important and run through Xata's single-call transaction endpoint.
 
 ## Why transactions are important
 
@@ -27,11 +23,13 @@ Transactions come with a lot of knobs and dials. Transactions give control over 
 
 Xata's role is to help you build and iterate on your product faster, so we've started off with features to help you make use of transactions, but without you needing to dive into the nitty gritty.
 
-Our approach with transactions has been to start small, and to be careful about finding the right balance between usefulness and ease of use for you, the builder.
+The single-call transaction endpoint enables you to run a number of sequential operations under a single API call. In case any of the operations fails, all operations in the single-call transaction are aborted and their changes are rolled back.
+
+The number of operations allowed in a single-call transaction is [limited by the total number of operations that can be run at once](/docs/sdk/transaction#limitations). It is _not_ possible to chain multiple single-call transactions to logically form a larger one. Each single-call transaction request runs atomically and either succeeds or fails in its entirety.
 
 ## API
 
-The Xata transactions API can be thought of as a way to wrap our existing insert, update, and delete operations into a single operation. The options for each operation are almost identical to their non-transactional counterparts.
+The Xata single-call transaction API can be thought of as a way to wrap our existing insert, update, and delete operations into a single operation. The options for each operation are almost identical to their non-transactional counterparts.
 
 We'll start by taking a look at a full request-response, and then we'll step into each operation and its options.
 
@@ -578,6 +576,5 @@ result, _ := recordsClient.Transaction(context.TODO(), xata.TransactionRequest{
 
 ## Limitations
 
-- A maximum of 1000 operations are allowed in a single transaction. If you exceed this limit, you will receive an error message.
+- A maximum of 1000 operations are allowed in a single-call transaction. If you exceed this limit, you will receive an error message.
 - Inserting and updating content to `file` and `file\[]` (file array) columns is not permitted with transactions.
-- To prevent timeouts with the SQL proxy during delete operations with a transaction, delete records in small batches. Each batch should not exceed 10,000 records.
