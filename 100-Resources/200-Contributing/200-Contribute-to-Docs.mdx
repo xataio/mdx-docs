@@ -36,16 +36,15 @@ Xata's developer documentation follows a [docs-as-code](https://www.writethedocs
 
 Linting rules are enforced to ensure consistency and readability across the codebase. The documentation uses [ESLint](https://eslint.org/), [Prettier](https://prettier.io/docs/en/integrating-with-linters.html), and [Remark](https://www.npmjs.com/package/remark-lint) for linting. These tools are essential for keeping the code clean and consistent.
 
-Contributors are advised to run `pnpm install` in their local development environment. This step ensures that all necessary linting packages are installed and configured, allowing for real-time linting error detection.
+When you commit changes or create a pull request, linting is automatically applied. You can optionally run `pnpm install` in your local development environment. This step allows you to install and configure all necessary linting packages, allowing for real-time linting error detection.
 
 ### Apply the linter
 
-To ensure your pull request passes checks, apply the linter by navigating to the root directory of the `mdx-docs` repository and running `pnpm install`. Failure to do so will result in a failed build.
+You can optionally apply the linter by navigating to the root directory of the `mdx-docs` repository and running `pnpm install`.
 
 ### Troubleshoot linting
 
-To fix issues from linting, review the error message that references the specific line number of the error. Examine the code or documentation related to the error and ensure the syntax and usage align with coding and documentation standards.
-If the error persists, contact us in [Discord](https://xata.io/discord) or use community resources for guidance.
+To fix issues from linting, review the error message that references the specific line number of the error. Examine the code or documentation related to the error and ensure the syntax and usage align with coding and documentation standards. If the error persists, contact us in [Discord](https://xata.io/discord) or use community resources for guidance.
 
 After adding and committing code changes, the linter may identify errors. For instance, in the following example, an error is found on **line 62**, along with four additional warnings.
 
