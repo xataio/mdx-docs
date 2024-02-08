@@ -25,7 +25,7 @@ Xata's role is to help you build and iterate on your product faster, so we've st
 
 The single-call transaction endpoint enables you to run a number of sequential operations under a single API call. In case any of the operations fails, all operations in the single-call transaction are aborted and their changes are rolled back.
 
-The number of operations allowed in a single-call transaction is [limited](/docs/sdk/transaction#limitations). It is _not_ possible to chain multiple single-call transactions to logically form a larger one. Each single-call transaction request runs atomically and either succeeds or fails in its entirety.
+The number of operations allowed in a single-call transaction is [limited by the total number of operations that can be run at once](/docs/sdk/transaction#limitations). It is _not_ possible to chain multiple single-call transactions to logically form a larger one. Each single-call transaction request runs atomically and either succeeds or fails in its entirety.
 
 ## API
 
