@@ -9,25 +9,34 @@ published: true
 
 The Xata starter guides walk you through building a blog application and help you learn core Xata fundamental concepts. The guides explore framework-specific features and demonstrate how they work with Xata.
 
-## What will you learn?
+## What you will do
 
-The guides demonstrate the following features:
+- Use the Xata CLI to create a database
+- Define a database schema and seed the database by importing a CSV
+- Generate TypeScript code with database branching
+- Query and filter
+- Use full-text fuzzy search
 
-- Using the Xata CLI to create a database
-- Defining a database schema and seeding the database by importing a CSV
-- Generating TypeScript code with database branching
-- Querying and filtering
-- Using full-text fuzzy search
+## Before you begin
 
-## What you need to start?
+Before you build your blog application, review some important concepts and set up your development environment.
 
-Each getting started guide requires you to install the Xata CLI, authenticate it, and store the CLI API key locally.
+### What is a serverless database platform?
 
-### Xata CLI
+A serverless database is a cloud-based database service that removes the need for users to manage the underlying servers, infrastructure, and many typical database administration tasks. You get to focus on building your application rather than managing the complexities of database infrastructure.
+For more information, see [What is a serverless data platform?](/docs/concepts/serverless-data-platform).
 
-The [Xata command line interface (CLI)](/docs/getting-started/installation) allows you to work with your Xata serverless database directly from your command line and is important for integrating Xata's capabilities into your project. Using the CLI, you can manage your database, schemas, and import data.
+### What is a schema?
 
-To install the Xata CLI, use the following command:
+A Xata.io schema is a JSON-based code file that defines the structure of your database. Think of it like a blueprint for your database.
+For more information, see [Schema](/docs/concepts/schema).
+
+### The Xata CLI
+
+Before getting started, install the [Xata command line interface (CLI)](/docs/getting-started/installation), [authenticate](/docs/rest-api/authentication), and store the CLI API key locally.
+You will use the Xata CLI to manage your database, schemas, and to import data directly from your command line.
+
+Install the Xata CLI by using the following command:
 
 <TabbedCode tabs={['Shell', 'PowerShell']}>
 
@@ -41,13 +50,13 @@ npm install -g '@xata.io/cli'
 
 </TabbedCode>
 
-To learn more about the Xata CLI, refer to the [documentation](/docs/getting-started/installation).
+For more information, see the [Command line interface documentation](/docs/getting-started/installation).
 
 ### Authentication
 
-Authentication links the CLI to your Xata account, enabling you to perform database operations securely. If you are not yet a Xata user, the authentication process also guides you through creating a new account.
+Authentication establishes a secure link between the CLI and your Xata account for database operations. If you are not yet a Xata user, the authentication process also guides you through creating a new account.
 
-You can use the command `xata auth login` to initiate authentication. Following authentication, an API key specific to your account is generated.
+Initiate authentication by using the `xata auth login` command. After you authenticate, an API key specific to your account is generated.
 The generated API key ensures communication between your CLI and the Xata databases you'll manage.
 
 The key is stored locally on your computer. The exact storage location can vary depending on your operating system. Typically, the API key is stored in the configuration file `.config/xata/credentials`, with the following format:
@@ -57,10 +66,20 @@ The key is stored locally on your computer. The exact storage location can vary 
 apiKey=YOUR_API_KEY_HERE
 ```
 
-The CLI makes it easier to manage your database activities directly from the terminal. By authenticating the CLI and securely storing your API key locally, you ensure that your database operations are protected and that only authorized users can access your data.
+The CLI makes it easier to manage your database activities directly from the terminal. By authenticating the CLI and securely storing your API key locally, your database operations are protected and only authorized users can access your data.
 
-To learn more about authentication, refer to the [documentation](/docs/getting-started/installation#authenticate-the-cli-to-your-account).
+To learn more about authentication, see the [documentation](/docs/getting-started/installation#authenticate-the-cli-to-your-account).
 
-## Next steps
+## Start building
 
-Select either the [Astro](/docs/getting-started/astro), [Next.js](/docs/getting-started/nextjs), [Nuxt](/docs/getting-started/nuxt), [Remix](/docs/getting-started/remix), [SolidStart](/docs/getting-started/solidstart), or [SvelteKit](/docs/getting-started/sveltekit) starter guide to begin building a blog application with Xata.
+Now that you understand a few basic concepts and have set up your development environment, it's time to get started building!
+
+Get started by selecting your starter guide:
+- [Astro](/docs/getting-started/astro)
+- [Next.js](/docs/getting-started/nextjs)
+- [Nuxt](/docs/getting-started/nuxt)
+- [Remix](/docs/getting-started/remix)
+- [SolidStart](/docs/getting-started/solidstart)
+- [SvelteKit](/docs/getting-started/sveltekit) starter guide.
+
+Happy building!
