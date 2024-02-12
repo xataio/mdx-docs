@@ -981,6 +981,10 @@ users = xata.data().query("Users", {
 
 Note that random sorting does not apply to a specific column, hence the special column name `"*"`.
 
+<Alert status="warning">
+  *Sorting* on nested json fields is not available with the Xata API. As a workaround, this is possible with SQL.
+</Alert>
+
 You can sort nested JSON fields in SQL by using the `->` operator and enclosing the JSON key in quotes.
 
 <TabbedCode tabs={['TypeScript','Python','SQL']}>
