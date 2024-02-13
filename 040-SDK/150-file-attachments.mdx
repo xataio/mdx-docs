@@ -57,7 +57,9 @@ const record = await xata.db.myTableName.create(
 return Response({ myUploadUrl: record.myFileColumnName.uploadUrl });
 ```
 
-### Step 2: Upload the file using a `PUT` request to the `uploadUrl` (client side)
+### Step 2: Upload the file (client side)
+
+Upload the file using a `PUT` request to the `uploadUrl` returned from the server side.
 
 ```ts title="app/upload.tsx"
 try {
