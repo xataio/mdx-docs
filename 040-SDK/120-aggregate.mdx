@@ -8,8 +8,8 @@ published: true
 ---
 
 <Alert status="warning">
-  This feature is Beta. It is still under active development. While we are avoiding breaking changes, we do not
-  guarantee backwards compatibility until the functionality is GA.
+  Aggregations are experimental. While we are currently avoiding breaking changes, we do not guarantee backwards
+  compatibility or that this endpoint will reach GA without major changes.
 </Alert>
 
 The `/aggregate` API allows you to use the search/analytics engine to perform aggregations on your data. Similar to the [search API](/docs/sdk/search),
@@ -222,6 +222,8 @@ There are two types of aggregations:
 - _bucket aggregations_, which split the data into buckets based on a column value. Examples of bucket aggregations are: `topValues`, `dateHistogram` and `numericHistogram`.
 - _metric aggregations_, which compute a value based on the data in the bucket. Examples of metric aggregations are: `average`, `sum`, `min`, `max`, `count` and `uniqueCount`.
 
+<Alert status="warning">Aggregations cannot be used with [link](/docs/concepts/data-model#link) columns.</Alert>
+
 ## Response type
 
 The response for the example aggregation above has the following form:
@@ -425,6 +427,10 @@ results = xata.data().aggregate("titles", {
 ```
 
 </TabbedCode>
+
+<Alert status="warning">
+  The Date histogram aggregation cannot be used on xata metadata columns `xata.createdAt` and `xata.updatedAt`.
+</Alert>
 
 ## Metric aggregations
 
@@ -839,3 +845,8 @@ For example:
   }
 }
 ```
+
+## Known Issues
+
+Default values added to existing records by creating new columns with default values, are not available for Aggregations.
+These default values are available for new records and become accessible in existing records only in case of a subsequent record update.
