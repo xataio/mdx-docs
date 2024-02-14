@@ -401,6 +401,12 @@ Example definition:
 }
 ```
 
+<Alert status="warning">
+  It is possible to filter by nested json fields, but *sorting* on nested json fields is not available with the Xata
+  API. Refer to the [result sorting](/docs/sdk/get#sorting-the-results) documentation for an alternative approach with
+  SQL.
+</Alert>
+
 ## Special Columns
 
 Xata maintains a special set of columns that don't have to be defined in the schema. The `id` and the `xata.*` columns names are reserved and you cannot create your own columns with these names. No other column names are reserved.
