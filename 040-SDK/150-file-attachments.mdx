@@ -20,7 +20,7 @@ Xata provides three different ways to interact with file attachments within a fi
 
 - ✅ Upload files in the same step as creating a record.
 - ✅ Useful for querying and modifying the metadata around existing files.
-- ⚠️ Only supports file uploads up to 20MB.
+- ⚠️ Only supports files up to 20MB (total per request).
 - ⚠️ Server side only.
 - ⚠️ Likely exceed limits of serverless functions from providers like Vercel which can be much lower.
 
@@ -39,9 +39,9 @@ They are the recommended pattern for uploading large files from a client e.g. a 
 
 The downside to using upload URLs is they require multiple steps: creating, then updating the record.
 
-### Step 1: Create a record with an empty file (server side)
+### Step 1: Create/Update a record with an empty file (server side)
 
-On the server side use `xata.db.myTableName.create` to create a record with an empty file and simultaneously request an `uploadUrl`.
+On the server side use `xata.db.myTableName.create` to create (or update) a record with an empty file and simultaneously request an `uploadUrl`.
 
 A server-side API route (heavily simplified, and not accounting for your particular framework) might look like this:
 
@@ -49,6 +49,7 @@ A server-side API route (heavily simplified, and not accounting for your particu
 // ... Your api route code
 
 // Create an empty record with no base64 content on a `myTableName` table. The column for the file is `myFileColumnName`.
+// Can also use `.update` for existing records
 const record = await xata.db.myTableName.create(
   { name, myFileColumnName: { name: name, mediaType: 'image/png', base64Content: '' } },
   // Request an uploadUrl from the created record. We'll use this client-side to update the record.
