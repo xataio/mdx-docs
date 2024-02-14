@@ -15,6 +15,8 @@ Xata natively provides text-based search for your database with the following co
 - Weights and boosts to influence the relevance of search scores based on certain columns
 - Highlight markup in search results to emphasize partial matches in returned content
 
+Search runs in the optional Search store which is eventually consistent. You can choose to opt-out from the Search store at the branch level in the Web UI. The search API and features described in this page require the Search store to be enabled.
+
 ![Xata's website search is powered by Xata search](./images/search.png)
 
 As you insert records into Xata tables, they are automatically replicated from the Transactional store to the eventually consistent Search store.

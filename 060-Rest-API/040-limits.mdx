@@ -90,14 +90,14 @@ For more information on the available tiers, refer to our Pricing [page](/pricin
 
 #### Store types
 
-Xata uses store types with individual concurrency limits:
+Xata uses store types with individual concurrency limits. The Consistent transactional store is built into every branch while the Search & Analytics store is optional.
 
-| Store type                     | Free tier concurrency | Pro tier concurrency | Endpoints                                                           |
-| ------------------------------ | --------------------- | -------------------- | ------------------------------------------------------------------- |
-| Consistent transactional store | 6                     | 18                   | `data`, `bulk`, `transaction`, `query`, `summarize`, `data`, `file` |
-| Read replicas store            | 9                     | 27                   | `query`, `summarize` _with option_ `consistency: eventual`          |
-| Search & Analytics store       | 15                    | 45                   | `aggregate`, `search`, `ask`, `vectorSearch`                        |
-| File attachments access urls   | unrestricted          | unrestricted         | `url`, `signedUrl`                                                  |
+| Store type                          | Free tier concurrency | Pro tier concurrency | Endpoints                                                           |
+| ----------------------------------- | --------------------- | -------------------- | ------------------------------------------------------------------- |
+| Consistent transactional store      | 6                     | 18                   | `data`, `bulk`, `transaction`, `query`, `summarize`, `data`, `file` |
+| Read replicas store                 | 9                     | 27                   | `query`, `summarize` _with option_ `consistency: eventual`          |
+| Search & Analytics store (optional) | 15                    | 45                   | `aggregate`, `search`, `ask`, `vectorSearch`                        |
+| File attachments access urls        | unrestricted          | unrestricted         | `url`, `signedUrl`                                                  |
 
 Custom concurrency limits are offered with [Enterprise plans](/pricing).
 
@@ -115,5 +115,6 @@ Tips & best practices useful to optimize requests for the Xata API:
 - Log and track errors in your application error channels or log streams in order to monitor for throttling errors, so you can make informed decisions whether to upgrade your plan.
 - For writing records to Xata, use the bulk endpoint instead of the atomic (individual record insert) data endpoint. The bulk endpoint allows batching of multiple records in a single request, which favors the optimal use of both your branch's request rate limit and concurrency slots in the transactional store.
 - For requests to the `query` and `summarize` endpoints, consider using the `consistency: eventual` option to use the Read Replicas Store. This makes it less likely to reach the concurrency limit of either Store type and gets the best possible performance from your Xata plan.
+- If you are not using any of the `aggregate`, `search`, `ask` and `vectorSearch` endpoints, you can opt-out from the Search store at the branch level in the Web UI, thus avoiding storage costs associated with it.
 
 Custom plans can increase or remove some limits. To discuss upgrading, [contact us](mailto:support@xata.io) or complete the [Contact Form](https://support.xata.io/hc/en-us/requests/new).

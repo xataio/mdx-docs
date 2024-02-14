@@ -21,7 +21,7 @@ Xata is a global multi-tenant system, composed of **cells**, each living in a re
 
 - The data is stored in PostgreSQL, which is considered the source of truth.
 - The PostgreSQL logical replication events are written in a Kafka queue, from where they can be read by multiple consumers.
-- One of these consumers indexes the data into Elasticsearch.
+- One of these consumers optionally indexes the data into Elasticsearch.
 - The Xata API layer offers a RESTful API offering both the functionality of the relational database (PostgreSQL) with the advanced search and analytics from the search engine/columnar store (Elasticsearch).
 - On top of this API, Xata has client SDKs and a web interface.
 
@@ -122,7 +122,7 @@ At any point, the migration can be canceled without a major impact. It is also p
 
 It is very useful to get a near-real-time stream with all the changes that are in the database. In database terminology, this is called [Change Data Capture](https://en.wikipedia.org/wiki/Change_data_capture). In PostgreSQL, this can be done based on the [logical replication](https://www.postgresql.org/docs/current/logical-replication.html) functionality, which is available since PostgreSQL 10. By hooking into this functionality, we are receiving an event every time a row is changed in PostgreSQL, regardless what has caused the change. It is somewhat similar to database triggers functionality but with better reliability.
 
-We are using logical replication events today to replicate the data from PostgreSQL into Elasticsearch, and in the near future, we’ll use it to call Webhooks, trigger serverless functions, replication between regions, and more.
+We are using logical replication events today to optionally replicate the data from PostgreSQL into Elasticsearch, and in the near future, we’ll use it to call Webhooks, trigger serverless functions, replication between regions, and more.
 
 One interesting challenge with processing replication events is that it’s generally hard to guarantee exactly-once delivery and the ordering of events. Solutions for delivery in order usually imply a single thread of processing. Instead, we have chosen to use version numbers for the records, which are incremented every time a record is updated or deleted. On the consumer side, these versions can be used to both identify duplicate events and to know in which order they are safe to apply.
 
@@ -132,7 +132,7 @@ Another typical challenge with logical replication is that the number of events 
 
 ## File attachments
 
-Xata offers general purpose storage for file attachments through the `file` column type. By integrating file support in the database, Xata aims to simplify the management of large binary content, by exposing it under the same API, same security model, same SDK. At the same time, the queries, filters, summaries, aggregations available can now be used on files metadata. The metadata (file name, media type, tags) is also indexed for search so it can be included in search results.
+Xata offers general purpose storage for file attachments through the `file` column type. By integrating file support in the database, Xata aims to simplify the management of large binary content, by exposing it under the same API, same security model, same SDK. At the same time, the queries, filters, summaries, aggregations available can now be used on files metadata. The metadata (file name, media type, tags, urls) is also indexed to the optional Search store so it can be included in search results.
 
 In order to offer both database benefits like queries and CRUD and storage service benefits like - high capacity, high throughput, high concurrency, regional caching - Xata stores the files' metadata in PostgreSQL and the actual binary content in a dedicated cloud storage service.
 
@@ -195,7 +195,7 @@ An aggregation request looks something similar to the follwing:
 }
 ```
 
-The `/query` and `/summarize` API endpoints are served from the transactional store (PostgreSQL) and you can choose if you want them to be strongly consistent or to use a read replica. The `/search` and `/aggregate` API endpoints are served from the search and analytics engine (Elasticsearch) and offer only eventual consistency.
+The `/query` and `/summarize` API endpoints are served from the transactional store (PostgreSQL) and you can choose if you want them to be strongly consistent or to use a read replica. The `/search` and `/aggregate` API endpoints are served from the optional search and analytics engine (Elasticsearch) and offer only eventual consistency.
 
 As you can see in the above examples, the filtering syntax is the same across the different types of stores, meaning that it’s easy to move queries from one to another.
 
@@ -252,7 +252,7 @@ For disaster recovery and change control purposes, Xata performs frequent backup
 
 At Xata we are taking hard data problems, solve them using the industry's best practices, and then offer them to you in the most easy-to-use way possible.
 
-Zero-downtime migrations are an example of this: difficult under the hood, but a familiar-looking pull request with a diff in our UI. Change Data Capture is another example: generally difficult to get right, but inside Xata your data is simply replicated to the search engine, with zero configuration.
+Zero-downtime migrations are an example of this: difficult under the hood, but a familiar-looking pull request with a diff in our UI. Change Data Capture is another example: generally difficult to get right, but inside Xata your data is optionally replicated to the search engine, with zero configuration.
 
 Our design principles are:
 
