@@ -82,7 +82,7 @@ try {
     const fileObj = file;
     formData.append('fileType', fileObj.type);
     // Use `myUploadUrl` from the server response to upload the file on the client
-    await fetch(record.myUploadUrl, { method: 'PUT', body: file });
+    await fetch(responseJson.myUploadUrl, { method: 'PUT', body: file });
   } catch (error) {
     throw new Error("Couldn't upload image because the image wasn't accepted");
   }
