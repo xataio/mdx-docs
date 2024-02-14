@@ -191,24 +191,33 @@ import { XataApiClient } from '@xata.io/client';
 
 const api = new XataApiClient();
 
-const { id: workspace } = await api.workspaces.createWorkspace({
+ api.workspaces.createWorkspace({
+      body: { name: workspaceName }
+    })
   data: { name: 'workspace' }
 });
 
-const { databaseName } = await api.database.createDatabase({
+await newApi.databases.createDatabase({
+      body: {region },
+      pathParams: {dbName: "", workspaceId:""}
+    })
   workspace,
   database: 'database',
   data: { region: 'eu-west-1' }
 });
 
-await api.branches.createBranch({
+await newApi.branch.createBranch({
+      pathParams: { workspace, region, dbBranchName: `${database}:branch` },
+    });
   workspace,
   region: 'eu-west-1',
   database: databaseName,
   branch: 'branch'
 });
 
-await api.tables.createTable({
+ await newApi.table.createTable({
+      pathParams: { workspace, region, dbBranchName: `${database}:branch`, tableName: 'table' },
+    });
   workspace,
   region: 'eu-west-1',
   database: databaseName,
@@ -216,7 +225,10 @@ await api.tables.createTable({
   table: 'table'
 });
 
-await api.tables.setTableSchema({
+await newApi.table.setTableSchema({
+      body: {columns: [{name: 'email', type: 'string'}]},
+      pathParams: {workspace, region, dbBranchName: `${database}:branch`, tableName: 'table'}
+    })
   workspace,
   region: 'eu-west-1',
   database: databaseName,
@@ -225,7 +237,9 @@ await api.tables.setTableSchema({
   schema: { columns: [{ name: 'email', type: 'string' }] }
 });
 
-const recordId = await api.records.insertRecord({
+await newApi.records.insertRecord({
+      pathParams: { workspace, region, dbBranchName: `${database}:branch`, tableName: 'table' },
+    })
   workspace,
   region: 'eu-west-1',
   database: databaseName,
@@ -234,7 +248,9 @@ const recordId = await api.records.insertRecord({
   record: { email: 'example@foo.bar' }
 });
 
-const record = await api.records.getRecord({
+ await newApi.records.getRecord({
+      pathParams: { workspace, region, dbBranchName: `${database}:branch`, tableName: 'table', recordId: '1' },
+    });
   workspace,
   region: 'eu-west-1',
   database: databaseName,
@@ -243,7 +259,9 @@ const record = await api.records.getRecord({
   id: recordId.id
 });
 
-await api.workspaces.deleteWorkspace({ workspace });
+await newApi.workspaces.deleteWorkspace({
+      pathParams: { workspaceId: workspace }
+    });
 ```
 
 ## Limitations
