@@ -442,6 +442,8 @@ A column of type `link` describes a relationship between two entities that you c
 
 You can represent many-to-one relationships between tables by using columns of the `link` type. The value of the link column points to a record in the target table, referenced by the ID.
 
+It is also possible to use `link` columns that target the same table. For example, you can have a `parent` column that points to the parent record of the current record.
+
 At query time, you can easily include columns from the target table by specifying the `"columns"` field in the request. For an example, see [Selecting columns from the linked tables](/docs/sdk/get#selecting-columns-from-the-linked-tables).
 
 Also, you can navigate the link in the opposite direction, from the target table to the source table. For example, if you have a `posts` table with an `author` column of type `link` that points to a `users` table. You are able to navigate the link from the `users` table to the `posts` table. At query time, you can get a list of the related posts in a single request by specifying the `<-posts.author` field. The arrow (`<-`) token indicates we are using a backwards relationship established by the `author` column (of type `link`) from `posts`. An example request that retrieves the name and related posts from the `users` table would look like this:
@@ -589,8 +591,6 @@ The following limitations apply to backwards (`<-`) link relationships :
 - Filtering cannot be applied on records returned from backwards links.
 
 ### Many-to-many relationships with links
-
-It is also possible to use `link` columns that target the same table. For example, you can have a `parent` column that points to the parent record of the current record.
 
 You can represent many-to-many relationships between two tables by using a third table dedicated to storing the relationships between the two entities. For example, you have a `mentors` table and a `mentee` table, and you want to represent an N:M relationship where a mentor can have multiple mentees and a mentee can have multiple mentors. You can create a `relationships` table with a schema looking like this:
 
