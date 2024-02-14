@@ -7,30 +7,32 @@ slug: sdk/file-attachments
 published: true
 ---
 
-Xata provides three different ways to upload files to a file column within a database.
+Xata provides three different ways to interact with file attachments within a file column in a database.
 
-[Upload URLs](#upload-urls) (recommended)
+**[Upload URLs](#upload-urls)** _(for uploads)_
 
-- Client side (don't require using an API key)
-- Works with [large files](/docs/rest-api/limits#file-attachments-limits)
-- Require extra steps across the client and server side
+- ✅ Client side (doesn't require using an API key, and can be run in the browser).
+- ✅ Upload [large files](/docs/rest-api/limits#file-attachments-limits).
+- ⚠️ Require extra steps across the client and server side.
+- Used only for initial upload or replacement of the actual files.
 
-[Record APIs](#record-apis)
+**[Record APIs](#record-apis)** _(for deleting, downloading, and querying files)_
 
-- Upload files in the same step as creating a record
-- Only supports files up to 20MB
-- Server side only
-- Likely exceed limits of serverless functions from providers like Vercel which can be much lower
+- ✅ Upload files in the same step as creating a record.
+- ✅ Useful for querying and modifying the metadata around existing files.
+- ⚠️ Only supports file uploads up to 20MB.
+- ⚠️ Server side only.
+- ⚠️ Likely exceed limits of serverless functions from providers like Vercel which can be much lower.
 
-[Binary APIs](#file-binary-apis)
+**[Binary APIs](#file-binary-apis)** _(for controlled environments)_
 
-- Upload files to existing record
-- Server side only
-- Works with [large files](/docs/rest-api/limits#file-attachments-limits)
-- Likely exceed limits of serverless functions from providers like Vercel which can be much lower
-- This makes their usefulness limited to scenarios where you control the environment completely, like uploading large files from a local machine
+- ✅ Upload files to existing record.
+- ✅ Upload [large files](/docs/rest-api/limits#file-attachments-limits).
+- ⚠️ Server side only.
+- ⚠️ Likely exceed limits of serverless functions from providers like Vercel which can be much lower.
+- Good for when you own the environment completely, like uploading large files from a local machine.
 
-## Upload URLs (recommended)
+## Upload URLs
 
 Upload URLs are a temporary, secure URL that allows uploading files to Xata from the client side.
 They are the recommended pattern for uploading large files from a client e.g. a web browser. Upload URLs have large [limits](/docs/rest-api/limits#file-attachments-limits) and allow you to bypass the size restrictions of many server-side function hosts like Vercel.
