@@ -7,6 +7,11 @@ slug: sdk/aggregate
 published: true
 ---
 
+<Alert status="warning">
+  This feature is Beta. It is still under active development. While we are avoiding breaking changes, we do not
+  guarantee backwards compatibility until the functionality is GA.
+</Alert>
+
 The `/aggregate` API allows you to use the search/analytics engine to perform aggregations on your data. Similar to the [search API](/docs/sdk/search),
 it is important to understand that the Aggregation API is served from a different store, which means: it is eventually consistent with the main store,
 and it cannot access the linked fields from a table. If these limitations are not acceptable for your use case, you should use the Summarize API. The advantages of using the Aggregation API, over the Summarize API, are:
