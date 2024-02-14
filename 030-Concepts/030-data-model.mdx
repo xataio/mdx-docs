@@ -575,6 +575,13 @@ The response would look like this (notice the nested `records` array under the `
 }
 ```
 
+The following limitations apply to backwards (`<-`) link relationships :
+
+- Recursive link navigation is not available. Backward access to linked records is limited to one level of depth.
+- Filtering cannot be applied on records returned from backwards links.
+
+These requirements can be fulfilled using [SQL](/docs/sdk/sql/overview) syntax instaed.
+
 It is also possible to use `link` columns that target the same table. For example, you can have a `parent` column that points to the parent record of the current record.
 
 You can represent many-to-many relationships between two tables by using a third table dedicated to storing the relationships between the two entities. For example, you have a `mentors` table and a `mentee` table, and you want to represent an N:M relationship where a mentor can have multiple mentees and a mentee can have multiple mentors. You can create a `relationships` table with a schema looking like this:
