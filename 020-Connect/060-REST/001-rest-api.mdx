@@ -11,6 +11,13 @@ Xata uses HTTP-based APIs for data management and collaboration, ensuring standa
 
 > Note, Xata can support no-code or low-code data ingestion through integrations with tools like [Zapier](/docs/integrations/zapier) and [Airbyte](/docs/integrations/airbyte).
 
+## OpenAPI specifications
+
+To provide an easy way to use your favorite tools for exploring the Xata API, you can use the [OpenAPI](https://www.openapis.org/) specification:
+
+- [Core API spec](https://xata.io/api/openapi?scope=core)
+- [Workspace API spec](https://xata.io/api/openapi?scope=workspace)
+
 ## Methods
 
 The API methods define the actions that can be performed on resources. See our [API reference docs](/docs/api-reference/user#get-user-details) for more information.
@@ -112,8 +119,6 @@ Everything else that falls under the context of a workspace is operable with Xat
 
 Bound by the [REST API limits](/docs/rest-api/limits), each workspace in Xata can contain a number of databases and each database can have a number of tables and branches . When interacting with Xata properties within the bounds of a workspace, we use the workspace-level API. This is accessible at a domain that is visible to you in your workspace's management section.
 
-![Managing a workspace in Xata](images/manage-workspace.png)
-
 For example, the general form of the database API is:
 
 ```text
@@ -134,10 +139,3 @@ In the above:
 - `{dbname}` is the name of the database you are interacting with.
 
 You can find your workspace domain by navigating to the **Configuration** tab in the Xata Web UI, or in the **Get Code Snippet** under **Set up Xata Project**.
-
-## OpenAPI specifications
-
-To provide an easy way to use your favorite tools for exploring the Xata API, you can use the [OpenAPI](https://www.openapis.org/) specification:
-
-- [Core API spec](https://xata.io/api/openapi?scope=core)
-- [Workspace API spec](https://xata.io/api/openapi?scope=workspace)
