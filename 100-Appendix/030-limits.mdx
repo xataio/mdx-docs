@@ -1,13 +1,11 @@
 ---
-title: Limits
-navTitle: REST API limits
+title: API limitations
+navTitle: Limitations
 keywords: ['rest', 'api']
 description: Specifications, best practices, and tips provided for optimizing requests
 slug: rest-api/limits
 published: true
 ---
-
-## Limits
 
 Xata applies some limits based on the plan level and the API endpoint in order to ensure reliable operation and scalability.
 
@@ -20,14 +18,14 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 - [File attachments limits](#file-attachments-limits)
 - [Rate limits](#rate-limits)
 
-### User limits
+## User limits
 
 | Scope               | Limit |
 | :------------------ | :---- |
 | API keys per user   | 40    |
 | Workspaces per user | 40    |
 
-### Schema limits
+## Schema limits
 
 | Scope                   | Limit     |
 | :---------------------- | :-------- |
@@ -37,7 +35,7 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 | Database name length    | 255 chars |
 | Branch name length      | 255 chars |
 
-### Column limits
+## Column limits
 
 | Scope                       | Limit       |
 | :-------------------------- | :---------- |
@@ -47,13 +45,13 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 | Text column size            | 200 KB      |
 | Multiple type total size    | 65536 chars |
 
-### Record limits
+## Record limits
 
 | Scope       | Limit  |
 | :---------- | :----- |
 | Record size | 600 KB |
 
-### Request limits
+## Request limits
 
 | Scope                   | Limit           |
 | :---------------------- | :-------------- |
@@ -61,7 +59,7 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 | Bulk insert             | 1000 records    |
 | Single-call transaction | 1000 operations |
 
-### Response limits
+## Response limits
 
 | Scope                   | Limit         |
 | :---------------------- | :------------ |
@@ -69,7 +67,7 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 | Offset pagination size  | 50000 records |
 | Cursor pagination depth | Unrestricted  |
 
-### File attachments limits
+## File attachments limits
 
 | Scope                                                 | Limit |
 | :---------------------------------------------------- | :---- |
@@ -79,7 +77,7 @@ Xata applies some limits based on the plan level and the API endpoint in order t
 | Number of files in a file array                       | 50    |
 | Max ttl for a signed URL                              | 24h   |
 
-### Rate limits
+## Rate limits
 
 The REST API may return HTTP response code `429` as a throttling error when the rate limiting conditions are met:
 
@@ -88,7 +86,7 @@ The REST API may return HTTP response code `429` as a throttling error when the 
 
 For more information on the available tiers, refer to our Pricing [page](/pricing) and [docs](/docs/concepts/pricing).
 
-#### Store types
+### Store types
 
 Xata uses store types with individual concurrency limits:
 

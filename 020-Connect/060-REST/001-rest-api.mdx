@@ -1,6 +1,6 @@
 ---
-title: REST API overview
-navTitle: Overview
+title: REST API for Xata
+navTitle: REST API
 keywords: ['rest', 'api', 'authentication', 'overviews']
 description: Get familiar with API methods and responses.
 slug: rest-api
@@ -40,3 +40,104 @@ The responses listed below are standardized and can be applied to any API, inclu
 | 409         | Conflict                                   | There is a conflict with the current state of the resource or a resource version mismatch.                                                                                             |
 | 429         | Too many requests                          | The user or client exceeded request rate limits.                                                                                                                                       |
 | 5xx         | Internal server error/ service unavailable | An unexpected error occurred on the server, and the request could not be fulfilled. The server is temporarily unable to handle the request, typically due to maintenance or high load. |
+
+## Authentication
+
+The Xata API uses API keys to authenticate users, ensuring secure interactions with the database.
+
+To access Xata via the API, authentication is required using an API key associated with the workspace. Client libraries like TypeScript or Python include this key in the "Authorization" header when emitting HTTPS requests to Xata. If you're using tools like cURL to make HTTPS requests directly, you'll need to include the API key in the "Authorization" HTTP request header.
+
+## Generate an API key
+
+You can use a personal API key to log in to the Xata CLI client, granting you access to your workspaces and databases.
+
+To create an API key, visit the [Account Settings](https://app.xata.io/settings) page and click **+ Add a key**. You'll be prompted to enter a name for your key, then click **Save**. Upon regenerating a key, the previous key instance becomes invalid immediately. You need to update the API key value with the new value in every place where it is used.
+
+## Find your API key
+
+All the API keys you generate are listed in the "Personal API Keys" section of your [Account Settings](https://app.xata.io/settings).
+
+## Regenerate an API key
+
+For security and access control reasons, it's important to regenerate your API key if you have any concerns about its security. Do not share or disclose your API key under any circumstances. If you suspect that your key's security has been compromised, take action by clicking **Regenerate** to update it.
+
+## Send an authenticated request
+
+After you have an API key, you're ready to interact with any route on our [API reference](/docs/api-reference/user), passing the key in the request's `Authorization` header. For example, to get a list of your workspaces, you can make a request like the following:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+```ts
+import fetch from 'node-fetch'
+fetch('https://api.xata.io/workspaces', {
+  headers: {
+    Authorization: 'Bearer YOUR_API_KEY', // <- the magic
+    'Content-Type': 'application/json',
+  },
+})
+.then((response) => response.json())
+.then((workspaces) => console.log('Look ma! Workspaces!', workspaces))
+```
+```python
+from requests import request
+headers = {
+  'Authorization': 'Bearer YOUR_API_KEY',
+  'Content-Type': 'application/json',
+}
+resp = request("GET", "https://api.xata.io/workspaces", headers=headers)
+print(resp.json())
+```
+```bash
+curl -X GET https://api.xata.io/workspaces \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"
+```
+</TabbedCode>
+
+> Note that we `import fetch from "node-fetch"` because **we recommend interacting with the Xata API from a backend** that serves as a proxy to our API. This protects your API key by not exposing it to a browser environment. When `fetch` is called in a browser, all headers sent with the request [are visible in a browser's developer tools](https://stackoverflow.com/questions/4423061/how-can-i-view-http-headers-in-google-chrome), which has severe security implications. This visibility can have serious security consequences, as it may lead to the unintended exposure of your API key, potentially putting your database at risk of security threats.
+
+## Contexts
+
+Most Xata API operations occur within the context of a _workspace_, which can be thought of as a "organization" in which all of your databases live. Some things though, are not _part_ of a workspace, but adjacent to workspaces&mdash;like _other workspaces_. Because of this, Xata offers different API hosts depending on your usage contexts. We explain this more in the following sections.
+
+### Core API
+
+The Core API is accessible at the origin `https://api.xata.io` and is responsible for operations on all Xata properties that are not bound to a specific workspace. These include:
+
+- `/user`: Since one user can belong to multiple workspaces, a `user` is not bound to a workspace.
+- `/workspaces`: A workspace is equivalent to an organization or team, and cannot be a child of another workspace. Workspaces are top-level entities, so workspaces are managed with the Core API.
+
+Everything else that falls under the context of a workspace is operable with Xata's workspace-bound APIs.
+
+### Workspace API
+
+Bound by the [REST API limits](/docs/rest-api/limits), each workspace in Xata can contain a number of databases and each database can have a number of tables and branches . When interacting with Xata properties within the bounds of a workspace, we use the workspace-level API. This is accessible at a domain that is visible to you in your workspace's management section.
+
+![Managing a workspace in Xata](images/manage-workspace.png)
+
+For example, the general form of the database API is:
+
+```text
+https://{workspace-display-name}-{workspace-id}.{region}.xata.sh/db/{dbname}
+```
+
+An example of this is:
+
+```text
+https://my-workspace-123456.us-east-1.xata.sh/db/yourdatabase
+```
+
+In the above:
+
+- `{workspace-display-name}` is the display name of the workspace and is used to make identifying the workspace easier. It is ignored by the API.
+- `{workspace-id}` is the unique ID of the workspace, currently consisting of 6 alphanumeric characters.
+- `{region}` is the region in which the database is hosted. Note that the region can be configured per database, and this value must match the database region configuration.
+- `{dbname}` is the name of the database you are interacting with.
+
+You can find your workspace domain by navigating to the **Configuration** tab in the Xata Web UI, or in the **Get Code Snippet** under **Set up Xata Project**.
+
+## OpenAPI specifications
+
+To provide an easy way to use your favorite tools for exploring the Xata API, you can use the [OpenAPI](https://www.openapis.org/) specification:
+
+- [Core API spec](https://xata.io/api/openapi?scope=core)
+- [Workspace API spec](https://xata.io/api/openapi?scope=workspace)
