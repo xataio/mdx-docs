@@ -161,14 +161,15 @@ Below are the parameters passed to the methods in the following examples:
 ### Insert or update a new record
 
 <TabbedCode tabs={['1.x', '0.x']}>
-  ```python
-  from xata.client import XataClient
+
+```python
+from xata.client import XataClient
 
 xata = XataClient(db_name="my_db")
 
 record = {
-"name": "Peter Parker",
-"job": "Spiderman",
+  "name": "Peter Parker",
+  "job": "Spiderman",
 }
 
 # Insert record to table "Avengers" and let Xata generate a record Id
@@ -191,8 +192,8 @@ assert resp.is_success()
 # Upsert: Update or insert a record
 
 record = {
-"name": "Bruce Banner",
-"job": "Hulk",
+  "name": "Bruce Banner",
+  "job": "Hulk",
 }
 resp = xata.records().upsert("Avengers", "hulk-1", record)
 
@@ -209,7 +210,7 @@ resp = xata.records().upsert("Avengers", "spidey-1", record)
 assert resp.status_code == 200
 assert resp.is_success()
 
-````
+```
 
 ```python
 from xata.client import XataClient
@@ -248,7 +249,7 @@ record["job"] = "the incredible hulk"
 resp = client.records().upsertRecordWithID("Avengers", "spidey-1", record)
 # On update status code = 200
 assert resp.status_code == 200
-````
+```
 
 </TabbedCode>
 
