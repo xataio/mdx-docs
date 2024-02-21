@@ -258,9 +258,10 @@ assert resp.status_code == 200
 The following example shows how to retrieve a record with the id `spidey`, from the table `Avengers` and how to handle records that do not exist.
 
 <TabbedCode tabs={['1.x', '0.x']}>
-  ```python
-  from xata.client import XataClient
-  records = XataClient().records()
+
+```python
+from xata.client import XataClient
+records = XataClient().records()
 
 spiderman = records.get("Avengers", "spidey")
 print(spiderman.is_success()) # True
@@ -275,7 +276,7 @@ batman = records.get("Avengers", "bruce-wayne")
 print(batman.status_code) # 404
 print(batman.is_success()) # False
 
-````
+```
 
 ```python
 from xata.client import XataClient
@@ -289,7 +290,7 @@ print(spiderman.json())
 batman = records.getRecord("Avengers", "bruce-wayne")
 print(batman.status_code)
 # 404
-````
+```
 
 </TabbedCode>
 
@@ -298,22 +299,21 @@ print(batman.status_code)
 The following example shows how to query a table and apply filters and sorts. We will query the table `Avengers`, and apply some filters.
 
 <TabbedCode tabs={['1.x', '0.x']}>
-  ```python
-  from xata.client import XataClient
+
+```python
+from xata.client import XataClient
 
 resp = xata.data().query("Avengers", {
-"columns": ["name", "thumbnail"], # the columns we want returned
-"filter": { "job": "spiderman" }, # optional filters to apply
-"sort": { "name": "desc" } # optional sorting key and order (asc/desc)
+  "columns": ["name", "thumbnail"], # the columns we want returned
+  "filter": { "job": "spiderman" }, # optional filters to apply
+  "sort": { "name": "desc" }        # optional sorting key and order (asc/desc)
 })
 assert resp.is_success()
+
 print(resp["records"])
-
 # [{"id": "spidey", "name": "Peter Parker", "job": "spiderman"}]
-
 # Note it will be an array, even if there is only one record matching the filters
-
-````
+```
 
 ```python
 from xata.client import XataClient
@@ -330,7 +330,7 @@ records = resp.json()
 print(data["records"])
 # [{"id": "spidey", "name": "Peter Parker", "job": "spiderman"}]
 # Note it will be an array, even if there is only one record matching the filters
-````
+```
 
 </TabbedCode>
 
