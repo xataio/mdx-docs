@@ -1,0 +1,27 @@
+---
+title: 'Error: API key in browser'
+navTitle: 'Error: API key in browser'
+keywords: []
+description: 'Error: API key in browser'
+slug: messages/api-key-browser-error
+published: false
+---
+
+## Why this message occurred
+
+Our SDK detected that you are using a Xata API key in a browser (Example API key: `xau_xyz123`).
+
+## How to fix this
+
+**✅ Only use Xata API keys in server-side code.**
+
+In some frameworks (e.g. Next.js) it can be unclear which code is server-side and which is client-side. If in doubt, try using the Xata SDK inside an API route.
+
+## Why can't I use Xata API keys in a browser?
+
+⚠️ Xata API Keys have unrestricted permissions in your Xata database.
+
+Xata API keys can:
+
+- Delete databases
+- read/write to all tables
