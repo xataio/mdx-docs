@@ -9,9 +9,9 @@ published: true
 
 Xata has a relational data model, with a strict schema. Records are grouped into tables, which are grouped into databases. Xata supports rich column types and relations between tables can be represented via link columns, which are similar to foreign keys.
 
-Internally, we are storing the data both in a transactional database (OLTP) as well as in a search/analytics engine (OLAP). This is done transparently for you and the different stores are exposed via the same API. You can read more about how Xata works behind the scenes on the [How it Works](/docs/concepts/how-it-works) page.
+Internally, we are storing the data both in a transactional database (OLTP) as well as in a search/analytics engine (OLAP). This is done transparently for you and the different stores are exposed via the same API. You can read more about how Xata works behind the scenes on the [How it Works](/docs/concepts/serverless-data-platform) page.
 
-Data is organized in "tables" which are grouped into "databases". Tables have a strict [schema](/docs/concepts/schema), which contains a list of columns.
+Data is organized in "tables" which are grouped into "databases". Tables have a strict [schema](/docs/concepts/data-model#schema), which contains a list of columns.
 
 Xata supports many column types and the type is used, among other things, to generate type-safe clients.
 
@@ -101,7 +101,7 @@ These fields are **optional**:
 - `unique`: A boolean value answering the question "is every value in this column expected to be unique?"
 - `notNull`: A boolean value answering the question "is this column exected to have data?"
 - `defaultValue`: The default value of the column, if nothing is provided.
-- `file`: Specific to [file attachments](/docs/concepts/file-attachments), the `file` field will allow you to provide the `defaultPublicAccess` of files added to that record.
+- `file`: Specific to [file attachments](/docs/sdk/file-attachments), the `file` field will allow you to provide the `defaultPublicAccess` of files added to that record.
 
 ### Loading the Schema from a File
 
@@ -136,7 +136,7 @@ The following is an example of a record that you can store natively in Xata:
 }
 ```
 
-The keys in the JSON are the column names. The values are the data. The corresponding [schema file](/docs/concepts/schema) for the above record, looks like the following:
+The keys in the JSON are the column names. The values are the data. The corresponding [schema file](/docs/concepts/data-model#schema) for the above record, looks like the following:
 
 ```json
 {
@@ -516,7 +516,7 @@ Example definition:
 
 Xata maintains a special set of columns that don't have to be defined in the schema. The `id` and the `xata.*` columns names are reserved and you cannot create your own columns with these names. No other column names are reserved.
 
-The `id` and `xata.*` are not explicitely represented in the [schema](/docs/concepts/schema) file, because they are present for all tables and maintained by Xata.
+The `id` and `xata.*` are not explicitely represented in the [schema](/docs/concepts/data-model#schema) file, because they are present for all tables and maintained by Xata.
 
 ### id
 
@@ -783,7 +783,7 @@ Using `consistency: eventual` is beneficial if you are not bound to real time da
 
 ## Conclusion
 
-This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/docs/concepts/schema).
+This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/docs/concepts/data-model#schema).
 
 ## Object type migration
 

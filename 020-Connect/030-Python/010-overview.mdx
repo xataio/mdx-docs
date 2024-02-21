@@ -101,7 +101,7 @@ xata = XataClient(db_url="https://test-12345.us-east-1.xata.sh/db/Planes:feature
 
 Another options is to specify the `branch_name` in the SDK. If you specify `db_url` and `branch_name`, the latter will be ignored.
 
-If you want to change the branch for a single request, you can do so with all [workspace endpoints](/docs/rest-api/contexts#workspace-api), by setting the `branch_name`:
+If you want to change the branch for a single request, you can do so with all [workspace endpoints](/docs/rest-api#contexts#workspace-api), by setting the `branch_name`:
 
 ```python
 xata.records().insert("Planes", record, branch_name="feature-042")
@@ -127,7 +127,7 @@ Alternatively, you can directly instantiate a namespace, as demonstrated in this
 | Database table management                                        | `client.table()`          |
 | SQL over HTTP                                                    | `client.sql()`            |
 
-The endpoints and namespaces are generated from the [OpenAPI specification](/docs/rest-api/contexts).
+The endpoints and namespaces are generated from the [OpenAPI specification](/docs/rest-api#contexts).
 
 ## Logging
 

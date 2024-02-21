@@ -502,7 +502,7 @@ records, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
 
 ### File attachments within search results
 
-File attachment metadata is also available by default in [search](/docs/sdk/search) results. All metadata fields including the `url`,`signedUrl` and `uploadUrl` are returned as part of matching documents, but not the file content. Note that the `url` value is accessible only when [enablePublicUrl](/docs/concepts/file-attachments#public-urls) is set to `true` in the file's configuration.
+File attachment metadata is also available by default in [search](/docs/sdk/search) results. All metadata fields including the `url`,`signedUrl` and `uploadUrl` are returned as part of matching documents, but not the file content. Note that the `url` value is accessible only when [enablePublicUrl](/docs/sdk/file-attachments#public-urls) is set to `true` in the file's configuration.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 ```ts
@@ -866,7 +866,7 @@ user, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
 
 </TabbedCode>
 
-Within the Xata UI you can make files public by default for the column by setting `Make files public by default` when creating the column. This can also be done programtically by setting a parameter on the file column in the [schema](/docs/concepts/schema).
+Within the Xata UI you can make files public by default for the column by setting `Make files public by default` when creating the column. This can also be done programtically by setting a parameter on the file column in the [schema](/docs/concepts/data-model#schema).
 
 ![Entire columns can be made public by default](images/column-access-public.png)
 
