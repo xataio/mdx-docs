@@ -343,34 +343,29 @@ So we need to make multiple calls to page through our data.
 > NOTE: Pagination is limited to a total possible retrieval of 50,000 records.
 
 <TabbedCode tabs={['1.x', '0.x']}>
-  ```python
-  from xata.client import XataClient
+
+```python
+from xata.client import XataClient
 
 records = xata.data().query("people", {
-"page": {
-"size": 25 # limit result set to 25 records
-}
+  "page": {
+    "size": 25 # limit result set to 25 records
+  }
 })
 
 # do something with the data ..
 
 # are more pages available ? If yes keep looping
-
 # through until we reached the last page
-
 while records.has_more_results():
-
-# fetch the next page ...
-
-records = self.xata.data().query("people", {
-"page": {
-"after": records.get_cursor() # get the next cursor
-}
-})
-
-# do something with the data ..
-
-````
+  # fetch the next page ...
+  records = self.xata.data().query("people", {
+    "page": {
+      "after": records.get_cursor() # get the next cursor
+    }
+  })
+  # do something with the data ..
+```
 
 ```python
 from xata.client import XataClient
@@ -395,21 +390,21 @@ while more:
   # do something with the data ..
   more = records.json()["meta"]["page"]["more"]
 
-````
+```
 
 </TabbedCode>
 
 ### Delete a record from a table
 
 <TabbedCode tabs={['1.x', '0.x']}>
-  ```python
-  from xata.client import XataClient
-  records = XataClient().records()
+
+```python
+from xata.client import XataClient
+records = XataClient().records()
 
 record = records.delete("Avengers", "captain-america")
 print(record.status_code) # 204
-
-````
+```
 
 ```python
 from xata.client import XataClient
@@ -417,7 +412,7 @@ records = XataClient().records()
 
 record = records.deleteRecord("Avengers", "captain-america")
 print(record.status_code) # 204
-````
+```
 
 </TabbedCode>
 
