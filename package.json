@@ -16,7 +16,6 @@
     "eslint-config-next": "^13.4.7",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-mdx": "^2.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "prettier": "^2.8.8",
@@ -30,7 +29,7 @@
   "lint-staged": {
     "*.{js,ts,tsx,mdx,md}": [
       "prettier --config=.prettierrc.precommit.js --write",
-      "eslint --cache --fix"
+      "eslint --cache"
     ],
     "*.{css,json,md,yml,yaml,mdx,md}": [
       "prettier --write"
