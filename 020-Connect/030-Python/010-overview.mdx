@@ -129,10 +129,6 @@ Alternatively, you can directly instantiate a namespace, as demonstrated in this
 
 The endpoints and namespaces are generated from the [OpenAPI specification](/docs/rest-api#contexts).
 
-## Logging
-
-The SDK builds on the [requests](https://pypi.org/project/requests/) package and includes built-in logging support. By configuring the log level to debug, you can view the URL and status code by default.
-
 ## Examples
 
 The following examples assume the `client` variable is an instance of `XataClient` with the correct credentials. To learn more about initializing the SDK, refer to the [Configuration](/docs/python-sdk/overview#configuration) page.
@@ -715,8 +711,9 @@ while queue.subscribed():
 bp.flush_queue()
 ```
 
-### Logging
+## Logging
 
+The SDK builds on the [requests](https://pypi.org/project/requests/) package and includes built-in logging support. By configuring the log level to debug, you can view the URL and status code by default.
 The `BulkProcessor` just like the [`client`](/docs/python-sdk/overview#logging) use the `logging` package and will emit logs.
 
 ## Migrating from 0.x to 1.x
