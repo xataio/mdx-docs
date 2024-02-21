@@ -421,21 +421,21 @@ print(record.status_code) # 204
 The Bulk Processor is a helpful tool for performing bulk operations using the Xata Python client. It abstracts away the complexity of managing bulk operations, making it easier to perform large-scale insert operations. Using the [Bulk Processor](/docs/python-sdk/bulk-processor) is recommended for bulk operations in Xata.
 
 <TabbedCode tabs={['1.x', '0.x']}>
-  ```python
-  from xata.client import XataClient
+
+```python
+from xata.client import XataClient
 
 xata = XataClient(api_key="REDACTED_API_KEY", db_name="my_db", branch_name="feature-042")
 
 avengers = [
-{"name": "Peter Parker", "job": "Spiderman"},
-{"name": "Bruce Banner", "job": "Hulk"},
-{"name": "Steve Rodgers Parker", "job": "Captain America"},
-{"name": "Tony Stark", "job": "Iron Man"},
+  {"name": "Peter Parker", "job": "Spiderman"},
+  {"name": "Bruce Banner", "job": "Hulk"},
+  {"name": "Steve Rodgers Parker", "job": "Captain America"},
+  {"name": "Tony Stark", "job": "Iron Man"},
 ]
 resp = xata.records().bulk_insert("Avengers", {"records": avengers})
 assert resp.is_success()
-
-````
+```
 
 ```python
 from xata.client import XataClient
@@ -450,7 +450,7 @@ avengers = [
 ]
 resp = client.records().bulkInsertTableRecords("Avengers", {"records": avengers})
 assert resp.status_code == 200
-````
+```
 
 </TabbedCode>
 
@@ -459,21 +459,21 @@ assert resp.status_code == 200
 In this scenario we are uploading an on disk hosted file into a table `Photos` through the records API. For more examples please consult the [file attachment examples](/docs/sdk/file-attachments).
 
 <TabbedCode tabs={['1.x', '0.x']}>
-  ```python
-  xata = XataClient()
+
+```python
+xata = XataClient()
 
 upload = xata.records().insert("Photos", {
-"title": "My new uploaded photo",
-"photo": {
-"name": "Nordkette, Innsbruck",
-"mediaType": "image/jpeg",
-"base64Content": "Tm9yZGtldHRlLCBJbm5zYnJ1Y2ssIFR5cm9sLCBBdXN0cmlhLCBMb3JlbSBJcHN1bSBsb3Jv",
-"enablePublicUrl": True
-}
+  "title": "My new uploaded photo",
+  "photo": {
+    "name": "Nordkette, Innsbruck",
+    "mediaType": "image/jpeg",
+    "base64Content": "Tm9yZGtldHRlLCBJbm5zYnJ1Y2ssIFR5cm9sLCBBdXN0cmlhLCBMb3JlbSBJcHN1bSBsb3Jv",
+    "enablePublicUrl": True
+  }
 })
 assert upload.is_success()
-
-````
+```
 
 ```python
 xata = XataClient()
@@ -488,7 +488,7 @@ upload = xata.records().insertRecord("Photos", {
   }
 })
 assert upload.status_code == 201
-````
+```
 
 </TabbedCode>
 
@@ -506,8 +506,9 @@ b64 = base64.b64encode(file_content).decode("ascii")
 The `ask` endpoint uses search or similarity search algorithms to find relevant information from your database. Please refer to [this page](/docs/sdk/ask) to get more information about the endpoint.
 
 <TabbedCode tabs={['1.x', '0.x']}>
-  ```python
-  xata = XataClient()
+
+```python
+xata = XataClient()
 
 answer = xata.data().ask("xata", "does xata have a python sdk")
 assert answer.is_success()
@@ -523,8 +524,7 @@ assert follow_up.is_success()
 
 print("Answer : %s" % follow_up["answer"])
 print("Records: %s" % follow_up["records"])
-
-````
+```
 
 ```python
 client = XataClient(api_key="REDACTED_API_KEY", workspace_id="REDACTED_WS_ID")
@@ -539,23 +539,23 @@ assert resp.status_code == 200
 print("Answer : %s" % resp.json()["answer"])
 print("Records: %s" % resp.json()["records"])
 
-# follow up questions only available in 1.x version of the SDK
-````
+# [!] follow up questions only available in 1.x version of the SDK
+```
 
 </TabbedCode>
 
 ### Get the current User
 
 <TabbedCode tabs={['1.x', '0.x']}>
-  ```python
-  from xata.client import XataClient
+
+```python
+from xata.client import XataClient
 
 xata = XataClient()
 
 user = xata.users().get()
 print(user.status_code) # 200
-
-````
+```
 
 ```python
 from xata.client import XataClient
@@ -564,7 +564,7 @@ client = XataClient()
 
 user = client.users().getUser()
 print(user.status_code) # 200
-````
+```
 
 </TabbedCode>
 
@@ -749,13 +749,13 @@ The API surface was clunky with duplicate names, creating long function calls an
 Listing all databases in `0.x`
 
 ```python
-list = xata.databases().getDatabaseList()
+lst = xata.databases().getDatabaseList()
 ```
 
 changed to a more concise call in `1.x`:
 
 ```python
-list = xata.databases().list()
+lst = xata.databases().list()
 ```
 
 Continously the function arguments are also converted to the pep-8 standard, lowercased and separated by an underscore, `SessionId` becomes `session_id`.
