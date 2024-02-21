@@ -1,0 +1,88 @@
+---
+title: Xata SDK for Go
+navTitle: Xata SDK
+keywords: ['go', 'golang', 'sdk']
+description: Get to know Xata using Go
+slug: sdk/go/overview
+published: true
+---
+
+<Alert status="warning">
+  The Go SDK is currently in *alpha*. This means that it does not include all endpoints and is subject to potential
+  breaking changes before reaching its `1.0.0` stable General Availability (GA) release.
+</Alert>
+
+The Go SDK is available on GitHub: https://github.com/xataio/xata-go
+
+## Install
+
+```bash
+go get github.com/xataio/xata-go@latest
+```
+
+## Configuration
+
+The client requires the `XATA_API_KEY` environment variable for [authentication](/docs/rest-api#authentication). You can configure your workspace, region, and branch in two ways:
+
+### Using environment variables
+
+The following environment variables are available to configure your connection params:
+
+- `XATA_WORKSPACE_ID`: This is variable to mandatory.
+- `XATA_BRANCH`: This is _optional_, if unspecified, defaults to `main`.
+- `XATA_REGION`: This is _optional_, if unspecified, defaults to `us-east-1`. Explore all [available regions](/docs/getting-started/available-regions) in Xata.
+
+### Using the `.xatarc` file
+
+Alternatively, you can configure settings using the `.xatarc` file. To initialize your project with the `.xatarc` file, refer to the [installation guide](/docs/getting-started/installation#xatarc).
+
+## Example
+
+After setting up your project and adding Xata credentials, create an example Go file.
+
+The following example code demonstrates using the SDK to connect to Xata, retrieve a list of workspaces, and then print out details of the first workspace in the list.
+
+In your text editor, paste the following code into your `example.go` file and save the file:
+
+```go
+package main
+
+import (
+  "context"
+  "fmt"
+
+  "github.com/xataio/xata-go/xata"
+)
+
+func main() {
+  workspaces, _ := xata.NewWorkspacesClient()
+  resp, _ := workspaces.List(context.TODO())
+  fmt.Printf("%#v\n", *resp.Workspaces[0])
+}
+```
+
+In the terminal, enter `go run .` to run the code.
+
+The code snippet calls `workspaces.List(ctx)` API to list all workspaces and prints the details of the first workspace with `fmt.Printf("%#v\n", *resp.Workspaces[0])`.
+
+### Runnable Example
+
+You can run the snippet from above on your machine by, pulling the example code from the xataio/xata-go repository
+
+```bash
+wget -O example.go "https://raw.githubusercontent.com/xataio/xata-go/main/examples/list_workspaces.go"
+go mod edit -module=example.com/mod
+go mod download github.com/xataio/xata-go@main
+```
+
+Run the code with the command:
+
+```bash
+XATA_API_KEY="<INSERT_YOUR_API_KEY>" go run example.go
+```
+
+## Known Limitations
+
+- [Numeric operations](/docs/sdk/update#numeric-operations) are currently not supported using the update API. As a workaround, you can use the transaction API [example](/docs/sdk/transaction).
+- Not all Xata endpoints are available at the alpha state of the SDK. You can check the coverage [here](https://github.com/xataio/xata-go/issues/1).
+- Currently, there is no option to change the [consistency](/docs/concepts/data-model#consistency) and the default setting is `strong`.
