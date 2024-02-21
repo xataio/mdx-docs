@@ -7,6 +7,8 @@ slug: postgres/connect
 published: true
 ---
 
+<Alert status="info">The Postgres wire protocol is still considered BaseAudioContext.</Alert>
+
 This page shows you how to connect to Postgres, by explaining how a connection string is built, the different parameters and examples to connect via [psql](https://www.postgresql.org/docs/current/app-psql.html).
 
 ## Connection string
@@ -45,3 +47,11 @@ psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
 
 Games:main=>
 ```
+
+### sslmode
+
+<Alert status="warning">this is incomplete and still a TODO</Alert>
+
+`required`
+
+https://www.postgresql.org/docs/current/libpq-ssl.html
