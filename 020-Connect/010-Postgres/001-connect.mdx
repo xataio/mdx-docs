@@ -1,0 +1,47 @@
+---
+title: Connect to Postgres
+navTitle: Connect
+keywords: ['postgres', 'connect', 'dsn']
+description: Learn how to connect to Postgres
+slug: postgres/connect
+published: true
+---
+
+This page shows you how to connect to Postgres, by explaining how a connection string is built, the different parameters and examples to connect via [psql](https://www.postgresql.org/docs/current/app-psql.html).
+
+## Connection string
+
+The connection string to connect to Postgres is constructed the following:
+
+```
+postgresql://[User]:[Password]@[Host]:[Port]/[Database]
+```
+
+The following conversion table illustrates how the connection string parameters are mapped to Xata.
+
+| Postgres | Xata                       | Example                 |
+| -------- | -------------------------- | ----------------------- |
+| User     | Workspace Id               | `ws1234`                |
+| Password | API Key                    | `xau_apikey123456`      |
+| Host     | Region plus `.sql.xata.sh` | `us-east-1.sql.xata.sh` |
+| Port     | `5432` or empty            | `5432`                  |
+| Database | Database and branch name   | `Games:main`            |
+
+With the example values from above, the connection string to connect to our database `Games` on branch `main` is constructed as:
+
+```
+postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
+```
+
+The connection strings for the HTTP access and for the Postgres wire protocol are shown to you when you create a new database, afterwards you can always navigate to the database settings to see the URL construction.
+![Database settings showing connection strings](images/connection-string.png)
+
+To create a new API key, or manage your existing ones, you need to open your [account settings](https://app.xata.io/settings).
+
+Using psql to connect to your database, based off the previously constructed connection string with the example values:
+
+```bash
+psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main"
+
+Games:main=>
+```
