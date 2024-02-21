@@ -1,0 +1,289 @@
+---
+title: SQL queries over HTTP
+description: How to access Xata using SQL directly
+keywords: ['sql', 'access', 'rest']
+slug: sdk/sql/overview
+published: true
+---
+
+Xata uses PostgreSQL under the hood to store your data. You can use SQL to work with your data. The results come back in a typical Xata JSON response mechanism over HTTP. If the Xata API doesn't cover the query you need, you can use SQL directly to do queries, insert data, update information, and delete records.
+
+Xata offers support for a subset of PostgreSQL functions. This includes functions such as `subquery`, `comparison`, `aggregate`, `window`, `range`, `json`, `string`, `datetime`, and `array` functions. Functions beyond these are not permitted.
+
+## Data model
+
+Database tables are stored in PostgreSQL as tables. Xata data types are mapped to PostgreSQL types with additional constraints:
+
+| Xata data type | PostgreSQL data type | Notes                              |
+| -------------- | -------------------- | ---------------------------------- |
+| string         | text                 |                                    |
+| text           | text                 | With constraints on maximum length |
+| int            | bigint               |                                    |
+| float          | double precision     |                                    |
+| datetime       | timestamptz          |                                    |
+| bool           | boolean              |                                    |
+| email          | text                 | Validated by Xata                  |
+| multiple       | text[]               | Validated by Xata                  |
+| file           | jsonb                | Validated by Xata                  |
+| filearray      | jsonb                | Validated by Xata                  |
+| link           | foreign key          |                                    |
+
+In PostgreSQL tables are used to store and organize data. Linked columns serve as foreign keys, establishing connections to other tables. To access data from a linked column, use JOIN operations or apply WHERE conditions to locate the related records.
+
+For example, the following query shows how to retrieve email addresses and corresponding cities using a `LEFT JOIN` operation between the "Users" and "address" tables.:
+
+```sql
+SELECT "Users".email, address.city FROM "Users"
+LEFT JOIN address ON "Users".id=address.id;
+```
+
+For specific Xata data types like email, it is required you use the Xata API or SDK. This ensures that Xata can validate the inserted data's accuracy. We recommend refraining from directly writing to columns of this type and instead using the provided API for better results.
+
+### Table and column names
+
+Note when you are working with names that include upper-case
+letters like `Users` or `zipCode`, you must quote those
+otherwise PostgreSQL treats it as a lowercase name.
+
+## API Endpoint
+
+**URL:** `https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql`
+
+- This URL represents the endpoint for making SQL queries within the Xata platform. It's intended to enable database interaction within a designated Workspace.
+
+**Method:** `POST`
+
+- The HTTP method used to interact with the provided URL is `POST`. This means you'll be sending data to the server, specifically your SQL statement and any additional parameters.
+
+**Parameters:**
+
+- `statement`: Your SQL statement (required).
+- `params`: A list of parameters when submitting a parameterized statement.
+- `consistency`: This parameter refers to the level of consistency when executing a statement. It offers options such as `strong` and `eventual`. The default setting is `strong`.
+
+## Examples
+
+The following are instances of working with data, including retrieving, selecting, inserting, and deleting records, using SQL in the Xata platform.
+
+### Fetch all records
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
+```ts
+const { records } = await xata.sql<TeamsRecord>`SELECT * FROM teams`;
+```
+
+```python
+records = xata.sql().query("SELECT * FROM \"teams\"")
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"teams\""
+}
+```
+
+</TabbedCode>
+
+The following response is returned:
+
+```json
+{
+  "records": [
+    {
+      "id": "rec_c8hng2h26un90p8sr7k0",
+      "name": "Matrix",
+      "owner": {
+        "id": "myid"
+      },
+      "xata": {
+        "version": 0,
+        "createdAt": "2023-05-15T08:21:31.96526+01:00",
+        "updatedAt": "2023-05-15T21:58:54.072595+01:00"
+      }
+    }
+  ]
+}
+```
+
+### Select a subset of columns from your table
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
+```ts
+const { records } = await xata.sql<TeamsRecord>`SELECT name, city FROM "Users"`;
+```
+
+```python
+records = xata.sql().query("SELECT name, city FROM \"Users\"")
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT name, city FROM \"Users\""
+}
+```
+
+</TabbedCode>
+
+Response:
+
+```json
+{
+  "records": [
+    {
+      "city": "New York",
+      "name": "Keanu Reaves"
+    }
+  ]
+}
+```
+
+### Insert a new record using a parameterized query
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const user = { name: "Keanu Reeves", email: "keanu@example.com" };
+const { records } = await xata.sql<UsersRecord>`INSERT INTO "Users" (name, email) VALUES (${user.name}, ${user.email})`;
+```
+
+```python
+name = "Keanu Reeves"
+email = "keanu@example.com"
+records = xata.sql().query(
+  "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
+  [name, email]
+)
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
+  "params": ["Keanu Reeves", "keanu@example.com"]
+}
+```
+
+</TabbedCode>
+
+### Delete record using a parameterized query
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const user = { id: "my-record-id" };
+await xata.sql<UsersRecord>`DELETE FROM "Users" WHERE id=${user.id}`;
+````
+
+```python
+xata.sql().query(
+  statement = "DELETE FROM \"Users\" WHERE id=$1",
+  params = ["my-record-id"]
+)
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "DELETE FROM  \"Users\" WHERE id=$1",
+  "params": ["my-record-id"]
+}
+```
+
+</TabbedCode>
+
+### Query records from the replica store
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const response = await xata.sql<UsersRecord>({
+  statement: `SELECT * FROM "Users" LIMIT 10;`,
+  consistency: "eventual",
+});
+```
+
+```python
+xata.sql().query(
+  statement = "SELECT * FROM \"Users\" LIMIT 10;",
+  consistency = "eventual"
+)
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+
+{
+  "statement": "SELECT * FROM \"Users\" LIMIT 10;",
+  "consistency": "eventual"
+}
+```
+
+</TabbedCode>
+
+## Limitations
+
+When using SQL in Xata, there are a few constraints to keep in mind.
+
+### Data retrieval
+
+- The `xata.*` internal fields are read-only. You cannot modify these fields.
+- You can only submit one statement per request.
+- Xata returns 1000 records at a time. Access your data using `LIMIT` and `OFFSET` to iterate and work through your data.
+- JSON formatter functions do not work as the endpoint already returns a JSON response.
+- The `work_mem` setting in PostgreSQL is set to 4 MB. so a query can use only 4 MB of memory (before writing to temp files)
+
+### Resource consumption
+
+- In PostgreSQL, the `work_mem` configuration is set to 4 MB. A query is limited to 4 MB of memory and this limit is enforced before the data is saved into temporary files. The `work_mem` configuration sets the baseline maximum memory for query operations like sorting or using hash tables before writing to temporary disk file.
+- The `hash_mem_multiplier` is set to `1`. The `hash_mem_multiplier` computes the maximum memory for hash-based operations by multiplying it by `work_mem`. For additional information on resource consumption in Postgres, see the [PostgreSQL docs](https://www.postgresql.org/docs/current/runtime-config-resource.html).
+
+### Column names
+
+Columns with matching names overwrite each other by default. To address this, especially when dealing with multiple columns that have the same name, you can use column aliasing as a solution. For instance:
+
+```sql
+SELECT address AS physical_address, address AS email
+FROM people, emails
+WHERE people.id=emails.id;
+```
+
+By assigning aliases, you can distinguish between columns with similar names and manage them effectively.
+
+### Supported commands
+
+Xata supports the following essential Data Manipulation Language (DML) SQL commands, which are fundamental for managing and manipulating data within database tables:
+
+- `SELECT`: This command is used to retrieve data from a database. It allows you to select one or more columns of a table, with various options for filtering, sorting, and grouping the data.
+
+- `INSERT`: This command is used to add new records (rows) to a table. It specifies the table to insert into and the values for the new row.
+
+- `DELETE`: This command removes existing records from a table. It can be used with conditions to specify which records should be deleted.
+
+- `UPDATE`: This command modifies existing records in a table such as correcting errors or updating information. Like DELETE, it can be used with conditions to specify which records should be updated and how.
+
+#### Unsupported commands
+
+The following table provides examples of commands that are currently **not supported** in Xata:
+
+| Command type                           | Description                                             | Unsupported commands                                                          |
+| -------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Data Definition Language (DDL)**     | Used for defining or altering database structures       | `CREATE`, `DROP`, `ALTER`, `TRUNCATE`                                         |
+| **Data Manipulation Language (DML)**   | Typically used for data manipulation                    | `UPSERT`, `SEQUENCE`                                                          |
+| **Data Control Language (DCL)**        | Manages user permissions and access control             | `GRANT`, `REVOKE`                                                             |
+| **Transaction Control Language (TCL)** | Crucial for managing the state of database transactions | `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ROLLBACK TO SAVEPOINT`, `SET TRANSACTION` |
+
+### Connection methods
+
+SQL access in Xata is achieved via an HTTP or HTTPS proxy. Tools that use a wire protocol with a connection string to PostgreSQL are not compatible with Xata's SQL proxy.
+
+You can use SQL in Xata with any of the following methods:
+
+- Use the built-in PostgreSQL Playground in the Xata Web UI.
+- Execute API calls to your branch's `/sql` endpoint using web clients such as Postman.
+- Use the SQL methods provided in the Typescript and Python SDKs.
+- Use the [Kysely](/docs/integrations/kysely) and [Drizzle](/docs/integrations/drizzle) integrations.

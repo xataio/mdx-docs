@@ -1,0 +1,1062 @@
+---
+title: File attachments
+navTitle: File attachments
+keywords: ['files', 'file storage', 'file attachments']
+description: Store files within your database with Xata
+slug: sdk/file-attachments
+published: true
+---
+
+Xata offers general purpose file attachment capabilities. In order to simplify the management of large binary objects and to improve the developer experience, Xata integrates files support directly into the database itself. The aim is to offer a unified, seamless experience by exposing file support under one API, security model, and SDK. Using this approach, the [queries](/docs/sdk/get), [filters](/docs/sdk/filtering), [summaries](/docs/sdk/summarize), [aggregations](/docs/sdk/aggregate) from the SDK can also be used on the files' metadata. The metadata (file name, media type, tags) is also indexed for [search](/docs/sdk/search) so it can be included in search results.
+
+![Add the file column type to start working with files](images/file-attachments-add.jpg)
+
+Xata provides three different ways to interact with file attachments within a file column in a database.
+
+**[Upload URLs](#upload-urls)** _(for uploads)_
+
+- ✅ Client side (doesn't require using an API key, and can be run in the browser).
+- ✅ Upload [large files](/docs/rest-api/limits#file-attachments-limits).
+- ⚠️ Require extra steps across the client and server side.
+- Used only for initial upload or replacement of the actual files.
+
+**[Record APIs](#record-apis)** _(for deleting, downloading, and querying files)_
+
+- ✅ Upload files in the same step as creating a record.
+- ✅ Useful for querying and modifying the metadata around existing files.
+- ⚠️ Only supports files up to 20MB (total per request).
+- ⚠️ Server side only.
+- ⚠️ Likely exceed limits of serverless functions from providers like Vercel which can be much lower.
+
+**[Binary APIs](#file-binary-apis)** _(for controlled environments)_
+
+- ✅ Upload files to existing record.
+- ✅ Upload [large files](/docs/rest-api/limits#file-attachments-limits).
+- ⚠️ Server side only.
+- ⚠️ Likely exceed limits of serverless functions from providers like Vercel which can be much lower.
+- Good for when you own the environment completely, like uploading large files from a local machine.
+
+## Upload files using upload URLs
+
+Upload URLs are a temporary, secure URL that allows uploading files to Xata from the client side.
+They are the recommended pattern for uploading large files from a client e.g. a web browser. Upload URLs have large [limits](/docs/rest-api/limits#file-attachments-limits) and allow you to bypass the size restrictions of many server-side function hosts like Vercel.
+
+The downside to using upload URLs is they require multiple steps: creating, then updating the record.
+
+### 1. Create/Update a record with an empty file (server side)
+
+On the server side use `xata.db.myTableName.create` to create (or update) a record with an empty file and simultaneously request an `uploadUrl`.
+
+A server-side API route (heavily simplified, and not accounting for your particular framework) might look like this:
+
+```ts title="app/api/create-record.ts"
+// ... Your api route code
+
+// Create an empty record with no base64 content on a `myTableName` table. The column for the file is `myFileColumnName`.
+// Can also use `.update` for existing records
+const record = await xata.db.myTableName.create(
+  { name, myFileColumnName: { name: name, mediaType: 'image/png', base64Content: '' } },
+  // Request an uploadUrl from the created record. We'll use this client-side to update the record.
+  ['myFileColumnName.uploadUrl']
+);
+
+// Return the `uploadUrl` in the API response.
+return Response({ myUploadUrl: record.myFileColumnName.uploadUrl });
+```
+
+### 2. Upload the file (client side)
+
+Upload the file using a `PUT` request to the `uploadUrl` returned from the server side.
+
+```ts title="app/upload.tsx"
+try {
+  // Call the server API from step 1 above
+  const response = await fetch('/api/create-record', {
+    method: 'POST',
+    body: formData
+  });
+  if (response.status !== 200) {
+    throw new Error("Couldn't create record");
+  }
+
+  const responseJson = await response.json();
+
+  try {
+    // Put the file inside a FormData object
+    const formData = new FormData();
+    const fileObj = file;
+    formData.append('fileType', fileObj.type);
+    // Use `myUploadUrl` from the server response to upload the file on the client
+    await fetch(responseJson.myUploadUrl, { method: 'PUT', body: file });
+  } catch (error) {
+    throw new Error("Couldn't upload image because the image wasn't accepted");
+  }
+} catch (error) {
+  throw new Error("Couldn't upload image because the record wasn't created");
+}
+```
+
+A minimal image upload example using Next.js server components is available as a [sample application](https://github.com/xataio/examples/tree/main/apps/sample-nextjs-upload-file) on GitHub. A more advanced example is available in our [Gallery app](https://github.com/xataio/sample-nextjs-chakra-gallery-app).
+
+## Record APIs
+
+All Xata record APIs can be used to create, read, update, delete and query files.
+
+### Upload a file through inserting a new record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+```ts
+const record = await xata.db.Users.create({
+  name: 'Keanu',
+  photo: {
+    name: 'file.png',
+    mediaType: 'image/png',
+    base64Content:
+      'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+  }
+});
+```
+
+```python
+record = xata.records().insert("Users", {
+  "name": "Keanu",
+  "photo": {
+    "name": "file.png",
+    "mediaType": "image/png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC",
+  }
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+record, _ := recordsClient.Insert(context.TODO(), xata.InsertRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  Body: map[string]*xata.DataInputRecordValue{
+    "name":  xata.ValueFromString("Keanu"),
+    "photo": xata.ValueFromInputFile(xata.InputFile{
+      Name:          "file.png",
+      MediaType:     xata.String("image/png"),
+      Base64Content: xata.String("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"),
+    }),
+  },
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
+
+{
+  "name": "Keanu",
+  "photo": {
+    "name": "file.png",
+    "mediaType": "image/png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+</TabbedCode>
+
+### Update a file through updating a record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+
+```ts
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    base64Content:
+      'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+  }
+});
+
+// or, using the `update` method on the record object:
+
+user.update({
+  photo: {
+    base64Content:
+      'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+  }
+});
+```
+
+```python
+record = xata.records().update("Users", "record_id", {
+  "photo": {
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+record, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "record_id",
+  Body: map[string]*xata.DataInputRecordValue{
+    "photo": xata.ValueFromInputFile(xata.InputFile{
+      Base64Content: xata.String("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"),
+    }),
+  },
+})
+```
+
+```jsonc
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
+
+{
+  "photo": {
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+</TabbedCode>
+
+### Append a file to an array through updating a record
+
+In the following example the `photos` column is of type `file[]` (file array).
+The existing file ids from the array must be present in the update.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+
+```ts
+const user = await xata.db.Users.update('record_id', {
+  photos: [
+    {
+      id: 'existing_file_id'
+    },
+    {
+      id: 'new_id',
+      base64Content:
+        'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+    }
+  ]
+});
+
+// or, using the `update` method on the record object:
+
+user.update({
+  photos: [
+    {
+      id: 'existing_file_id'
+    },
+    {
+      id: 'new_id',
+      base64Content:
+        'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC'
+    }
+  ]
+});
+```
+
+```python
+record = xata.records().update("Users", "record_id", {
+  "photos": [
+    {
+      "id": "existing_file_id"
+    },
+    {
+      "id": "new_id",
+      "base64Content":
+        "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+    }
+  ]
+})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+record, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "record_id",
+  Body: map[string]*xata.DataInputRecordValue{
+    "photos": xata.ValueFromInputFileArray(xata.InputFileArray{
+      {
+        Id: xata.String("existing_file_id"),
+      },
+      {
+        Name:          xata.String("new_id"),
+        Base64Content: xata.String("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"),
+      },
+    }),
+  },
+})
+```
+
+```jsonc
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
+
+{
+  "photos": [
+    {
+      "id": "existing_file_id"
+    },
+    {
+      "id": "new_id",
+      "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+    }
+  ]
+}
+```
+
+</TabbedCode>
+
+### Download a file through reading a record
+
+The `base64Content` must be requested explicitly, it is not returned when selecting columns using wildcard.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
+```ts
+const user = await xata.db.Users.read('record_id', ['photo.name', 'photo.base64Content']);
+```
+
+```python
+user = xata.records().get("Users", "record_id", columns=["photo.name", "photo.base64Content"])
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+user, _ := recordsClient.Get(context.Background(), xata.GetRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "record_id",
+  Columns: []string{"photo.name", "photo.base64Content"},
+})
+```
+
+```sh
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?columns=photo.name,photo.base64Content' \
+  --header 'authorization: Bearer xau_REDACTED'
+```
+
+</TabbedCode>
+
+Response:
+
+```json
+{
+  "id": "record_id",
+  "photo": {
+    "name": "file.png",
+    "base64Content": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVR42mNk+M9QzwAEjDAGACCDAv8cI7IoAAAAAElFTkSuQmCC"
+  }
+}
+```
+
+### Delete a file through updating a record
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const user = await xata.db.Users.update('record_id', { photo: null });
+
+// or, using the `update` method on the record object:
+
+await user.update({ photo: null });
+
+````
+
+```python
+record = xata.records().update("Users", "record_id", {"photo": None})
+````
+
+```jsonc
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
+
+{
+  "photo": null
+}
+```
+
+</TabbedCode>
+
+### Delete a file from an array through updating a record
+
+A file array item is deleted by setting the array to the set of ids that need to be kept.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+```ts
+const user = await xata.db.Users.update('record_id', { photos: [{id: 'id_to_keep_1'}, {id: 'id_to_keep_2'} ] });
+
+// or, using the `update` method on the record object:
+
+await user.update({ photos: [{id: 'id_to_keep_1'}, {id: 'id_to_keep_2'} ] });
+
+````
+
+```python
+record = xata.records().update("Users", "record_id", {
+  "photos": [
+    {"id": "id_to_keep_1"},
+    {"id": "id_to_keep_2"}
+  ]
+})
+````
+
+```jsonc
+// PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/record_id
+
+{
+  "photos": [{ "id": "id_to_keep_1" }, { "id": "id_to_keep_2" }]
+}
+```
+
+</TabbedCode>
+
+### Query files metadata
+
+Here is an example of retrieving access URLs for all files from the photo column, that are `image/png`, sorted by file size:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+```ts
+const photos = await xata.db.Users.select(['name', 'photo.url', 'photo.size'])
+  .filter({ 'photo.mediaType': 'image/png' })
+  .sort('photo.size', 'desc')
+  .getMany();
+```
+
+```python
+photos = xata.data().query("Users", {
+  "columns": ["name", "photo.url", "photo.size"],
+  "filter": { "photo.mediaType": "image/png" },
+  "sort": { "photo.size": "desc" }
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+records, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{"name", "photo.url", "photo.size"},
+    // Nested filters currently are not support yet in xata-go
+    Sort: xata.NewSortExpressionFromStringSortOrderMap(map[string]xata.SortOrder{
+      "photo.size": xata.SortOrderDesc,
+    }),
+  },
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+
+{
+  "columns": ["name", "photo.url", "photo.size"],
+  "filter": { "photo.mediaType": "image/png" },
+  "sort": { "photo.size": "desc" }
+}
+```
+
+</TabbedCode>
+
+Fields `base64Content` and `signedUrl` within the `photo` object are retrieved only when they are explicitly specified in the request. If you use a wildcard to request all fields of the photo object, these specific fields will not be included automatically. You must list them individually to retrieve their values.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+```ts
+const photos = await xata.db.Users.select(['name', 'photo.base64Content', 'photo.signedUrl', 'photo.*'])
+  .filter({ 'photo.mediaType': 'image/png' })
+  .sort('photo.size', 'desc')
+  .getMany();
+```
+
+```python
+photos = xata.data().query("Users", {
+  "columns": ["name", "photo.base64Content", "photo.signedUrl", "photo.*"],
+  "filter": { "photo.mediaType": "image/png" },
+  "sort": { "photo.size": "desc" }
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+records, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{"name", "photo.base64Content", "photo.signedUrl", "photo.*"},
+    // Nested filters are currently not supported in xata-go
+    Sort: xata.NewSortExpressionFromStringSortOrderMap(map[string]xata.SortOrder{
+      "photo.size": xata.SortOrderDesc,
+    }),
+  },
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+
+{
+  "columns": ["name", "photo.base64Content", "photo.signedUrl", "photo.*"],
+  "filter": { "photo.mediaType": "image/png" },
+  "sort": { "photo.size": "desc" }
+}
+```
+
+</TabbedCode>
+
+### File attachments within search results
+
+File attachment metadata is also available by default in [search](/docs/sdk/search) results. All metadata fields including the `url`,`signedUrl` and `uploadUrl` are returned as part of matching documents, but not the file content. Note that the `url` value is accessible only when [enablePublicUrl](/docs/sdk/file-attachments#public-urls) is set to `true` in the file's configuration.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
+```ts
+const results = await xata.search.all('Keanu', {
+  tables: ['Users']
+});
+```
+
+```python
+results = xata.data().search_branch({
+  "query": "Keanu",
+  "tables": ["Users"]
+})
+```
+
+```go
+searchClient, _ := xata.NewSearchAndFilterClient()
+results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
+  Payload: xata.SearchBranchRequestPayload{
+    Query:  "Keanu",
+    Tables: []*xata.SearchBranchRequestTablesItem{
+      xata.NewSearchBranchRequestTablesItemFromString("Users"),
+    },
+  },
+})
+```
+
+```jsonc
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/search
+
+{
+  "query": "Keanu",
+  "tables": ["Users"]
+}
+```
+
+</TabbedCode>
+
+<details open>
+  <summary>Example Search response</summary>
+```json
+{
+  "totalCount": 1,
+  "records": [
+    {
+      "table": "Users",
+      "record": {
+        "id": "rec_cn2baqiit8nelj83jag0",
+        "name": "Keanu Reeves",
+        "photo": {
+          "name": "img.jpg",
+          "mediaType": "image/jpeg",
+          "enablePublicUrl": true,
+          "signedUrlTimeout": 600,
+          "uploadUrlTimeout": 86400,
+          "size": 1,
+          "version": 0,
+          "url": "https://us-east-1.storage.xata.sh/f13f4im2411tpd9njp32mgt9fc",
+          "signedUrl": "https://us-east-1.xata.sh/file/...",
+          "uploadUrl": "https://q867qv.us-east-1.upload.xata.sh/file/...",
+          "attributes": {
+            "height": 3205,
+            "width": 2561
+          }
+        },
+        "xata": {
+          "createdAt": "2024-02-08T11:05:14.344Z",
+          "highlight": {
+            "name": [
+              "<em>Keanu</em> Reeves"
+            ]
+          },
+          "score": 0.2876821,
+          "table": "Users",
+          "updatedAt": "2024-02-08T12:03:57.044Z",
+          "version": 1
+        }
+      }
+    }
+  ]
+}
+```
+</details>
+
+## File (binary) APIs
+
+Since all record APIs use JSON for both request and response body, the file content needs to be encoded. For reasons like performance or data size on the wire, encoding the content might not be desired.
+To work directly with binary file content, Xata introduces new file APIs.
+Similar to the other Xata APIs, the file APIs require the Authorization header and a valid API key.
+
+### Upload a file using file APIs
+
+`file` column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
+```ts
+await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id' }, file);
+```
+
+```python
+# file_content = bytes
+response = xata.files().put("table_name", "record_id", "column_name", file_content)
+```
+
+```go
+filesClient, _ := xata.NewFilesClient()
+file, _ := filesClient.Put(context.TODO(), xata.PutFileRequest{
+  TableName:  "table_name",
+  RecordID:   "record_id",
+  ColumnName: "column_name",
+  Data:       []byte(`data`), // file content
+})
+```
+
+```sh
+curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file' \
+  --header 'Content-Type: image/jpeg' \
+  --header 'Authorization: Bearer xau_REDACTED' \
+  --data-binary '@/path/to/file'
+```
+
+</TabbedCode>
+
+### Append a file to an array using file APIs
+
+Column type is `file[]` (file array).
+The `fileId` is optional and a unique id will be automatically generated if not provided.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
+```ts
+await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id', fileId: 'id' }, file);
+```
+
+```python
+# file_content = bytes
+response = xata.files().put_item("table_name", "record_id", "column_name", "file_id", file_content)
+```
+
+```go
+filesClient, _ := xata.NewFilesClient()
+file, _ := filesClient.PutItem(context.TODO(), xata.PutFileItemRequest{
+  TableName:  "table_name",
+  RecordID:   "record_id",
+  ColumnName: "column_name",
+  FileID:     "file_id",
+  Data:       []byte(`data`), // file content
+})
+```
+
+```sh
+curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file/{file_id}' \
+  --header 'Content-Type: image/jpeg' \
+  --header 'Authorization: Bearer xau_REDACTED' \
+  --data-binary '@/path/to/file'
+```
+
+</TabbedCode>
+
+### Download a file using file APIs
+
+`file` column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
+```ts
+const file = await xata.files.download({ table: 'table_name', column: 'column_name', record: 'record_id' });
+```
+
+```python
+file = xata.files().get("table_name", "record_id", "column_name")
+```
+
+```go
+filesClient, _ := xata.NewFilesClient()
+file, _ := filesClient.Get(context.TODO(), xata.GetFileRequest{
+  TableName:  "table_name",
+  RecordID:   "record_id",
+  ColumnName: "column_name",
+})
+```
+
+```sh
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file' \
+  --header 'Authorization: Bearer xau_REDACTED' \
+  --output download.jpeg
+```
+
+</TabbedCode>
+
+`file[]` (file array) column type:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
+```ts
+const file = await xata.files.download({
+  table: 'table_name',
+  column: 'column_name',
+  record: 'record_id',
+  fileId: 'file_id'
+});
+```
+
+```python
+file = xata.files().get_item("table_name", "record_id", "column_name", "file_id")
+```
+
+```go
+filesClient, _ := xata.NewFilesClient()
+file, _ := filesClient.GetItem(context.TODO(), xata.GetFileItemRequest{
+  TableName:  "table_name",
+  RecordID:   "record_id",
+  ColumnName: "column_name",
+  FileID:     "file_id",
+})
+```
+
+```sh
+curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file/{file_id}' \
+  --header 'Authorization: Bearer xau_REDACTED' \
+  --output download.jpeg
+```
+
+</TabbedCode>
+
+### Delete a file from an array using file APIs
+
+Column type is `file[]` (file array).
+`fileId` is required to identify the array item to be deleted.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
+```ts
+await xata.files.delete({ table: 'table_name', column: 'column_name', record: 'record_id', fileId: 'id' });
+```
+
+```python
+response = xata.files().delete_item("table_name", "record_id", "column_name", "file_id")
+```
+
+```go
+filesClient, _ := xata.NewFilesClient()
+file, _ := filesClient.DeleteItem(context.TODO(), xata.DeleteFileItemRequest{
+  TableName:  "table_name",
+  RecordID:   "record_id",
+  ColumnName: "column_name",
+  FileID:     "file_id",
+})
+```
+
+```sh
+curl --request DELETE 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file/{file_id}' \
+  --header 'Authorization: Bearer xau_REDACTED' \
+```
+
+</TabbedCode>
+
+## File access and security
+
+Xata provides three ways to expose a file's URL to any request. This allows you to build a range of products from public facing websites, to more security-minded applications that need to think through authentication. Files are secure by default, with action required through these methods to provide access.
+
+![A file's access can be toggled in the app](images/file-access.png)
+
+### Authenticated URLs
+
+Authenticated URLs are private URLs that can be used to access a file with a valid Xata API key. They are available in the `url` field of a file object if the file is not configured for public access.
+
+These URLs are especially useful if you need quick, high-throughput, and concurrent download access, with cached data.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go']}>
+
+```ts
+// Disallow this User photo to be accessed publicly at any time by the URL alone
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    enablePublicUrl: false
+  }
+});
+
+// Retrieve the private URL on the file in the "photo" column
+const { url } = user.photo.transform({ quality: 50 });
+```
+
+```python
+# Disallow this User photo to be accessed publicly at any time by the URL alone
+user = xata.records().update("Users", "record_id", {
+  "photo": {
+    "enablePublicUrl": False
+  }
+})
+
+# Retrieve the private URL on the file in the "photo" column
+url = xata.files().transform_url("<photo.signedUrl>", {"quality": 50})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+user, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "record_id",
+  Body: map[string]*xata.DataInputRecordValue{
+    "photo": xata.ValueFromInputFile(xata.InputFile{
+      EnablePublicUrl: false,
+    }),
+  },
+})
+
+// Transform API not implemented yet
+```
+
+</TabbedCode>
+
+### Public URLs
+
+A Xata file can be configured for public access, resulting in a URL that is publicly available without the need of an API key or a signature. A public URL does not expire and offers access until the file is reconfigured to remove public access. To enable public access for a file, you can set the `enablePublicUrl` field to `true` in the file's configuration. This is particularly useful for public websites and for sharing public content.
+
+You can use the public URL directly without writing code. For instance:
+
+https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94 is available publicly.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go']}>
+
+```ts
+// Allow this user's photo to be accessed publicly at any time by the URL alone
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    enablePublicUrl: true
+  }
+});
+
+// Retrieve the public URL on the file in the "photo" column
+const { url } = user.photo.transform({ quality: 50 });
+```
+
+```python
+# Allow this user's photo to be accessed publicly at any time by the URL alone
+user = xata.records().update("Users", "record_id", {
+  "photo": {
+    "enablePublicUrl": True
+  }
+})
+
+# Retrieve the public URL on the file in the "photo" column
+url = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {"quality": 50})
+```
+
+```go
+recordsClient, _ := xata.NewRecordsClient()
+user, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "record_id",
+  Body: map[string]*xata.DataInputRecordValue{
+    "photo": xata.ValueFromInputFile(xata.InputFile{
+      EnablePublicUrl: true,
+    }),
+  },
+})
+
+// Transform API not implemented yet
+```
+
+</TabbedCode>
+
+Within the Xata UI you can make files public by default for the column by setting `Make files public by default` when creating the column. This can also be done programtically by setting a parameter on the file column in the [schema](/docs/concepts/data-model#schema).
+
+![Entire columns can be made public by default](images/column-access-public.png)
+
+<Alert status="warning">
+  **Public object caching** Changing the permissions of a cached public object does not remove it from the cache. The
+  cached version remains unaffected. The file remains accessible through the previously existing URLs until the cache
+  expires after 4 hours. It is highly recommended to exercise caution when configuring public access. There is a
+  significant delay in reverting permissions from public back to private.
+</Alert>
+
+### Signed URLs
+
+A signed URL offers authenticated access to a file without requiring an API key. The URL contains the key (signature) within it, so anyone holding the URL can get access to the file. Because of their on demand nature, signed URLs need to be requested directly and do not come along with the default request on the record.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go']}>
+
+```ts
+// Returns the signed URL for records[0].photo.signedUrl
+const records = await xata.db.Users.select(['id', 'name', 'photo.*', 'photo.signedUrl']).getMany();
+
+// Returns an empty string for records[0].photo.signedUrl
+const records = await xata.db.Users.getMany();
+```
+
+```python
+# Returns the signed URL for records[0]["photo"]["signedUrl"]
+records = xata.data().query("Users", {
+  "columns": ["id", "name", "photo.*", "photo.signedUrl"]
+})
+
+# Returns an empty string for records[0]["photo"]["signedUrl"]
+records = xata.data().query("Users")
+```
+
+```go
+client, _ := xata.NewSearchAndFilterClient()
+
+// Returns the signed URL for records[0]["photo"]["signedUrl"]
+records, _ := client.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{"id", "name", "photo.*", "photo.signedUrl"},
+  },
+})
+
+// Returns an empty string for records[0]["photo"]["signedUrl"]
+records, _ := client.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{},
+})
+```
+
+</TabbedCode>
+
+Signed URLs have a configurable time to live (TTL), which specifies when access to the URL expires. To avoid permanent public access, the TTL can be set to a maximum of 24h. You can modify the timeout duration of the signed URL for each file by adjusting the `signedUrlTimeout` field within the file object. Please note that `signedUrlTimeout` expects a positive number, defining the timeout duration in seconds. The default value is set to 60 seconds.
+
+Use signed URLs when you need temporary access without revealing the API key, such as rendering an image without disclosing a permanent image URL.
+
+<TabbedCode tabs={['TypeScript', 'Python']}>
+
+```ts
+// Set the timeout to 10 minutes for this user's photo
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    signedUrlTimeout: 600 // In seconds
+  }
+});
+
+// Retrieve the signed URL on the file in the "photo" column
+const { signedUrl } = user.photo.transform({ quality: 50 });
+```
+
+```python
+# Set the timeout to 10 minutes for this user's photo
+user = xata.records().update("Users", "record_id", {
+  "photo": {
+    "signedUrlTimeout": 600 # In seconds
+  }
+})
+
+# Get the transformed image
+img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+  "quality": 50
+})
+```
+
+</TabbedCode>
+
+### Upload URLs
+
+An upload URL provides a secure and authenticated method to upload or update a file without requiring an API key. This URL includes a time-limited signature, that ensures that only users with the URL can upload a file within a set time frame.
+
+The URLs are similar to signed URLs in that they must be specifically requested and are not automatically included with a standard record request. This improves security by controlling access and limiting the window during which uploads can occur.
+
+HTTP `PUT` is the only valid method for a request using the upload URL.
+
+An upload URL is assigned to a specific file. Subsequent uploads using the same URL will overwrite the existing file content, instead of generating additional files. Every time the URL is used, it updates the same specific file it's linked to.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go']}>
+
+```ts
+// Returns the upload URL for records[0].photo.uploadUrl
+const records = await xata.db.Users.select(['id', 'name', 'photo.*', 'photo.uploadUrl']).getMany();
+
+// Returns an empty string for records[0].photo.uploadUrl
+const records = await xata.db.Users.getMany();
+```
+
+```python
+# Returns the signed URL for records[0]["photo"]["uploadUrl"]
+records = xata.data().query("Users", {
+  "columns": ["id", "name", "photo.*", "photo.uploadUrl"]
+})
+
+# Returns an empty string for records[0]["photo"]["uploadUrl"]
+records = xata.data().query("Users")
+```
+
+```go
+client, _ := xata.NewSearchAndFilterClient()
+
+// Returns the signed URL for records[0]["photo"]["uploadUrl"]
+records, _ := client.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{
+    Columns: []string{"id", "name", "photo.*", "photo.uploadUrl"},
+  },
+})
+
+// Returns an empty string for records[0]["photo"]["uploadUrl"]
+records, _ := client.Query(context.TODO(), xata.QueryTableRequest{
+  TableName: "Users",
+  Payload: xata.QueryTableRequestPayload{},
+})
+```
+
+</TabbedCode>
+
+Upload URLs have a configurable time to live (TTL), which specifies when access to the URL expires. The default is 24h. You can modify the timeout duration of the upload URL for each file by adjusting the `uploadUrlTimeout` field within the file object. The value represents a duration in seconds.
+
+Use upload URLs when you need temporary write access without revealing the API key, such as exposing uploads in a web application.
+
+<TabbedCode tabs={['TypeScript', 'Python', 'Go']}>
+
+```ts
+// Set the timeout to 10 minutes for the photo upload URL
+const user = await xata.db.Users.update('record_id', {
+  photo: {
+    uploadUrlTimeout: 600 // Time in seconds
+  }
+});
+```
+
+```python
+# Set the timeout to 10 minutes for the photo upload URL
+user = xata.records().update("Users", "record_id", {
+  "photo": {
+    "uploadUrlTimeout": 600 # Time in seconds
+  }
+})
+```
+
+```go
+// Set the timeout to 10 minutes for the photo upload URL
+recordsClient, _ := xata.NewRecordsClient()
+user, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
+  RecordRequest: xata.RecordRequest{
+    TableName: "Users",
+  },
+  RecordID: "record_id",
+  Body: map[string]*xata.DataInputRecordValue{
+    "photo": xata.ValueFromInputFile(xata.InputFile{
+      UploadUrlTimeout: xata.Int(600), // Time in seconds
+    }),
+  },
+})
+```
+
+</TabbedCode>
+
+The SDK documentation for file attachments contains [a more detailed pattern](/docs/sdk/file-attachments#upload-urls) for using an `uploadUrl` in a typical web scenario. The [sample gallery app](https://github.com/xataio/sample-nextjs-chakra-gallery-app) repo on Github also documents a complete example of the pattern for Next.js.
+
+## Content delivery network (CDN)
+
+File attachments are delivered through an integrated content delivery network (CDN) which minimizes access latency by using regional caches.
+
+Caching is enabled for all signed and public URLs. This is to avoid caching data that is secured by API key permissions. This feature is enabled by default and doesn't require any configuration. Content from publicly accessible and signed URLs is cached for a duration of 4 hours.
+
+As with all cache systems, the fundamental problem is cache invalidation - maintaining cache access performance while ensuring updated content and preventing outdated entries. In its architectural approach, Xata addresses the issue of cache invalidation by treating file content as dynamic - analogous to data within a database.
+
+Consequently, it's recommended that clients dynamically obtain access URLs from the database, rather than persisting them in static resources. When the target file is modified, URLs can become invalid, resulting in access disruptions if stored externally to the database.
+
+Through the process of generating a new URL after each update, the system prevents the delivery of outdated and stale content, regardless of any caches or proxies between the client and storage service. For the client application, this translates to no need for cache time-to-live (TTL) or waiting for cache invalidation. When the URL is fetched directly from the database, it is guaranteed to retrieve the most recent version of the file available.
