@@ -517,8 +517,8 @@ results = xata.data().search_branch({
 
 Limitations:
 
-- It is not possible to filter by linked columns. In the Search store, columns of `link` type contain only the `id` of the linked record.
-- Columns of `json` type are mapped as plain text for Search. It is not possible to apply filters on specific nested nodes in a JSON object.
+- It is not possible to apply filters on linked columns. For Search, columns of `link` type contain only the `id` of the linked record.
+- It is not possible to apply filters on specific nested nodes in a JSON object. For Search, columns of `json` type are mapped as plain text.
 
 ## Target specific columns
 
