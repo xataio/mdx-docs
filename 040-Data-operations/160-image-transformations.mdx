@@ -42,6 +42,18 @@ const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjn
   format: 'webp'
 });
 // => https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u1fh2o6p10blbutjnphcste94
+
+// Or shorthand when you have a record:
+const record = await xata.db.movies.read('rec_xyz');
+
+const { url } = record.movieThumbnail.transform({
+  height: 100,
+  rotate: 180,
+  format: 'webp'
+});
+
+console.log(url);
+// => "https://us-east-1.xata.sh/transform/height=100,rotate=180,format=webp/file/09p6sdj2dopigqfipg3a6i7kilsliolv27no4penf5taohum9gf5f7aj01iteuclfpqfsqc1nfepjvq4i1alj0i7siup94dmikj23bmc51cb00mgj7f6i9d1d84o2bvskp4rqit1nsu004tcfjc3u6asmk"
 ```
 
 ```python
@@ -99,6 +111,23 @@ const metadataUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p1
 
 const response = await fetch(metadataUrl);
 const metadata = await response.json();
+
+// Or shorthand when you have a record:
+const record = await xata.db.movies.read('rec_xyz');
+
+const result = record.movieThumbnail.transform({
+  height: 100,
+  rotate: 180,
+  format: 'webp'
+});
+
+console.log(result);
+/*
+  {
+    url: "https://us-east-1.xata.sh/transform/height=100,rotate=180,format=webp/file/09p6sdj2dopigqfipg3a6i7kilsliolv27no4penf5taohum9gf5f7aj01iteuclfpqfsqc1nfepjvq4i1alj0i7siup94dmikj23bmc51cb00mgj7f6i9d1d84o2bvskp4rqit1nsu004tcfjc3u6asmk",
+    metadataUrl: "https://us-east-1.xata.sh/transform/height=100,rotate=180,format=webp,format=json/file/09p6sdj2dopigqfipg3a6i7kilsliolv27no4penf5taohum9gf5f7aj01iteuclfpqfsqc1nfepjvq4i1alj0i7siup94dmikj23bmc51cb00mgj7f6i9d1d84o2bvskp4rqit1nsu004tcfjc3u6asmk"
+  }
+*/
 ```
 
 ```python
