@@ -7,13 +7,19 @@ slug: sdk/image-transformations
 published: true
 ---
 
-For the very common case of storing images, Xata offers a set of transformations that can be applied in real-time while retrieving images through [access URLs](/docs/sdk/file-attachments#file-access-urls). Transformations are specified in the URL and their result is cached by the CDN. Both public and signed URLs support transformations. In the URL the transformation specification is a comma separated list of individual transformations following the `/transform/` segment.
+Xata supports transformations for images stored in Xata's `File` and `File[]` [column types](/docs/sdk/file-attachments).
 
-Original image URL:
+Transformations are specified by modifying the `File`'s URL by adding `/transform/height=100,width=200/{fileId}`
+
+## Example
+
+(Vanity idea: gif which animates pulling the url apart and inserting the transform. And also animates the actual image :fire:. Or it could be react code not a gif. Might be too distracting)
+
+**Original image URL:**
 
 https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94
 
-Image URL with transformations:
+**Transformed image URL:**
 
 https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u1fh2o6p10blbutjnphcste94
 
@@ -22,141 +28,125 @@ https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u
   options={{ rotate: 180, height: 100 }}
 />
 
-## Record based transformations
+## SDK transformation helpers
 
-When querying a `file` of `file[]` column from a record, you can make a direct transformation on any of the files it contains.
-
-<TabbedCode tabs={['TypeScript', 'URL']}>
-
-```ts
-// Get a specific record from the "gallery" database
-const record = await xata.db.gallery.read('record_id');
-
-// Get a new url and signedUrl based on transformations applied to
-// an image in the "imageColumnName"
-//
-// Also grab the related meta data (height, width...etc) of the new image
-const { url, signedUrl, metadataUrl, signedMetadataUrl } = record.imageColumnName.transform({
-  height: 100,
-  rotate: 180,
-  format: 'webp'
-});
-```
-
-```txt
-https://us-east-1.storage.xata.sh/transform/height=50,format=webp/4u1fh2o6p10blbutjnphcste94
-```
-
-</TabbedCode>
-
-## URL based transformations
-
-It is also possible to make transformations directly on any given image URL without knowledge of the record it is attached to.
-
-For TypeScript, this is done client-side with the `transformImage()` helper in `@xata.io/client`. Performing client-side transformations can be useful for generating images conditionally based on media queries within a browser. With this method, only a `url` for an existing Xata image is needed.
+Our SDKs provide helpers to apply transformations to image URLs.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts title="client_component.tsx"
-'use client';
 import { transformImage } from '@xata.io/client';
 
-// Once you have a URL to a Xata image, you can transform it and return a new URL
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+// Apply transformations to a Xata image URL
+transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   height: 100,
   rotate: 180,
   format: 'webp'
 });
+// => https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u1fh2o6p10blbutjnphcste94
+
+// Or shorthand when you have a record:
+const record = await xata.db.movies.read('rec_xyz');
+
+record.movieThumbnail.transform({
+  height: 100,
+  rotate: 180,
+  format: 'webp'
+});
+// TODO: Richard: WRONG this an object
+// => https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u1fh2o6p10blbutjnphcste94
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+# TODO: Richard: missing import?
+xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "height": 100,
   "rotate": 180,
   "format": "webp"
 })
+# => https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u1fh2o6p10blbutjnphcste94
 ```
 
 ```txt
-https://us-east-1.storage.xata.sh/transform/height=50,format=webp/4u1fh2o6p10blbutjnphcste94
+https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u1fh2o6p10blbutjnphcste94
 ```
 
 </TabbedCode>
 
-## Post-transformation metadata
+## Image metadata
 
-Once a transformation occurs, it is common to need the dimensions of the new image. The [`format=json` option](#format) returns an JSON object containing dimensions for the transformed and original versions of the image.
+You can retrieve the image metadata of a file by adding `/transform/format=json/` to an image URL. This will return JSON containing the metadata for the image.
 
-TypeScript additionally provides `metadataUrl` and `signedMetadataUrl` (if using signed URLs). The below code contains common patterns for that method.
+Example:
 
-<TabbedCode tabs={['TypeScript', 'URL']}>
+https://us-east-1.storage.xata.sh/transform/format=json/4u1fh2o6p10blbutjnphcste94
+
+```json
+{
+  "width": 300,
+  "height": 200,
+  "original": {
+    "file_size": 29476,
+    "width": 300,
+    "height": 200,
+    "format": "image/jpeg"
+  }
+}
+```
+
+<TabbedCode tabs={['TypeScript', 'Python']}>
 
 ```ts
-// Get a specific record from the "gallery" database
-const record = await xata.db.gallery.read('record_id');
+import { transformImage } from '@xata.io/client';
 
-// Also grab the related meta data (height, width...etc) of the new image
-const { url, metadataUrl } = record.imageColumnName.transform({
-  height: 100,
-  rotate: 180,
-  format: 'webp'
+// Apply transformations to a Xata image URL
+const metadataUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+  format: 'json',
+  height: 100
 });
+// => https://us-east-1.storage.xata.sh/transform/format=json,height=100/4u1fh2o6p10blbutjnphcste94
 
-const metadata = await fetchMetadata(metadataUrl);
+const response = await fetch(metadataUrl);
+const metadata = await response.json();
 
-console.log(metadata.height); // 100px
+// Or shorthand when you have a record:
+const record = await xata.db.movies.read('rec_xyz');
 
-// Below is a TypeScript function useful for fetching metadata
+const { metadataUrl } = record.movieThumbnail.transform({
+  height: 100
+});
+// => https://us-east-1.storage.xata.sh/transform/format=json,height=100/4u1fh2o6p10blbutjnphcste94
 
-interface OriginalImageInfo {
-  file_size: number;
-  width: number;
-  height: number;
-  format: string;
-}
-
-interface ImageMetadata {
-  width: number;
-  height: number;
-  original: OriginalImageInfo;
-}
-
-export const fetchMetadata = async (metadataUrl: string): Promise<ImageMetadata | null> => {
-  try {
-    const response = await fetch(metadataUrl);
-    if (!response.ok) {
-      throw new Error('Failed to fetch metadata');
-    }
-    const data: ImageMetadata = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching metadata:', error);
-    return null;
-  }
-};
+const response = await fetch(metadataUrl);
+const metadata = await response.json();
 ```
 
-```txt
-  https://us-east-1.storage.xata.sh/transform/format=json,height=100,width=100/4u1fh2o6p10blbutjnphcste94
+```python
+# TODO: Richard: missing import?
+metadata_url = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+  "format": "json",
+  "height": 100,
+})
+# => https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u1fh2o6p10blbutjnphcste94
+
+# todo: Richard: fetch it
 ```
 
 </TabbedCode>
 
-If using the URL based transformations, you can still get post-transformation metadata by utilizing the [`format=json` option](#format), which you will need to do as a second call.
-
-## Options
+## Transformations
 
 The following transformations are available:
 
-> All options show the URL method of handling transformations. For the TypeScript examples, remember to import `transformImage` from `@xata.io/cleint`.
-
 ### anim
 
-Use to remove animation frames from input files. Default is set to `true`. Setting it to `false` reduces animations to still images. You will also need to pass at least one other transformation, like `format: 'auto'`, for it to take effect.
+Removes animation frames from input files. Default is set to `true`. Setting it to `false` reduces animations to still images. You will also need to pass at least one other transformation, like `format: 'auto'`, for it to take effect.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/ai4u0uoq297518gmuqboschtcs', {
   anim: false,
   format: 'auto'
@@ -183,11 +173,13 @@ https://us-east-1.storage.xata.sh/transform/anim=false,format=auto/4u1fh2o6p10bl
 
 ### background
 
-Use this to introduce a background color beneath the image. Applies to images with transparency. Accepts any CSS color, such as #RRGGBB and rgba(…).
+Adds a background color beneath the image. Applies to images with transparency. Accepts any CSS color, such as `#RRGGBB` and `rgba(…)`.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8', {
   background: 'pink'
 });
@@ -217,6 +209,8 @@ Adds a blur radius ranging from 1 (slight blur) to 250 (maximum).
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   blur: 20
 });
@@ -243,6 +237,8 @@ Increase brightness by a factor. A value of `1.0` equals no change, a value of `
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   brightness: 0.5
 });
@@ -272,6 +268,8 @@ This marginally reduces latency in case of a cache miss, by selecting the fastes
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   compression: 'fast'
 });
@@ -301,6 +299,8 @@ Increase contrast by a factor. A value of 1.0 equals no change, a value of 0.5 e
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   contrast: 0.5
 });
@@ -322,11 +322,13 @@ https://us-east-1.storage.xata.sh/transform/contrast=0.5/4u1fh2o6p10blbutjnphcst
 
 ### download
 
-Depending on the file type, some browsers preview the file instead of downloading it. Setting the `download` property will make the browser to always download the file. The value allows you to assign a name, and optionally an extension to the file that will be downloaded.
+Depending on the file type, some browsers preview the file instead of downloading it. Setting the `download` property will make sure the browser always downloads the file. The value allows you to assign a name, and optionally an extension to the file that will be downloaded.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   download: 'xata-cat.jpg',
   format: 'jpeg'
@@ -351,11 +353,13 @@ https://us-east-1.storage.xata.sh/transform/download=xata-cat.jpg,format=jpeg/4u
 
 ### dpr
 
-This refers to the Device Pixel Ratio (DPR). The default is 1. This is a multiplier (similar to a flat scale) for width/height that makes it easier to specify higher-DPI sizes in `img srcset`. `dpr` needs to be used in tandem with a dimension transform to take effect.
+This refers to the Device Pixel Ratio (DPR). The default is 1. This is a multiplier (similar to a flat scale) for width/height that makes it easier to specify higher-DPI sizes in `img srcset`. `dpr` needs to be used in tandem with a (@snide, what is a dimension transform?) dimension transform to take effect.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Note that the rendered example is actually 400px even though the original was 200px
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   dpr: 2,
@@ -393,13 +397,16 @@ Image will be resized (shrunk or enlarged) to be as large as possible within the
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Note that the rendered example retains the original aspect-ratio
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 100,
-  height: 100,
-  fit: 'contain'
+width: 100,
+height: 100,
+fit: 'contain'
 });
-```
+
+````
 
 ```python
 # Note that the rendered example retains the original aspect-ratio
@@ -408,7 +415,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   "height": 100,
   "fit": "contain"
 })
-```
+````
 
 ```txt
 https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=contain/4u1fh2o6p10blbutjnphcste94
@@ -420,10 +427,12 @@ https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=contain/4u1
   url="https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94"
   options={{ height: 100, width: 100, fit: 'contain' }}
 />
-
+@snide: I'm not sure about these double examples. Options I see: Kill the second example, or make it more obvious why there are two examples. Maybe by pulling out the "Note that the rendered example retains the original aspect-ratio, but doesn't grow beyond the original size" into markdown?
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Note that the rendered example retains the original aspect-ratio, but doesn't grow beyond the original size
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 250,
@@ -458,23 +467,28 @@ Similar to contain, but the image is never enlarged. If the image is larger than
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Notice that the rendered example scales down properly because the source is larger
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 100,
-  height: 100,
-  fit: 'scale-down'
+width: 100,
+height: 100,
+fit: 'scale-down'
 });
-```
+
+````
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
   "height": 100,
   "fit": "scale-down"
 })
-```
+````
+
 ```txt
 https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=scale-down/4u1fh2o6p10blbutjnphcste94
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -484,23 +498,28 @@ https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=scale-down/
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Notice that the rendered example does not grow beyond it's original size
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 600,
-  height: 400,
-  fit: 'scale-down'
+width: 600,
+height: 400,
+fit: 'scale-down'
 });
-```
+
+````
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 600,
   "height": 400,
   "fit": "scale-down"
 })
-```
+````
+
 ```txt
 https://us-east-1.storage.xata.sh/transform/width=600,height=400,fit=scale-down/4u1fh2o6p10blbutjnphcste94
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -514,23 +533,28 @@ Resizes (shrinks or enlarges) to fill the entire area of width and height. If th
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Notice that the rendered example is a perfect square
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 100,
-  height: 100,
-  fit: 'cover'
+width: 100,
+height: 100,
+fit: 'cover'
 });
-```
+
+````
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
   "height": 100,
   "fit": "cover"
 })
-```
+````
+
 ```txt
 https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=cover/4u1fh2o6p10blbutjnphcste94
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -540,23 +564,28 @@ https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=cover/4u1fh
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Notice that the rendered example is a perfect square that enlarges past its original size
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 250,
-  height: 250,
-  fit: 'cover'
+width: 250,
+height: 250,
+fit: 'cover'
 });
-```
+
+````
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 250,
   "height": 250,
   "fit": "cover"
 })
-```
+````
+
 ```txt
 https://us-east-1.storage.xata.sh/transform/width=250,height=250,fit=cover/4u1fh2o6p10blbutjnphcste94
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -570,23 +599,28 @@ Image will be shrunk and cropped to fit within the area specified by width and h
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Notice that the rendered example crops to a square because it is below the original size
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 100,
-  height: 100,
-  fit: 'crop'
+width: 100,
+height: 100,
+fit: 'crop'
 });
-```
+
+````
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
   "height": 100,
   "fit": "crop"
 })
-```
+````
+
 ```txt
 https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=crop/4u1fh2o6p10blbutjnphcste94
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -596,23 +630,28 @@ https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=crop/4u1fh2
 
 <TabbedCode tabs={['TypeScript', 'Python','URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Notice that the rendered example does not become a square, and does not grow above the original size
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 500,
-  height: 500,
-  fit: 'crop'
+width: 500,
+height: 500,
+fit: 'crop'
 });
-```
+
+````
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 500,
   "height": 500,
   "fit": "crop"
 })
-```
+````
+
 ```txt
 https://us-east-1.storage.xata.sh/transform/width=500,height=500,fit=crop/4u1fh2o6p10blbutjnphcste94
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -626,13 +665,16 @@ Resizes to the maximum size that fits within the given width and height, and the
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 250,
-  height: 250,
-  fit: 'pad',
-  background: 'pink'
+width: 250,
+height: 250,
+fit: 'pad',
+background: 'pink'
 });
-```
+
+````
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 250,
@@ -640,10 +682,12 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   "fit": "pad",
   "background": "pink"
 })
-```
+````
+
 ```txt
 https://us-east-1.storage.xata.sh/transform/width=250,height=250,fit=pad/4u1fh2o6p10blbutjnphcste94
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -662,11 +706,13 @@ Converts the format of the retrieved image.
 - `webp`
   Generate images in Google WebP format. Set the quality to 100 to get the WebP lossless format.
 - `json`
-  Instead of generating an image, outputs information about the image in JSON format. The JSON object will contain data such as image size (before and after resizing), source image’s MIME type, and file size.
+  Instead of generating an image, outputs [metadata](#image-metadata) about the image in JSON format.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   format: 'webp'
 });
@@ -694,6 +740,8 @@ Here is an example of outputting `JSON`, which will give you dimensions of the t
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   height: 100,
   format: 'json'
@@ -730,6 +778,8 @@ Increases exposure by a factor. A value of 1.0 equals no change, a value of 0.5 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   gamma: 0.5
 });
@@ -756,18 +806,21 @@ When cropping with fit: "cover" and fit: "crop", this parameter defines the side
 - `auto`
   Selects focal point based on saliency detection (using maximum symmetric surround algorithm).
 - `side`
-  A side ("left", "right", "top", "bottom") or coordinates specified on a scale from 0.0 (top or left) to 1.0 (bottom or right), 0.5 being the center. The X and Y coordinates are separated by lowercase `x` in the URL format. For example, 0x1 means left and bottom, 0.5x0.5 is the center, 0.5x0.33 is a point in the top third of the image.
+  A side (`"left"`, `"right"`, `"top"`, `"bottom"`) or coordinates specified on a scale from `0.0` (top or left) to `1.0` (bottom or right), `0.5` being the center. The X and Y coordinates are separated by lowercase `x` in the URL format. For example, `0x1` means left and bottom, `0.5x0.5` is the center, `0.5x0.33` is a point in the top third of the image.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Crop from right
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 100,
-  height: 100,
-  fit: 'cover',
-  gravity: 'right'
+width: 100,
+height: 100,
+fit: 'cover',
+gravity: 'right'
 });
-```
+
+````
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
@@ -775,10 +828,12 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
   "fit": "cover",
   "gravity": "right"
 })
-```
+````
+
 ```txt
 https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=cover,gravity=right/4u1fh2o6p10blbutjnphcste94
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -788,17 +843,20 @@ https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=cover,gravi
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 // Crop from left and bottom
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  width: 100,
-  height: 100,
-  fit: 'cover',
-  gravity: {
-    x: 0,
-    y: 1
-  }
+width: 100,
+height: 100,
+fit: 'cover',
+gravity: {
+x: 0,
+y: 1
+}
 });
-```
+
+````
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
@@ -809,10 +867,12 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
     "y": 1
   }
 })
-```
+````
+
 ```txt
 https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=cover,gravity=0x1/4u1fh2o6p10blbutjnphcste94
 ```
+
 </TabbedCode>
 
 <TransformImageExample
@@ -827,6 +887,8 @@ Specifies maximum height of the image in pixels. Exact behavior depends on the `
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   height: 100
 });
@@ -853,13 +915,15 @@ Controls amount of invisible metadata (EXIF data) that should be preserved. Colo
 - `keep`
   Preserves most of EXIF metadata, including GPS location if present.
 - `copyright`
-  Discard all metadata except EXIF copyright tag. This is the default behavior for JPEG images.
+  Discards all metadata except EXIF copyright tag. This is the default behavior for JPEG images.
 - `none`
-  Discard all invisible EXIF metadata. Currently, WebP and PNG output formats always discard metadata.
+  Discards all invisible EXIF metadata. Currently, WebP and PNG output formats always discard metadata.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   metadata: 'none'
 });
@@ -884,6 +948,8 @@ Specifies quality for images in JPEG, WebP, and AVIF formats. The quality is in 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   quality: 50
 });
@@ -910,6 +976,8 @@ Specifies number of degrees (90, 180, or 270) to rotate the image by. Width and 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   rotate: 90
 });
@@ -936,6 +1004,8 @@ Specifies strength of sharpening filter to apply to the image. The value is a fl
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   sharpen: 2
 });
@@ -961,15 +1031,18 @@ Specifies the number of pixels to cut off on each side. Allows removal of border
 
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
-  trim: {
-    top: 20,
-    right: 30,
-    bottom: 20,
-    left: 0
-  }
+trim: {
+top: 20,
+right: 30,
+bottom: 20,
+left: 0
+}
 });
-```
+
+````
 
 ```python
 transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
@@ -980,7 +1053,7 @@ transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u
     "left": 0
   }
 })
-```
+````
 
 ```txt
 https://us-east-1.storage.xata.sh/transform/trim=20;30;20;0/4u1fh2o6p10blbutjnphcste94
@@ -1007,6 +1080,8 @@ Specifies maximum width of the image in pixels. Exact behavior depends on the fi
 <TabbedCode tabs={['TypeScript', 'Python', 'URL']}>
 
 ```ts
+import { transformImage } from '@xata.io/client';
+
 const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 100
 });
