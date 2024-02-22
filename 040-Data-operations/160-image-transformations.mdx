@@ -56,8 +56,10 @@ record.movieThumbnail.transform({
 ```
 
 ```python
-# TODO: Richard: missing import?
-xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "height": 100,
   "rotate": 180,
   "format": "webp"
@@ -120,12 +122,18 @@ const metadata = await response.json();
 ```
 
 ```python
-# TODO: Richard: missing import?
-metadata_url = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+metadata_url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "format": "json",
   "height": 100,
 })
-# => https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u1fh2o6p10blbutjnphcste94
+# => https://us-east-1.storage.xata.sh/transform/format=json,height=100/4u1fh2o6p10blbutjnphcste94
+
+metadata = requests.get(metadata_url).json()
+
+# => {'width': 150, 'height': 100, 'original': {'file_size': 29476, 'width': 300, 'height': 200, 'format': 'image/jpeg'}}
 
 # todo: Richard: fetch it
 ```
@@ -152,7 +160,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/ai
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/ai4u0uoq297518gmuqboschtcs", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/ai4u0uoq297518gmuqboschtcs", {
   "anim": false,
   "format": "auto"
 })
@@ -178,13 +189,16 @@ Adds a background color beneath the image. Applies to images with transparency. 
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8', {
+transformImage('https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8', {
   background: 'pink'
 });
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8", {
+from xata.client import XataClient
+xata = XataClient()
+
+xata.files().transform_url("https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8", {
   "background": "pink"
 })
 ```
@@ -215,7 +229,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "blur": 20
 })
 ```
@@ -243,7 +260,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "brightness": 0.5
 })
 ```
@@ -274,7 +294,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "compression": "fast"
 })
 ```
@@ -305,7 +328,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "contrast": 0.5
 })
 ```
@@ -334,7 +360,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform(
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url(
   "https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94",
   {
     "download": "xata-cat.jpg",
@@ -367,7 +396,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "dpr": 2,
   "height": 200,
   "fit": "contain"
@@ -407,8 +439,11 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
+from xata.client import XataClient
+xata = XataClient()
+
 # Note that the rendered example retains the original aspect-ratio
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
   "height": 100,
   "fit": "contain"
@@ -439,8 +474,11 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
+from xata.client import XataClient
+xata = XataClient()
+
 # Note that the rendered example retains the original aspect-ratio, but doesn't grow beyond the original size
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 250,
   "height": 250,
   "fit": "contain"
@@ -476,7 +514,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
   "height": 100,
   "fit": "scale-down"
@@ -508,7 +549,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 600,
   "height": 400,
   "fit": "scale-down"
@@ -544,7 +588,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
   "height": 100,
   "fit": "cover"
@@ -576,7 +623,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 250,
   "height": 250,
   "fit": "cover"
@@ -612,7 +662,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
   "height": 100,
   "fit": "crop"
@@ -644,7 +697,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 500,
   "height": 500,
   "fit": "crop"
@@ -680,7 +736,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 250,
   "height": 250,
   "fit": "pad",
@@ -723,7 +782,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "format": "webp"
 })
 ```
@@ -753,7 +815,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "height": 100,
   "format": "json"
 })
@@ -790,7 +855,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "gamma": 0.5
 })
 ```
@@ -827,7 +895,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
   "height": 100,
   "fit": "cover",
@@ -864,7 +935,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
   "height": 100,
   "fit": "cover",
@@ -901,7 +975,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "height": 100
 })
 ```
@@ -936,7 +1013,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "metadata": "none"
 })
 ```
@@ -962,7 +1042,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "quality": 50
 })
 ```
@@ -990,7 +1073,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "rotate": 90
 })
 ```
@@ -1018,7 +1104,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "sharpen": 2
 })
 ```
@@ -1051,7 +1140,10 @@ const transformedUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o
 ```
 
 ```python
-transformed_image = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+transformed_image = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "trim": {
     "top": 20,
     "right": 30,
@@ -1094,7 +1186,10 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 ```
 
 ```python
-img = xata.files().transform("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+from xata.client import XataClient
+xata = XataClient()
+
+img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100
 })
 ```
