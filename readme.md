@@ -75,3 +75,41 @@ You can create tabbed code blocks by enclosing multiple fenced snippets within `
 ```tsx
 <TabbedCode tabs={['Some typescript', 'Some JSON']}>{/*  fence based code blocks within */}</TabbedCode>
 ```
+
+##### `<TabbedCode>` formatting (careful!)
+
+Using the `<TabbedCode>` component in MDX can cause very bad formatting issues where prettier / eslint completely destroys the formatting of the file.
+
+The correct way to format the `<TabbedCode>` component is like this:
+
+<!-- prettier-ignore-start -->
+
+````
+<TabbedCode tabs={['TypeScript', 'Python']}>
+\n empty line !important
+```ts // TypeScript code ```
+\n empty line !important
+```python
+# Python code
+```
+\n emptyline !important
+</TabbedCode>
+````
+
+Example without the comments:
+
+````
+<TabbedCode tabs={['TypeScript', 'Python']}>
+
+```ts
+// TypeScript code
+```
+
+```python
+# Python code
+```
+
+</TabbedCode>
+````
+
+<!-- prettier-ignore-end -->
