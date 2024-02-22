@@ -42,17 +42,6 @@ transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   format: 'webp'
 });
 // => https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u1fh2o6p10blbutjnphcste94
-
-// Or shorthand when you have a record:
-const record = await xata.db.movies.read('rec_xyz');
-
-record.movieThumbnail.transform({
-  height: 100,
-  rotate: 180,
-  format: 'webp'
-});
-// TODO: Richard: WRONG this an object
-// => https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u1fh2o6p10blbutjnphcste94
 ```
 
 ```python
@@ -108,17 +97,6 @@ const metadataUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p1
 
 const response = await fetch(metadataUrl);
 const metadata = await response.json();
-
-// Or shorthand when you have a record:
-const record = await xata.db.movies.read('rec_xyz');
-
-const { metadataUrl } = record.movieThumbnail.transform({
-  height: 100
-});
-// => https://us-east-1.storage.xata.sh/transform/format=json,height=100/4u1fh2o6p10blbutjnphcste94
-
-const response = await fetch(metadataUrl);
-const metadata = await response.json();
 ```
 
 ```python
@@ -134,8 +112,6 @@ metadata_url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1
 metadata = requests.get(metadata_url).json()
 
 # => {'width': 150, 'height': 100, 'original': {'file_size': 29476, 'width': 300, 'height': 200, 'format': 'image/jpeg'}}
-
-# todo: Richard: fetch it
 ```
 
 </TabbedCode>
