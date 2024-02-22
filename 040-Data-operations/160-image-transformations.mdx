@@ -62,6 +62,8 @@ https://us-east-1.storage.xata.sh/transform/rotate=180,height=100,format=webp/4u
 
 </TabbedCode>
 
+See our [supported transformations](#transformations).
+
 ## Image metadata
 
 You can retrieve the image metadata of a file by adding `/transform/format=json/` to an image URL. This will return JSON containing the metadata for the image.
@@ -1177,3 +1179,21 @@ https://us-east-1.storage.xata.sh/transform/width=100/4u1fh2o6p10blbutjnphcste94
 </TabbedCode>
 
 <TransformImageExample url="https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94" options={{ width: 100 }} />
+
+## Supported image file types
+
+- Supported input formats:
+
+  - JPEG
+  - PNG
+  - GIF (including animations)
+  - WebP (no animations)
+  - SVG
+
+- Supported output formats:
+  - JPEG
+  - PNG
+  - GIF (including animations)
+  - WebP (including animations)
+  - SVG
+  - AVIF
