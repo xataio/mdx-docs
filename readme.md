@@ -91,8 +91,8 @@ The correct way to format the `<TabbedCode>` component is like this:
 \n empty line !important
 ```python
 # Python code
-``` \n empty
-line !important
+```
+\n emptyline !important
 </TabbedCode>
 ````
 
