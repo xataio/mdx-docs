@@ -82,16 +82,23 @@ Using the `<TabbedCode>` component in MDX can cause very bad formatting issues w
 
 The correct way to format the `<TabbedCode>` component is like this:
 
-````mdx
+<!-- prettier-ignore-start -->
+
+````
 <TabbedCode tabs={['TypeScript', 'Python']}>
-  \n empty line !important ```ts // TypeScript code ``` \n empty line !important ```python # Python code ``` \n empty
-  line !important
+\n empty line !important
+```ts // TypeScript code ```
+\n empty line !important
+```python
+# Python code
+``` \n empty
+line !important
 </TabbedCode>
 ````
 
 Example without the comments:
 
-````mdx
+````
 <TabbedCode tabs={['TypeScript', 'Python']}>
 
 ```ts
@@ -104,3 +111,5 @@ Example without the comments:
 
 </TabbedCode>
 ````
+
+<!-- prettier-ignore-end -->
