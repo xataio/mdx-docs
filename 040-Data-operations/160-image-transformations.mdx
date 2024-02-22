@@ -36,7 +36,7 @@ Our SDKs provide helpers to apply transformations to image URLs.
 import { transformImage } from '@xata.io/client';
 
 // Apply transformations to a Xata image URL
-transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   height: 100,
   rotate: 180,
   format: 'webp'
@@ -48,7 +48,7 @@ transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
 from xata.client import XataClient
 xata = XataClient()
 
-xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "height": 100,
   "rotate": 180,
   "format": "webp"
@@ -129,7 +129,7 @@ Removes animation frames from input files. Default is set to `true`. Setting it 
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/ai4u0uoq297518gmuqboschtcs', {
+const url = transformImage('https://us-east-1.storage.xata.sh/ai4u0uoq297518gmuqboschtcs', {
   anim: false,
   format: 'auto'
 });
@@ -139,7 +139,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/ai
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/ai4u0uoq297518gmuqboschtcs", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/ai4u0uoq297518gmuqboschtcs", {
   "anim": false,
   "format": "auto"
 })
@@ -165,7 +165,7 @@ Adds a background color beneath the image. Applies to images with transparency. 
 ```ts
 import { transformImage } from '@xata.io/client';
 
-transformImage('https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8', {
+const url = transformImage('https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8', {
   background: 'pink'
 });
 ```
@@ -174,7 +174,7 @@ transformImage('https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8', {
 from xata.client import XataClient
 xata = XataClient()
 
-xata.files().transform_url("https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/a3r97ge71h3od25glq8ook1vg8", {
   "background": "pink"
 })
 ```
@@ -199,7 +199,7 @@ Adds a blur radius ranging from 1 (slight blur) to 250 (maximum).
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   blur: 20
 });
 ```
@@ -208,7 +208,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "blur": 20
 })
 ```
@@ -230,7 +230,7 @@ Increase brightness by a factor. A value of `1.0` equals no change, a value of `
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   brightness: 0.5
 });
 ```
@@ -239,7 +239,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "brightness": 0.5
 })
 ```
@@ -264,7 +264,7 @@ This marginally reduces latency in case of a cache miss, by selecting the fastes
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   compression: 'fast'
 });
 ```
@@ -273,7 +273,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "compression": "fast"
 })
 ```
@@ -298,7 +298,7 @@ Increase contrast by a factor. A value of 1.0 equals no change, a value of 0.5 e
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   contrast: 0.5
 });
 ```
@@ -307,7 +307,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "contrast": 0.5
 })
 ```
@@ -329,7 +329,7 @@ Depending on the file type, some browsers preview the file instead of downloadin
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   download: 'xata-cat.jpg',
   format: 'jpeg'
 });
@@ -339,7 +339,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url(
+url = xata.files().transform_url(
   "https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94",
   {
     "download": "xata-cat.jpg",
@@ -364,7 +364,7 @@ This refers to the Device Pixel Ratio (DPR). The default is 1. This is a multipl
 import { transformImage } from '@xata.io/client';
 
 // Note that the rendered example is actually 400px even though the original was 200px
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   dpr: 2,
   height: 200,
   fit: 'contain'
@@ -375,7 +375,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "dpr": 2,
   "height": 200,
   "fit": "contain"
@@ -407,7 +407,7 @@ Image will be resized (shrunk or enlarged) to be as large as possible within the
 import { transformImage } from '@xata.io/client';
 
 // Note that the rendered example retains the original aspect-ratio
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 100,
   height: 100,
   fit: 'contain'
@@ -442,7 +442,7 @@ https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=contain/4u1
 import { transformImage } from '@xata.io/client';
 
 // Note that the rendered example retains the original aspect-ratio, but doesn't grow beyond the original size
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 250,
   height: 250,
   fit: 'contain'
@@ -482,7 +482,7 @@ Similar to contain, but the image is never enlarged. If the image is larger than
 import { transformImage } from '@xata.io/client';
 
 // Notice that the rendered example scales down properly because the source is larger
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 100,
   height: 100,
   fit: 'scale-down'
@@ -517,7 +517,7 @@ https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=scale-down/
 import { transformImage } from '@xata.io/client';
 
 // Notice that the rendered example does not grow beyond it's original size
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 600,
   height: 400,
   fit: 'scale-down'
@@ -556,7 +556,7 @@ Resizes (shrinks or enlarges) to fill the entire area of width and height. If th
 import { transformImage } from '@xata.io/client';
 
 // Notice that the rendered example is a perfect square
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 100,
   height: 100,
   fit: 'cover'
@@ -591,7 +591,7 @@ https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=cover/4u1fh
 import { transformImage } from '@xata.io/client';
 
 // Notice that the rendered example is a perfect square that enlarges past its original size
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 250,
   height: 250,
   fit: 'cover'
@@ -630,7 +630,7 @@ Image will be shrunk and cropped to fit within the area specified by width and h
 import { transformImage } from '@xata.io/client';
 
 // Notice that the rendered example crops to a square because it is below the original size
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 100,
   height: 100,
   fit: 'crop'
@@ -665,7 +665,7 @@ https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=crop/4u1fh2
 import { transformImage } from '@xata.io/client';
 
 // Notice that the rendered example does not become a square, and does not grow above the original size
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 500,
   height: 500,
   fit: 'crop'
@@ -703,7 +703,7 @@ Resizes to the maximum size that fits within the given width and height, and the
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 250,
   height: 250,
   fit: 'pad',
@@ -752,7 +752,7 @@ Converts the format of the retrieved image.
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   format: 'webp'
 });
 ```
@@ -761,7 +761,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "format": "webp"
 })
 ```
@@ -784,7 +784,7 @@ Here is an example of outputting `JSON`, which will give you dimensions of the t
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   height: 100,
   format: 'json'
 });
@@ -794,7 +794,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "height": 100,
   "format": "json"
 })
@@ -825,7 +825,7 @@ Increases exposure by a factor. A value of 1.0 equals no change, a value of 0.5 
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   gamma: 0.5
 });
 ```
@@ -834,7 +834,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "gamma": 0.5
 })
 ```
@@ -862,7 +862,7 @@ When cropping with fit: "cover" and fit: "crop", this parameter defines the side
 import { transformImage } from '@xata.io/client';
 
 // Crop from right
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 100,
   height: 100,
   fit: 'cover',
@@ -899,7 +899,7 @@ https://us-east-1.storage.xata.sh/transform/width=100,height=100,fit=cover,gravi
 import { transformImage } from '@xata.io/client';
 
 // Crop from left and bottom
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 100,
   height: 100,
   fit: 'cover',
@@ -945,7 +945,7 @@ Specifies maximum height of the image in pixels. Exact behavior depends on the `
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   height: 100
 });
 ```
@@ -954,7 +954,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "height": 100
 })
 ```
@@ -983,7 +983,7 @@ Controls amount of invisible metadata (EXIF data) that should be preserved. Colo
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   metadata: 'none'
 });
 ```
@@ -992,7 +992,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "metadata": "none"
 })
 ```
@@ -1012,7 +1012,7 @@ Specifies quality for images in JPEG, WebP, and AVIF formats. The quality is in 
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   quality: 50
 });
 ```
@@ -1021,7 +1021,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "quality": 50
 })
 ```
@@ -1043,7 +1043,7 @@ Specifies number of degrees (90, 180, or 270) to rotate the image by. Width and 
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   rotate: 90
 });
 ```
@@ -1052,7 +1052,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "rotate": 90
 })
 ```
@@ -1074,7 +1074,7 @@ Specifies strength of sharpening filter to apply to the image. The value is a fl
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   sharpen: 2
 });
 ```
@@ -1083,7 +1083,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "sharpen": 2
 })
 ```
@@ -1156,7 +1156,7 @@ Specifies maximum width of the image in pixels. Exact behavior depends on the fi
 ```ts
 import { transformImage } from '@xata.io/client';
 
-const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
+const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94', {
   width: 100
 });
 ```
@@ -1165,7 +1165,7 @@ const transformedImageUrl = transformImage('https://us-east-1.storage.xata.sh/4u
 from xata.client import XataClient
 xata = XataClient()
 
-img = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
+url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100
 })
 ```
