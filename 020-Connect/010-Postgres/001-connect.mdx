@@ -159,7 +159,7 @@ The table below, is providing a more granular picture of the supported statement
 | `CREATE EXTENSION`      | N             | N              | Y                 |
 | `DROP EXTENSION`        | N             | N              | Y                 |
 | `ALTER EXTENSION`       | N             | N              | Y                 |
-| Temporary tables        | N             | N              | Y                 |
+| CREATE TEMPORARY TABLE  | N             | N              | Y                 |
 
 ## Limitations
 
@@ -168,7 +168,10 @@ The table below, is providing a more granular picture of the supported statement
 The following statements and/or functions are not available:
 
 - `SELECT user;`
-- `SHOW password_encryption;`
+- `SHOW password_encryption`
+- `SET ROLE`
+- `RESET ROLE`
+- `SET SESSION AUTHORIZATION`
 
 ### Connection limits
 
