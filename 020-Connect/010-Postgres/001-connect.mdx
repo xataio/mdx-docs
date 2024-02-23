@@ -7,7 +7,7 @@ slug: postgres/connect
 published: true
 ---
 
-<Alert status="info">The Postgres wire protocol is still considered BaseAudioContext.</Alert>
+<Alert status="info">The Postgres wire protocol is still considered Beta.</Alert>
 
 This page shows you how to connect to Postgres, by explaining how a connection string is built, the different parameters and examples to connect via [psql](https://www.postgresql.org/docs/current/app-psql.html).
 
@@ -94,13 +94,13 @@ If you are on a dedicated cluster you can install extensions yourself, please co
 Xata offers different approaches to Postgres, from SQL over HTTP to pure Postgres over the wire protocol to a shared or dedicated cluster.
 Each come with a security scope, to provide isolation in a multi tenant environment.
 
-|                   | FUNCTIONs | DQL statements | (some) DML statements | DDL statements |
+|                   | FUNCTIONS| DQL statements | (some) DML statements | DDL statements |
 | ----------------- | --------- | -------------- | --------------------- | -------------- |
 | SQL over HTTP     | N         | Y              | Y                     | Y              |
 | Shared cluster    | N         | Y              | Y                     | Y              |
 | Dedicated cluster | Y         | Y              | Y                     | Y              |
 
-The table below, is providing a more granularity picture of the supported statements.
+The table below, is providing a more granular picture of the supported statements.
 
 |                         | SQL over HTTP | Shared Cluster | Dedicated Cluster |
 | ----------------------- | ------------- | -------------- | ----------------- |
