@@ -48,14 +48,6 @@ psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
 Games:main=>
 ```
 
-### sslmode
-
-<Alert status="warning">this is incomplete and still a TODO</Alert>
-
-`required`
-
-https://www.postgresql.org/docs/current/libpq-ssl.html
-
 ## Supported Versions
 
 You can check the Postgres version with the following command:
@@ -88,3 +80,115 @@ You can select which version you want, currently supported versions in all [avai
 - 14.9
 
 You can control the maintenance windows and the version upgrades yourself.
+
+## Extensions
+
+The available, out-of-the-box extensions are:
+
+- list
+
+If you are on a dedicated cluster you can install extensions yourself, please consult the [Postgres documentation](https://www.postgresql.org/docs/current/sql-createextension.html) for a how to.
+
+## Supported Statements
+
+Xata offers different approaches to Postgres, from SQL over HTTP to pure Postgres over the wire protocol to a shared or dedicated cluster.
+Each come with a security scope, to provide isolation in a multi tenant environment.
+
+|                   | FUNCTIONs | DQL statements | (some) DML statements | DDL statements |
+| ----------------- | --------- | -------------- | --------------------- | -------------- |
+| SQL over HTTP     | N         | Y              | Y                     | Y              |
+| Shared cluster    | N         | Y              | Y                     | Y              |
+| Dedicated cluster | Y         | Y              | Y                     | Y              |
+
+The table below, is providing a more granularity picture of the supported statements.
+
+|                         | SQL over HTTP | Shared Cluster | Dedicated Cluster |
+| ----------------------- | ------------- | -------------- | ----------------- |
+| `SELECT`                | Y             | Y              | Y                 |
+| `INSERT`                | Y             | Y              | Y                 |
+| `DELETE`                | Y             | Y              | Y                 |
+| `UPDATE`                | Y             | Y              | Y                 |
+| `SHOW`                  | Y             | Y              | Y                 |
+| `ALTER TABLE`           | Y             | Y              | Y                 |
+| `CREATE TABLE`          | Y             | Y              | Y                 |
+| `DROP TABLE`            | Y             | Y              | Y                 |
+| `BEGIN`                 | N             | Y              | Y                 |
+| `COMMIT`                | N             | Y              | Y                 |
+| `ROLLBACK`              | Y             | Y              | Y                 |
+| `SET`                   | Y             | Y              | Y                 |
+| `COPY`                  | Y             | Y              | Y                 |
+| `LOCK`                  | Y             | Y              | Y                 |
+| `PREPARE`               | Y             | Y              | Y                 |
+| `EXECUTE`               | Y             | Y              | Y                 |
+| `TRUNCATE`              | Y             | Y              | Y                 |
+| `ALTER TABLESPACE`      | N             | N              | Y                 |
+| `CREATE TABLESPACE`     | N             | N              | Y                 |
+| `DROP TABLESPACE`       | N             | N              | Y                 |
+| `ALTER INDEX`           | N             | N              | Y                 |
+| `DROP INDEX`            | N             | N              | Y                 |
+| `ALTER TRIGGER`         | N             | N              | Y                 |
+| `CREATE TRIGGER`        | N             | N              | Y                 |
+| `DROP TRIGGER`          | N             | N              | Y                 |
+| `ALTER EVENTTRIGGER`    | N             | N              | Y                 |
+| `CREATE EVENTTRIGGER`   | N             | N              | Y                 |
+| `DROP EVENTTRIGGER`     | N             | N              | Y                 |
+| `ALTER SEQUENCE`        | N             | N              | Y                 |
+| `CREATE SEQUENCE`       | N             | N              | Y                 |
+| `DROP SEQUENCE`         | N             | N              | Y                 |
+| `CALL`                  | N             | N              | Y                 |
+| `ALTER STATISTICS`      | N             | N              | Y                 |
+| `CREATE STATISTICS`     | N             | N              | Y                 |
+| `DROP STATISTICS`       | N             | N              | Y                 |
+| `ALTER RULE`            | N             | N              | Y                 |
+| `CREATE RULE`           | N             | N              | Y                 |
+| `DROP RULE`             | N             | N              | Y                 |
+| `ALTER TYPE`            | N             | N              | Y                 |
+| `CREATE TYPE`           | N             | N              | Y                 |
+| `DROP TYPE`             | N             | N              | Y                 |
+| `ALTER DOMAIN`          | N             | N              | Y                 |
+| `CREATE DOMAIN`         | N             | N              | Y                 |
+| `DROP DOMAIN`           | N             | N              | Y                 |
+| `ALTER FUNCTION`        | N             | N              | Y                 |
+| `CREATE FUNCTION`       | N             | N              | Y                 |
+| `DROP FUNCTION`         | N             | N              | Y                 |
+| `EXPLAIN`               | N             | N              | Y                 |
+| `REINDEX`               | N             | N              | Y                 |
+| `ALTER OPERATOR CLASS`  | N             | N              | Y                 |
+| `CREATE OPERATOR CLASS` | N             | N              | Y                 |
+| `DROP OPERATOR CLASS`   | N             | N              | Y                 |
+| `CREATE EXTENSION`      | N             | N              | Y                 |
+| `DROP EXTENSION`        | N             | N              | Y                 |
+| `ALTER EXTENSION`       | N             | N              | Y                 |
+| Temporary tables        | N             | N              | Y                 |
+
+## Limitations
+
+### Unsupported statements and functions
+
+The following statements and/or functions are not available:
+
+- `SELECT user;`
+- `SHOW password_encryption;`
+
+### Connection limits
+
+- SQL over HTTP to a shared cluster has the rate limits in place, for a dedicated cluster there are none.
+- Shared cluster - TODO, amount of available connections
+- Dedicated cluster - no limit to connections
+
+### `xata_` Column prefix
+
+Xata reserves the `xata_` column prefix for [special columns](docs/concepts/data-model#special-columns) and rejects any custom created columns with the prefix.
+
+### sslmode
+
+Xata does not allow plain text connections, this may have an effect on the client you are using and the default that is inferred by such.
+If you face an issue, be append the SSL mode `require` option to the connection string or pass in a parameterized way depending on the tool you are using.
+
+Example given:
+
+```bash
+psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main?sslmode=require"
+```
+
+Please refer to the main Postgres documentation for more in depth information about the [sslmodes](https://www.postgresql.org/docs/current/libpq-ssl.html) option.
