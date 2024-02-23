@@ -102,64 +102,64 @@ Each come with a security scope, to provide isolation in a multi tenant environm
 
 The table below, is providing a more granular picture of the supported statements.
 
-|                         | SQL over HTTP | Shared Cluster | Dedicated Cluster |
-| ----------------------- | ------------- | -------------- | ----------------- |
-| `SELECT`                | Y             | Y              | Y                 |
-| `INSERT`                | Y             | Y              | Y                 |
-| `DELETE`                | Y             | Y              | Y                 |
-| `UPDATE`                | Y             | Y              | Y                 |
-| `SHOW`                  | Y             | Y              | Y                 |
-| `ALTER TABLE`           | Y             | Y              | Y                 |
-| `CREATE TABLE`          | Y             | Y              | Y                 |
-| `DROP TABLE`            | Y             | Y              | Y                 |
-| `BEGIN`                 | N             | Y              | Y                 |
-| `COMMIT`                | N             | Y              | Y                 |
-| `ROLLBACK`              | N             | Y              | Y                 |
-| `SET`                   | N             | Y              | Y                 |
-| `COPY`                  | N             | Y              | Y                 |
-| `LOCK`                  | N             | Y              | Y                 |
-| `PREPARE`               | N             | Y              | Y                 |
-| `EXECUTE`               | N             | Y              | Y                 |
-| `TRUNCATE`              | Y             | Y              | Y                 |
-| `ALTER TABLESPACE`      | N             | N              | Y                 |
-| `CREATE TABLESPACE`     | N             | N              | Y                 |
-| `DROP TABLESPACE`       | N             | N              | Y                 |
-| `ALTER INDEX`           | N             | N              | Y                 |
-| `DROP INDEX`            | N             | N              | Y                 |
-| `ALTER TRIGGER`         | N             | N              | Y                 |
-| `CREATE TRIGGER`        | N             | N              | Y                 |
-| `DROP TRIGGER`          | N             | N              | Y                 |
-| `ALTER EVENTTRIGGER`    | N             | N              | Y                 |
-| `CREATE EVENTTRIGGER`   | N             | N              | Y                 |
-| `DROP EVENTTRIGGER`     | N             | N              | Y                 |
-| `ALTER SEQUENCE`        | N             | N              | Y                 |
-| `CREATE SEQUENCE`       | N             | N              | Y                 |
-| `DROP SEQUENCE`         | N             | N              | Y                 |
-| `CALL`                  | N             | N              | Y                 |
-| `ALTER STATISTICS`      | N             | N              | Y                 |
-| `CREATE STATISTICS`     | N             | N              | Y                 |
-| `DROP STATISTICS`       | N             | N              | Y                 |
-| `ALTER RULE`            | N             | N              | Y                 |
-| `CREATE RULE`           | N             | N              | Y                 |
-| `DROP RULE`             | N             | N              | Y                 |
-| `ALTER TYPE`            | N             | N              | Y                 |
-| `CREATE TYPE`           | N             | N              | Y                 |
-| `DROP TYPE`             | N             | N              | Y                 |
-| `ALTER DOMAIN`          | N             | N              | Y                 |
-| `CREATE DOMAIN`         | N             | N              | Y                 |
-| `DROP DOMAIN`           | N             | N              | Y                 |
-| `ALTER FUNCTION`        | N             | N              | Y                 |
-| `CREATE FUNCTION`       | N             | N              | Y                 |
-| `DROP FUNCTION`         | N             | N              | Y                 |
-| `EXPLAIN`               | N             | N              | Y                 |
-| `REINDEX`               | N             | N              | Y                 |
-| `ALTER OPERATOR CLASS`  | N             | N              | Y                 |
-| `CREATE OPERATOR CLASS` | N             | N              | Y                 |
-| `DROP OPERATOR CLASS`   | N             | N              | Y                 |
-| `CREATE EXTENSION`      | N             | N              | Y                 |
-| `DROP EXTENSION`        | N             | N              | Y                 |
-| `ALTER EXTENSION`       | N             | N              | Y                 |
-| CREATE TEMPORARY TABLE  | N             | N              | Y                 |
+|                          | SQL over HTTP | Shared Cluster | Dedicated Cluster |
+| ------------------------ | ------------- | -------------- | ----------------- |
+| `SELECT`                 | Y             | Y              | Y                 |
+| `INSERT`                 | Y             | Y              | Y                 |
+| `DELETE`                 | Y             | Y              | Y                 |
+| `UPDATE`                 | Y             | Y              | Y                 |
+| `SHOW`                   | Y             | Y              | Y                 |
+| `ALTER TABLE`            | Y             | Y              | Y                 |
+| `CREATE TABLE`           | Y             | Y              | Y                 |
+| `DROP TABLE`             | Y             | Y              | Y                 |
+| `BEGIN`                  | N             | Y              | Y                 |
+| `COMMIT`                 | N             | Y              | Y                 |
+| `ROLLBACK`               | N             | Y              | Y                 |
+| `SET`                    | N             | Y              | Y                 |
+| `COPY`                   | N             | Y              | Y                 |
+| `LOCK`                   | N             | Y              | Y                 |
+| `PREPARE`                | N             | Y              | Y                 |
+| `EXECUTE`                | N             | Y              | Y                 |
+| `TRUNCATE`               | Y             | Y              | Y                 |
+| `ALTER TABLESPACE`       | N             | N              | Y                 |
+| `CREATE TABLESPACE`      | N             | N              | Y                 |
+| `DROP TABLESPACE`        | N             | N              | Y                 |
+| `ALTER INDEX`            | N             | N              | Y                 |
+| `DROP INDEX`             | N             | N              | Y                 |
+| `ALTER TRIGGER`          | N             | N              | Y                 |
+| `CREATE TRIGGER`         | N             | N              | Y                 |
+| `DROP TRIGGER`           | N             | N              | Y                 |
+| `ALTER EVENTTRIGGER`     | N             | N              | Y                 |
+| `CREATE EVENTTRIGGER`    | N             | N              | Y                 |
+| `DROP EVENTTRIGGER`      | N             | N              | Y                 |
+| `ALTER SEQUENCE`         | N             | N              | Y                 |
+| `CREATE SEQUENCE`        | N             | N              | Y                 |
+| `DROP SEQUENCE`          | N             | N              | Y                 |
+| `CALL`                   | N             | N              | Y                 |
+| `ALTER STATISTICS`       | N             | N              | Y                 |
+| `CREATE STATISTICS`      | N             | N              | Y                 |
+| `DROP STATISTICS`        | N             | N              | Y                 |
+| `ALTER RULE`             | N             | N              | Y                 |
+| `CREATE RULE`            | N             | N              | Y                 |
+| `DROP RULE`              | N             | N              | Y                 |
+| `ALTER TYPE`             | N             | N              | Y                 |
+| `CREATE TYPE`            | N             | N              | Y                 |
+| `DROP TYPE`              | N             | N              | Y                 |
+| `ALTER DOMAIN`           | N             | N              | Y                 |
+| `CREATE DOMAIN`          | N             | N              | Y                 |
+| `DROP DOMAIN`            | N             | N              | Y                 |
+| `ALTER FUNCTION`         | N             | N              | Y                 |
+| `CREATE FUNCTION`        | N             | N              | Y                 |
+| `DROP FUNCTION`          | N             | N              | Y                 |
+| `EXPLAIN`                | N             | N              | Y                 |
+| `REINDEX`                | N             | N              | Y                 |
+| `ALTER OPERATOR CLASS`   | N             | N              | Y                 |
+| `CREATE OPERATOR CLASS`  | N             | N              | Y                 |
+| `DROP OPERATOR CLASS`    | N             | N              | Y                 |
+| `CREATE EXTENSION`       | N             | N              | Y                 |
+| `DROP EXTENSION`         | N             | N              | Y                 |
+| `ALTER EXTENSION`        | N             | N              | Y                 |
+| `CREATE TEMPORARY TABLE` | N             | N              | Y                 |
 
 ## Limitations
 
@@ -167,7 +167,7 @@ The table below, is providing a more granular picture of the supported statement
 
 The following statements and/or functions are not available:
 
-- `SELECT user;`
+- `SELECT user`
 - `SHOW password_encryption`
 - `SET ROLE`
 - `RESET ROLE`
