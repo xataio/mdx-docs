@@ -47,8 +47,8 @@ data = xata.data().query("{table_name}", {
 searchClient, _ := xata.NewSearchAndFilterClient()
 data, _ := searchClient.Query(context.TODO(), xata.QueryTableRequest{
   BranchRequestOptional: xata.BranchRequestOptional{
-		DatabaseName: xata.String("{database_name}"),
-	},
+	  DatabaseName: xata.String("{database_name}"),
+  },
   TableName: "{table_name}",
   Payload: xata.QueryTableRequestPayload{
     Columns: []string{"col_1", ".."},
