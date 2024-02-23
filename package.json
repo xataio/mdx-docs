@@ -27,11 +27,11 @@
     "remark-preset-prettier": "^2.0.1"
   },
   "lint-staged": {
-    "*.{js,ts,tsx,mdx,md}": [
+    "*.{js,ts,tsx,mdx}": [
       "prettier --config=.prettierrc.precommit.js --write",
       "eslint --cache"
     ],
-    "*.{css,json,md,yml,yaml,mdx,md}": [
+    "*.{css,json,md,yml,yaml,md}": [
       "prettier --write"
     ]
   }
