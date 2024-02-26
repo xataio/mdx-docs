@@ -27,6 +27,13 @@ properties:
   published:
     description: Whether to list this doc in the menu and search
     type: boolean
+  status:
+    description: state of the feature
+    type: string
+    enum:
+      - alpha
+      - beta
+      - ga
 
 required:
   - title
