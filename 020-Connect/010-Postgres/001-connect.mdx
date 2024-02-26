@@ -190,7 +190,11 @@ Xata reserves the `xata_` column prefix for [special columns](docs/concepts/data
 ### sslmode
 
 Xata does not allow plain text connections, this may have an effect on the client you are using and the default that is inferred by such.
-If you face an issue, be append the SSL mode `require` option to the connection string or pass in a parameterized way depending on the tool you are using.
+If you face an issue with an error message as shown below, append the SSL mode `require` option to the connection string or pass in a parameterized way depending on the tool you are using.
+
+```bash
+psql: error: connection to server at "eu-west-1.sql.xata.sh" (12.34.56.89), port 5432 failed: SSL required
+```
 
 Example given:
 
