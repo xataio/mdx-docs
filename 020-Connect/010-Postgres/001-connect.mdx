@@ -190,16 +190,26 @@ Xata reserves the `xata_` column prefix for [special columns](docs/concepts/data
 ### sslmode
 
 Xata does not allow plain text connections, this may have an effect on the client you are using and the default that is inferred by such.
-If you face an issue with an error message as shown below, append the SSL mode `require` option to the connection string or pass in a parameterized way depending on the tool you are using.
+If you face an issue with an error message as shown below, you will need to explicitly force SSL, by adding the sslmode to `require` in the connection string or pass in a parameterized way depending on the tool you are using.
 
 ```bash
-psql: error: connection to server at "eu-west-1.sql.xata.sh" (12.34.56.89), port 5432 failed: SSL required
+psql: error: connection to server at "eu-west-1.sql.xata.sh" (42.42.42.42), port 5432 failed: SSL required
 ```
 
-Example given:
+Xata recommends that the client verifies the server certificate, in psql this would be achieved with the `verify-ca` and `verify-full` modes.
+
+<Alert status="warning">TODO: add screenshot and or more detail how to get the certificate.</Alert>
+
+We will need to provide a certificate store to do this, it is usually present in most operative systems, for instance:
+
+MacOS: `/etc/ssl/cert.pem`
+GNU/Linux: `/etc/ssl/certs/ca-certificates.crt`
+
+Using psql on Mac to establish a fully secure connection to Xata is as easy as:
 
 ```bash
-psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main?sslmode=require"
+psql "sslmode=verify-full sslrootcert=/etc/ssl/cert.pem user=ws1234 password=xau_apikey123456 host=us-east-1.sql.xata.sh dbname=Games:main"
 ```
 
+Keep in mind that different clients will provide different configuration options.
 Please refer to the main Postgres documentation for more in depth information about the [sslmodes](https://www.postgresql.org/docs/current/libpq-ssl.html) option.
