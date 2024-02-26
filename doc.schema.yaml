@@ -33,7 +33,7 @@ properties:
     enum:
       - alpha
       - beta
-      - production
+      - ga
 
 required:
   - title
