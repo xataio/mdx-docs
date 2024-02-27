@@ -618,7 +618,7 @@ file, _ := filesClient.Put(context.TODO(), xata.PutFileRequest{
 ```
 
 ```sh
-curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file' \
+curl --request PUT 'https://{workspace}.{region}.upload.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file' \
   --header 'Content-Type: image/jpeg' \
   --header 'Authorization: Bearer xau_REDACTED' \
   --data-binary '@/path/to/file'
@@ -653,7 +653,7 @@ file, _ := filesClient.PutItem(context.TODO(), xata.PutFileItemRequest{
 ```
 
 ```sh
-curl --request PUT 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file/{file_id}' \
+curl --request PUT 'https://{workspace}.{region}.upload.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file/{file_id}' \
   --header 'Content-Type: image/jpeg' \
   --header 'Authorization: Bearer xau_REDACTED' \
   --data-binary '@/path/to/file'
