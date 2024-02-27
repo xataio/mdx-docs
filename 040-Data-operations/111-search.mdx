@@ -465,7 +465,7 @@ The above will match records containing `Keanu`.
 
 ## Filter records before search is performed
 
-Filtering allows you to filter out records before passing them through the search algorithm. The filtering syntax is the same as for the query API, with the limitation that you cannot filter by linked columns.
+Filtering allows you to filter out records before passing them through the search algorithm. The filtering syntax is the same as for the query API.
 
 The filtering is applied at the table level. For example:
 
@@ -514,6 +514,11 @@ results = xata.data().search_branch({
 ```
 
 </TabbedCode>
+
+Limitations:
+
+- It is not possible to apply filters on linked columns. For Search, columns of `link` type contain only the `id` of the linked record.
+- It is not possible to apply filters on specific nested nodes in a JSON object. For Search, columns of `json` type are mapped as plain text.
 
 ## Target specific columns
 
