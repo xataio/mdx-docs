@@ -29,21 +29,29 @@ Individuals and indie developers like Xata because it is easy to get started, ha
 
 Companies and larger teams like Xata because it is cost-efficient, consolidates tooling and reduces the operation load. Branching and zero-downtime migration workflows means that your team can iterate faster when performing complex schema changes.
 
-## Why Postgres?
+## PostgreSQL, the Xata way
 
-As per the [StackOverflow survey of 2023](https://survey.stackoverflow.co/2023/#section-most-popular-technologies-databases), PostgreSQL is currently the most popular database system on the planet. Started in 1983, the PostgreSQL open source project has a long history of reliability and a huge and growing community. Here are some of the reasons why we chose Postgres as the foundation for Xata:
+As per the [StackOverflow survey of 2023](https://survey.stackoverflow.co/2023/#section-most-popular-technologies-databases), PostgreSQL is currently the most popular database system on the planet. Started in 1983, the PostgreSQL open source project has a long history of reliability and a huge and growing community. For many developers, PostgreSQL is the first choice for a database system, because of its ACID transactions, planner performance, JSON support, extensibility, and much more.
 
-**Safe**: Postgres comes with ACID transactions and its transaction isolation levels are [well documented](https://www.postgresql.org/docs/current/transaction-iso.html), making it easy to create correct applications that are easy to reason about. It also provides a lot of mechanisms for data integrity, including constraints, triggers, and foreign keys.
+At Xata, we strive to provide the best PostgreSQL cloud service, on a few particular dimensions:
 
-**Performant**: Postgres transactions are implemented via a multi-version concurrency control (MVCC) system, which means it is very good at handling concurrent writes. The Postgres query planner is sophisticated and can handle complex queries efficiently.
+**Reliability**: When it comes to the reliability of the core database service, we have a very [good track record](https://www.xatastatus.com/history) and offer [SLAs](TODO) on our Pro plans and above. Our technology choices are relatively conservative, as we make use of AWS Aurora, a managed PostgreSQL service used at scale by many companies.
 
-**No vendor lock-in**: PostgreSQL is offered as a managed service by many cloud providers and it is open-source, so you can also always self-host if you choose to. In addition to this, the Postgres wire protocol is open and well-documented, and because of this it was adopted by other database systems as well (e.g. CockroachDB and YugabyteDB). This means that if your application depends on PostgreSQL, you are guaranteed to have a lot of options when it comes to hosting and scaling.
+Even on the free tier we offer high-availability and redundancy, with replicas running in multiple availability zones. The failover from the primary instance to a replica is automatic and it's guaranteed to have no data loss. At the storage layer, the data is synchronously replicated to six storage nodes across three availability zones.
 
-**Versatile**: Besides the usual relational database features, Postgres also has a rich set of data types, including JSON and geospatial data (via the PostGis extension). It also has row-level security, inverted indexes (GIN), and many other features that make it a good fit for a wide range of applications.
+On the paid plans, we offer point-in-time-recovery (PITR) and our support team will help you restore the whole database or only parts of the database (e.g. specific tables or rows) as per our support [SLA times](TODO).
 
-**Extensible**: Postgres has a rich ecosystem of extensions and new extensions can be written in multiple programming languages, including C, [Rust](https://github.com/pgcentralfoundation/pgrx), and [Zig](https://github.com/xataio/pgzx) (pgzx is maintained by Xata). New extensions can add new data types, new indexing methods, new query operators, and new procedural languages.
+**Cost efficiency**: The way we achieve cost efficiency for as many use cases as possible is by offering a high degree of optionality. The innovation of the Xata service is that we make it really easy to move from one type of cluster to another, without downtime. This means that you can easily try your workload on different types of clusters and see which one is the most cost-efficient for you.
 
-## Shared or dedicated clusters
+At small scale, we offer a free tier that includes high-availability and read replicas, no cold-starts, and no instance-pausing after a few days. We can offer this sustainably because the free tier makes use of [shared clusters](#shared-or-dedicated-clusters) and auto-scaling.
+
+At large scale, you pay for the resources you use and you have a high degree of control. For example, for predictable load, you can configure a particular instance size, while for unpredictable load, auto-scaling will likely be more cost-efficient. Similarly, you can choose between standard storage and I/O optimized storage, which is more cost-efficient for I/O-heavy workloads.
+
+**Scalability**: Available instance types in Xata go up to 128 vCPUs and 1TB of RAM (for example, `db.r6i.32xlarge`). Storage can be scaled up to 128TiB per cluster. That is quite a lot of headroom for vertical scaling.
+
+When it comes to horizontal scaling, the fact that you can create databases and branches instantly and that you can move them between clusters without downtime, opens up several architectural possibilities. For example, you can create a logical database for each of your customers, and place them in different regions. See the section on [Global control plane for databases and branches](#global-control-plane-for-databases-and-branches) for more details.
+
+### Shared or dedicated clusters
 
 There are two types of clusters powering the Xata service: shared and dedicated. Database branches can be created on both types of clusters, and they can be moved seamlessly between them, without downtime. It is common to use a dedicated cluster for the production branch and shared clusters for the dev branches.
 
