@@ -86,7 +86,7 @@ While Xata is built on top of PostgreSQL, it is not a typical PostgreSQL DBaaS, 
 
 While PostgreSQL is an incredibly versitile database, and it's an excelent starting dataabse for almost any application, we are of the opinion that it is not the best tool for every job.
 
-A good example of this is the File Attachments faeture. While it is possible to store files as BLOBs in PostgreSQL, it would be expensive and inefficient to do so. Instead, we use S3 for file storage and the Cloudflare CDN for file delivery and image transformations.
+A good example of this is the File Attachments feature. While it is possible to store files as BLOBs in PostgreSQL, it would be expensive and inefficient to do so. Instead, we use S3 for file storage and the Cloudflare CDN for file delivery and image transformations.
 
 Similarly, while PostgreSQL has full-text search capabilities, we can provide a significantly better full-text search experience by using Elasticsearch. A blog post comparing the two approaches is available [here](https://xata.io/blog/postgres-full-text-search-postgres-vs-elasticsearch).
 
