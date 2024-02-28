@@ -19,7 +19,7 @@ On top of the usual Postgres functionality, Xata provides a set of features that
 - **Collaborative dashboard**: A web-based console to manage your data, including schema and data.
 - **SDKs**: Xata comes with vertically integrated SDKs for popular programming languages, including TypeScript, JavaScript, Python, and Go. In addition, Xata works with any PostgreSQL client or ORM.
 
-In order to provide these features, Xata uses other data stores in addition to PostgreSQL, namely Elasticsearch for full-text search and aggregations, S3 for file attachments, and the Cloudflare CDN for file delivery and image transformations. The Postgres logical replication events are used to keep these data stores in sync with the main database.
+In order to provide these features, Xata uses other data stores in addition to PostgreSQL, namely [Elasticsearch](https://github.com/elastic/elasticsearch/) for full-text search, aggregations and vector search, [S3](https://aws.amazon.com/s3/) for file attachments, and the [Cloudflare CDN](https://www.cloudflare.com/application-services/products/cdn/) for file delivery and image transformations. The Postgres logical replication events are used to keep these data stores in sync with the main database.
 
 Access to the underlying data is provided in two main ways: via the PostgreSQL wire protocol, which is mediated by our SQL Proxy, and via our SDKs, which provide a higher-level interface to the data.
 
