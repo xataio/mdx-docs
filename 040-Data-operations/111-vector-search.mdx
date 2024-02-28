@@ -12,7 +12,7 @@ The Xata [vector type](/docs/concepts/data-model#vector) can be combined with th
 
 An embedding is a vector of floating point numbers that represents the original data (text, image, audio, etc.). Embeddings are typically produced by a machine learning model. You can store the embeddings in Xata in a column of type `vector` and use the `vectorSearch` API call to find the nearest neighbors of a given embedding. This is useful in a number of use cases related to machine learning, such as: semantic search, recommendations, clustering, classification, and others.
 
-Vector search runs in the Search store which is eventually consistent. It works at the table level and has the following format:
+Vector search runs in the Search store which is eventually consistent. The Search store is enabled by default and can be disabled in the Database Settings from the Web UI. The vectorSearch API and features described in this page require the Search store to be enabled. It works at the table level and has the following format:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 

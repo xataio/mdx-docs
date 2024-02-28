@@ -57,7 +57,7 @@ Xata is a global multi-tenant system, composed of **cells**, each living in a re
 
 - The data is stored in PostgreSQL, which is considered the source of truth.
 - The PostgreSQL logical replication events are written in a Kafka queue, from where they can be read by multiple consumers.
-- One of these consumers indexes the data into Elasticsearch.
+- One of these consumers optionally indexes the data into Elasticsearch.
 - The Xata API layer offers a RESTful API offering both the functionality of the relational database (PostgreSQL) with the advanced search and analytics from the search engine/columnar store (Elasticsearch).
 - On top of this API, Xata has client SDKs and a web interface.
 
@@ -158,7 +158,7 @@ At any point, the migration can be canceled without a major impact. It is also p
 
 It is very useful to get a near-real-time stream with all the changes that are in the database. In database terminology, this is called [Change Data Capture](https://en.wikipedia.org/wiki/Change_data_capture). In PostgreSQL, this can be done based on the [logical replication](https://www.postgresql.org/docs/current/logical-replication.html) functionality, which is available since PostgreSQL 10. By hooking into this functionality, we are receiving an event every time a row is changed in PostgreSQL, regardless what has caused the change. It is somewhat similar to database triggers functionality but with better reliability.
 
-We are using logical replication events today to replicate the data from PostgreSQL into Elasticsearch, and in the near future, we’ll use it to call Webhooks, trigger serverless functions, replication between regions, and more.
+We are using logical replication events today to optionally replicate the data from PostgreSQL into Elasticsearch, and in the near future, we’ll use it to call Webhooks, trigger serverless functions, replication between regions, and more.
 
 One interesting challenge with processing replication events is that it’s generally hard to guarantee exactly-once delivery and the ordering of events. Solutions for delivery in order usually imply a single thread of processing. Instead, we have chosen to use version numbers for the records, which are incremented every time a record is updated or deleted. On the consumer side, these versions can be used to both identify duplicate events and to know in which order they are safe to apply.
 
