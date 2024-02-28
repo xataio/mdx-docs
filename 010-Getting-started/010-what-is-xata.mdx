@@ -16,7 +16,7 @@ On top of the usual Postgres functionality, Xata provides a set of features that
 - **File attachments**: Store and retrieve files up to 1GB, including images, videos, and audio files. The files are stored in object storage and automatically cached on a global CDN for fast delivery. From the application point of view, however, it's just another column in the database.
 - **Full-text search**: Data is automatically replicated into a full-text search engine, making it easy to build search experiences, supporting fuzzy search, weights, and relevancy boosters.
 - **Vector search**: Easily store embeddings and implement similarity search to power your AI applications.
-- **Admin UI**: A web-based console to manage your data, including schema and data.
+- **Collaborative dashboard**: A web-based console to manage your data, including schema and data.
 - **SDKs**: Xata comes with vertically integrated SDKs for popular programming languages, including TypeScript, JavaScript, Python, and Go. In addition, Xata works with any PostgreSQL client or ORM.
 
 In order to provide these features, Xata uses other data stores in addition to PostgreSQL, namely Elasticsearch for full-text search and aggregations, S3 for file attachments, and the Cloudflare CDN for file delivery and image transformations. The Postgres logical replication events are used to keep these data stores in sync with the main database.
