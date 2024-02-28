@@ -55,7 +55,7 @@ These are multi-tenant clusters that are shared between multiple customers. This
 
 Shared clusters are cost-efficient and are the reason for which we can sustainably offer such a generous free-tier. The main billing metric for shared clusters is the storage size, with compute being bundled in. They come with rate limits and concurrency limits to prevent abuse. This means that they are typically cost efficient for applications with relatively small database sizes and low to moderate traffic.
 
-The shared clusters are limited when it comes to the PostgreSQL functionality that is enabled. For example, custom functions and triggers are not allowed, in order protect the security of the cluster.
+The shared clusters are limited when it comes to the PostgreSQL functionality that is enabled. For example, custom functions and triggers are not allowed, in order to protect the security of the cluster.
 
 Nevertheless, branches on shared clusters have zero cold starts, they are never paused, and come with high-availability and redundancy built-in, even on the free tier. The shared clusters are powered by AWS Aurora, which separates storage from compute and offers fast failover and point-in-time-recovery (PITR) backups.
 
