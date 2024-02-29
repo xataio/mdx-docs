@@ -148,13 +148,13 @@ Response:
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const user = { name: "Keanu Reeves", email: "keanu@example.com" };
-const { records } = await xata.sql<UsersRecord>`INSERT INTO "Users" (name, email) VALUES (${user.name}, ${user.email})`;
+await xata.sql`INSERT INTO "Users" (name, email) VALUES (${user.name}, ${user.email})`;
 ```
 
 ```python
 name = "Keanu Reeves"
 email = "keanu@example.com"
-records = xata.sql().query(
+response = xata.sql().query(
   "INSERT INTO \"Users\" (name, email) VALUES ($1, $2)",
   [name, email]
 )
@@ -176,7 +176,7 @@ records = xata.sql().query(
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const user = { id: "my-record-id" };
-await xata.sql<UsersRecord>`DELETE FROM "Users" WHERE id=${user.id}`;
+await xata.sql`DELETE FROM "Users" WHERE id=${user.id}`;
 ````
 
 ```python
