@@ -15,6 +15,8 @@ Xata natively provides text-based search for your database with the following co
 - Weights and boosts to influence the relevance of search scores based on certain columns
 - Highlight markup in search results to emphasize partial matches in returned content
 
+Search runs in the Search store which is eventually consistent. The Search store is enabled by default and can be disabled in the Database Settings from the Web UI. The search API and features described in this page require the Search store to be enabled.
+
 ![Xata's website search is powered by Xata search](./images/search.png)
 
 As you insert records into Xata tables, they are automatically replicated from the Transactional store to the eventually consistent Search store.
@@ -465,7 +467,7 @@ The above will match records containing `Keanu`.
 
 ## Filter records before search is performed
 
-Filtering allows you to filter out records before passing them through the search algorithm. The filtering syntax is the same as for the query API, with the limitation that you cannot filter by linked columns.
+Filtering allows you to filter out records before passing them through the search algorithm. The filtering syntax is the same as for the query API.
 
 The filtering is applied at the table level. For example:
 
@@ -514,6 +516,11 @@ results = xata.data().search_branch({
 ```
 
 </TabbedCode>
+
+Limitations:
+
+- It is not possible to apply filters on linked columns. For Search, columns of `link` type contain only the `id` of the linked record.
+- It is not possible to apply filters on specific nested nodes in a JSON object. For Search, columns of `json` type are mapped as plain text.
 
 ## Target specific columns
 
