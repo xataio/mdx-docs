@@ -7,7 +7,7 @@ slug: python-pg8000
 published: true
 ---
 
-The [pg8000](https://pypi.org/project/pg8000/) driver comes with different API'satisfies, the [DB API 2.0](http://www.python.org/dev/peps/pep-0249/) and the pg8000 native one.
+The [pg8000](https://pypi.org/project/pg8000/) driver comes with different API'satisfies, the [Database API v2.0](http://www.python.org/dev/peps/pep-0249/) and the pg8000 native one.
 Both API's use the parameterized approach to define the connection parameters.
 Please replace the placeholders in the connection string or parameters, as indicated on the [connect to Postgres](/docs/postgres/connect) page.
 
@@ -15,7 +15,7 @@ pg8000 does not default to encrypted connections out of the box, and as Xata rej
 This is done by adding the `ssl_context=True` in the connection parameters.
 The following examples both demonstrate this.
 
-## dbapi
+## Database API v2.0
 
 ```python
 import pg8000.dbapi
