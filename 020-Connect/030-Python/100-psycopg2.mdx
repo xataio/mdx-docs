@@ -7,15 +7,10 @@ slug: python/connect/psycopg2
 published: true
 ---
 
-## psycopg2
+To use Xata with [psycopg2](https://www.psycopg.org/docs/module.html), you have the option to connect with the connection string (DSN) or use the parameterized approach.
+Please replace the placeholders in the connection string or parameters, as indicated on the [connect to Postgres](/docs/postgres/connect) page.
 
-https://www.psycopg.org/docs/module.html
-
-TESTED
-
-### Connect via DSN
-
-See psql for DSN and how it’s constructed
+## With the connection string
 
 ```python
 import psycopg2
@@ -26,10 +21,11 @@ cnn = psycopg2.connect(dsn)
 cur = cnn.cursor()
 cur.execute("SELECT 1")
 print(cur.fetchone())
+# (1,)
 cnn.close()
 ```
 
-### Connect via params
+## With parameters
 
 ```python
 import psycopg2
@@ -44,5 +40,6 @@ cnn = psycopg2.connect(
 cur = cnn.cursor()
 cur.execute("SELECT 1")
 print(cur.fetchone())
+# (1,)
 cnn.close()
 ```

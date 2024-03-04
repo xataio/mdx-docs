@@ -7,9 +7,7 @@ slug: python/connect/django
 published: true
 ---
 
-https://docs.djangoproject.com/en/5.0/ref/databases/#postgresql-notes
-
-settings.py
+Connecting to Xata with Django can be done by altering the `settings.py` file:
 
 ```python title="settings.py"
 DATABASES = {
@@ -24,7 +22,9 @@ DATABASES = {
 }
 ```
 
-https://stackpython.medium.com/how-to-start-django-project-with-a-database-postgresql-aaa1d74659d8
+Please replace the parameters as indicated on the [connect to Postgres](/docs/postgres/connect) page.
 
-Django migrations are not fully supported on shared clusters, as the create type statement is not allowed. For full support, you must use a dedicated cluster, see limitations for more information on supported statements.
-LINK TO supported statements matrix
+For other options to bootstrap the database settings in Django, e.g. with environment variables, please refer to the [project documentation](https://docs.djangoproject.com/en/5.0/ref/databases/#postgresql-notes).
+
+Please be aware that Django migrations are not fully supported on shared-clusters, as the statement `CREATE TYPE` is not allowed.
+For full support, you must use a dedicated cluster, see [supported statements](/docs/postgres/connect#supported-statements) for a complete breakdown.
