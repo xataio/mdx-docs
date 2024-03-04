@@ -23,7 +23,7 @@ The following conversion table illustrates how the connection string parameters 
 | Postgres | Xata                       | Example                 |
 | -------- | -------------------------- | ----------------------- |
 | User     | Workspace Id               | `ws1234`                |
-| Password | API Key                    | `xau_apikey123456`      |
+| Password | API key                    | `xau_apikey123456`      |
 | Host     | Region plus `.sql.xata.sh` | `us-east-1.sql.xata.sh` |
 | Port     | `5432` or empty            | `5432`                  |
 | Database | Database and branch name   | `Games:main`            |
@@ -52,7 +52,7 @@ Games:main=>
 You can check the Postgres version with the following command:
 
 ```bash
-psql "postgresql://[Workspace Id]:[API Key]@[Region].sql.xata.sh:[Port]/[Database]:[Branch]" -c "select version()"
+psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh:[Port]/[Database]:[Branch]" -c "select version()"
 ```
 
 ```sql
@@ -88,13 +88,39 @@ The available, out-of-the-box extensions are:
 
 If you are on a dedicated cluster you can install extensions yourself, please consult the [Postgres documentation](https://www.postgresql.org/docs/current/sql-createextension.html) for a how to.
 
-## pg_dump and pg_restore
+## Export your database branch with pg_dump
 
-TODO
+In order to export a branch with pg_dump, you need to specify the connection parameters as indicated in the [connection string](#connection-string) section.
+
+```bash
+pg_dump --no-acl --no-owner --no-comments --no-table-access-method --host=[Region].sql.xata.sh --username=[Workspace Id] --dbname=[Database]:[Branch] --password
+```
+
+The prompt will ask you for the password, which is your API key.
+
+The flags, `--no-acl`, `--no-owner`, `--no-comments` and `--no-table-access-method` are not mandatory, but remove unnecessary noise in the file, creating a cleaner output.
+
+Please refer to the pg_dump [documentation](https://www.postgresql.org/docs/current/app-pgdump.html) for a full list of features.
+
+## Import
+
+The import path depends on your data format, if it's a compressed archive (e.g. `.tar`), you need to use [pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html).
+pg_dump offers the flag `--format=tar` to immediately output to tar file format.
+
+```bash
+pg_restore --host=[Region].sql.xata.sh --username=[Workspace Id] --dbname=[Database]:[Branch] --password dumpdata.tar
+```
+
+The parameters are equally organized as for pg_dump.
+
+If the file is a plain SQL file (`.sql`), you can convenitently use psql to immediately import the database branch.
+In the following example, we want to import the file `my_branch.sql` into the database `playground` on the branch `new_branch`
+
+```bash
+psql "postgresql://[Workspace Id]:[API key]@[Region].sql.staging-xata.dev/playground:new_branch" < my_branch.sql
+```
 
 ## Adapt my Table
-
-TODO
 
 A table created through the wire protocol, is not automatically equiped with the necessary columns to make use of Xata's other features, like a functioning UI, or full text search, etc.
 In order to unlock the functionality, you need to adapt your table.
@@ -199,6 +225,7 @@ The following statements and/or functions are not available:
 - `ALTER TABLESPACE`
 - `CREATE TABLESPACE`
 - `DROP TABLESPACE`
+- `SET search_path TO <SCHEMA>`
 
 ### Connection limits
 
@@ -210,7 +237,7 @@ The following statements and/or functions are not available:
 
 Xata reserves the `xata_` column prefix for [special columns](docs/concepts/data-model#special-columns) and rejects any custom created columns with the prefix.
 
-### sslmode
+## sslmode
 
 Xata does not allow plain text connections, this may have an effect on the client you are using and the default that is inferred by such.
 If you face an issue with an error message as shown below, you will need to explicitly force SSL, by adding the sslmode to `require` in the connection string or pass in a parameterized way depending on the tool you are using.
