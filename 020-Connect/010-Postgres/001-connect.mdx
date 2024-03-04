@@ -12,7 +12,7 @@ This page shows you how to connect to Postgres, by explaining how a connection s
 
 ## Connection string
 
-The connection string to connect to Postgres is constructed the following:
+The connection string to connect to Postgres needs to be in the following format:
 
 ```
 postgresql://[User]:[Password]@[Host]:[Port]/[Database]
@@ -34,7 +34,7 @@ With the example values from above, the connection string to connect to our data
 postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
 ```
 
-The connection strings for the HTTP access and for the Postgres wire protocol are shown to you when you create a new database, afterwards you can always navigate to the database settings to see the URL construction.
+The connection strings for HTTP access and Postgres wire protocol access are shown to you when you create a new database. You can always see how the connection string is constructed later on by navigating to the database settings page.
 ![Database settings showing connection strings](images/connection-string.png)
 
 To create a new API key, or manage your existing ones, you need to open your [account settings](https://app.xata.io/settings).
@@ -47,7 +47,7 @@ psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
 Games:main=>
 ```
 
-## Supported Versions
+## Supported versions
 
 You can check the Postgres version with the following command:
 
@@ -71,7 +71,7 @@ If you want control of the version, you should consider a dedicated cluster.
 
 ### Dedicated cluster
 
-You can select which version you want, currently supported versions in all [available regions](/docs/getting-started/available-regions):
+In a dedicated cluster, you can select which version you want. The currently supported versions in all [available regions](/docs/getting-started/available-regions) are:
 
 - 15.4
 - 15.5
@@ -115,10 +115,10 @@ If you click adapt table, Xata will add four new columns to your table:
 
 Please reference to the [special columns](/docs/concepts/data-model#special-columns) section to learn more about these columns.
 
-## Supported Statements
+## Supported statements
 
 Xata offers different approaches to Postgres, from SQL over HTTP to pure Postgres over the wire protocol to a shared or dedicated cluster.
-Each come with a security scope, to provide isolation in a multi tenant environment.
+Each come with a security scope to provide isolation in a multi tenant environment.
 
 |                   | FUNCTIONS | DQL statements | (some) DML statements | DDL statements |
 | ----------------- | --------- | -------------- | --------------------- | -------------- |
@@ -126,7 +126,7 @@ Each come with a security scope, to provide isolation in a multi tenant environm
 | Shared cluster    | N         | Y              | Y                     | Y              |
 | Dedicated cluster | Y         | Y              | Y                     | Y              |
 
-The table below, is providing a more granular picture of the supported statements.
+The table below provides a more granular picture of the supported statements.
 
 |                          | SQL over HTTP | Shared Cluster | Dedicated Cluster |
 | ------------------------ | ------------- | -------------- | ----------------- |
@@ -202,7 +202,7 @@ The following statements and/or functions are not available:
 
 ### Connection limits
 
-- SQL over HTTP to a shared cluster has the rate limits in place, for a dedicated cluster there are none.
+- SQL over HTTP to a shared cluster has rate limits in place. SQL over HTTP to a dedicated cluster does not have rate limits in place.
 - Shared cluster - TODO, amount of available connections
 - Dedicated cluster - no limit to connections
 
