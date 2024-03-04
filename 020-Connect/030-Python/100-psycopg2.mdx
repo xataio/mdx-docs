@@ -24,8 +24,8 @@ dsn = "postgresql://<WORKSPACE_ID>:<API_KEY>@<REGION>.sql.xata.sh:5432/<DATABASE
 
 cnn = psycopg2.connect(dsn)
 cur = cnn.cursor()
-r = cur.execute("SELECT 1")
-print(r)
+cur.execute("SELECT 1")
+print(cur.fetchone())
 cnn.close()
 ```
 
@@ -42,7 +42,7 @@ cnn = psycopg2.connect(
   port=5432,
 )
 cur = cnn.cursor()
-r = cur.execute("SELECT 1")
-print(r)
+cur.execute("SELECT 1")
+print(cur.fetchone())
 cnn.close()
 ```
