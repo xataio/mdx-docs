@@ -10,35 +10,6 @@ Xata uses PostgreSQL under the hood to store your data. You can use SQL to work 
 
 Xata offers support for a subset of PostgreSQL functions. This includes functions such as `subquery`, `comparison`, `aggregate`, `window`, `range`, `json`, `string`, `datetime`, and `array` functions. Functions beyond these are not permitted.
 
-## Data model
-
-Database tables are stored in PostgreSQL as tables. Xata data types are mapped to PostgreSQL types with additional constraints:
-
-| Xata data type | PostgreSQL data type | Notes                              |
-| -------------- | -------------------- | ---------------------------------- |
-| string         | text                 |                                    |
-| text           | text                 | With constraints on maximum length |
-| int            | bigint               |                                    |
-| float          | double precision     |                                    |
-| datetime       | timestamptz          |                                    |
-| bool           | boolean              |                                    |
-| email          | text                 | Validated by Xata                  |
-| multiple       | text[]               | Validated by Xata                  |
-| file           | jsonb                | Validated by Xata                  |
-| filearray      | jsonb                | Validated by Xata                  |
-| link           | foreign key          |                                    |
-
-In PostgreSQL tables are used to store and organize data. Linked columns serve as foreign keys, establishing connections to other tables. To access data from a linked column, use JOIN operations or apply WHERE conditions to locate the related records.
-
-For example, the following query shows how to retrieve email addresses and corresponding cities using a `LEFT JOIN` operation between the "Users" and "address" tables.:
-
-```sql
-SELECT "Users".email, address.city FROM "Users"
-LEFT JOIN address ON "Users".id=address.id;
-```
-
-For specific Xata data types like email, it is required you use the Xata API or SDK. This ensures that Xata can validate the inserted data's accuracy. We recommend refraining from directly writing to columns of this type and instead using the provided API for better results.
-
 ### Table and column names
 
 Note when you are working with names that include upper-case
@@ -146,8 +117,9 @@ Response:
 ### Insert a new record using a parameterized query
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
 ```ts
-const user = { name: "Keanu Reeves", email: "keanu@example.com" };
+const user = { name: 'Keanu Reeves', email: 'keanu@example.com' };
 await xata.sql`INSERT INTO "Users" (name, email) VALUES (${user.name}, ${user.email})`;
 ```
 
@@ -174,10 +146,11 @@ response = xata.sql().query(
 ### Delete record using a parameterized query
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
 ```ts
-const user = { id: "my-record-id" };
+const user = { id: 'my-record-id' };
 await xata.sql`DELETE FROM "Users" WHERE id=${user.id}`;
-````
+```
 
 ```python
 xata.sql().query(
@@ -200,10 +173,11 @@ xata.sql().query(
 ### Query records from the replica store
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
 ```ts
 const response = await xata.sql<UsersRecord>({
   statement: `SELECT * FROM "Users" LIMIT 10;`,
-  consistency: "eventual",
+  consistency: 'eventual'
 });
 ```
 
