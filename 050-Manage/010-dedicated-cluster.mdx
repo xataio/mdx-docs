@@ -14,3 +14,30 @@ It is a Postgres instance, that only belongs to you, so you get all the power of
 Dedicated cluster is available in the [Pro plan](docs/concepts/pricing#pro-plan).
 
 Sign up for the early access program.
+
+## Supported versions
+
+At the moment Xata supports the following Postgres versions:
+
+- 15.4
+- 15.5
+- 14.10
+- 14.9
+
+As we working to promoted dedicated clusters to generaly available (GA), we will add more versions.
+Another functionality we are working on is to provide you control over the maintenance windows and the ability upgrade a version yourself.
+
+## Regions
+
+Similar to the supported Postgres version, we will launch this feature in a selected set of regions.
+If you the region you are looking for is not available please reach out to our [support team](/docs/resources/support).
+
+## Extensions
+
+You can install extensions yourself, please consult the [Postgres documentation](https://www.postgresql.org/docs/current/sql-createextension.html) for a how to.
+
+To inspect which extensions are available out-of-the-box, please connect to your database and run the following command:
+
+```sql
+SELECT * FROM pg_available_extensions;
+```

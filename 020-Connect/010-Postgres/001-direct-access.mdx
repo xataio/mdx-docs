@@ -49,6 +49,11 @@ Games:main=>
 
 ## Supported versions
 
+The Postgres version depends on your deployment and plan.
+In a shared cluster, you operate in a multi tenant environment, sharing the same Postgres version. Minor version upgrades are continuously updated.
+
+If you want control of the version, you should consider a [dedicated cluster](/docs/dedicated-cluster#supported-versions).
+
 You can check the Postgres version with the following command:
 
 ```bash
@@ -62,31 +67,10 @@ psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh:[Port]/[Databas
 (1 row)
 ```
 
-### Shared cluster
-
-Version: `15.4`
-
-In a shared cluster, you operate in a multi tenant environment, sharing the same Postgres version. Minor version upgrades are continuously updated.
-If you want control of the version, you should consider a [dedicated cluster](/docs/dedicated-cluster).
-
-### Dedicated cluster
-
-In a [dedicated cluster](/docs/dedicated-cluster), you can select which version you want. The currently supported versions in all [available regions](/docs/getting-started/available-regions) are:
-
-- 15.4
-- 15.5
-- 14.10
-- 14.9
-
-You can control the maintenance windows and the version upgrades yourself.
-
 ## Extensions
 
-The available, out-of-the-box extensions are:
-
-- list
-
-If you are on a [dedicated cluster](/docs/dedicated-cluster) you can install extensions yourself, please consult the [Postgres documentation](https://www.postgresql.org/docs/current/sql-createextension.html) for a how to.
+In a shared cluster, no extension except the mandatory [plpgsql](https://www.postgresql.org/docs/current/plpgsql.html) is installed and installing others is forbidden.
+If you need extensions, you need to deploy a [dedicated cluster](/docs/dedicated-cluster#Extensions).
 
 ## Export your database branch with pg_dump
 
