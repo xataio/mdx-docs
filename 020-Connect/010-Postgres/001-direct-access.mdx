@@ -72,9 +72,9 @@ psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh:[Port]/[Databas
 In a shared cluster, no extension except the mandatory [plpgsql](https://www.postgresql.org/docs/current/plpgsql.html) is installed and installing others is forbidden.
 If you need extensions, you need to deploy a [dedicated cluster](/docs/dedicated-cluster#Extensions).
 
-## Export your database branch with pg_dump
+## Export
 
-In order to export a branch with pg_dump, you need to specify the connection parameters as indicated in the [connection string](#connection-string) section.
+In order to export a branch with `pg_dump`, you need to specify the connection parameters as indicated in the [connection string](#connection-string) section.
 
 ```bash
 pg_dump --no-acl --no-owner --no-comments --no-table-access-method --host=[Region].sql.xata.sh --username=[Workspace Id] --dbname=[Database]:[Branch] --password
