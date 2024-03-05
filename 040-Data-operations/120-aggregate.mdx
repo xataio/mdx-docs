@@ -217,7 +217,11 @@ There are two types of aggregations:
 - _bucket aggregations_, which split the data into buckets based on a column value. Examples of bucket aggregations are: `topValues`, `dateHistogram` and `numericHistogram`.
 - _metric aggregations_, which compute a value based on the data in the bucket. Examples of metric aggregations are: `average`, `sum`, `min`, `max`, `count` and `uniqueCount`.
 
-<Alert status="warning">Aggregations cannot be used with [link](/docs/concepts/data-model#link) columns.</Alert>
+<Alert status="warning">
+
+Aggregations cannot be used with [link](/docs/concepts/data-model#link) columns.
+
+</Alert>
 
 ## Response type
 

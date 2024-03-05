@@ -41,12 +41,22 @@ The following are extra components that can be used within the markdown files.
 
 #### Alerts
 
-Alerts accept a `status` prop with values of `info | warning | danger`
+Alerts accept a `status` prop with values of `info | warning | danger`.
 
 ```tsx
 <Alert status="warning">
   This feature is Beta. It is still under active development. While we are avoiding breaking changes, we do not
   guarantee backwards compatibility until the functionality is GA.
+</Alert>
+```
+
+This component assumes your alert is simple and is a simple string (which is good practice). However, if you need multiple lines or other markdown (like links or images) you might need to include extra whitespace for proper rendering:
+
+```
+<Alert status="warning">
+
+Aggregations cannot be used with [link](/docs/concepts/data-model#link) columns.
+
 </Alert>
 ```
 
