@@ -67,11 +67,11 @@ psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh:[Port]/[Databas
 Version: `15.4`
 
 In a shared cluster, you operate in a multi tenant environment, sharing the same Postgres version. Minor version upgrades are continuously updated.
-If you want control of the version, you should consider a dedicated cluster.
+If you want control of the version, you should consider a [dedicated cluster](/docs/dedicated-cluster).
 
 ### Dedicated cluster
 
-In a dedicated cluster, you can select which version you want. The currently supported versions in all [available regions](/docs/getting-started/available-regions) are:
+In a [dedicated cluster](/docs/dedicated-cluster), you can select which version you want. The currently supported versions in all [available regions](/docs/getting-started/available-regions) are:
 
 - 15.4
 - 15.5
@@ -86,7 +86,7 @@ The available, out-of-the-box extensions are:
 
 - list
 
-If you are on a dedicated cluster you can install extensions yourself, please consult the [Postgres documentation](https://www.postgresql.org/docs/current/sql-createextension.html) for a how to.
+If you are on a [dedicated cluster](/docs/dedicated-cluster) you can install extensions yourself, please consult the [Postgres documentation](https://www.postgresql.org/docs/current/sql-createextension.html) for a how to.
 
 ## Export your database branch with pg_dump
 
@@ -143,10 +143,10 @@ Please reference to the [special columns](/docs/concepts/data-model#special-colu
 
 ## Supported statements
 
-Xata offers different approaches to Postgres, from SQL over HTTP to pure Postgres over the wire protocol to a shared or dedicated cluster.
+Xata offers different approaches to Postgres, from SQL over HTTP to pure Postgres over the wire protocol to a shared or [dedicated cluster](/docs/dedicated-cluster).
 Each come with a security scope to provide isolation in a multi tenant environment.
 
-|                   | FUNCTIONS | DQL statements | (some) DML statements | DDL statements |
+|                   | Functions | DQL statements | (some) DML statements | DDL statements |
 | ----------------- | --------- | -------------- | --------------------- | -------------- |
 | SQL over HTTP     | N         | Y              | Y                     | Y              |
 | Shared cluster    | N         | Y              | Y                     | Y              |
@@ -229,9 +229,9 @@ The following statements and/or functions are not available:
 
 ### Connection limits
 
-- SQL over HTTP to a shared cluster has rate limits in place. SQL over HTTP to a dedicated cluster does not have rate limits in place.
+- SQL over HTTP to a shared cluster has rate limits in place. SQL over HTTP to a [dedicated cluster](/docs/dedicated-cluster) does not have rate limits in place.
 - Shared cluster - TODO, amount of available connections
-- Dedicated cluster - no limit to connections
+- [Dedicated cluster](/docs/dedicated-cluster) - no limit to connections
 
 ### `xata_` Column prefix
 
