@@ -290,7 +290,7 @@ Replace the contents of `src/layouts/main.astro` with the following:
 
 ```astro title="src/layouts/main.astro" {2,10,49}
 ---
-const { title } = Astro.props;
+const { title } = Astro.props; // [!code highlight]
 ---
 
 <html lang="en">
@@ -298,7 +298,7 @@ const { title } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
+    <title>{title}</title> // [!code highlight]
     <style>
       :root {
         --foreground-rgb: 0, 0, 0;
@@ -337,7 +337,7 @@ const { title } = Astro.props;
           </a>
         </div>
       </div>
-      <slot />
+      <slot /> // [!code highlight]
     </main>
   </body>
 </html>
@@ -490,48 +490,48 @@ Create a new file, `src/pages/posts/[slug].astro` to enable access to a `slug` p
 
 ```tsx astro="src/pages/posts/[slug].astro" {2,4,6-21,23-43}
 ---
-import MainLayout from '../../layouts/main.astro'
+import MainLayout from '../../layouts/main.astro' // [!code highlight]
 
-import { XataClient } from '../../xata';
+import { XataClient } from '../../xata'; // [!code highlight]
 
-export async function getStaticPaths() {
-  const xata = new XataClient({
-    apiKey: import.meta.env.XATA_API_KEY,
-    branch: import.meta.env.XATA_BRANCH
-  });
-  const posts = await xata.db.Posts.getAll();
+export async function getStaticPaths() { // [!code highlight]
+  const xata = new XataClient({ // [!code highlight]
+    apiKey: import.meta.env.XATA_API_KEY, // [!code highlight]
+    branch: import.meta.env.XATA_BRANCH // [!code highlight]
+  }); // [!code highlight]
+  const posts = await xata.db.Posts.getAll(); // [!code highlight]
+ // [!code highlight]
+  const routes = posts.map(({ slug, title, description, pubDate }) => { // [!code highlight]
+    return { // [!code highlight]
+      params: { slug }, // [!code highlight]
+      props: { title, description, pubDate }, // [!code highlight]
+    }; // [!code highlight]
+  }); // [!code highlight]
+ // [!code highlight]
+  return routes; // [!code highlight]
+} // [!code highlight]
 
-  const routes = posts.map(({ slug, title, description, pubDate }) => {
-    return {
-      params: { slug },
-      props: { title, description, pubDate },
-    };
-  });
-
-  return routes;
-}
-
-const post = Astro.props;
----
-
-<MainLayout title={post.title}>
-
-  <div class="w-full max-w-5xl mt-16">
-    <p class="mb-2">
-      <a href="/" class="text-purple-600">
-        &larr; Back to blog
-      </a>
-    </p>
-
-    <h1 class="text-3xl mb-2">{post?.title}</h1>
-    <p class="text-sm mb-4 text-purple-950 dark:text-purple-200">
-      {post?.pubDate?.toDateString()}
-    </p>
-    <p class="text-xl">{post?.description}</p>
-
-  </div>
-
-</MainLayout>
+const post = Astro.props; // [!code highlight]
+--- // [!code highlight]
+ // [!code highlight]
+<MainLayout title={post.title}> // [!code highlight]
+ // [!code highlight]
+  <div class="w-full max-w-5xl mt-16"> // [!code highlight]
+    <p class="mb-2"> // [!code highlight]
+      <a href="/" class="text-purple-600"> // [!code highlight]
+        &larr; Back to blog // [!code highlight]
+      </a> // [!code highlight]
+    </p> // [!code highlight]
+ // [!code highlight]
+    <h1 class="text-3xl mb-2">{post?.title}</h1> // [!code highlight]
+    <p class="text-sm mb-4 text-purple-950 dark:text-purple-200"> // [!code highlight]
+      {post?.pubDate?.toDateString()} // [!code highlight]
+    </p> // [!code highlight]
+    <p class="text-xl">{post?.description}</p> // [!code highlight]
+ // [!code highlight]
+  </div> // [!code highlight]
+ // [!code highlight]
+</MainLayout> // [!code highlight]
 
 ```
 
@@ -635,7 +635,7 @@ import tailwind from '@astrojs/tailwind';
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind()],
-  output: 'hybrid'
+  output: 'hybrid' // [!code highlight]
 });
 ```
 
@@ -654,27 +654,27 @@ const xata = new XataClient({
   branch: import.meta.env.XATA_BRANCH
 });
 
-const search = Astro.url.searchParams.get('q')! || '';
+const search = Astro.url.searchParams.get('q')! || ''; // [!code highlight]
 
-let posts = null;
-if (search) {
-  const { records } = await xata.db.Posts.search(search, { fuzziness: 2 });
-  posts = records;
-} else {
-  posts = await xata.db.Posts.getAll();
+let posts = null; // [!code highlight]
+if (search) { // [!code highlight]
+  const { records } = await xata.db.Posts.search(search, { fuzziness: 2 }); // [!code highlight]
+  posts = records; // [!code highlight]
+} else { // [!code highlight]
+  posts = await xata.db.Posts.getAll(); // [!code highlight]
 }
 ---
 
-<MainLayout title="Get started with Xata and Astro">
-  <div class="w-full max-w-5xl mt-16">
-    <form action="/">
-      <input
-        name="q"
-        value={search}
-        placeholder="Search..."
-        class="w-full rounded-lg border-2 p-2 dark:text-purple-950"
-      />
-    </form>
+<MainLayout title="Get started with Xata and Astro"> // [!code highlight]
+  <div class="w-full max-w-5xl mt-16"> // [!code highlight]
+    <form action="/"> // [!code highlight]
+      <input // [!code highlight]
+        name="q" // [!code highlight]
+        value={search} // [!code highlight]
+        placeholder="Search..." // [!code highlight]
+        class="w-full rounded-lg border-2 p-2 dark:text-purple-950" // [!code highlight]
+      /> // [!code highlight]
+    </form> // [!code highlight]
   </div>
 
   ...

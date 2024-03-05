@@ -259,35 +259,35 @@ Once all the steps from the guide have been followed, update `app/tailwind.css` 
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
-}
-```
+:root { // [!code highlight]
+  --foreground-rgb: 0, 0, 0; // [!code highlight]
+  --background-start-rgb: 214, 219, 220; // [!code highlight]
+  --background-end-rgb: 255, 255, 255; // [!code highlight]
+} // [!code highlight]
+ // [!code highlight]
+@media (prefers-color-scheme: dark) { // [!code highlight]
+  :root { // [!code highlight]
+    --foreground-rgb: 255, 255, 255; // [!code highlight]
+    --background-start-rgb: 0, 0, 0; // [!code highlight]
+    --background-end-rgb: 0, 0, 0; // [!code highlight]
+  } // [!code highlight]
+} // [!code highlight]
+ // [!code highlight]
+body { // [!code highlight]
+  color: rgb(var(--foreground-rgb)); // [!code highlight]
+  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb)); // [!code highlight]
+} // [!code highlight]
+ // [!code highlight]```
 
 Finally, update `app/root.tsx` to add some shared structure across application pages. The code will end up as follows:
 
 ```tsx title="app.root.tsx" {1,4,6,29}
-import type { LinksFunction } from '@remix-run/node';
+import type { LinksFunction } from '@remix-run/node'; // [!code highlight]
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 
-import styles from './tailwind.css';
+import styles from './tailwind.css'; // [!code highlight]
 
-export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]; // [!code highlight]
 
 export default function App() {
   return (
@@ -310,7 +310,7 @@ export default function App() {
               </a>
             </div>
           </div>
-          <Outlet />
+          <Outlet /> // [!code highlight]
         </main>
         <ScrollRestoration />
         <Scripts />
@@ -578,7 +578,7 @@ Finally, the main page function makes use of the `userLoaderData` hook to retrie
 
 ```tsx {2,11,13,15}
 export default function Post() {
-  const { post } = useLoaderData<typeof loader>();
+  const { post } = useLoaderData<typeof loader>(); // [!code highlight]
 
   return (
     <div className="w-full max-w-5xl mt-16">
@@ -587,11 +587,11 @@ export default function Post() {
           &larr; Back to blog
         </a>
       </p>
-      <h1 className="text-3xl mb-2">{post?.title}</h1>
+      <h1 className="text-3xl mb-2">{post?.title}</h1> // [!code highlight]
       <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
-        {new Date(post?.pubDate ?? '').toDateString()}
+        {new Date(post?.pubDate ?? '').toDateString()} // [!code highlight]
       </p>
-      <p className="text-xl">{post?.description}</p>
+      <p className="text-xl">{post?.description}</p> // [!code highlight]
     </div>
   );
 }
@@ -612,46 +612,46 @@ any configuration to enable search, just need to use the
 Let's add this functionality to the landing page:
 
 ```tsx title="app/routes/_index.tsx" {1,7-24,27,31-40}
-import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node'
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node' // [!code highlight]
 import { useLoaderData } from '@remix-run/react'
 import { getXataClient } from 'src/xata'
 
 ...
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const xata = getXataClient()
-
-  const url = new URL(request.url)
-  const search = url.searchParams.get('q')
-
-  let posts = null
-  if (search) {
-    posts = await xata.db.Posts.search(search, { fuzziness: 2 })
-  } else {
-    posts = await xata.db.Posts.getAll()
-  }
-
-  return json({
-    posts,
-    search,
-  })
-}
+export async function loader({ request }: LoaderFunctionArgs) { // [!code highlight]
+  const xata = getXataClient() // [!code highlight]
+ // [!code highlight]
+  const url = new URL(request.url) // [!code highlight]
+  const search = url.searchParams.get('q') // [!code highlight]
+ // [!code highlight]
+  let posts = null // [!code highlight]
+  if (search) { // [!code highlight]
+    posts = await xata.db.Posts.search(search, { fuzziness: 2 }) // [!code highlight]
+  } else { // [!code highlight]
+    posts = await xata.db.Posts.getAll() // [!code highlight]
+  } // [!code highlight]
+ // [!code highlight]
+  return json({ // [!code highlight]
+    posts, // [!code highlight]
+    search, // [!code highlight]
+  }) // [!code highlight]
+} // [!code highlight]
 
 export default function Index() {
-  const { posts, search } = useLoaderData<typeof loader>()
+  const { posts, search } = useLoaderData<typeof loader>() // [!code highlight]
 
   return (
     <>
-      <div className="w-full max-w-5xl mt-16">
-        <form>
-          <input
-            name="q"
-            defaultValue={search || ''}
-            placeholder="Search..."
-            className="w-full rounded-lg p-2 border-2 dark:text-purple-950"
-          />
-        </form>
-      </div>
+      <div className="w-full max-w-5xl mt-16"> // [!code highlight]
+        <form> // [!code highlight]
+          <input // [!code highlight]
+            name="q" // [!code highlight]
+            defaultValue={search || ''} // [!code highlight]
+            placeholder="Search..." // [!code highlight]
+            className="w-full rounded-lg p-2 border-2 dark:text-purple-950" // [!code highlight]
+          /> // [!code highlight]
+        </form> // [!code highlight]
+      </div> // [!code highlight]
 
       ...
     </>
@@ -665,13 +665,13 @@ First, update the `@remix-run/node` import to include `LoaderFunctionArgs`. Then
 the `request` property from the `LoaderFunctionArgs` parameter.
 
 ```tsx {1,7}
-import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node'
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node' // [!code highlight]
 import { useLoaderData } from '@remix-run/react'
 import { getXataClient } from 'src/xata'
 
 ...
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) { // [!code highlight]
   ...
 }
 ```

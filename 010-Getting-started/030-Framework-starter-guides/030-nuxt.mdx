@@ -249,25 +249,25 @@ Once completed, add the following global styling to the newly created `assets/cs
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
-}
-```
+:root { // [!code highlight]
+  --foreground-rgb: 0, 0, 0; // [!code highlight]
+  --background-start-rgb: 214, 219, 220; // [!code highlight]
+  --background-end-rgb: 255, 255, 255; // [!code highlight]
+} // [!code highlight]
+ // [!code highlight]
+@media (prefers-color-scheme: dark) { // [!code highlight]
+  :root { // [!code highlight]
+    --foreground-rgb: 255, 255, 255; // [!code highlight]
+    --background-start-rgb: 0, 0, 0; // [!code highlight]
+    --background-end-rgb: 0, 0, 0; // [!code highlight]
+  } // [!code highlight]
+} // [!code highlight]
+ // [!code highlight]
+body { // [!code highlight]
+  color: rgb(var(--foreground-rgb)); // [!code highlight]
+  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb)); // [!code highlight]
+} // [!code highlight]
+ // [!code highlight]```
 
 Finally, update `app.vue` to add some shared structure across application pages. The code will end up as follows:
 
@@ -498,15 +498,15 @@ import { getXataClient } from '../../src/xata';
 const xata = getXataClient();
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
-  const search = query.q as string;
-
-  let posts = null;
-  if (search) {
-    const { records } = await xata.db.Posts.search(search, { fuzziness: 2 });
-    posts = records;
-  } else {
-    posts = await xata.db.Posts.getAll();
+  const query = getQuery(event); // [!code highlight]
+  const search = query.q as string; // [!code highlight]
+ // [!code highlight]
+  let posts = null; // [!code highlight]
+  if (search) { // [!code highlight]
+    const { records } = await xata.db.Posts.search(search, { fuzziness: 2 }); // [!code highlight]
+    posts = records; // [!code highlight]
+  } else { // [!code highlight]
+    posts = await xata.db.Posts.getAll(); // [!code highlight]
   }
 
   return posts;
