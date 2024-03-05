@@ -7,6 +7,13 @@ slug: php-laravel
 published: true
 ---
 
+<Alert status="warning">
+  Laravel is only supported on a [dedicated cluster](/docs/dedicated-cluster). On app start, Laravel forces any pending
+  migrations to be executed automatically, this step fails in a shared as the statement `CREATE TYPE` is not allowed.
+  For full support, you must use a dedicated cluster, see [supported statements](/docs/postgres#supported-statements)
+  for a complete breakdown.
+</Alert>
+
 To connect your Laravel application to Xata, you need to adjust the database connection in the .env file as follows:
 
 ```bash title=".env"
@@ -19,9 +26,6 @@ DB_PASSWORD=<API_KEY>
 ```
 
 Please replace the parameters as indicated on the [connect to Postgres](/docs/postgres) page.
-
-Please be aware that Laravel migrations are not fully supported on shared-clusters, as the statement `CREATE TYPE` is not allowed.
-For full support, you must use a dedicated cluster, see [supported statements](/docs/postgres/connect#supported-statements) for a complete breakdown.
 
 ## Known issues
 
