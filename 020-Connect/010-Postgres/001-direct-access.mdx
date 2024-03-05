@@ -109,11 +109,13 @@ psql "postgresql://[Workspace Id]:[API key]@[Region].sql.staging-xata.dev/playgr
 Xata offers different approaches to Postgres, from SQL over HTTP to pure Postgres over the wire protocol to a shared or [dedicated cluster](/docs/dedicated-cluster).
 Each come with a security scope to provide isolation in a multi tenant environment.
 
-|                   | Functions | DQL statements | (some) DML statements | DDL statements |
-| ----------------- | --------- | -------------- | --------------------- | -------------- |
-| SQL over HTTP     | N         | Y              | Y                     | Y              |
-| Shared cluster    | N         | Y              | Y                     | Y              |
-| Dedicated cluster | Y         | Y              | Y                     | Y              |
+|                     | Functions | DQL statements | (some) DML statements | DDL statements |
+| ------------------- | --------- | -------------- | --------------------- | -------------- |
+| SQL over HTTP       | N         | Y              | Y                     | Y              |
+| Shared cluster\*    | N         | Y              | Y                     | Y              |
+| Dedicated cluster\* | Y         | Y              | Y                     | Y              |
+
+\*Direct access to Postgres with the wire protocol.
 
 The table below provides a more granular picture of the supported statements.
 
