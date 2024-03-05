@@ -104,27 +104,6 @@ In the following example, we want to import the file `my_branch.sql` into the da
 psql "postgresql://[Workspace Id]:[API key]@[Region].sql.staging-xata.dev/playground:new_branch" < my_branch.sql
 ```
 
-## Adapt my Table
-
-A table created through the wire protocol, is not automatically equiped with the necessary columns to make use of Xata's other features, like a functioning UI, or full text search, etc.
-In order to unlock the functionality, you need to adapt your table.
-If you access the UI, you will see the following dialog on the page of the table itself:
-
-![Adapt my table](images/adapt-my-table.png)
-
-Or if you navigate to the schema view:
-
-![Adapt my table in schema view](images/adapt-my-table-schema.png)
-
-If you click adapt table, Xata will add four new columns to your table:
-
-- `xata_id`: internal unique record identifier.
-- `xata_version`: discrete version counter of the record, every update will increment the counter by one.
-- `xata_createdat`: datetime in UTC of the record's creation
-- `xata_updatedat`: datetime in UTC of the record's most recent update. If none happened, then the value is equal to the creation datetime.
-
-Please reference to the [special columns](/docs/concepts/data-model#special-columns) section to learn more about these columns.
-
 ## Supported statements
 
 Xata offers different approaches to Postgres, from SQL over HTTP to pure Postgres over the wire protocol to a shared or [dedicated cluster](/docs/dedicated-cluster).
@@ -220,6 +199,27 @@ The following statements and/or functions are not available:
 ### `xata_` Column prefix
 
 Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and rejects any custom created columns with the prefix.
+
+## Adapt my Table
+
+A table created through the wire protocol, is not automatically equiped with the necessary columns to make use of Xata's other features, like a functioning UI, or full text search, etc.
+In order to unlock the functionality, you need to adapt your table.
+If you access the UI, you will see the following dialog on the page of the table itself:
+
+![Adapt my table](images/adapt-my-table.png)
+
+Or if you navigate to the schema view:
+
+![Adapt my table in schema view](images/adapt-my-table-schema.png)
+
+If you click adapt table, Xata will add four new columns to your table:
+
+- `xata_id`: internal unique record identifier.
+- `xata_version`: discrete version counter of the record, every update will increment the counter by one.
+- `xata_createdat`: datetime in UTC of the record's creation
+- `xata_updatedat`: datetime in UTC of the record's most recent update. If none happened, then the value is equal to the creation datetime.
+
+Please reference to the [special columns](/docs/concepts/data-model#special-columns) section to learn more about these columns.
 
 ## sslmode
 
