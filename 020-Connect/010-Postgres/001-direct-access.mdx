@@ -226,7 +226,7 @@ Please reference to the [special columns](/docs/concepts/data-model#special-colu
 ## sslmode
 
 Xata does not allow plain text connections, this may have an effect on the client you are using and the default that is inferred by such.
-If you face an issue with an error message as shown below, you will need to explicitly force SSL, by adding the sslmode to `require` in the connection string or pass in a parameterized way depending on the tool you are using.
+If you face an issue with an error message like the one shown below, you will need to explicitly force SSL, by setting the sslmode to `require` in the connection string or passing the setting in via a parameter depending on the tool you are using.
 
 ```bash
 psql: error: connection to server at "eu-west-1.sql.xata.sh" (42.42.42.42), port 5432 failed: SSL required
