@@ -32,3 +32,9 @@ LEFT JOIN address ON "Users".id=address.id;
 ```
 
 For specific Xata data types like email, it is required you use the Xata API or SDK. This ensures that Xata can validate the inserted data's accuracy. We recommend refraining from directly writing to columns of this type and instead using the provided API for better results.
+
+## Limitations
+
+As you are able to create your own types or use types from extensions through the [wire protocol](/docs/postgres), there is a possibility that the Xata UI is not aware the type.
+For such cases, the UI will display the column values as string and they will be read-only.
+If you need to manipulate these columns, please do so through the wire protocol or reach out to our [support team](/docs/resources/support) to request adding the data type to Xata.
