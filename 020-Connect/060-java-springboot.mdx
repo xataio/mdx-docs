@@ -27,8 +27,11 @@ spring:
 
 Please replace the parameters as indicated on the [connect to Postgres](/docs/postgres) page.
 
-If you are using [HikariCP](https://github.com/brettwooldridge/HikariCP) for connection pooling, please add the following property to your configuration file, in order to avoid getting rate limited.
+With a shared cluster you are subject to [connection limits](/docs/postgres#connection-limits), meaning how many connections can be active concurrently.
+In order to avoid running into max open connection limit reached, please adjust the maximum pool size to 5 as indicated below.
 
 ```
 spring.datasource.hikari.maximum-pool-size=5
 ```
+
+A [dedicated cluster](/docs/dedicated-cluster) does not have any connection limits in place.
