@@ -232,6 +232,12 @@ If you face an issue with an error message as shown below, you will need to expl
 psql: error: connection to server at "eu-west-1.sql.xata.sh" (42.42.42.42), port 5432 failed: SSL required
 ```
 
+psql enforces the sslmode require by default, but for demonstration purposes, the following connection string has the option appended to enforce an encrypted connection:
+
+```bash
+psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main?sslmode=require"
+```
+
 Xata recommends that the client verifies the server certificate, in psql this would be achieved with the `verify-ca` and `verify-full` modes.
 We will need to provide a certificate store to do this, it is usually present in most operative systems, for instance:
 
