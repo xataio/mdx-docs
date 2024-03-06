@@ -9,7 +9,7 @@ published: true
 
 To connect to Xata with [Spring Boot](https://spring.io/projects/spring-boot) you to adjust your application config as follows.
 
-```title="application.properties"
+```properties title="application.properties"
 spring.datasource.url=jdbc:postgresql://<REGION>.sql.xata.sh:5432/<DATABASE_NAME>:<BRANCH>
 spring.datasource.username=<WORKSPACE_ID>
 spring.datasource.password=<API_KEY>
@@ -17,7 +17,7 @@ spring.datasource.password=<API_KEY>
 
 Analogous, if you are using a yaml file:
 
-```title="application.yml"
+```yaml title="application.yml"
 spring:
   datasource:
     url: jdbc:postgresql://<REGION>.sql.xata.sh:5432/<DATABASE_NAME>:<BRANCH>
