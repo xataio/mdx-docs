@@ -194,9 +194,11 @@ The following statements and/or functions are not available:
 
 ### Connection limits
 
-- SQL over HTTP to a shared cluster has rate limits in place. SQL over HTTP to a [dedicated cluster](/docs/dedicated-cluster) does not have rate limits in place.
-- Shared cluster - TODO, amount of available connections
-- [Dedicated cluster](/docs/dedicated-cluster) - no limit to connections
+Depending on your [plan](/docs/concepts/pricing#pricing-plans) and cluster, you have different connection limits:
+
+- Free plan: 6 concurrent connections
+- Pro plan on shared cluster: 18 concurrent connections
+- Pro plan on [dedicated cluster](/docs/dedicated-cluster): Unlimited connections
 
 ### `xata_` Column prefix
 

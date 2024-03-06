@@ -27,6 +27,21 @@ At the moment Xata supports the following Postgres versions:
 As we working to promoted dedicated clusters to generaly available (GA), we will add more versions.
 Another functionality we are working on is to provide you control over the maintenance windows and the ability upgrade a version yourself.
 
+## Instance types
+
+- db.t4g.medium
+- db.t4g.large
+- db.t3.medium
+- db.t3.large
+- r6gd.xlarge
+- r6gd.2xlarge
+- db.r6g.large
+- db.r6g.xlarge
+- db.r6g.2xlarge
+- db.r6i.large
+- db.r6i.xlarge
+- db.r6i.2xlarge
+
 ## Regions
 
 Similar to the supported Postgres version, we will launch this feature in a selected set of regions.
@@ -41,3 +56,7 @@ To inspect which extensions are available out-of-the-box, please connect to your
 ```sql
 SELECT * FROM pg_available_extensions;
 ```
+
+## Limitations
+
+All limitations that Xata imposes like rate limits [1](/docs/postgres#connection-limits),[2](/docs/rest-api/limits#rate-limits) are removed in a dedicated cluster.
