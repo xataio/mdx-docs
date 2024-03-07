@@ -43,7 +43,7 @@ postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
 - The connection strings for HTTP access and Postgres wire protocol access are shown to you when you create a new database. You can view this connection string at any time by going to your database's settings page.
 - API keys are stored at the user level and can be accessed within [account settings](https://app.xata.io/settings).
 
-Using [psql](https://www.postgresql.org/docs/current/app-psql.html) to connect to your database, based off the previously constructed connection string with the example values:
+Connect with [psql](https://www.postgresql.org/docs/current/app-psql.html) using the connection string format provided above:
 
 ```bash
 psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main"
@@ -65,44 +65,43 @@ psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh:[Port]/[Databas
 ```
 
 ```sql
-                                                   version
--------------------------------------------------------------------------------------------------------------
- PostgreSQL 15.4 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 9.5.0, 64-bit
+PostgreSQL 15.4 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 9.5.0, 64-bit
 (1 row)
 ```
 
 ## Extensions
 
-In a shared cluster, no extension except the mandatory [plpgsql](https://www.postgresql.org/docs/current/plpgsql.html) is installed and installing others is forbidden.
-If you need extensions, you need to deploy a [dedicated cluster](/docs/dedicated-cluster#Extensions).
+Extensions are only available in [dedicated cluster](/docs/dedicated-cluster#Extensions) plans. The default shared cluster setup ships with [plpgsql](https://www.postgresql.org/docs/current/plpgsql.html) only.
 
 ## Export
 
-In order to export a branch with `pg_dump`, you need to specify the connection parameters as indicated in the [connection string](#connection-string) section.
+To run `pg_dump`, you need to specify the connection parameters as indicated in the [connection string](#connection-string) section above.
 
 ```bash
 pg_dump --no-acl --no-owner --no-comments --no-table-access-method --host=[Region].sql.xata.sh --username=[Workspace Id] --dbname=[Database]:[Branch] --password
 ```
 
-The prompt will ask you for the password, which is your API key.
+- The prompt will ask you for the password, which is your API key.
+- The flags, `--no-acl`, `--no-owner`, `--no-comments` and `--no-table-access-method` are not mandatory, but remove unnecessary noise in the file, creating a cleaner output.
 
-The flags, `--no-acl`, `--no-owner`, `--no-comments` and `--no-table-access-method` are not mandatory, but remove unnecessary noise in the file, creating a cleaner output.
-
-Please refer to the pg_dump [documentation](https://www.postgresql.org/docs/current/app-pgdump.html) for a full list of features.
+Please refer to [pg_dump's documentation](https://www.postgresql.org/docs/current/app-pgdump.html) for a full list of features.
 
 ## Import
 
-The import path depends on your data format, if it's a compressed archive (e.g. `.tar`), you need to use [pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html).
-pg_dump offers the flag `--format=tar` to immediately output to tar file format.
+Import methods depend on your file format.
+
+### Import from an archive
+
+Use [pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html). `pg_dump` offers the flag `--format=tar` to immediately output to tar file format.
 
 ```bash
 pg_restore --host=[Region].sql.xata.sh --username=[Workspace Id] --dbname=[Database]:[Branch] --password dumpdata.tar
 ```
 
-The parameters are equally organized as for pg_dump.
+### Import from a SQL file
 
-If the file is a plain SQL file (`.sql`), you can convenitently use psql to immediately import the database branch.
-In the following example, we want to import the file `my_branch.sql` into the database `playground` on the branch `new_branch`
+Use `psql` to import `.sql` files into a database branch.
+The following example imports the file `my_branch.sql` into the database `playground` on the branch `new_branch`.
 
 ```bash
 psql "postgresql://[Workspace Id]:[API key]@[Region].sql.staging-xata.dev/playground:new_branch" < my_branch.sql
