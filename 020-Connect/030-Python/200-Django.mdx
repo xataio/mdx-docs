@@ -26,5 +26,5 @@ Please replace the parameters as indicated on the [connect to Postgres](/docs/po
 
 For other options to bootstrap the database settings in Django, e.g. with environment variables, please refer to the [project documentation](https://docs.djangoproject.com/en/5.0/ref/databases/#postgresql-notes).
 
-Please be aware that Django migrations are not fully supported on shared-clusters, as the statement `CREATE TYPE` is not allowed.
+Please be aware that Django migrations are not fully supported on a shared cluster at the moment, as the statement `CREATE INDEX` is not allowed.
 For full support, you must use a dedicated cluster, see [supported statements](/docs/postgres#supported-statements) for a complete breakdown.
