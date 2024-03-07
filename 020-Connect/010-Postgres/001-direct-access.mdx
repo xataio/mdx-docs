@@ -47,6 +47,21 @@ psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
 Games:main=>
 ```
 
+## Enabling the direct access to Postgres
+
+The direct access is still in beta at the moment and requires you to opt-in.
+Please navigate to your workspace settings, and activate the feature flag for _Direct access to Postgres_
+
+![Opt-in to direct access in workspace settings](images/beta-opt-in-workspace.png)
+
+Next you need to create a new database, navigate to _Add database_ and confirm you want to enable the direct access to Postgres for this database.
+
+![Enable direct access to database](images/beta-opt-in-database.png)
+
+In the database overview, the newly created database will feature a little elephant to indicate this database has direct access to Postgres
+
+![Database with Postgres direct access](images/pg-database.png)
+
 ## Supported versions
 
 The Postgres version depends on your deployment and plan.
