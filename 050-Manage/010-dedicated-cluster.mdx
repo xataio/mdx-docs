@@ -65,4 +65,5 @@ SELECT * FROM pg_available_extensions;
 
 ## Limitations
 
-All limitations that Xata imposes like rate limits [1](/docs/postgres#connection-limits),[2](/docs/rest-api/limits#rate-limits) are removed in a dedicated cluster.
+Certain SQL statements and functions are forbidden, refer to [limtations](/docs/postgres#limitations) for the complete list.
+There are **no** limits imposed on amount of open Postgres [connections](/docs/postgres#connection-limits) or [HTTP API requests](/docs/rest-api/limits#rate-limits) in a dedicated cluster.
