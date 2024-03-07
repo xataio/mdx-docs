@@ -298,7 +298,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </a>
             </div>
           </div>
-          {children}
+          {children} // [!code highlight]
         </main>
       </body>
     </html>
@@ -429,7 +429,7 @@ Create a new file, `src/app/posts/[slug]/page.tsx`, where the Next.js framework 
 the name of the slug:
 
 ```tsx title="src/app/posts/[slug]/page.tsx" {1,10}
-export default async function Post({ params }: { params: { slug: string } }) {
+export default async function Post({ params }: { params: { slug: string } }) { // [!code highlight]
   return (
     <div className="w-full max-w-5xl mt-16">
       <p className="mb-2">
@@ -438,7 +438,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
         </a>
       </p>
 
-      <h1 className="text-3xl mb-2">{params.slug}</h1>
+      <h1 className="text-3xl mb-2">{params.slug}</h1> // [!code highlight]
     </div>
   );
 }
@@ -449,12 +449,12 @@ Above, the slug value is passed into the function via a `params` parameter and a
 Next, let's update the page to bring in the Xata client and use the slug value to fetch the post from the database:
 
 ```tsx title="src/app/posts/[slug]/page.tsx" {1-3,5-6,16-18}
-import { getXataClient } from '@/xata';
+import { getXataClient } from '@/xata'; // [!code highlight]
+ // [!code highlight]
+const xata = getXataClient(); // [!code highlight]
 
-const xata = getXataClient();
-
-export default async function Post({ params }: { params: { slug: string } }) {
-  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
+export default async function Post({ params }: { params: { slug: string } }) { // [!code highlight]
+  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst(); // [!code highlight]
 
   return (
     <div className="w-full max-w-5xl mt-16">
@@ -464,9 +464,9 @@ export default async function Post({ params }: { params: { slug: string } }) {
         </a>
       </p>
 
-      <h1 className="text-3xl mb-2">{post?.title}</h1>
-      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">{post?.pubDate?.toDateString()}</p>
-      <p className="text-xl">{post?.description}</p>
+      <h1 className="text-3xl mb-2">{post?.title}</h1> // [!code highlight]
+      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">{post?.pubDate?.toDateString()}</p> // [!code highlight]
+      <p className="text-xl">{post?.description}</p> // [!code highlight]
     </div>
   );
 }
@@ -523,26 +523,26 @@ import { getXataClient } from '@/xata';
 
 const xata = getXataClient();
 
-export default async function Home({ searchParams }: { searchParams: { q: string } }) {
-  let posts = null;
-  if (searchParams.q) {
-    const { records } = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 });
-    posts = records;
-  } else {
-    posts = await xata.db.Posts.getAll();
+export default async function Home({ searchParams }: { searchParams: { q: string } }) { // [!code highlight]
+  let posts = null; // [!code highlight]
+  if (searchParams.q) { // [!code highlight]
+    const { records } = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 }); // [!code highlight]
+    posts = records; // [!code highlight]
+  } else { // [!code highlight]
+    posts = await xata.db.Posts.getAll(); // [!code highlight]
   }
 
   return (
-    <>
-      <div className="w-full max-w-5xl mt-16">
-        <form>
-          <input
-            name="q"
-            defaultValue={searchParams.q}
-            placeholder="Search..."
-            className="w-full rounded-lg p-2 dark:text-purple-950"
-          />
-        </form>
+    <> // [!code highlight]
+      <div className="w-full max-w-5xl mt-16"> // [!code highlight]
+        <form> // [!code highlight]
+          <input // [!code highlight]
+            name="q" // [!code highlight]
+            defaultValue={searchParams.q} // [!code highlight]
+            placeholder="Search..." // [!code highlight]
+            className="w-full rounded-lg p-2 dark:text-purple-950" // [!code highlight]
+          /> // [!code highlight]
+        </form> // [!code highlight]
       </div>
       ...
     </>

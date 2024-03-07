@@ -154,9 +154,9 @@ Note the `xata.highlight` field in the example below which marks the search term
       "email": "keanu@example.com",
       "lifetimeBoxOffice": 500000000,
       "xata": {
-        "highlight": {
-          "city": ["<em>New York</em> City"]
-        },
+        "highlight": { // [!code highlight]
+          "city": ["<em>New York</em> City"] // [!code highlight]
+        }, // [!code highlight]
         "score": 0.2876821,
         "table": "Actors",
         "version": 0
@@ -174,7 +174,7 @@ If you want to search only some tables in the database, provide the `tables` par
 
 ```ts {2}
 const results = await xata.search.all('search term', {
-  tables: ['Actors', 'Movies']
+  tables: ['Actors', 'Movies'] // [!code highlight]
 });
 
 // equivalent to:
@@ -186,7 +186,7 @@ const results = await xata.search.all('search term', {
 ```python {3}
 results = xata.data().search_branch({
   "query": "search term",
-  "tables": ["Actors", "Movies"]
+  "tables": ["Actors", "Movies"] # [!code highlight]
 })
 
 # equivalent to:
@@ -204,10 +204,10 @@ searchClient, _ := xata.NewSearchAndFilterClient()
 results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest{
   Payload: xata.SearchBranchRequestPayload{
     Query:  "search term",
-    Tables: []*xata.SearchBranchRequestTablesItem{
-      xata.NewSearchBranchRequestTablesItemFromString("Actors"),
-      xata.NewSearchBranchRequestTablesItemFromString("Movies"),
-    },
+    Tables: []*xata.SearchBranchRequestTablesItem{ // [!code highlight]
+      xata.NewSearchBranchRequestTablesItemFromString("Actors"), // [!code highlight]
+      xata.NewSearchBranchRequestTablesItemFromString("Movies"), // [!code highlight]
+    }, // [!code highlight]
   },
 })
 ```
@@ -217,7 +217,7 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 
 {
   "query": "search term",
-  "tables": ["Actors", "Movies"]
+  "tables": ["Actors", "Movies"] // [!code highlight]
 }
 
 // equivalent to:
@@ -239,7 +239,7 @@ If you want to search in a single table only, it can be easier to search off the
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
 
 ```ts {1}
-const results = await xata.db.Actors.search("search term", {
+const results = await xata.db.Actors.search("search term", { // [!code highlight]
   target: [...],
   filter: {...},
   boosters: [...],
@@ -250,7 +250,7 @@ const results = await xata.db.Actors.search("search term", {
 ```
 
 ```python {1}
-results = xata.data().search_table("Actors", {
+results = xata.data().search_table("Actors", { # [!code highlight]
   "query": "search term",
   "filter": {...},
   "target": [...],
@@ -286,7 +286,7 @@ results, _ := searchClient.SearchTable(context.TODO(), xata.SearchTableRequest{
 ```
 
 ```jsonc {1}
-// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/search
+// POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/search // [!code highlight]
 {
   "query": "search term",
   "filter": {...},
@@ -317,22 +317,22 @@ File attachment metadata is available by default in [search](/docs/sdk/search) r
       "record": {
         "id": "rec_cn2baqiit8nelj83jag0",
         "name": "Keanu Reeves",
-        "photo": {
-          "name": "img.jpg",
-          "mediaType": "image/jpeg",
-          "enablePublicUrl": true,
-          "signedUrlTimeout": 600,
-          "uploadUrlTimeout": 86400,
-          "size": 1,
-          "version": 0,
-          "url": "https://us-east-1.storage.xata.sh/f13f4im2411tpd9njp32mgt9fc",
-          "signedUrl": "https://us-east-1.xata.sh/file/...",
-          "uploadUrl": "https://q867qv.us-east-1.upload.xata.sh/file/...",
-          "attributes": {
-            "height": 3205,
-            "width": 2561
-          }
-        },
+        "photo": { // [!code highlight]
+          "name": "img.jpg", // [!code highlight]
+          "mediaType": "image/jpeg", // [!code highlight]
+          "enablePublicUrl": true, // [!code highlight]
+          "signedUrlTimeout": 600, // [!code highlight]
+          "uploadUrlTimeout": 86400, // [!code highlight]
+          "size": 1, // [!code highlight]
+          "version": 0, // [!code highlight]
+          "url": "https://us-east-1.storage.xata.sh/f13f4im2411tpd9njp32mgt9fc", // [!code highlight]
+          "signedUrl": "https://us-east-1.xata.sh/file/...", // [!code highlight]
+          "uploadUrl": "https://q867qv.us-east-1.upload.xata.sh/file/...", // [!code highlight]
+          "attributes": { // [!code highlight]
+            "height": 3205, // [!code highlight]
+            "width": 2561 // [!code highlight]
+          } // [!code highlight]
+        }, // [!code highlight]
         "xata": {
           "createdAt": "2024-02-08T11:05:14.344Z",
           "highlight": {
@@ -477,9 +477,9 @@ const results = await xata.search.all("Search term", {
 tables: [
     {
       table: "Actors",
-      filter: {
-        "city": "New York",
-      },
+      filter: { // [!code highlight]
+        "city": "New York", // [!code highlight]
+      }, // [!code highlight]
     },
   ],
 });
@@ -491,9 +491,9 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Actors",
-      "filter": {
-        "city": "New York"
-      }
+      "filter": { # [!code highlight]
+        "city": "New York" # [!code highlight]
+      } # [!code highlight]
     }
   ]
 })
@@ -507,9 +507,9 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Actors",
-      "filter": {
-        "city": "New York"
-      }
+      "filter": { // [!code highlight]
+        "city": "New York" // [!code highlight]
+      } // [!code highlight]
     }
   ]
 }
@@ -533,7 +533,7 @@ const results = await xata.search.all('search term', {
   tables: [
     {
       table: 'Actors',
-      target: ['name', 'city']
+      target: ['name', 'city'] // [!code highlight]
     }
   ]
 });
@@ -545,7 +545,7 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Actors",
-      "target": ["name", "city"]
+      "target": ["name", "city"] # [!code highlight]
     }
   ]
 })
@@ -556,10 +556,10 @@ searchClient, _ := xata.NewSearchAndFilterClient()
 results, _ := searchClient.SearchTable(context.TODO(), xata.SearchTableRequest{
   Payload: xata.SearchTableRequestPayload{
     Query:  *xata.String("search term"),
-    Target: []*xata.TargetExpressionItem{
-      xata.NewTargetExpression("name"),
-      xata.NewTargetExpression("city"),
-    },
+    Target: []*xata.TargetExpressionItem{ // [!code highlight]
+      xata.NewTargetExpression("name"), // [!code highlight]
+      xata.NewTargetExpression("city"), // [!code highlight]
+    }, // [!code highlight]
   },
 })
 ```
@@ -572,7 +572,7 @@ results, _ := searchClient.SearchTable(context.TODO(), xata.SearchTableRequest{
   "tables": [
     {
       "table": "Actors",
-      "target": ["name", "city"]
+      "target": ["name", "city"] // [!code highlight]
     }
   ]
 }
@@ -594,10 +594,10 @@ const results = await xata.search.all('search term', {
       target: ['name', 'city']
     }
   ],
-  page: {
-    size: 10,
-    offset: 10
-  }
+  page: { // [!code highlight]
+    size: 10, // [!code highlight]
+    offset: 10 // [!code highlight]
+  } // [!code highlight]
 });
 ```
 
@@ -610,10 +610,10 @@ results = xata.data().search_branch({
       "target": ["name", "city"]
     }
   ],
-  "page": {
-    "size": 10,
-    "offset": 10
-  }
+  "page": { # [!code highlight]
+    "size": 10, # [!code highlight]
+    "offset": 10 # [!code highlight]
+  } # [!code highlight]
 })
 ```
 
@@ -628,10 +628,10 @@ results = xata.data().search_branch({
       "target": ["name", "city"]
     }
   ],
-  "page": {
-    "size": 10,
-    "offset": 10
-  }
+  "page": { // [!code highlight]
+    "size": 10, // [!code highlight]
+    "offset": 10 // [!code highlight]
+  } // [!code highlight]
 }
 ```
 
@@ -657,7 +657,7 @@ const results = await xata.search.all('search term', {
   tables: [
     {
       table: 'Movies',
-      target: [{ column: 'title', weight: 5 }, { column: 'genre', weight: 2 }, '*']
+      target: [{ column: 'title', weight: 5 }, { column: 'genre', weight: 2 }, '*'] // [!code highlight]
     }
   ]
 });
@@ -669,17 +669,17 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "target": [
-        {
-          "column": "title",
-          "weight": 5
-        },
-        {
-          "column": "genre",
-          "weight": 2
-        },
-        "*"
-      ]
+      "target": [ # [!code highlight]
+        { # [!code highlight]
+          "column": "title", # [!code highlight]
+          "weight": 5 # [!code highlight]
+        }, # [!code highlight]
+        { # [!code highlight]
+          "column": "genre", # [!code highlight]
+          "weight": 2 # [!code highlight]
+        }, # [!code highlight]
+        "*" # [!code highlight]
+      ] # [!code highlight]
     }
   ]
 })
@@ -693,17 +693,17 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "target": [
-        {
-          "column": "title",
-          "weight": 5
-        },
-        {
-          "column": "genre",
-          "weight": 2
-        },
-        "*"
-      ]
+      "target": [ // [!code highlight]
+        { // [!code highlight]
+          "column": "title", // [!code highlight]
+          "weight": 5 // [!code highlight]
+        }, // [!code highlight]
+        { // [!code highlight]
+          "column": "genre", // [!code highlight]
+          "weight": 2 // [!code highlight]
+        }, // [!code highlight]
+        "*" // [!code highlight]
+      ] // [!code highlight]
     }
   ]
 }
@@ -724,7 +724,7 @@ const results = await xata.search.all('search term', {
   tables: [
     {
       table: 'Movies',
-      boosters: [{ numericBooster: { column: 'views', factor: 3 } }]
+      boosters: [{ numericBooster: { column: 'views', factor: 3 } }] // [!code highlight]
     }
   ]
 });
@@ -736,14 +736,14 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "boosters": [
-        {
-          "numericBooster": {
-            "column": "views",
-            "factor": 3
-          }
-        }
-      ]
+      "boosters": [ # [!code highlight]
+        { # [!code highlight]
+          "numericBooster": { # [!code highlight]
+            "column": "views", # [!code highlight]
+            "factor": 3 # [!code highlight]
+          } # [!code highlight]
+        } # [!code highlight]
+      ] # [!code highlight]
     }
   ]
 })
@@ -757,14 +757,14 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "boosters": [
-        {
-          "numericBooster": {
-            "column": "views",
-            "factor": 3
-          }
-        }
-      ]
+      "boosters": [ // [!code highlight]
+        { // [!code highlight]
+          "numericBooster": { // [!code highlight]
+            "column": "views", // [!code highlight]
+            "factor": 3 // [!code highlight]
+          } // [!code highlight]
+        } // [!code highlight]
+      ] // [!code highlight]
     }
   ]
 }
@@ -796,7 +796,7 @@ const results = await xata.search.all('search term', {
   tables: [
     {
       table: 'Movies',
-      boosters: [{ numericBooster: { column: 'views', factor: 3, modifier: 'square' } }]
+      boosters: [{ numericBooster: { column: 'views', factor: 3, modifier: 'square' } }] // [!code highlight]
     }
   ]
 });
@@ -808,15 +808,15 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "boosters": [
-        {
-          "numericBooster": {
-            "column": "views",
-            "factor": 3,
-            "modifier": "square"
-          }
-        }
-      ]
+      "boosters": [ # [!code highlight]
+        { # [!code highlight]
+          "numericBooster": { # [!code highlight]
+            "column": "views", # [!code highlight]
+            "factor": 3, # [!code highlight]
+            "modifier": "square" # [!code highlight]
+          } # [!code highlight]
+        } # [!code highlight]
+      ] # [!code highlight]
     }
   ]
 })
@@ -830,15 +830,15 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "boosters": [
-        {
-          "numericBooster": {
-            "column": "views",
-            "factor": 3,
-            "modifier": "square"
-          }
-        }
-      ]
+      "boosters": [ // [!code highlight]
+        { // [!code highlight]
+          "numericBooster": { // [!code highlight]
+            "column": "views", // [!code highlight]
+            "factor": 3, // [!code highlight]
+            "modifier": "square" // [!code highlight]
+          } // [!code highlight]
+        } // [!code highlight]
+      ] // [!code highlight]
     }
   ]
 }
@@ -859,7 +859,7 @@ const results = await xata.search.all('search term', {
   tables: [
     {
       table: 'Movies',
-      boosters: [{ valueBooster: { column: 'genre', value: 'action', factor: 5 } }]
+      boosters: [{ valueBooster: { column: 'genre', value: 'action', factor: 5 } }] // [!code highlight]
     }
   ]
 });
@@ -871,15 +871,15 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "boosters": [
-        {
-          "valueBooster": {
-            "column": "genre",
-            "value": "action",
-            "factor": 5
-          }
-        }
-      ]
+      "boosters": [ # [!code highlight]
+        { # [!code highlight]
+          "valueBooster": { # [!code highlight]
+            "column": "genre", # [!code highlight]
+            "value": "action", # [!code highlight]
+            "factor": 5 # [!code highlight]
+          } # [!code highlight]
+        } # [!code highlight]
+      ] # [!code highlight]
     }
   ]
 })
@@ -893,15 +893,15 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "boosters": [
-        {
-          "valueBooster": {
-            "column": "genre",
-            "value": "action",
-            "factor": 5
-          }
-        }
-      ]
+      "boosters": [ // [!code highlight]
+        { // [!code highlight]
+          "valueBooster": { // [!code highlight]
+            "column": "genre", // [!code highlight]
+            "value": "action", // [!code highlight]
+            "factor": 5 // [!code highlight]
+          } // [!code highlight]
+        } // [!code highlight]
+      ] // [!code highlight]
     }
   ]
 }
@@ -924,12 +924,12 @@ const results = await xata.search.all('search term', {
       table: 'Movies',
       boosters: [
         {
-          dateBooster: {
-            column: 'xata.createdAt',
-            decay: 0.5,
-            scale: '30d',
-            factor: 10
-          }
+          dateBooster: { // [!code highlight]
+            column: 'xata.createdAt', // [!code highlight]
+            decay: 0.5, // [!code highlight]
+            scale: '30d', // [!code highlight]
+            factor: 10 // [!code highlight]
+          } // [!code highlight]
         }
       ]
     }
@@ -945,12 +945,12 @@ results = xata.data().search_branch({
       "table": "Movies",
       "boosters": [
         {
-          "dateBooster": {
-            "column": "xata.createdAt",
-            "decay": 0.5,
-            "scale": "30d",
-            "factor": 10
-          }
+          "dateBooster": { # [!code highlight]
+            "column": "xata.createdAt", # [!code highlight]
+            "decay": 0.5, # [!code highlight]
+            "scale": "30d", # [!code highlight]
+            "factor": 10 # [!code highlight]
+          } # [!code highlight]
         }
       ]
     }
@@ -968,12 +968,12 @@ results = xata.data().search_branch({
       "table": "Movies",
       "boosters": [
         {
-          "dateBooster": {
-            "column": "xata.createdAt",
-            "decay": 0.5,
-            "scale": "30d",
-            "factor": 10
-          }
+          "dateBooster": { // [!code highlight]
+            "column": "xata.createdAt", // [!code highlight]
+            "decay": 0.5, // [!code highlight]
+            "scale": "30d", // [!code highlight]
+            "factor": 10 // [!code highlight]
+          } // [!code highlight]
         }
       ]
     }

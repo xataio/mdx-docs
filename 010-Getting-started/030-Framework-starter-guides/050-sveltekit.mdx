@@ -267,25 +267,25 @@ Add the following global styling to the scaffolded `src/app.postcss`:
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
-}
-```
+:root { // [!code highlight]
+  --foreground-rgb: 0, 0, 0; // [!code highlight]
+  --background-start-rgb: 214, 219, 220; // [!code highlight]
+  --background-end-rgb: 255, 255, 255; // [!code highlight]
+} // [!code highlight]
+ // [!code highlight]
+@media (prefers-color-scheme: dark) { // [!code highlight]
+  :root { // [!code highlight]
+    --foreground-rgb: 255, 255, 255; // [!code highlight]
+    --background-start-rgb: 0, 0, 0; // [!code highlight]
+    --background-end-rgb: 0, 0, 0; // [!code highlight]
+  } // [!code highlight]
+} // [!code highlight]
+ // [!code highlight]
+body { // [!code highlight]
+  color: rgb(var(--foreground-rgb)); // [!code highlight]
+  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb)); // [!code highlight]
+} // [!code highlight]
+ // [!code highlight]```
 
 Finally, update `src/routes/+layout.svelte` to add some shared structure across application pages. The code will end up as follows:
 
@@ -293,25 +293,25 @@ Finally, update `src/routes/+layout.svelte` to add some shared structure across 
 <script>
   import '../app.postcss';
 </script>
-<svelte:head>
-    <title>Get started with Xata and SvelteKit</title>
-</svelte:head>
-
-<main class="flex flex-col items-center p-8 lg:p-24 min-h-screen">
-  <div class="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-    <p class="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-      <a href="/" data-sveltekit-reload>Get started with Xata and SvelteKit</a>
-    </p>
-    <div class="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-      <a href="https://xata.io" class="w-20">
-        <img alt="Xata logo" src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
-      </a>
-    </div>
-  </div>
-
-  <slot />
-
-</main>
+<svelte:head> // [!code highlight]
+    <title>Get started with Xata and SvelteKit</title> // [!code highlight]
+</svelte:head> // [!code highlight]
+ // [!code highlight]
+<main class="flex flex-col items-center p-8 lg:p-24 min-h-screen"> // [!code highlight]
+  <div class="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex"> // [!code highlight]
+    <p class="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none"> // [!code highlight]
+      <a href="/" data-sveltekit-reload>Get started with Xata and SvelteKit</a> // [!code highlight]
+    </p> // [!code highlight]
+    <div class="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none"> // [!code highlight]
+      <a href="https://xata.io" class="w-20"> // [!code highlight]
+        <img alt="Xata logo" src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" /> // [!code highlight]
+      </a> // [!code highlight]
+    </div> // [!code highlight]
+  </div> // [!code highlight]
+ // [!code highlight]
+  <slot /> // [!code highlight]
+ // [!code highlight]
+</main> // [!code highlight]
 ```
 
 Ensure the `<slot />` component is before the closing `</main>` element.
@@ -509,20 +509,20 @@ const xata = new XataClient({
   branch: import.meta.env.VITE_XATA_BRANCH
 });
 
-export const load: PageServerLoad = async ({ request }) => {
-  const url = new URL(request.url);
-  const search = url.searchParams.get('q');
-
-  let posts = null;
-  if (search) {
-    const { records } = await xata.db.Posts.search(search, { fuzziness: 2 });
-    posts = records;
-  } else {
-    posts = await xata.db.Posts.getAll();
+export const load: PageServerLoad = async ({ request }) => { // [!code highlight]
+  const url = new URL(request.url); // [!code highlight]
+  const search = url.searchParams.get('q'); // [!code highlight]
+ // [!code highlight]
+  let posts = null; // [!code highlight]
+  if (search) { // [!code highlight]
+    const { records } = await xata.db.Posts.search(search, { fuzziness: 2 }); // [!code highlight]
+    posts = records; // [!code highlight]
+  } else { // [!code highlight]
+    posts = await xata.db.Posts.getAll(); // [!code highlight]
   }
 
   return {
-    posts,
+    posts, // [!code highlight]
     search
   };
 };
