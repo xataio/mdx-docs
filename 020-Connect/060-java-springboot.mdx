@@ -30,7 +30,7 @@ Please replace the parameters as indicated on the [connect to Postgres](/docs/po
 With a shared cluster you are subject to [connection limits](/docs/postgres#connection-limits), meaning how many connections can be active concurrently.
 In order to avoid running into max open connection limit reached, please adjust the maximum pool size to 20 for free plan - and 60 for pro plan users.
 
-```properties
+```properties title="application.properties"
 spring.datasource.hikari.maximum-pool-size=20
 ```
 
