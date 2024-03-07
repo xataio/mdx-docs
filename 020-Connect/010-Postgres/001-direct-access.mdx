@@ -8,21 +8,23 @@ published: true
 status: beta
 ---
 
-Xata allows you to your database branch via the standard Postgres wire protocol. You can use this connection method to use almost any tool that supports Postgres, including `psql`, `pg_dump / pg_restore`, client drivers in various programming languages, ORMs, BI tools, and more.
+> This is a beta feature that requires a workspace administrator to turn on the `Direct access to Postgres` feature flag within their **workspace settings page**. Once enabled, any _new_ databases created within that workspace will have the option to enable the feature. Existing databases that weren't set up with direct access can not be migrated to allow these features without direct [Xata support](/docs/resources/support) involvement.
 
-The SQL commands that you send over the wire protocol behave identical to the way they behave on any other Postgres installation or service. However, some functionality is restricted, especially on shared clusters. This page documents the limitations you can expect.
+Xata provides the ability to connect to database branches via the standard Postgres wire protocol. This opens up generic Postgres tool support including `psql`, `pg_dump`, `pg_restore`, language clients, ORMs, BI tools, and more.
 
-This page shows you how to connect to Postgres directly, by explaining how a connection string is built, the different Xata parameters map to Postgres URLs and examples to connect via [psql](https://www.postgresql.org/docs/current/app-psql.html).
+The SQL commands that you send over the wire protocol behave identical to the way they behave on any other Postgres installation or service. We maintain a list of [supported statements](#supported-statements) which limits some statements within our default shared clusters. Full access is available with our Dedicated Cluster plans.
+
+The examples below teach you how a connection string is built and explain how different Xata parameters map to Postgres URLs when connecting via [psql](https://www.postgresql.org/docs/current/app-psql.html).
 
 ## Connection string
 
-The connection string to connect to Postgres needs to be in the following format:
+The connection string needs to be in the following format:
 
-```
+```txt
 postgresql://[User]:[Password]@[Host]:[Port]/[Database]
 ```
 
-The following conversion table illustrates how the connection string parameters are mapped to Xata.
+Typical Postgres parameters have Xata equivalents.
 
 | Postgres | Xata                       | Example                 |
 | -------- | -------------------------- | ----------------------- |
@@ -32,16 +34,14 @@ The following conversion table illustrates how the connection string parameters 
 | Port     | `5432` or empty            | `5432`                  |
 | Database | Database and branch name   | `Games:main`            |
 
-With the example values from above, the connection string to connect to our database `Games` on branch `main` is constructed as:
+With the mapping from above, the connection string to connect to our database `Games` on branch `main` is:
 
-```
+```txt
 postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
 ```
 
-The connection strings for HTTP access and Postgres wire protocol access are shown to you when you create a new database. You can always see how the connection string is constructed later on by navigating to the database settings page.
-![Database settings showing the connection string](images/connection-string.png)
-
-To create a new API key, or manage your existing ones, you need to open your [account settings](https://app.xata.io/settings).
+- The connection strings for HTTP access and Postgres wire protocol access are shown to you when you create a new database. You can view this connection string at any time by going to your database's settings page.
+- API keys are stored at the user level and can be accessed within [account settings](https://app.xata.io/settings).
 
 Using [psql](https://www.postgresql.org/docs/current/app-psql.html) to connect to your database, based off the previously constructed connection string with the example values:
 
@@ -50,21 +50,6 @@ psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
 
 Games:main=>
 ```
-
-## Enabling the direct access to Postgres
-
-The direct access is still in beta at the moment and requires you to opt-in.
-Please navigate to your workspace settings, and activate the feature flag for _Direct access to Postgres_
-
-![Opt-in to direct access in workspace settings](images/beta-opt-in-workspace.png)
-
-Next you need to create a new database, navigate to _Add database_ and confirm you want to enable the direct access to Postgres for this database.
-
-![Enable direct access to database](images/beta-opt-in-database.png)
-
-In the database overview, the newly created database will feature a little elephant to indicate this database has direct access to Postgres
-
-![Database with Postgres direct access](images/pg-database.png)
 
 ## Supported versions
 
