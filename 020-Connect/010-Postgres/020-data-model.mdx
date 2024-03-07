@@ -38,3 +38,5 @@ For specific Xata data types like email, it is required you use the Xata API or 
 As you are able to create your own types or use types from extensions through the [wire protocol](/docs/postgres), there is a possibility that the Xata UI is not aware the type.
 For such cases, the UI will display the column values as string and they will be read-only.
 If you need to manipulate these columns, please do so through the wire protocol or reach out to our [support team](/docs/resources/support) to request adding the data type to Xata.
+
+Branch migrations are not supported yet. In databases that support direct Postgres access, you can create new branches but they cannot be merged together. This capability will become available later on.
