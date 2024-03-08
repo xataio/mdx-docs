@@ -107,9 +107,16 @@ The following example imports the file `my_branch.sql` into the database `playgr
 psql "postgresql://[Workspace Id]:[API key]@[Region].sql.staging-xata.dev/playground:new_branch" < my_branch.sql
 ```
 
+The following limitations apply:
+
+- Some warnings are to be expected during the restore operation due to restrictions from [supported statements](/docs/postgres#supported-statements).
+- The set of supported statements differs between Shared and Dedicated Clusters so the warnings when restoring from the same file may differ depending on the target environment.
+- Managing roles and table ownership is not supported, errors from such statements are expected.
+- Schemas are not supported. Data content and objects are restored under the virtual public schema of the target branch.
+
 ## Supported statements
 
-Xata offers Postgres in a variety of [pricing formats](/pricing). Shared cluster plans limit statements to guaruntee isolation in a multi-tenant environment. [Dedicated cluster](/docs/dedicated-cluster) plans provide more flexibility.
+Xata offers Postgres in a variety of [pricing formats](/pricing). Shared cluster plans limit statements to guarantee isolation in a multi-tenant environment. [Dedicated cluster](/docs/dedicated-cluster) plans provide more flexibility.
 
 |                     | Functions | DQL statements | (some) DML statements | DDL statements |
 | ------------------- | --------- | -------------- | --------------------- | -------------- |
@@ -204,7 +211,7 @@ Concurrent connections are limited by [plan](/docs/concepts/pricing#pricing-plan
 
 ## Adapt your schema to match Xata requirements
 
-Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and rejects any columns with the prefix.
+Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and rejects any columns with the prefix. Avoid naming columns with this prefix as there will be functional implications.
 
 Tables created through the wire protocol will be missing the columns necessary to make Xata work. You may run into roadblocks within the UI that ask you to "Adapt your table". Doing so will quickly add the below `xata_` columns to your table and enable the UI and other functionality like full-text search.
 
