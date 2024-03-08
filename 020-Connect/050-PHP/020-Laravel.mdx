@@ -4,14 +4,14 @@ navTitle: Laravel
 keywords: ['php', 'laravel']
 description: Connect to Postgres with Laravel and pgsql
 slug: php-laravel
-published: true
+published: false
 ---
 
 <Alert status="warning">
-  Laravel is only supported on a [dedicated cluster](/docs/dedicated-cluster). On app start, Laravel forces any pending
-  migrations to be executed automatically, this step fails in a shared as the statement `CREATE TYPE` is not allowed.
-  For full support, you must use a dedicated cluster, see [supported statements](/docs/postgres#supported-statements)
-  for a complete breakdown.
+
+Laravel is not supported at the moment as the statement `SET search_path TO {}` is forbidden.
+See [supported statements](/docs/postgres#supported-statements) for a complete breakdown.
+
 </Alert>
 
 To connect your Laravel application to Xata, you need to adjust the database connection in the .env file as follows:
@@ -23,6 +23,7 @@ DB_PORT=5432
 DB_DATABASE=<DATABASE>:<BRANCH>
 DB_USERNAME=<WORKSPACE_ID>
 DB_PASSWORD=<API_KEY>
+DB_SSLMODE=require
 ```
 
 Please replace the parameters as indicated on the [connect to Postgres](/docs/postgres) page.
