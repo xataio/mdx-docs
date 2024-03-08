@@ -112,7 +112,7 @@ The following limitations apply:
 - Some warnings are to be expected during the restore operation due to restrictions from [supported statements](/docs/postgres#supported-statements).
 - The set of supported statements differs between Shared and Dedicated Clusters so the warnings when restoring from the same file may differ depending on the target environment.
 - Managing roles and table ownership is not supported, errors from such statements are expected.
-- Schemas are not supported. Data content and objects are restored under the virtual public schema of the target branch.
+- Schemas are not supported. Data content and objects are restored under the target branch.
 
 ## Supported statements
 
