@@ -8,21 +8,23 @@ published: true
 status: beta
 ---
 
-Xata allows you to your database branch via the standard Postgres wire protocol. You can use this connection method to use almost any tool that supports Postgres, including `psql`, `pg_dump / pg_restore`, client drivers in various programming languages, ORMs, BI tools, and more.
+> This is a beta feature that requires a workspace administrator to turn on the `Direct access to Postgres` feature flag within their **workspace settings page**. Once enabled, any _new_ databases created within that workspace will have the option to enable the feature. For now, existing databases that weren't set up with direct access initially will need to be ported into a brand new database if you wish to utilize these features.
 
-The SQL commands that you send over the wire protocol behave identical to the way they behave on any other Postgres installation or service. However, some functionality is restricted, especially on shared clusters. This page documents the limitations you can expect.
+Xata provides the ability to connect to database branches via the standard Postgres wire protocol. This opens up generic Postgres tool support including `psql`, `pg_dump`, `pg_restore`, language clients, ORMs, BI tools, and more.
 
-This page shows you how to connect to Postgres directly, by explaining how a connection string is built, the different Xata parameters map to Postgres URLs and examples to connect via [psql](https://www.postgresql.org/docs/current/app-psql.html).
+The SQL commands that you send over the wire protocol behave identical to the way they behave on any other Postgres installation or service. We maintain a list of [supported statements](#supported-statements) which limits some statements within our default shared clusters. Full access is available with our Dedicated Cluster plans.
+
+The examples below teach you how a connection string is built and explain how different Xata parameters map to Postgres URLs when connecting via [psql](https://www.postgresql.org/docs/current/app-psql.html).
 
 ## Connection string
 
-The connection string to connect to Postgres needs to be in the following format:
+The connection string needs to be in the following format:
 
-```
+```txt
 postgresql://[User]:[Password]@[Host]:[Port]/[Database]
 ```
 
-The following conversion table illustrates how the connection string parameters are mapped to Xata.
+Typical Postgres parameters have Xata equivalents.
 
 | Postgres | Xata                       | Example                 |
 | -------- | -------------------------- | ----------------------- |
@@ -32,39 +34,22 @@ The following conversion table illustrates how the connection string parameters 
 | Port     | `5432` or empty            | `5432`                  |
 | Database | Database and branch name   | `Games:main`            |
 
-With the example values from above, the connection string to connect to our database `Games` on branch `main` is constructed as:
+With the mapping from above, the connection string to connect to our database `Games` on branch `main` is:
 
-```
+```txt
 postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
 ```
 
-The connection strings for HTTP access and Postgres wire protocol access are shown to you when you create a new database. You can always see how the connection string is constructed later on by navigating to the database settings page.
-![Database settings showing the connection string](images/connection-string.png)
+- The connection strings for HTTP access and Postgres wire protocol access are shown to you when you create a new database. You can view this connection string at any time by going to your database's settings page.
+- API keys are stored at the user level and can be accessed within [account settings](https://app.xata.io/settings).
 
-To create a new API key, or manage your existing ones, you need to open your [account settings](https://app.xata.io/settings).
-
-Using [psql](https://www.postgresql.org/docs/current/app-psql.html) to connect to your database, based off the previously constructed connection string with the example values:
+Connect with [psql](https://www.postgresql.org/docs/current/app-psql.html) using the connection string format provided above:
 
 ```bash
 psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main"
 
 Games:main=>
 ```
-
-## Enabling the direct access to Postgres
-
-The direct access is still in beta at the moment and requires you to opt-in.
-Please navigate to your workspace settings, and activate the feature flag for _Direct access to Postgres_
-
-![Opt-in to direct access in workspace settings](images/beta-opt-in-workspace.png)
-
-Next you need to create a new database, navigate to _Add database_ and confirm you want to enable the direct access to Postgres for this database.
-
-![Enable direct access to database](images/beta-opt-in-database.png)
-
-In the database overview, the newly created database will feature a little elephant to indicate this database has direct access to Postgres
-
-![Database with Postgres direct access](images/pg-database.png)
 
 ## Supported versions
 
@@ -80,44 +65,43 @@ psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh:[Port]/[Databas
 ```
 
 ```sql
-                                                   version
--------------------------------------------------------------------------------------------------------------
- PostgreSQL 15.4 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 9.5.0, 64-bit
+PostgreSQL 15.4 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 9.5.0, 64-bit
 (1 row)
 ```
 
 ## Extensions
 
-In a shared cluster, no extension except the mandatory [plpgsql](https://www.postgresql.org/docs/current/plpgsql.html) is installed and installing others is forbidden.
-If you need extensions, you need to deploy a [dedicated cluster](/docs/dedicated-cluster#Extensions).
+Extensions are only available in [dedicated cluster](/docs/dedicated-cluster#Extensions) plans. The default shared cluster setup ships with [plpgsql](https://www.postgresql.org/docs/current/plpgsql.html) only.
 
 ## Export
 
-In order to export a branch with `pg_dump`, you need to specify the connection parameters as indicated in the [connection string](#connection-string) section.
+To run `pg_dump`, you need to specify the connection parameters as indicated in the [connection string](#connection-string) section above.
 
 ```bash
 pg_dump --no-acl --no-owner --no-comments --no-table-access-method --host=[Region].sql.xata.sh --username=[Workspace Id] --dbname=[Database]:[Branch] --password
 ```
 
-The prompt will ask you for the password, which is your API key.
+- The prompt will ask you for the password, which is your API key.
+- The flags, `--no-acl`, `--no-owner`, `--no-comments` and `--no-table-access-method` are not mandatory, but remove unnecessary noise in the file, creating a cleaner output.
 
-The flags, `--no-acl`, `--no-owner`, `--no-comments` and `--no-table-access-method` are not mandatory, but remove unnecessary noise in the file, creating a cleaner output.
-
-Please refer to the pg_dump [documentation](https://www.postgresql.org/docs/current/app-pgdump.html) for a full list of features.
+Please refer to [pg_dump's documentation](https://www.postgresql.org/docs/current/app-pgdump.html) for a full list of features.
 
 ## Import
 
-The import path depends on your data format, if it's a compressed archive (e.g. `.tar`), you need to use [pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html).
-pg_dump offers the flag `--format=tar` to immediately output to tar file format.
+Import methods depend on your file format.
+
+### Import from an archive
+
+Use [pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html). `pg_dump` offers the flag `--format=tar` to immediately output to tar file format.
 
 ```bash
 pg_restore --host=[Region].sql.xata.sh --username=[Workspace Id] --dbname=[Database]:[Branch] --password dumpdata.tar
 ```
 
-The parameters are equally organized as for pg_dump.
+### Import from a SQL file
 
-If the file is a plain SQL file (`.sql`), you can convenitently use psql to immediately import the database branch.
-In the following example, we want to import the file `my_branch.sql` into the database `playground` on the branch `new_branch`
+Use `psql` to import `.sql` files into a database branch.
+The following example imports the file `my_branch.sql` into the database `playground` on the branch `new_branch`.
 
 ```bash
 psql "postgresql://[Workspace Id]:[API key]@[Region].sql.staging-xata.dev/playground:new_branch" < my_branch.sql
@@ -132,81 +116,80 @@ The following limitations apply:
 
 ## Supported statements
 
-Xata offers different approaches for connecting to Postgres, from SQL over HTTP to pure Postgres over the wire protocol to a shared or [dedicated cluster](/docs/dedicated-cluster).
-Each come with a security scope to provide isolation in a multi tenant environment.
+Xata offers Postgres in a variety of [pricing formats](/pricing). Shared cluster plans limit statements to guarantee isolation in a multi-tenant environment. [Dedicated cluster](/docs/dedicated-cluster) plans provide more flexibility.
 
 |                     | Functions | DQL statements | (some) DML statements | DDL statements |
 | ------------------- | --------- | -------------- | --------------------- | -------------- |
-| SQL over HTTP       | N         | Y              | Y                     | Y              |
-| Shared cluster\*    | N         | Y              | Y                     | Y              |
-| Dedicated cluster\* | Y         | Y              | Y                     | Y              |
+| SQL over HTTP       |           | ✅             | ✅                    | ✅             |
+| Shared cluster\*    |           | ✅             | ✅                    | ✅             |
+| Dedicated cluster\* | ✅        | ✅             | ✅                    | ✅             |
 
-\*Direct access to Postgres with the wire protocol.
+\* Requires toggling on direct access connections through Postgres.
 
-The table below provides a more granular picture of the supported statements.
+The table below provides full granularity over specific statements.
 
-|                          | SQL over HTTP | Shared Cluster | Dedicated Cluster |
-| ------------------------ | ------------- | -------------- | ----------------- |
-| `SELECT`                 | Y             | Y              | Y                 |
-| `INSERT`                 | Y             | Y              | Y                 |
-| `DELETE`                 | Y             | Y              | Y                 |
-| `UPDATE`                 | Y             | Y              | Y                 |
-| `SHOW`                   | Y             | Y              | Y                 |
-| `ALTER TABLE`            | Y             | Y              | Y                 |
-| `CREATE TABLE`           | Y             | Y              | Y                 |
-| `DROP TABLE`             | Y             | Y              | Y                 |
-| `BEGIN`                  | N             | Y              | Y                 |
-| `COMMIT`                 | N             | Y              | Y                 |
-| `ROLLBACK`               | N             | Y              | Y                 |
-| `SET`                    | N             | Y              | Y                 |
-| `COPY`                   | N             | Y              | Y                 |
-| `LOCK`                   | N             | Y              | Y                 |
-| `PREPARE`                | N             | Y              | Y                 |
-| `EXECUTE`                | N             | Y              | Y                 |
-| `TRUNCATE`               | Y             | Y              | Y                 |
-| `ALTER INDEX`            | N             | N              | Y                 |
-| `CREATE INDEX`           | N             | N              | Y                 |
-| `DROP INDEX`             | N             | N              | Y                 |
-| `ALTER TRIGGER`          | N             | N              | Y                 |
-| `CREATE TRIGGER`         | N             | N              | Y                 |
-| `DROP TRIGGER`           | N             | N              | Y                 |
-| `ALTER EVENTTRIGGER`     | N             | N              | Y                 |
-| `CREATE EVENTTRIGGER`    | N             | N              | Y                 |
-| `DROP EVENTTRIGGER`      | N             | N              | Y                 |
-| `ALTER SEQUENCE`         | N             | N              | Y                 |
-| `CREATE SEQUENCE`        | N             | N              | Y                 |
-| `DROP SEQUENCE`          | N             | N              | Y                 |
-| `CALL`                   | N             | N              | Y                 |
-| `ALTER STATISTICS`       | N             | N              | Y                 |
-| `CREATE STATISTICS`      | N             | N              | Y                 |
-| `DROP STATISTICS`        | N             | N              | Y                 |
-| `ALTER RULE`             | N             | N              | Y                 |
-| `CREATE RULE`            | N             | N              | Y                 |
-| `DROP RULE`              | N             | N              | Y                 |
-| `ALTER TYPE`             | N             | N              | Y                 |
-| `CREATE TYPE`            | N             | N              | Y                 |
-| `DROP TYPE`              | N             | N              | Y                 |
-| `ALTER DOMAIN`           | N             | N              | Y                 |
-| `CREATE DOMAIN`          | N             | N              | Y                 |
-| `DROP DOMAIN`            | N             | N              | Y                 |
-| `ALTER FUNCTION`         | N             | N              | Y                 |
-| `CREATE FUNCTION`        | N             | N              | Y                 |
-| `DROP FUNCTION`          | N             | N              | Y                 |
-| `EXPLAIN`                | N             | N              | Y                 |
-| `REINDEX`                | N             | N              | Y                 |
-| `ALTER OPERATOR CLASS`   | N             | N              | Y                 |
-| `CREATE OPERATOR CLASS`  | N             | N              | Y                 |
-| `DROP OPERATOR CLASS`    | N             | N              | Y                 |
-| `CREATE EXTENSION`       | N             | N              | Y                 |
-| `DROP EXTENSION`         | N             | N              | Y                 |
-| `ALTER EXTENSION`        | N             | N              | Y                 |
-| `CREATE TEMPORARY TABLE` | N             | N              | Y                 |
+|                        |     | SQL over HTTP | Shared Cluster | Dedicated Cluster |
+| ---------------------- | --- | ------------- | -------------- | ----------------- |
+| SELECT                 |     | ✅            | ✅             | ✅                |
+| INSERT                 |     | ✅            | ✅             | ✅                |
+| DELETE                 |     | ✅            | ✅             | ✅                |
+| UPDATE                 |     | ✅            | ✅             | ✅                |
+| SHOW                   |     | ✅            | ✅             | ✅                |
+| ALTER TABLE            |     | ✅            | ✅             | ✅                |
+| CREATE TABLE           |     | ✅            | ✅             | ✅                |
+| DROP TABLE             |     | ✅            | ✅             | ✅                |
+| BEGIN                  |     |               | ✅             | ✅                |
+| COMMIT                 |     |               | ✅             | ✅                |
+| ROLLBACK               |     |               | ✅             | ✅                |
+| SET                    |     |               | ✅             | ✅                |
+| COPY                   |     |               | ✅             | ✅                |
+| LOCK                   |     |               | ✅             | ✅                |
+| PREPARE                |     |               | ✅             | ✅                |
+| EXECUTE                |     |               | ✅             | ✅                |
+| TRUNCATE               |     | ✅            | ✅             | ✅                |
+| ALTER INDEX            |     |               |                | ✅                |
+| CREATE INDEX           |     |               |                | ✅                |
+| DROP INDEX             |     |               |                | ✅                |
+| ALTER TRIGGER          |     |               |                | ✅                |
+| CREATE TRIGGER         |     |               |                | ✅                |
+| DROP TRIGGER           |     |               |                | ✅                |
+| ALTER EVENTTRIGGER     |     |               |                | ✅                |
+| CREATE EVENTTRIGGER    |     |               |                | ✅                |
+| DROP EVENTTRIGGER      |     |               |                | ✅                |
+| ALTER SEQUENCE         |     |               |                | ✅                |
+| CREATE SEQUENCE        |     |               |                | ✅                |
+| DROP SEQUENCE          |     |               |                | ✅                |
+| CALL                   |     |               |                | ✅                |
+| ALTER STATISTICS       |     |               |                | ✅                |
+| CREATE STATISTICS      |     |               |                | ✅                |
+| DROP STATISTICS        |     |               |                | ✅                |
+| ALTER RULE             |     |               |                | ✅                |
+| CREATE RULE            |     |               |                | ✅                |
+| DROP RULE              |     |               |                | ✅                |
+| ALTER TYPE             |     |               |                | ✅                |
+| CREATE TYPE            |     |               |                | ✅                |
+| DROP TYPE              |     |               |                | ✅                |
+| ALTER DOMAIN           |     |               |                | ✅                |
+| CREATE DOMAIN          |     |               |                | ✅                |
+| DROP DOMAIN            |     |               |                | ✅                |
+| ALTER FUNCTION         |     |               |                | ✅                |
+| CREATE FUNCTION        |     |               |                | ✅                |
+| DROP FUNCTION          |     |               |                | ✅                |
+| EXPLAIN                |     |               |                | ✅                |
+| REINDEX                |     |               |                | ✅                |
+| ALTER OPERATOR CLASS   |     |               |                | ✅                |
+| CREATE OPERATOR CLASS  |     |               |                | ✅                |
+| DROP OPERATOR CLASS    |     |               |                | ✅                |
+| CREATE EXTENSION       |     |               |                | ✅                |
+| DROP EXTENSION         |     |               |                | ✅                |
+| ALTER EXTENSION        |     |               |                | ✅                |
+| CREATE TEMPORARY TABLE |     |               |                | ✅                |
 
 ## Limitations
 
 ### Unsupported statements and functions
 
-The following statements and/or functions are not available:
+The following statements and/or functions are not available for security reasons.
 
 - `SELECT user`
 - `SHOW password_encryption`
@@ -220,29 +203,17 @@ The following statements and/or functions are not available:
 
 ### Connection limits
 
-Depending on your Workspace's [plan](/docs/concepts/pricing#pricing-plans) and cluster, you have different connection limits for the wire protocol:
+Concurrent connections are limited by [plan](/docs/concepts/pricing#pricing-plans).
 
 - Free plan: 20 concurrent connections
 - Pro plan on shared cluster: 60 concurrent connections
 - Pro plan on [dedicated cluster](/docs/dedicated-cluster): Unlimited connections
 
-### `xata_` Column prefix
+## Adapt your schema to match Xata requirements
 
-Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and the UI rejects any custom created columns with the prefix. Avoid naming columns with this prefix as there will be functional implications.
+Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and rejects any columns with the prefix. Avoid naming columns with this prefix as there will be functional implications.
 
-## Adapt my Table
-
-A table created through the wire protocol is not automatically equiped with the necessary columns to make use of Xata's other features, like a functioning UI, or full text search, etc.
-In order to unlock the functionality, you need to adapt your table.
-If you access the UI, you will see the following dialog on the page of the table itself:
-
-![Adapt my table](images/adapt-my-table.png)
-
-Or if you navigate to the schema view:
-
-![Adapt my table in schema view](images/adapt-my-table-schema.png)
-
-If you click adapt table, Xata will add four new columns to your table:
+Tables created through the wire protocol will be missing the columns necessary to make Xata work. You may run into roadblocks within the UI that ask you to "Adapt your table". Doing so will quickly add the below `xata_` columns to your table and enable the UI and other functionality like full-text search.
 
 - `xata_id`: internal unique record identifier.
 - `xata_version`: discrete version counter of the record, every update will increment the counter by one.
@@ -251,10 +222,12 @@ If you click adapt table, Xata will add four new columns to your table:
 
 Please reference to the [special columns](/docs/concepts/data-model#special-columns) section to learn more about these columns.
 
-## sslmode
+## Troubleshooting
 
-Xata does not allow plain text connections, this may have an effect on the client you are using and the default that is inferred by such.
-If you face an issue with an error message like the one shown below, you will need to explicitly force SSL, by setting the sslmode to `require` in the connection string or passing the setting in via a parameter depending on the tool you are using.
+### SSL required
+
+Xata does not allow plain text connections. This may cause problems with certain clients.
+If you see an error similar to the one shown below, you can explicitly force SSL by setting the `sslmode` to `require` in the connection string or passing this setting in via a parameter depending on the tool you are using.
 
 ```bash
 psql: error: connection to server at "eu-west-1.sql.xata.sh" (42.42.42.42), port 5432 failed: SSL required
@@ -266,18 +239,15 @@ psql enforces the sslmode require by default, but for demonstration purposes, th
 psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main?sslmode=require"
 ```
 
-Xata recommends that the client verifies the server certificate, in psql this would be achieved with the `verify-ca` and `verify-full` modes.
-We will need to provide a certificate store to do this, it is usually present in most operative systems, for instance:
+Xata recommends that the client verifies the server certificate. With `psql` use `verify-ca` and `verify-full` modes and provide a certificate store. It is usually present in the following location.
 
-MacOS: `/etc/ssl/cert.pem`
+- OSX: `/etc/ssl/cert.pem`
+- GNU/Linux: `/etc/ssl/certs/ca-certificates.crt`
 
-GNU/Linux: `/etc/ssl/certs/ca-certificates.crt`
-
-Using psql on Mac to establish a fully secure connection to Xata is as easy as:
+The below example shows how to use `psql` to manage a secure connection on a OSX.
 
 ```bash
 psql "sslmode=verify-full sslrootcert=/etc/ssl/cert.pem user=ws1234 password=xau_apikey123456 host=us-east-1.sql.xata.sh dbname=Games:main"
 ```
 
-Keep in mind that different clients will provide different configuration options.
-Please refer to the main Postgres documentation for more in depth information about the [sslmodes](https://www.postgresql.org/docs/current/libpq-ssl.html) option.
+Keep in mind that different clients might require different configuration options. Please refer to the main Postgres documentation for more in depth information about the [sslmodes](https://www.postgresql.org/docs/current/libpq-ssl.html) option.
