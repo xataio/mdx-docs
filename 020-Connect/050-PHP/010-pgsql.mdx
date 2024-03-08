@@ -23,7 +23,7 @@ $dsn = sprintf("host=%s port=%d dbname=%s user=%s password=%s",
 
 // Run query
 $conn = pg_connect($dsn) or die("failed to connect.");
-$result = pg_query($conn, "SELECT 1");
+$result = pg_query($conn, "SELECT 1") or die(pg_last_error());
 var_dump(pg_fetch_all($result));
 pg_free_result($result);
 pg_close($conn);
