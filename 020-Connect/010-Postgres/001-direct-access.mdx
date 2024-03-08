@@ -132,7 +132,7 @@ The following limitations apply:
 
 ## Supported statements
 
-Xata offers different approaches to Postgres, from SQL over HTTP to pure Postgres over the wire protocol to a shared or [dedicated cluster](/docs/dedicated-cluster).
+Xata offers different approaches for connecting to Postgres, from SQL over HTTP to pure Postgres over the wire protocol to a shared or [dedicated cluster](/docs/dedicated-cluster).
 Each come with a security scope to provide isolation in a multi tenant environment.
 
 |                     | Functions | DQL statements | (some) DML statements | DDL statements |
@@ -220,7 +220,7 @@ The following statements and/or functions are not available:
 
 ### Connection limits
 
-Depending on your [plan](/docs/concepts/pricing#pricing-plans) and cluster, you have different connection limits:
+Depending on your Workspace's [plan](/docs/concepts/pricing#pricing-plans) and cluster, you have different connection limits for the wire protocol:
 
 - Free plan: 20 concurrent connections
 - Pro plan on shared cluster: 60 concurrent connections
@@ -228,7 +228,7 @@ Depending on your [plan](/docs/concepts/pricing#pricing-plans) and cluster, you 
 
 ### `xata_` Column prefix
 
-Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and rejects any custom created columns with the prefix.
+Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and the UI rejects any custom created columns with the prefix. Avoid naming columns with this prefix as there will be functional implications.
 
 ## Adapt my Table
 
