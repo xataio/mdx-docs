@@ -25,7 +25,7 @@ The Authorization Code Flow works as follows:
 
 To redirect the user to Xata, the application must redirect the user to the following URL:
 
-```
+```txt
 https://app.xata.io/integrations/oauth/authorize
 ```
 
@@ -41,7 +41,7 @@ The application must include the following query parameters:
 
 For example:
 
-```
+```txt
 https://app.xata.io/integrations/oauth/authorize?client_id=123&redirect_uri=https://example.com/callback&response_type=code&scope=admin:all&state=abc123
 ```
 
@@ -57,7 +57,7 @@ After the user signs in, Xata will redirect the user back to the application. Xa
 
 For example:
 
-```
+```txt
 https://example.com/callback?code=abc123&state=abc123&color-mode=light
 ```
 
@@ -65,7 +65,7 @@ https://example.com/callback?code=abc123&state=abc123&color-mode=light
 
 To exchange the authorization code for an access token, the application must make a `POST` request to the following URL:
 
-```
+```txt
 https://app.xata.io/api/integrations/oauth/token
 ```
 
@@ -121,7 +121,7 @@ Access tokens are set to automatically expire. When an access token expires, the
 
 To refresh the access token, the application must make a `POST` request to the following URL:
 
-```
+```txt
 https://app.xata.io/api/integrations/oauth/token
 ```
 
