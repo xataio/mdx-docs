@@ -1,300 +1,131 @@
 ---
 title: What is Xata?
 navTitle: What is Xata?
-keywords: ['severless']
-description: Use integrated cloud services to revolutionize data operations
+keywords: ['severless', 'data platform', 'PostgreSQL', 'architecture']
+description: An overview of Xata, the data platform for PostgreSQL.
 slug: concepts/serverless-data-platform
 published: true
 ---
 
-Xata is a new type of Cloud service: it combines multiple types of stores (relational database, search engine, analytics engine) into a single service. The combined functionality is exposed over a single consistent API. It is also vertically integrated: an advanced admin UI and high-level SDKs come into the package.
+**Xata is a serverless data platform for PostgreSQL that optimizes for reliability, scalability, and developer experience.**
 
-We call this type of service a _Serverless Data Platform._
+On top of the usual Postgres functionality, Xata provides a set of features that make it easier to build modern applications:
 
-![Serverless Data Platform](images/serverless-data-platform.png)
+- **Branching**: Create a new branch of your data to work on new features or experiments without affecting the main branch. The branching can also be used for tenant separation, allowing you to create a branch for each of your customers.
+- **[Zero-downtime schema migrations](/docs/getting-started/workflow)**: Make changes to your production database with zero-downtime, reversible schema migrations and data backfilling. This functionality is powered by our open-source project [pgroll](https://github.com/xataio/pgroll).
+- **[File attachments](/docs/sdk/file-attachments)**: Store and retrieve files up to 1GB, including images, videos, and audio files. The files are stored in object storage and automatically cached on a global CDN for fast delivery. From the application point of view, however, it's just another column in the database.
+- **[Image transformations](/docs/sdk/image-transformations)**: Any images stored with File Attachments can perform powerful at-will image transformations.
+- **[Full-text search](/docs/sdk/search)**: Data is automatically replicated into a full-text search engine, making it easy to build search experiences, supporting fuzzy search, weights, and relevancy boosters.
+- **[Vector search](/docs/sdk/vector-search)**: Easily store embeddings and implement similarity search to power your AI applications.
+- **Collaborative dashboard**: A web-based console to manage your data, including schema and data.
+- **SDKs**: Xata comes with vertically integrated SDKs for popular programming languages, including [TypeScript](/docs/sdk/typescript/overview), [JavaScript](/docs/sdk/typescript/overview), [Python](/docs/sdk/python/overview), and [Go](/docs/sdk/go/overview). In addition, Xata works with any [PostgreSQL client or ORM](/docs/postgres/connect).
 
-This type of service has several benefits:
+In order to provide these features, Xata uses other data stores in addition to PostgreSQL, namely [Elasticsearch](https://github.com/elastic/elasticsearch/) for full-text search, aggregations and vector search, [S3](https://aws.amazon.com/s3/) for file attachments, and the [Cloudflare CDN](https://www.cloudflare.com/application-services/products/cdn/) for file delivery and image transformations. The Postgres logical replication events are used to keep these data stores in sync with the main database.
 
-- it simplifies building applications, thanks to its vertical integration and serverless capabilities
-- it offers more data-related functionality than a typical database, for example, free-text-search with relevancy controls, and more advanced analytics
-- it grows with you, in both scale and required functionality because it is based on proven data technologies, each best-in-class for the problems they solve.
+Access to the underlying data is provided in two main ways:
 
-Currently, the Xata service uses PostgreSQL as the data store, Elasticsearch as the search/analytics engine, and Kafka for storing the logical replication events. It also offers support for edge-caching. You can read more about how Xata works in this document and a more detailed explanation of the serverless aspect in this [blog post](https://xata.io/blog/what-is-a-serverless-database).
+- Via the PostgreSQL wire protocol, which is mediated by our SQL Proxy.
+- Via our SDKs, which provide a higher-level interface to the data.
 
-In the future, we plan to also add built-in support for centralized caching (for example, Redis), block storage, better support for sharding between DBs, automatic global distribution, and so on.
+![PostgreSQL Data Platform](images/xata-platform.png)
 
-This type of data architecture, where a relational DB is used as the primary store and the data in it is replicated in other more specialized stores (search engine, data warehousing, business intelligence systems, etc.) is very popular among companies over a certain size. However, it requires significant amounts of glue code, operational overhead, monitoring, and expertise. Not anymore, Xata packages it all in a single opinionated service.
+## Who is Xata built for?
 
-## How is it Different from Backend-as-a-Service (BaaS)?
+Individuals and indie developers like Xata because it is easy to get started, has a generous free-tier, accelerates development speed and solves common problems in a developer-first way (e.g. file attachments, full-text search, vector search).
 
-Backend-as-a-Service type of service is similar because it also offers the functionality of a serverless DB with more services on top of it. Firebase popularized the model already more than 10 years ago, and more recently players like Supabase, AppWrite, NHost, and others are offering open-source BaaS.
+Companies and larger teams like Xata because it is cost-efficient, consolidates tooling and reduces the operational load with its auto-scaling nature. Branching, and zero-downtime migration workflows means that your team can iterate faster when performing complex schema changes.
 
-The difference is the type of functionality that is added on top: BaaS typically try to add all the functionality that an app needs: hosting, authentication, push notifications, block storage.
+## PostgreSQL, the Xata way
 
-A Serverless Data Platform, on the other hand, is focused on adding data-related functionality, like free-text-search, advanced aggregations, caching, block storage, and so on. It doesn’t provide things like hosting, authentication, or push notifications, but it integrates nicely with platforms like Vercel, Netlify, or Cloudflare pages, as well as other authentication providers.
+As per the [StackOverflow survey of 2023](https://survey.stackoverflow.co/2023/#section-most-popular-technologies-databases), PostgreSQL is currently the most popular database system on the planet. Started in 1983, the PostgreSQL open source project has a long history of reliability and an ever growing community. For many developers, PostgreSQL is the first choice for a database system, because of its ACID transactions, planner performance, JSON support, extensibility, and much more.
 
-![BaaS versus Serverless Data Platform](images/baas-vs-sdp.png)
+At Xata, we strive to provide the best PostgreSQL cloud service, on a few particular dimensions:
 
-Because BaaS typically provide built-in authentication and row-level-security rules, it is possible to write strictly the client side of the application, and write no backend code at all (hence the name). This can be great for small projects because they get everything from a single provider, but as the projects grow in requirements and scale, some serious challenges appear:
+### Reliability
 
-- security rules become more complex and they are better implemented and maintained in code
-- each sub-service in the BaaS (hosting, authentication) is relatively shallow compared to dedicated providers
-- there is significant functionality overlap between what the BaaS offers and what modern full-stack web frameworks offer
+When it comes to the reliability of the core database service, we have a very [good track record](https://www.xatastatus.com/history) and offer [SLAs](TODO) on our Pro plans and above. Our technology choices are relatively conservative, as we make use of [AWS Aurora](https://aws.amazon.com/rds/aurora/), a managed PostgreSQL service used at scale by some of the largest businesses in the world.
 
-This causes a lot of product teams to move away from BaaS when they grow past a certain scale.
+Even on the free tier we offer high-availability and redundancy, with replicas running in multiple availability zones. The failover from the primary instance to a replica is automatic and it's guaranteed to have no data loss. At the storage layer, the data is synchronously replicated to six storage nodes across three availability zones.
 
-Since Firebase started more than 10 years ago, a new wave of developer-oriented products appeared and the whole serverless wave started. We now have full-stack frameworks like Next.js and platforms like Vercel and Netlify which offer fantastic developer experiences with their git-based workflows. Modern dedicated authentication and identity management services like Clerk, Stytch, or Auth0 are also easily accessible today. As a Serverless Data Platform, Xata fits very well into this growing Jamstack ecosystem.
+On the paid plans, we offer point-in-time-recovery (PITR) and our support team will help you restore the whole database or only parts of the database (e.g. specific tables or rows) as per our support [SLA times](TODO).
 
-## How Xata works
+### Cost efficiency
 
-Xata is a new type of cloud service: it offers an abstraction layer on top of multiple data stores in order to make application development and operations simpler. We call this type of service a [Serverless Data Platform](/docs/concepts/serverless-data-platform). This document explains the internal architecture of the Xata service, which can be useful to build a correct mental model of Xata. It can also be useful if you want to replicate the same architecture for yourself, which would give you some of the benefits of using Xata.
+Xata achieves cost efficiency for as many use cases as possible is by offering a high degree of optionality. The innovation of the Xata service is that we make it really easy to move from one type of cluster to another, without downtime. This means that you can easily try your workload on different types of clusters and see which one is the most cost-efficient for you.
 
-If you just want to build apps and use the Xata serverless service, you **do not** need to read this document. We’re solving these problems so that you don’t have to.
+At small scale, we offer a free tier that includes high-availability and read replicas, no cold-starts, and no instance-pausing after a few days. We can offer this sustainably because the free tier makes use of [shared clusters](#shared-or-dedicated-clusters) and auto-scaling.
 
-Xata is a global multi-tenant system, composed of **cells**, each living in a region. At the high level, one Xata **cell** implements the following architecture:
+At large scale, you pay for the resources you use and you have a high degree of control. For example, for predictable load, you can configure a particular instance size, while for unpredictable load, auto-scaling will likely be more cost-efficient. Similarly, you can choose between standard storage and I/O optimized storage, which is more cost-efficient for I/O-heavy workloads.
 
-![Xata cell](/images/xata-cell.png)
+### Scalability
 
-- The data is stored in PostgreSQL, which is considered the source of truth.
-- The PostgreSQL logical replication events are written in a Kafka queue, from where they can be read by multiple consumers.
-- One of these consumers optionally indexes the data into Elasticsearch.
-- The Xata API layer offers a RESTful API offering both the functionality of the relational database (PostgreSQL) with the advanced search and analytics from the search engine/columnar store (Elasticsearch).
-- On top of this API, Xata has client SDKs and a web interface.
+Available instance types in Xata go up to 128 vCPUs and 1TB of RAM (for example, `db.r6i.32xlarge`). Storage can be scaled up to 128TiB per cluster. That is quite a lot of headroom for vertical scaling.
 
-While the above architecture is a very common one in the industry, it hasn’t been —until now— productized in a service, which means a lot of teams were forced to either implement something similar to the above or live with reduced functionality.
+When it comes to horizontal scaling, the fact that you can create databases and branches instantly and that you can move them between clusters without downtime, opens up several architectural possibilities. For example, you can create a logical database for each of your customers, and place them in different regions. See the section on [Global control plane for databases and branches](#global-control-plane-for-databases-and-branches) for more details.
 
-## Going global
+### Infrastructure optionality
 
-As we’ve seen above, we call the combination of PostgreSQL + Elasticsearch and the associated services a “cell”. The cells are grouped into regions and form our **data plane**.
+There are two types of clusters powering the Xata service: shared and dedicated. Database branches can be created on both types of clusters, and they can be moved seamlessly between them, without downtime. A common scenario is to use a dedicated cluster for the production branch and shared clusters for the dev branches.
 
-![Xata global regions](/images/global-regions.png)
+![Shared and dedicated clusters](images/branch.png)
 
-Besides the cells, the regions contain other services:
+#### Shared Postgres clusters
 
-- An API Gateway service exists in each region and is responsible for routing between cells and enforcing the rate limits.
-- Several other supporting regional services, including regional control plane services and a service for running long-running tasks.
-- A global control plane layer responsible for maintaining users, workspaces, and API keys.
+These are multi-tenant clusters that are shared between multiple customers. This is the default in the Xata service, and if you don't have a dedicated cluster, your databases will be automatically created on a shared cluster.
 
-The control plane information (users, workspaces, API keys) is stored in a single central region and then replicated in near real-time to all other regions. This way, we can offer minimal latencies in each geographical area while still maintaining the convenience of a global service.
+Shared clusters are cost-efficient and are the reason we can sustainably offer a generous free-tier. The main billing metric for shared clusters is the storage size, with compute being bundled in. Shared clusters come with [rate and concurrency limits](/docs/rest-api/limits) to prevent abuse. This means that they are typically cost efficient for applications with relatively small database sizes and low to moderate traffic.
 
-## Data model representation
+Shared clusters are limited when it comes to the PostgreSQL functionality that is enabled. Custom functions, extensions and triggers are not allowed in order to protect the security of the cluster.
 
-Xata has a relational data model, with a strict schema (schemaful) and with support for JSON-like objects. Records are grouped into tables, which are grouped into databases. Xata supports rich column types and relations between tables can be represented via link columns, which are similar to foreign keys.
+Nevertheless, branches on shared clusters have zero cold starts, they are never paused, and come with high-availability and redundancy built-in, even on the free tier. The shared clusters are powered by AWS Aurora, which separates storage from compute and offers fast failover and point-in-time-recovery (PITR) backups.
 
-A record in Xata can look something like this:
+#### Dedicated Postgres clusters
 
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "age": 42,
-  "address": "123 Main St, New York",
-  "labels": ["admin", "user"]
-}
-```
+<Alert status="warning">Dedicated clusters are currently in private alpha. Please reach out to request access.</Alert>
 
-The above shows a column of type `email` and an array-like column (`labels` of type `multiple`). When this data is stored in PostgreSQL and Elasticsearch, columns are identified by IDs. By using IDs for columns, instead of their user-visible names, we make some migrations simpler and we make it possible, for example, to track a column across branches even if it was renamed.
+These are single-tenant clusters that are dedicated to a single customer. You can create multiple Xata databases or branches on a dedicated cluster, and you can move them between clusters (including shared clusters) without downtime.
 
-As a result, the underlying PostgreSQL table might look something like this:
+Unlike the shared clusters, the dedicated clusters offer the full set of PostgreSQL functionality, including custom functions, extensions, and triggers. They have no rate limits and no concurrency limits, and are limited only by the compute size.
 
-```sql
-  Column  |  Type   | Collation | Nullable | Default | Storage  | Stats target | Description
-----------+---------+-----------+----------+---------+----------+--------------+-------------
- _id      | text    |           | not null |         | extended |              |
- _version | integer |           | not null | 0       | plain    |              |
- a        | text    |           |          |         | extended |              |
- b        | text    |           |          |         | extended |              |
- c        | bigint  |           |          |         | plain    |              |
- d        | boolean |           |          |         | plain    |              |
- e        | text    |           |          |         | extended |              |
- g        | text    |           |          |         | extended |              |
- h        | text[]  |           |          |         | extended |              |
-Indexes:
-"tbl_cd46p95cefoedabj77gg_a_pkey" PRIMARY KEY, btree (_id)
-    "tbl_cd46p95cefoedabj77gg_a_replica_id" UNIQUE, btree (_id, _version) REPLICA IDENTITY
-    "tbl_cd46p95cefoedabj77gg_a_xata_unique_b" UNIQUE CONSTRAINT, btree (b)
-Check constraints:
-    "tbl_cd46p95cefoedabj77gg_a_xata_multiple_length_h" CHECK (octet_length(array_to_string(h, ''::text)) < 65536)
-    "tbl_cd46p95cefoedabj77gg_a_xata_string_length_a" CHECK (length(a) <= 2048)
-    "tbl_cd46p95cefoedabj77gg_a_xata_string_length_b" CHECK (length(b) <= 2048)
-    "tbl_cd46p95cefoedabj77gg_a_xata_string_length_g" CHECK (length(g) <= 2048)
-    "tbl_cd46p95cefoedabj77gg_a_xata_text_length_e" CHECK (octet_length(e) < 204800)
-```
+Xata dedicated clusters separate storage from compute. Storage and compute are billed separately for dedicated clusters. As storage scales automatically you will only get billed for what you use. In addition, the storage pricing is significantly cheaper than the storage pricing for shared clusters. The compute is billed by the hour depending on the instance size and characteristics.
 
-We also rely on PostgreSQL to enforce constraints (unique, not null), data size limitations, and referential integrity for the linked columns. Array types, like `multiple`, are represented using PostgreSQL array types.
+The above means that the dedicated clusters are typically cost-efficient for applications with larger database sizes and higher traffic.
 
-Our data model contains rich types, which refer to data types that allow for more complex and structured data representations that can include a short “string” column (containing a name, or a label) and a “text” column (containing maybe a blog post in Markdown). This means we can have the same defaults for representing and indexing those columns in both PostgreSQL and Elasticsearch.
+There are two kind of instance types to be used in dedicated clusters:
 
-## Branches and zero-downtime migrations
+- **Provisioned**, which are more cost effective for applications with predictable workloads.
+- **Auto-scaling**, which are more cost effective for applications with unpredictable workloads.
 
-A database in Xata can have multiple branches, which are first-class citizens in the API. Branches are full logical databases that might or might not exist on the same set of physical instances. When you start a new branch from an existing one, the schema is copied, but the data is not automatically available in the new branch. As you create a development branch from a production branch, you can copy and sanitize parts of the data or initialize the branch with test data.
+The dedicated clusters, both provisioned and auto-scaling, are powered by AWS Aurora. The auto-scaling functionality is provided by AWS Aurora Serverless v2.
 
-For each branch, we record the schema history in a list of “commits”. These commits contain operations like “add a column”, “rename a column”, “add a new table”, “delete a table”, and more. We also record which branch is created from which. This history information, together with the fact that each table and column are identified by IDs, allows us to create the correct migration diffs and perform the minimum set of operations required for a migration.
+### Integrated secondary data stores
 
-There are multiple benefits to having database branches, which is why lately they are being adopted by multiple database products:
+While PostgreSQL is an incredibly versatile database good for almost any starting application, we are of the opinion that it is not the best tool for every job.
 
-- enable development workflows that match Git workflows, for example having a branch for development, one for staging, one for production, etc.
-- enable development previews on platforms like Vercel and Netlify.
-- enable standardized workflows for applying schema migrations safely.
+A good example of this is our [File Attachments](/docs/sdk/file-attachments) feature. While it is possible to store files as BLOBs in PostgreSQL, it would be expensive and inefficient to do so. Instead, we use S3 for file storage and the Cloudflare CDN for file delivery and image transformations.
 
-The last one is particularly interesting because migrating database schemas is usually easy with small amounts of data, but becomes very painful when dealing with large amounts of data. In the NoSQL wave of DB products, this issue was avoided by going schemaless. However, not having a schema introduces its own class of problems, so lately the pendulum is swinging back toward databases with strict schemas.
+Similarly, while PostgreSQL has full-text search capabilities, we can provide a significantly better full-text search experience by using Elasticsearch. A blog post comparing the two approaches is available [here](https://xata.io/blog/postgres-full-text-search-postgres-vs-elasticsearch).
 
-![Migration Request](/images/migration-screenshot.png)
+The difference between Xata and a cloud provider that provides multiple DBaaS offerings is that in Xata the secondary data stores are **integrated**, meaning that the data is automatically replicated and kept in sync. Also, they are available via the same SDKs and APIs and authorization works the same way.
 
-One reason why migrations are difficult at scale is that `ALTER` statements can lock the database table. If an `ALTER` statement takes an exclusive table lock and it takes, say, one minute to execute, it essentially means one minute of downtime for your application, which is usually unacceptable. In PostgreSQL some `ALTER` statements are “safe”, meaning that they don’t take an exclusive lock, or if they take a lock they hold it for a very small amount of time. Simple migrations like adding a column or dropping a column are usually safe in PostgreSQL, but if that column has constraints, then the operation might become unsafe.
+### Global control plane for databases and branches
 
-Because we have control over the data model and because Xata has native concepts of migrations and migration requests, we can ensure that all supported migration types are safe. That’s why we call our migrations **zero-downtime** migrations. They constrain you in what types of migrations exists, but you can have the confidence that your workflow will keep working at scale.
+Xata databases and branches are `logical` entities, represented in the underlying PostgreSQL databases as schemas. This means that they can be created and destroyed instantly, and can be moved between clusters without downtime. They can be created in any of the regions where Xata is available and accessed via the same credentials.
 
-At the moment the set of migrations supported in Xata is limited to operations that are safely supported by PostgreSQL, but we are growing it to include long-running migrations. For example, if you need to change a column’s type from `string` to `int` that requires a costly data migration, and errors can be discovered at execution time. Because we separate the visible schema from the underlying PostgreSQL schema, we can approach it like this:
+This provides a lot of flexibility in a number of scenarios, for example:
 
-- add a new `int` column with a new internal ID , but don’t expose it in the user schema yet.
-- start a long-running task that converts the data in batches from `string` to `int` and write the results to the new column.
-- for new writes to the table, we write to both the `string` and the `int` columns.
-- when the long-running task is finished, we can swap the two columns atomically in the user schema.
+- A user might start a personal project using the free tier on shared clusters. As the project grows, they might move it to a dedicated cluster, and then to a different region, without downtime.
+- A company might have two dedicated clusters: one for their production branch, and one for all their dev branches. Or they can use shared clusters for the dev branches.
+- A company might create a different Xata database for each of their micro-services, ensuring that there is isolation between the services, yet they can all share the same dedicated cluster.
+- A company might have databases in multiple regions, either on shared clusters or dedicated clusters, depending on the size of each region.
+- A company might create a branch for each of their customers, potentially with different schemas for each and potentially in multiple regions. The largest customers get dedicated clusters, while others are kept on shared clusters.
 
-At any point, the migration can be canceled without a major impact. It is also possible to have the old and the new schema both be active in parallel for some time, simplifying your application upgrade.
+### Vertically integrated Data API and SDKs
 
-## Logical replication events
+Xata provides several ways to access your data:
 
-It is very useful to get a near-real-time stream with all the changes that are in the database. In database terminology, this is called [Change Data Capture](https://en.wikipedia.org/wiki/Change_data_capture). In PostgreSQL, this can be done based on the [logical replication](https://www.postgresql.org/docs/current/logical-replication.html) functionality, which is available since PostgreSQL 10. By hooking into this functionality, we are receiving an event every time a row is changed in PostgreSQL, regardless what has caused the change. It is somewhat similar to database triggers functionality but with better reliability.
+- Via the [Postgres wire protocol](/docs/postgres/connect), using any Postgres client, ORM, or BI tool.
+- Via [SQL over HTTP](/docs/sdk/sql/overview), which especially is useful when calling Xata from serverless functions, because it doesn't require persistent connections.
+- Via the Xata Data API, which is a [RESTful API](/docs/rest-api) that provides a higher-level abstraction over the database, and provides access to data platform functionality like full-text search, aggregations, and file attachments.
 
-We are using logical replication events today to optionally replicate the data from PostgreSQL into Elasticsearch, and in the near future, we’ll use it to call Webhooks, trigger serverless functions, replication between regions, and more.
-
-One interesting challenge with processing replication events is that it’s generally hard to guarantee exactly-once delivery and the ordering of events. Solutions for delivery in order usually imply a single thread of processing. Instead, we have chosen to use version numbers for the records, which are incremented every time a record is updated or deleted. On the consumer side, these versions can be used to both identify duplicate events and to know in which order they are safe to apply.
-
-The version field for a record is stored in a special column, which is exposed in the Xata API because it is also useful for [optimistic concurrency control](/docs/sdk/update#optimistic-concurrency-control).
-
-Another typical challenge with logical replication is that the number of events created can become quite large and overwhelm the PostgreSQL replication slot. For example, imagine running a statement `UPDATE foo` with no `WHERE` condition executed against a table with millions of rows. PostgreSQL executes that in a single transaction at the end of which all the rows in the table have been changed and need to be passed through the replication slot. Issues like this make it hard to rely on logical replication in the general case of arbitrary SQL access. Because we control the API, we can ensure that updates and deletes are done in transactions of reasonable size, which can be rate limited in order to protect the system from overload.
-
-## File attachments
-
-Xata offers general purpose storage for file attachments through the `file` column type. By integrating file support in the database, Xata aims to simplify the management of large binary content, by exposing it under the same API, same security model, same SDK. At the same time, the queries, filters, summaries, aggregations available can now be used on files metadata. The metadata (file name, media type, tags) is also indexed for search so it can be included in search results.
-
-In order to offer both database benefits like queries and CRUD and storage service benefits like - high capacity, high throughput, high concurrency, regional caching - Xata stores the files' metadata in PostgreSQL and the actual binary content in a dedicated cloud storage service.
-
-Direct access URLs are generated and offered through the database API. When using these URLs, the content is served directly from the storage service, therefore enabling greater throughput and concurrency compared to relational data access. The content accessed through the direct access URLs is also cached regionally. Xata integrates with a CDN service with a wide geographical distribution to offer content caching as close as possible to the client application. Xata integrates with an image transformation engine, providing a set of transformations which can be applied on-the-fly and cached.
-
-In all cache systems, the main challenge lies in cache invalidation. This means achieving fast cache access performance while effectively handling content updates and preventing the delivery of outdated information.
-
-Xata implements a cache-invalidation-free approach to optimize file content delivery. The files are treated as dynamic content, similar to the data stored in the database. To ensure efficient handling of updates and prevent stale entries, it is recommended that clients dynamically fetch access URLs directly from the database, rather than relying on static resources. Whenever a file undergoes an update, new URLs are automatically generated and subsequently recognized by the client application during the next database read.
-
-By generating fresh URLs after each update, Xata effectively eliminates the possibility of serving outdated entries, regardless of the presence of intermediate caches or proxies between the client and the storage service. This approach eliminates the need for cache time-to-live (TTL) or dealing with cache invalidation latency, resulting in improved performance for the client application.
-
-When the client application retrieves the URL from the database, it is guaranteed to access the most up-to-date version of the file available. This ensures seamless delivery of the latest file content without the risk of serving stale data.
-
-## API
-
-Xata exposes its functionality over a RESTful-like API. A sample query with a filter looks like this:
-
-```json
-// POST /db/tutorial:main/tables/Users/query
-{
-  "filter": {
-    "zipcode": 12345
-  },
-  "columns": ["name", "street_name, zipcode, city, country"]
-}
-```
-
-A simple free-text-search request looks something like this:
-
-```json
-// POST /db/tutorial:main/tables/Users/search
-{
-  "query": "keanu",
-  "fuzziness": 1,
-  "filter": {
-    "zipcode": 12345
-  }
-}
-```
-
-An aggregation request looks something similar to the follwing:
-
-```json
-// POST /db/tutorial:main/tables/Users/aggregate
-{
-  "aggs": {
-    "NewYorkUsers": {
-      "count": {
-        "filter": {
-          "city": "New York"
-        }
-      }
-    },
-    "citiesCount": {
-      "uniqueCount": {
-        "column": "city"
-      }
-    }
-  }
-}
-```
-
-The `/query` and `/summarize` API endpoints are served from the transactional store (PostgreSQL) and you can choose if you want them to be strongly consistent or to use a read replica. The `/search` and `/aggregate` API endpoints are served from the search and analytics engine (Elasticsearch) and offer only eventual consistency.
-
-As you can see in the above examples, the filtering syntax is the same across the different types of stores, meaning that it’s easy to move queries from one to another.
-
-While we expect most users to use our high-level SDK clients, which make development easier, the REST API is meant to be also easy to understand and use directly. Because it is using JSON, it is more verbose than SQL, but on the other hand, it makes it easier to use with functionality that doesn’t cleanly map into SQL, like free-text-search, complex aggregations, etc.
-
-At the moment, the Xata service doesn’t offer direct access to the PostgreSQL and Elasticsearch instances using their native protocols. The reasons for this might become more clear after reading the following sections, but in short: it allows us to control the underlying schema and what type of queries are possible, and therefore we can ultimately offer our users a new and safer developer experience. For the future, we do have plans to offer SQL support while still maintaining the advantages of mediating access to the underlying stores.
-
-## TypeScript SDK and type safety
-
-Xata has official SDKs for TypeScript/Javascript and Python, and the REST API is meant to be used with ease from any programming language. Having said that, the TypeScript SDK is by far the most advanced SDK that we have.
-
-It uses code generation to generate the models from your schema, so using it is similar to using an ORM.
-
-For example, consider the following command:
-
-```tsx
-const user = await xata.db.users.filter('email', 'foo@example.com').getFirst();
-```
-
-The command gets the first record from the `users` table that matches the filter. The `user` variable has the type `UsersRecord`, which is automatically generated and which has all the columns defined as properties, plus methods like `update()` and `delete()` to work with it. This means that you get type safety out of the box and the editor or IDE will be able to auto-complete table and column names, making writing code easy and fast.
-
-To update the record in the DB you can do the following:
-
-```tsx
-await user.update({
-  name: 'John Smith Jr.'
-});
-```
-
-and to delete it you can do:
-
-```tsx
-await user.delete();
-```
-
-In usage, using the Xata TypeScript SDK is similar to using a Typescript ORM, for example, [Prisma](https://www.prisma.io/). It is generally easy to port applications that use Xata to Prisma and the other way around, because while not 100% compatible, the two are fairly similar.
-
-Under the hood, however, the Xata SDK is implemented a bit differently and makes use of recent TypeScript additions to generate the types at run-time. It also has a somewhat simpler problem to solve, because it only needs to talk with the Xata API, not generate SQL. The result of this is that the Xata SDK is very lightweight and has zero dependencies, so it can be used in many JavaScript runtimes including Node.js, Cloudflare Workers, Deno, Electron, etc.
-
-## Data safety
-
-Xata is committed to protecting the security and ensuring the availability of user data. To do so, we implement appropriate technical measures and internal organization policies to protect from unauthorized access, data leak or loss.
-
-As part of our commitment to securing data access and storage, Xata encrypts user data content:
-
-- during network transit with Transport Layer Security
-- at rest with storage encryption provided by our underlying infrastructure providers
-
-The same level of security standard applies to internal backups, logs and traces which do not expose plain text data content to third parties.
-
-For disaster recovery and change control purposes, Xata performs frequent backups of user data which is retained only as required and while it continues to have a legitimate purpose for delivering our services to the user.
-
-## Conclusions and design principles
-
-At Xata we are taking hard data problems, solve them using the industry's best practices, and then offer them to you in the most easy-to-use way possible.
-
-Zero-downtime migrations are an example of this: difficult under the hood, but a familiar-looking pull request with a diff in our UI. Change Data Capture is another example: generally difficult to get right, but inside Xata your data is simply replicated to the search engine, with zero configuration.
-
-Our design principles are:
-
-- **Use proven technology**, best-in-class for a particular data problem. This is the reason we use PostgreSQL for the main data store and Elasticsearch for search and analytics. For edge functions, we rely on Cloudflare Workers, which has a wide and reliable network. Because we use proven technology, the resulting service is reliable and your data is safe.
-- **Build for vertical integration** for a smooth developer experience. Besides the backend service, we put a lot of effort into our admin UI and SDKs in multiple languages. They work together without any friction.
-- **Cloud-only and serverless**. Operating and monitoring databases is hard, especially when dealing with multiple of them. We are taking as much load off your shoulders as we can. This includes high availability, maintaining replicas, global distributions, etc. This blog post goes into detail on what we mean when we talk about [serverless databases](https://xata.io/blog/what-is-a-serverless-database).
-- **Make the complex simple**. We’re leveraging things like the UI, rich data types, and high-level SDK in order to to make Xata the easiest database to use. At the same time, we’re not sacrificing power, and our functionality goes deep in aspects like search and analytics.
-
-Xata is a relatively new service and we have a lot of ideas for improving it. For example, we plan to add more data stores and more ways to take advantage of the existing data stores. But you can expect us to follow the principles above.
+The Xata SDKs support all three methods above, so it easy to switch between them depending on the use case. The SDKs are available for multiple programming languages, including [TypeScript](/docs/sdk/typescript/overview), [JavaScript](/docs/sdk/typescript/overview), [Python](/docs/sdk/python/overview), and [Go](/docs/sdk/go/overview) and are continuously tested with the Xata service.
