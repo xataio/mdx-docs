@@ -7,7 +7,7 @@ slug: concepts/serverless-data-platform
 published: true
 ---
 
-Xata is a serverless data platform for PostgreSQL that optimizes for reliability, scalability, and developer experience.
+**Xata is a serverless data platform for PostgreSQL that optimizes for reliability, scalability, and developer experience.**
 
 On top of the usual Postgres functionality, Xata provides a set of features that make it easier to build modern applications:
 
@@ -29,9 +29,11 @@ Access to the underlying data is provided in two main ways:
 
 ![PostgreSQL Data Platform](images/postgresql_data_platform.png)
 
+## Who is Xata built for?
+
 Individuals and indie developers like Xata because it is easy to get started, has a generous free-tier, accelerates development speed and solves common problems in a developer-first way (e.g. file attachments, full-text search, vector search).
 
-Companies and larger teams like Xata because it is cost-efficient, consolidates tooling and reduces the operational load. Branching and zero-downtime migration workflows means that your team can iterate faster when performing complex schema changes.
+Companies and larger teams like Xata because it is cost-efficient, consolidates tooling and reduces the operational load with its auto-scaling nature. Branching, and zero-downtime migration workflows means that your team can iterate faster when performing complex schema changes.
 
 ## PostgreSQL, the Xata way
 
@@ -39,47 +41,53 @@ As per the [StackOverflow survey of 2023](https://survey.stackoverflow.co/2023/#
 
 At Xata, we strive to provide the best PostgreSQL cloud service, on a few particular dimensions:
 
-**Reliability**: When it comes to the reliability of the core database service, we have a very [good track record](https://www.xatastatus.com/history) and offer [SLAs](TODO) on our Pro plans and above. Our technology choices are relatively conservative, as we make use of AWS Aurora, a managed PostgreSQL service used at scale by many companies.
+### Reliability
+
+When it comes to the reliability of the core database service, we have a very [good track record](https://www.xatastatus.com/history) and offer [SLAs](TODO) on our Pro plans and above. Our technology choices are relatively conservative, as we make use of [AWS Aurora](https://aws.amazon.com/rds/aurora/), a managed PostgreSQL service used at scale by some of the largest businesses in the world.
 
 Even on the free tier we offer high-availability and redundancy, with replicas running in multiple availability zones. The failover from the primary instance to a replica is automatic and it's guaranteed to have no data loss. At the storage layer, the data is synchronously replicated to six storage nodes across three availability zones.
 
 On the paid plans, we offer point-in-time-recovery (PITR) and our support team will help you restore the whole database or only parts of the database (e.g. specific tables or rows) as per our support [SLA times](TODO).
 
-**Cost efficiency**: The way we achieve cost efficiency for as many use cases as possible is by offering a high degree of optionality. The innovation of the Xata service is that we make it really easy to move from one type of cluster to another, without downtime. This means that you can easily try your workload on different types of clusters and see which one is the most cost-efficient for you.
+### Cost efficiency
+
+Xata achieves cost efficiency for as many use cases as possible is by offering a high degree of optionality. The innovation of the Xata service is that we make it really easy to move from one type of cluster to another, without downtime. This means that you can easily try your workload on different types of clusters and see which one is the most cost-efficient for you.
 
 At small scale, we offer a free tier that includes high-availability and read replicas, no cold-starts, and no instance-pausing after a few days. We can offer this sustainably because the free tier makes use of [shared clusters](#shared-or-dedicated-clusters) and auto-scaling.
 
 At large scale, you pay for the resources you use and you have a high degree of control. For example, for predictable load, you can configure a particular instance size, while for unpredictable load, auto-scaling will likely be more cost-efficient. Similarly, you can choose between standard storage and I/O optimized storage, which is more cost-efficient for I/O-heavy workloads.
 
-**Scalability**: Available instance types in Xata go up to 128 vCPUs and 1TB of RAM (for example, `db.r6i.32xlarge`). Storage can be scaled up to 128TiB per cluster. That is quite a lot of headroom for vertical scaling.
+### Scalability
+
+Available instance types in Xata go up to 128 vCPUs and 1TB of RAM (for example, `db.r6i.32xlarge`). Storage can be scaled up to 128TiB per cluster. That is quite a lot of headroom for vertical scaling.
 
 When it comes to horizontal scaling, the fact that you can create databases and branches instantly and that you can move them between clusters without downtime, opens up several architectural possibilities. For example, you can create a logical database for each of your customers, and place them in different regions. See the section on [Global control plane for databases and branches](#global-control-plane-for-databases-and-branches) for more details.
 
-### Shared or dedicated clusters
+### Infrastructure optionality
 
-There are two types of clusters powering the Xata service: shared and dedicated. Database branches can be created on both types of clusters, and they can be moved seamlessly between them, without downtime. It is common to use a dedicated cluster for the production branch and shared clusters for the dev branches.
+There are two types of clusters powering the Xata service: shared and dedicated. Database branches can be created on both types of clusters, and they can be moved seamlessly between them, without downtime. A common scenario is to use a dedicated cluster for the production branch and shared clusters for the dev branches.
 
 ![Shared and dedicated clusters](images/shared_and_dedicated_clusters.png)
 
-### Shared Postgres clusters
+#### Shared Postgres clusters
 
 These are multi-tenant clusters that are shared between multiple customers. This is the default in the Xata service, and if you don't have a dedicated cluster, your databases will be automatically created on a shared cluster.
 
-Shared clusters are cost-efficient and are the reason for which we can sustainably offer such a generous free-tier. The main billing metric for shared clusters is the storage size, with compute being bundled in. They come with rate limits and concurrency limits to prevent abuse. This means that they are typically cost efficient for applications with relatively small database sizes and low to moderate traffic.
+Shared clusters are cost-efficient and are the reason we can sustainably offer a generous free-tier. The main billing metric for shared clusters is the storage size, with compute being bundled in. Shared clusters come with [rate and concurrency limits](/docs/rest-api/limits) to prevent abuse. This means that they are typically cost efficient for applications with relatively small database sizes and low to moderate traffic.
 
-The shared clusters are limited when it comes to the PostgreSQL functionality that is enabled. For example, custom functions and triggers are not allowed, in order to protect the security of the cluster.
+Shared clusters are limited when it comes to the PostgreSQL functionality that is enabled. Custom functions, extensions and triggers are not allowed in order to protect the security of the cluster.
 
 Nevertheless, branches on shared clusters have zero cold starts, they are never paused, and come with high-availability and redundancy built-in, even on the free tier. The shared clusters are powered by AWS Aurora, which separates storage from compute and offers fast failover and point-in-time-recovery (PITR) backups.
 
-### Dedicated Postgres clusters
+#### Dedicated Postgres clusters
 
 <Alert status="warning">Dedicated clusters are currently in private alpha. Please reach out to request access.</Alert>
 
 These are single-tenant clusters that are dedicated to a single customer. You can create multiple Xata databases or branches on a dedicated cluster, and you can move them between clusters (including shared clusters) without downtime.
 
-Unlike the shared clusters, the dedicated clusters offer the full set of PostgreSQL functionality, including custom functions and triggers. They have no rate limits and no concurrency limits, and are limited only by the compute size.
+Unlike the shared clusters, the dedicated clusters offer the full set of PostgreSQL functionality, including custom functions, extensions, and triggers. They have no rate limits and no concurrency limits, and are limited only by the compute size.
 
-Xata dedicated clusters separate storage from compute and the storage and compute are billed separately for dedicated clusters. The storage grows automatically and you only get billed for what you use. In addition, the storage pricing is significantly cheaper than the storage pricing for shared clusters. The compute is billed by the hour depending on the instance size and characteristics.
+Xata dedicated clusters separate storage from compute. Storage and compute are billed separately for dedicated clusters. As storage scales automatically you will only get billed for what you use. In addition, the storage pricing is significantly cheaper than the storage pricing for shared clusters. The compute is billed by the hour depending on the instance size and characteristics.
 
 The above means that the dedicated clusters are typically cost-efficient for applications with larger database sizes and higher traffic.
 
@@ -92,13 +100,13 @@ The dedicated clusters, both provisioned and auto-scaling, are powered by AWS Au
 
 ## More than PostgreSQL
 
-While Xata is built on top of PostgreSQL, it is not a typical PostgreSQL DBaaS, but a _data platform for PostgreSQL_. The following are the charateristics of the data platform.
+While Xata is built on top of PostgreSQL, it is not a typical PostgreSQL DBaaS, but a _data platform for PostgreSQL_. The following are the characteristics of the data platform:
 
 ### Integrated secondary data stores
 
-While PostgreSQL is an incredibly versitile database, and it's an excelent starting dataabse for almost any application, we are of the opinion that it is not the best tool for every job.
+While PostgreSQL is an incredibly versatile database good for almost any starting application, we are of the opinion that it is not the best tool for every job.
 
-A good example of this is the File Attachments feature. While it is possible to store files as BLOBs in PostgreSQL, it would be expensive and inefficient to do so. Instead, we use S3 for file storage and the Cloudflare CDN for file delivery and image transformations.
+A good example of this is our [File Attachments](/docs/sdk/file-attachments) feature. While it is possible to store files as BLOBs in PostgreSQL, it would be expensive and inefficient to do so. Instead, we use S3 for file storage and the Cloudflare CDN for file delivery and image transformations.
 
 Similarly, while PostgreSQL has full-text search capabilities, we can provide a significantly better full-text search experience by using Elasticsearch. A blog post comparing the two approaches is available [here](https://xata.io/blog/postgres-full-text-search-postgres-vs-elasticsearch).
 
@@ -106,26 +114,22 @@ The difference between Xata and a cloud provider that provides multiple DBaaS of
 
 ### Global control plane for databases and branches
 
-Xata databases and branches are _logical_ entities, represented in the underlying PostgreSQL databases as schemas. This means that they can be created and destroyed instantly, and they can be moved between clusters without downtime. They can also be created in any of the regions where Xata is available, yet accessed via the same credentials.
+Xata databases and branches are `logical` entities, represented in the underlying PostgreSQL databases as schemas. This means that they can be created and destroyed instantly, and can be moved between clusters without downtime. They can be created in any of the regions where Xata is available and accessed via the same credentials.
 
 This provides a lot of flexibility in a number of scenarios, for example:
 
 - A user might start a personal project using the free tier on shared clusters. As the project grows, they might move it to a dedicated cluster, and then to a different region, without downtime.
-
 - A company might have two dedicated clusters: one for their production branch, and one for all their dev branches. Or they can use shared clusters for the dev branches.
-
-- A company might create a different Xata database for each of their microservices, ensuring that there is isolation between the services, yet they can all share the same dedicated cluster.
-
+- A company might create a different Xata database for each of their micro-services, ensuring that there is isolation between the services, yet they can all share the same dedicated cluster.
 - A company might have databases in multiple regions, either on shared clusters or dedicated clusters, depending on the size of each region.
-
 - A company might create a branch for each of their customers, potentially with different schemas for each and potentially in multiple regions. The largest customers get dedicated clusters, while others are kept on shared clusters.
 
 ### Vertically integrated Data API and SDKs
 
 Xata provides several ways to access your data:
 
-- Via the Postgres wire protocol, using any Postgres client, ORM, or BI tool.
-- Via SQL over HTTP, which especially is useful when calling Xata from serverless functions, because it doesn't require persistent connections.
-- Via the Xata Data API, which is a RESTful API that provides a higher-level abstraction over the database, and provides access to data platform functionality like full-text search, aggregations, and file attachments.
+- Via the [Postgres wire protocol](/docs/postgres/connect), using any Postgres client, ORM, or BI tool.
+- Via [SQL over HTTP](/docs/sdk/sql/overview), which especially is useful when calling Xata from serverless functions, because it doesn't require persistent connections.
+- Via the Xata Data API, which is a [RESTful API](/docs/rest-api) that provides a higher-level abstraction over the database, and provides access to data platform functionality like full-text search, aggregations, and file attachments.
 
-The Xata SDKs support all three methods above, so it easy to switch between them depending on the use case. The SDKs are available for multiple programming languages, including TypeScript, JavaScript, Python, and Go and are continuously tested with the Xata service.
+The Xata SDKs support all three methods above, so it easy to switch between them depending on the use case. The SDKs are available for multiple programming languages, including [TypeScript](/docs/sdk/typescript/overview), [JavaScript](/docs/sdk/typescript/overview), [Python](/docs/sdk/python/overview), and [Go](/docs/sdk/go/overview) and are continuously tested with the Xata service.
