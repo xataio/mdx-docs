@@ -12,16 +12,20 @@ Xata is a serverless data platform for PostgreSQL that optimizes for reliability
 On top of the usual Postgres functionality, Xata provides a set of features that make it easier to build modern applications:
 
 - **Branching**: Create a new branch of your data to work on new features or experiments without affecting the main branch. The branching can also be used for tenant separation, allowing you to create a branch for each of your customers.
-- **Zero-downtime schema migrations**: Make changes to your production database with zero-downtime, reversible schema migrations and data backfilling. This functionality is powered by our open-source project [pgroll](https://github.com/xataio/pgroll).
-- **File attachments**: Store and retrieve files up to 1GB, including images, videos, and audio files. The files are stored in object storage and automatically cached on a global CDN for fast delivery. From the application point of view, however, it's just another column in the database.
-- **Full-text search**: Data is automatically replicated into a full-text search engine, making it easy to build search experiences, supporting fuzzy search, weights, and relevancy boosters.
-- **Vector search**: Easily store embeddings and implement similarity search to power your AI applications.
+- **[Zero-downtime schema migrations](/docs/getting-started/workflow)**: Make changes to your production database with zero-downtime, reversible schema migrations and data backfilling. This functionality is powered by our open-source project [pgroll](https://github.com/xataio/pgroll).
+- **[File attachments](/docs/sdk/file-attachments)**: Store and retrieve files up to 1GB, including images, videos, and audio files. The files are stored in object storage and automatically cached on a global CDN for fast delivery. From the application point of view, however, it's just another column in the database.
+- **[Image transformations](/docs/sdk/image-transformations)**: Any images stored with File Attachments can perform powerful at-will image transformations.
+- **[Full-text search](/docs/sdk/search)**: Data is automatically replicated into a full-text search engine, making it easy to build search experiences, supporting fuzzy search, weights, and relevancy boosters.
+- **[Vector search](/docs/sdk/vector-search)**: Easily store embeddings and implement similarity search to power your AI applications.
 - **Collaborative dashboard**: A web-based console to manage your data, including schema and data.
-- **SDKs**: Xata comes with vertically integrated SDKs for popular programming languages, including TypeScript, JavaScript, Python, and Go. In addition, Xata works with any PostgreSQL client or ORM.
+- **SDKs**: Xata comes with vertically integrated SDKs for popular programming languages, including [TypeScript](/docs/sdk/typescript/overview), [JavaScript](/docs/sdk/typescript/overview), [Python](/docs/sdk/python/overview), and [Go](/docs/sdk/go/overview). In addition, Xata works with any [PostgreSQL client or ORM](/docs/postgres/connect).
 
 In order to provide these features, Xata uses other data stores in addition to PostgreSQL, namely [Elasticsearch](https://github.com/elastic/elasticsearch/) for full-text search, aggregations and vector search, [S3](https://aws.amazon.com/s3/) for file attachments, and the [Cloudflare CDN](https://www.cloudflare.com/application-services/products/cdn/) for file delivery and image transformations. The Postgres logical replication events are used to keep these data stores in sync with the main database.
 
-Access to the underlying data is provided in two main ways: via the PostgreSQL wire protocol, which is mediated by our SQL Proxy, and via our SDKs, which provide a higher-level interface to the data.
+Access to the underlying data is provided in two main ways:
+
+- Via the PostgreSQL wire protocol, which is mediated by our SQL Proxy.
+- Via our SDKs, which provide a higher-level interface to the data.
 
 ![PostgreSQL Data Platform](images/postgresql_data_platform.png)
 
