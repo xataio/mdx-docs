@@ -413,13 +413,13 @@ const result = await xata.transactions.run([
   {
     delete: {
       table: 'titles',
-      record: { id: 'rec_cfl4g6v00023' },
+      id: 'rec_cfl4g6v00023'
     }
   }, 
   {
     delete: {
       table: 'titles',
-      record: { id: 'rec_cfl4g6v00056' },
+      id: 'rec_cfl4g6v00056'
     }
   },
   // You can add additional operations
@@ -432,13 +432,13 @@ result = xata.records().transaction({
     {
       "delete": {
         "table": "titles",
-        "record": { "id": "rec_cfl4g6v00023" }
+        "id": "rec_cfl4g6v00023"
       }
     },
     {
       "delete": {
         "table": 'titles',
-        "record": { "id": "rec_cfl4g6v00056" },
+        "id": "rec_cfl4g6v00056"
       }
     },
     # You can add additional operations
