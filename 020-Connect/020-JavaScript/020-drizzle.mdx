@@ -55,6 +55,22 @@ const client = new Client({ connectionString: xata.sql.connectionString });
 const db = drizzle(client);
 ```
 
+For production usecases, you can create a pool of connections with the TCP client:
+
+```ts
+import { drizzle } from '@xata.io/drizzle/pg';
+import { getXataClient } from './xata'; // Generated client
+import { Pool } from 'pg';
+
+const xata = getXataClient();
+const pool = new Pool({ connectionString: xata.sql.connectionString, max: 20 });
+const db = drizzle(pool);
+```
+
+> Depending on your current plan, you may need to adjust the `max` value to match your plan's connection limit.
+
+### Example
+
 A full example of using Drizzle with Xata is shown below:
 
 ```ts
