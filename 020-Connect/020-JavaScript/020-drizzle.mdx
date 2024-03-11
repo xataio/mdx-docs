@@ -16,15 +16,15 @@ Install both Drizzle and `@xata.io/drizzle` with the Xata client. You can use th
 
 <TabbedCode tabs={['npm', 'pnpm', 'yarn']}>
 ```sh
-npm install drizzle-orm @xata.io/drizzle @xata.io/client
+npm install drizzle-orm @xata.io/drizzle @xata.io/client pg
 ```
 
 ```sh
-pnpm add drizzle-orm @xata.io/drizzle @xata.io/client
+pnpm add drizzle-orm @xata.io/drizzle @xata.io/client pg
 ```
 
 ```sh
-yarn add drizzle-orm @xata.io/drizzle @xata.io/client
+yarn add drizzle-orm @xata.io/drizzle @xata.io/client pg
 ```
 
 </TabbedCode>
@@ -104,3 +104,4 @@ Currently, we recommend manually defining the schema like in the example above. 
 ### Limitations
 
 - Transactions are not supported in the HTTP client.
+- Drizzle Kit instrospection has a bug with our xata_id default value. You need to manually wrap the value with backticks.
