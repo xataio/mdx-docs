@@ -10,7 +10,7 @@ status: beta
 
 [Drizzle](https://github.com/drizzle-team/drizzle-orm) is a TypeScript ORM that is focused on type safety and closely follows the SQL syntax.
 
-### Installation
+## Installation
 
 Install both Drizzle and `@xata.io/drizzle` with the Xata client. You can use the following package managers:
 
@@ -29,9 +29,9 @@ yarn add drizzle-orm @xata.io/drizzle @xata.io/client pg
 
 </TabbedCode>
 
-### Usage
+## Usage
 
-You can use Drizzle with Xata with a HTTP client or a TCP client. The HTTP client doesn't create a persistent connection to the Xata server, while the TCP client does and can be used for better performance with a higher number of requests.
+Drizzle works with Xata as a HTTP client or a TCP client. The HTTP client doesn't create a persistent connection to the Xata server, while the TCP client does and can be used for better performance with a higher number of requests.
 
 To create a drizzle instance with the HTTP client, use the following code:
 
@@ -55,7 +55,7 @@ const client = new Client({ connectionString: xata.sql.connectionString });
 const db = drizzle(client);
 ```
 
-For production usecases, you can create a pool of connections with the TCP client:
+For production use cases, you can create a pool of connections with the TCP client:
 
 ```ts
 import { drizzle } from '@xata.io/drizzle/pg';
@@ -67,9 +67,9 @@ const pool = new Pool({ connectionString: xata.sql.connectionString, max: 20 });
 const db = drizzle(pool);
 ```
 
-> Depending on your current plan, you may need to adjust the `max` value to match your plan's connection limit.
+> Depending on your current plan, you may need to adjust the `max` value to match your plan's [connection limit](/docs/rest-api/limits).
 
-### Example
+## Example
 
 A full example of using Drizzle with Xata is shown below:
 
@@ -81,19 +81,18 @@ import { getXataClient } from './xata'; // Generated client
 
 const xata = getXataClient();
 
-const drivers = pgTable('drivers', {
+const actors = pgTable('Actors', {
   id: text('id').primaryKey(),
-  surname: text('surname'),
-  forename: text('forename'),
-  nationality: text('nationality')
+  name: text('name'),
+  city: text('city')
 });
 
 const db = drizzle(xata);
 
 const result = await db
-  .select({ surname: drivers.surname, forename: drivers.forename })
-  .from(drivers)
-  .where(eq(drivers.nationality, 'Spanish'))
+  .select({ name: actors.name, city: actors.city })
+  .from(actors)
+  .where(eq(actors.city, 'New York'))
   .execute();
 ```
 
@@ -101,8 +100,8 @@ The code imports required modules from the `drizzle-orm` and `@xata.io/drizzle` 
 
 Currently, we recommend manually defining the schema like in the example above. Alternatively, you can try to use `drizzle-kit` [experimental feature](https://orm.drizzle.team/kit-docs/commands#introspect--pull) to generate the schema from the database.
 
-### Limitations
+## Limitations
 
 - Transactions are not supported in the HTTP client.
-- Drizzle Kit instrospection has a bug with our xata_id default value. You need to manually wrap the value with backticks.
+- Drizzle Kit introspection has a bug with our xata_id default value. You need to manually wrap the value with backticks.
 - Xata File Storage is read-only and only shows file metadata. You need to use the SDK to upload and download files.
