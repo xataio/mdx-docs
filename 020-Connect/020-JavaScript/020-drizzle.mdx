@@ -31,9 +31,33 @@ yarn add drizzle-orm @xata.io/drizzle @xata.io/client
 
 ### Usage
 
-You can use Drizzle with a Xata, as demonstrated in the following examples:
+You can use Drizzle with Xata with a HTTP client or a TCP client. The HTTP client doesn't create a persistent connection to the Xata server, while the TCP client does and can be used for better performance with a higher number of requests.
 
-```tsx
+To create a drizzle instance with the HTTP client, use the following code:
+
+```ts
+import { drizzle } from '@xata.io/drizzle';
+import { getXataClient } from './xata'; // Generated client
+
+const xata = getXataClient();
+const db = drizzle(xata);
+```
+
+To create a drizzle instance with the TCP client, use the following code:
+
+```ts
+import { drizzle } from '@xata.io/drizzle/pg';
+import { getXataClient } from './xata'; // Generated client
+import { Client } from 'pg';
+
+const xata = getXataClient();
+const client = new Client({ connectionString: xata.sql.connectionString });
+const db = drizzle(client);
+```
+
+A full example of using Drizzle with Xata is shown below:
+
+```ts
 import { pgTable, text } from 'drizzle-orm/pg-core';
 import { drizzle } from '@xata.io/drizzle';
 import { eq } from 'drizzle-orm';
@@ -59,9 +83,8 @@ const result = await db
 
 The code imports required modules from the `drizzle-orm` and `@xata.io/drizzle` libraries. It also brings in the `eq` function from `drizzle-orm` for value comparison and the `getXataClient` function from a local xata module. The `getXataClient` function is used to acquire an instance of the Xata client.
 
-Currently, we recommend manually defining the schema like in the example above. We are working on utility functions to automatically generate the Drizzle model from the Xata database schema.
+Currently, we recommend manually defining the schema like in the example above. Alternatively, you can try to use `drizzle-kit` [experimental feature](https://orm.drizzle.team/kit-docs/commands#introspect--pull) to generate the schema from the database.
 
 ### Limitations
 
-- Drizzle migrations are not supported yet
-- Transactions are not supported yet
+- Transactions are not supported in the HTTP client.
