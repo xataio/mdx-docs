@@ -209,6 +209,10 @@ Concurrent connections are limited by [plan](/docs/concepts/pricing#pricing-plan
 - Pro plan on shared cluster: 60 concurrent connections
 - Pro plan on [dedicated cluster](/docs/dedicated-cluster): Unlimited connections
 
+### Migrations
+
+Branch migrations are not supported yet. In databases that support direct Postgres access, you can create new branches but they cannot be merged together. This capability will become available later on.
+
 ## Adapt your schema to match Xata requirements
 
 Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and rejects any columns with the prefix. Avoid naming columns with this prefix as there will be functional implications.

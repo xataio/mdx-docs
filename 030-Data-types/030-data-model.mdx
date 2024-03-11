@@ -7,6 +7,32 @@ slug: concepts/data-model
 published: true
 ---
 
+Xata builds on top of Postgres and thus supports the [default data types](https://www.postgresql.org/docs/current/datatype.html) inherit in that platform. Xata additionally adds to that list with unique types such as `file`, `filearray` and `vector` to handle platform features like [file attachements](/docs/sdk/file-attachments) and [vector searching](/docs/sdk/vector-search). In addition, there are some added types to simplify validation of common `text` patterns such as `email` and `multiple`. Usage of these types is ultimately optional if you wish to use Xata only as a Postgres host. If you do decide to utilize them (which is the default way Xata operates through our UI), it is required that you interact with these types through the Xata SDKs.
+
+## Xata specific data types
+
+Below is a mapping of the additional data types Xata provides alongside Postgres types.
+
+| Xata data type          | PostgreSQL data type | Notes                              |
+| ----------------------- | -------------------- | ---------------------------------- |
+| [string](#string)       | text                 |                                    |
+| [text](#text)           | text                 | With constraints on maximum length |
+| [int](#int)             | bigint               |                                    |
+| [float](#float)         | double precision     |                                    |
+| [datetime](#datetime)   | timestamptz          |                                    |
+| [bool](#bool)           | boolean              |                                    |
+| [email](#email)         | text                 | Validated by Xata                  |
+| [multiple](#multiple)   | text[]               | Validated by Xata                  |
+| [file](#file)           | jsonb                | Validated by Xata                  |
+| [filearray](#filearray) | jsonb                | Validated by Xata                  |
+| [link](#link)           | foreign key          |                                    |
+
+## Limitations when using native Postgres types
+
+As you are able to create your own types or use types from extensions through the [Postgres wire protocol](/docs/postgres), there is a possibility that the Xata UI is not aware of the type. For such cases, the UI will display the column values as a string and the corresponding edit UI set to read-only. For now, manipulation of these columns needs to be performed through the wire protocol. Reach out to our [support team](/docs/resources/support) to request adding the data type to Xata.
+
+## Xata model
+
 Xata has a relational data model, with a strict schema. Records are grouped into tables, which are grouped into databases. Xata supports rich column types and relations between tables can be represented via link columns, which are similar to foreign keys.
 
 Internally, we are storing the data both in a transactional database (OLTP) as well as in a search/analytics engine (OLAP). This is done transparently for you and the different stores are exposed via the same API. You can read more about how Xata works behind the scenes on the [How it Works](/docs/concepts/serverless-data-platform) page.
@@ -340,10 +366,6 @@ be defined in the schema, and must be a number between 2 and 10,000. For example
 
 In the example above we set the dimension to 1536, which is the output dimension produced by the OpenAI embeddings API, however, you can store embeddings
 produced by any other machine learning model. Once you store the embeddings, you can use vector search for a number of use cases, see the [Similarity/Vector search](/docs/sdk/vector-search) section for more information.
-
-### object
-
-**Warning**: The `object` type is no longer supported since December 13th, 2023. If you are using the `object` type in your workspace, we strongly encourage you to review your implementations and update them accordingly, replacing the `object` type with suitable alternatives as recommended in our [migration options](#object-type-migration) documentation.
 
 ### link
 
@@ -784,151 +806,3 @@ Using `consistency: eventual` is beneficial if you are not bound to real time da
 ## Conclusion
 
 This is the Xata data model as it stands today. Knowing what's available to you, we encourage exploring more concepts such as the [schema](/docs/concepts/data-model#schema).
-
-## Object type migration
-
-The `object` type is unsupported since December 13th, 2023 as mentioned [here](#object). We recommend you explore various migration options to transition away from this type.
-For a migration case, we listed three options for you to explore and change your schema.
-
-### Option 1: Flatten your schema
-
-Flattening a schema simplifies a database or table structure by removing nested objects. After flattening, all columns are at the same level, making it easier to represent in a tabular format.
-
-You can flatten your table schema by adding the columns from the object column to the table itself. To simplify your table structure, you can incorporate the columns from the object column directly into the table itself, using an underscore (\_) to separate them.
-
-The column name is defined as follows:
-
-```json
-{
-  "name": "name",
-  "type": "object",
-  "columns": [
-    {
-      "name": "first",
-      "type": "string"
-    },
-    {
-      "name": "middle",
-      "type": "string"
-    },
-    {
-      "name": "last",
-      "type": "string"
-    }
-  ]
-}
-```
-
-To flatten the structure, the column name should be split into three new columns: `first_name`, `middle_name`, and `last_name`, which will represent the corresponding fields `first`, `middle`, and `last`.
-
-```json
-{
-  "name": "first_name",
-  "type": "string"
-},
-{
-  "name": "middle_name",
-  "type": "string"
-},
-{
-  "name": "last_name",
-  "type": "string"
-}
-```
-
-### Option 2: Join table
-
-The second option is to normalize your schema and create a joined table by establishing a [link](#link). For example, if you have a table named `social_content` with a column `profile` of the type `object`, you can extract the columns of the `profile` object into their own table. This option is particularly good if you expect that the `profile` table might be linked to from other tables.
-
-```json
-{
-  "name": "profile",
-  "type": "object",
-  "columns": [
-    {
-      "name": "name",
-      "type": "string"
-    },
-    {
-      "name": "email",
-      "type": "email"
-    },
-    {
-      "name": "homepage",
-      "type": "string"
-    }
-  ]
-}
-```
-
-Create a new table called `profiles` with the same schema as the `object` type:
-
-```json
-{
-  "columns": [
-    {
-      "name": "name",
-      "type": "string"
-    },
-    {
-      "name": "email",
-      "type": "email"
-    },
-    {
-      "name": "homepage",
-      "type": "string"
-    }
-  ]
-}
-```
-
-Link the `profiles` table in the original `social_content` table:
-
-```json
-{
-  "name": "profile",
-  "type": "link",
-  "link": {
-    "table": "profiles"
-  }
-}
-```
-
-### Option 3: Store as raw JSON
-
-As indicated in [our roadmap](https://xata.io/roadmap), we are working on introducing support for a dedicated JSON type. As an interim solution, we suggest storing the data from an object column as serialized JSON in a column of type `text`.
-
-```json
-{
-  "name": "location",
-  "type": "object",
-  "columns": [
-    {
-      "name": "lat",
-      "type": "float"
-    },
-    {
-      "name": "lng",
-      "type": "float"
-    }
-  ]
-}
-```
-
-Change to the following:
-
-```json
-{
-  "name": "location",
-  "type": "text"
-}
-```
-
-Store the following JSON body:
-
-```json
-{
-  "lat": 47.259659,
-  "lng": 11.400375
-}
-```
