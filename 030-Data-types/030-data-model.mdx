@@ -13,20 +13,20 @@ Xata builds on top of Postgres and thus supports the [default data types](https:
 
 Below is a mapping of the additional data types Xata provides alongside Postgres types.
 
-| Xata data type          | PostgreSQL data type | Notes                              |
-| ----------------------- | -------------------- | ---------------------------------- |
-| [string](#string)       | text                 |                                    |
+| Xata data type          | PostgreSQL data type | Notes                                                 |
+| ----------------------- | -------------------- | ----------------------------------------------------- |
+| [string](#string)       | text                 |                                                       |
 | [text](#text)           | text                 | With constraints on maximum length of 1000 characters |
-| [int](#int)             | bigint               |                                    |
-| [float](#float)         | double precision     |                                    |
-| [datetime](#datetime)   | timestamptz          |                                    |
-| [bool](#bool)           | boolean              |                                    |
-| [email](#email)         | text                 | Validated by Xata                  |
-| [multiple](#multiple)   | text[]               | Validated by Xata                  |
-| [file](#file)           | jsonb                | Validated by Xata                  |
-| [filearray](#filearray) | jsonb                | Validated by Xata                  |
-| [link](#link)           | foreign key          |                                    |
-| [vector](#vector)       | real[]               |                                    |
+| [int](#int)             | bigint               |                                                       |
+| [float](#float)         | double precision     |                                                       |
+| [datetime](#datetime)   | timestamptz          |                                                       |
+| [bool](#bool)           | boolean              |                                                       |
+| [email](#email)         | text                 | Validated by Xata                                     |
+| [multiple](#multiple)   | text[]               | Validated by Xata                                     |
+| [file](#file)           | jsonb                | Validated by Xata                                     |
+| [filearray](#filearray) | jsonb                | Validated by Xata                                     |
+| [link](#link)           | foreign key          |                                                       |
+| [vector](#vector)       | real[]               |                                                       |
 
 ## Limitations when using native Postgres types
 
