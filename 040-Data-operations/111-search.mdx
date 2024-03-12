@@ -135,7 +135,7 @@ results, _ := searchClient.SearchBranch(context.TODO(), xata.SearchBranchRequest
 Regardless of client, the above search will return results in the below shape. Each result adds an additional `xata` object which contains metadata about the search that includes:
 
 - The `table` where the result was found.
-- The relevancy `score` of the result. See [Relevancy control](#relevancy-control) for more information.
+- The relevance `score` of the result. See [Relevance control](#relevance-control) for more information.
 - The `version` of the record.
 - The `highlight` field, which contains the highlighted search terms.
 - The `totalCount`, which is the total number of matches for a search query.
@@ -637,18 +637,18 @@ results = xata.data().search_branch({
 
 </TabbedCode>
 
-## Relevancy control
+## Relevance control
 
-When using the search API, Xata assigns a relevancy score to each result and the results are returned sorted by their relevancy to the provided query. Behind the scenes,
+When using the search API, Xata assigns a relevance score to each result and the results are returned sorted by their relevance to the provided query. Behind the scenes,
 Xata uses a [BM25](https://en.wikipedia.org/wiki/Okapi_BM25) algorithm to rank the results. The algorithm takes into account the frequency of the search terms in the document, the length of the document, and the frequency of the search terms in the database.
 
-The relevancy score is returned for each result in the metadata. See [Searching across tables](#searching-across-tables) for sample responses.
+The relevance score is returned for each result in the metadata. See [Searching across tables](#searching-across-tables) for sample responses.
 
-You can fine-tune the relevancy of your searches by using column weights and boosters. We recommend using the web UI to experiment with these settings, then use the "Get Code Snippet" button to get the code to use in your app.
+You can fine-tune the relevance of your searches by using column weights and boosters. We recommend using the web UI to experiment with these settings, then use the "Get Code Snippet" button to get the code to use in your app.
 
 ### Column weights
 
-You can assign an integer weight to each column. The default weight is 1. The higher the weight, the higher the relevancy score will be for matches in that column.
+You can assign an integer weight to each column. The default weight is 1. The higher the weight, the higher the relevance score will be for matches in that column.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
@@ -715,7 +715,7 @@ In the above example, all columns are still targeted (`*` is included in `target
 
 ### Numeric booster
 
-The numeric booster allows making use of numeric columns to influence the relevancy score. This is particularly useful when you have columns that contain metrics relevant to the score, like "number of stars", or "number of views'.
+The numeric booster allows making use of numeric columns to influence the relevance score. This is particularly useful when you have columns that contain metrics relevant to the score, like "number of stars", or "number of views'.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
@@ -772,7 +772,7 @@ results = xata.data().search_branch({
 
 </TabbedCode>
 
-In this example, the `views` column is multiplied with the factor of 3 and then added to the relevancy score.
+In this example, the `views` column is multiplied with the factor of 3 and then added to the relevance score.
 
 Additionally, the numeric booster can be configured with the `modifier` parameter which applies on the factor and value of the column before adding it to the item score.
 
@@ -846,11 +846,11 @@ results = xata.data().search_branch({
 
 </TabbedCode>
 
-In this example, the `views` column is multiplied with the factor of 3, then the result is squared and finally added to the relevancy score.
+In this example, the `views` column is multiplied with the factor of 3, then the result is squared and finally added to the relevance score.
 
 ### Exact value booster
 
-The exact value booster allows boosting the relevancy of records that have an exact value in a column. This can be useful to boost, for example, movies in a given genre. A common scenario is to use exact value boosts to "pin" a particular result at the top of the results.
+The exact value booster allows boosting the relevance of records that have an exact value in a column. This can be useful to boost, for example, movies in a given genre. A common scenario is to use exact value boosts to "pin" a particular result at the top of the results.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
@@ -909,11 +909,11 @@ results = xata.data().search_branch({
 
 </TabbedCode>
 
-In the above example, records that have the value `action` in the `genre` column will receive a boost factor of 5 added to their relevancy score.
+In the above example, records that have the value `action` in the `genre` column will receive a boost factor of 5 added to their relevance score.
 
 ### Date booster
 
-The date booster allows boosting the relevancy of records that have a date in a column depending on the proximity of the matching date to a provided date. This can be used to boost, for example, more recent movies added to the database. In the below example we'll use Xata's internal `xata.createdAt` object that is available on all records.
+The date booster allows boosting the relevance of records that have a date in a column depending on the proximity of the matching date to a provided date. This can be used to boost, for example, more recent movies added to the database. In the below example we'll use Xata's internal `xata.createdAt` object that is available on all records.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 
