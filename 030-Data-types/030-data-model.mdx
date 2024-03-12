@@ -23,8 +23,8 @@ Below is a mapping of the additional data types Xata provides alongside Postgres
 | [bool](#bool)           | boolean              |                                                       |
 | [email](#email)         | text                 | Validated by Xata                                     |
 | [multiple](#multiple)   | text[]               | Validated by Xata                                     |
-| [file](#file)           | jsonb                | Validated by Xata                                     |
-| [filearray](#filearray) | jsonb                | Validated by Xata                                     |
+| [file](#file)           | xata.xata_file       | json object stored natively as jsonb                  |
+| [filearray](#filearray) | xata.xata_file_array | json array stored natively as jsonb                   |
 | [link](#link)           | foreign key          |                                                       |
 | [vector](#vector)       | real[]               |                                                       |
 
