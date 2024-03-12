@@ -83,6 +83,7 @@ pg_dump --no-acl --no-owner --no-comments --no-table-access-method --host=[Regio
 
 - The prompt will ask you for the password, which is your API key.
 - The flags, `--no-acl`, `--no-owner`, `--no-comments` and `--no-table-access-method` are not mandatory, but remove unnecessary noise in the file, creating a cleaner output.
+- If you are planning to import the output using `pg_restore`, add the flag `--format=tar` to the `pg_dump` command.
 
 Please refer to [pg_dump's documentation](https://www.postgresql.org/docs/current/app-pgdump.html) for a full list of features.
 
