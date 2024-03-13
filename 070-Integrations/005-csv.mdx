@@ -53,9 +53,8 @@ Choose a format that matches the data you're entering. Xata columns support the 
 
 ### Column name restrictions
 
-Xata reserves the `xata_` column prefix for special columns such as record id and timestamp metadata.
-While it is possible to create columns named after this prefix and import data into them from CSV, it is strongly advised to avoid this column naming pattern.
-Introducing columns of this naming pattern can result in incompatibilities with other features and components in the platform.
+Xata reserves the `xata_` column prefix for special columns such as record id and timestamp metadata. The CSV importer will automatically ignore columns with this naming pattern in CSV files.
+While it is possible to create columns named after this prefix and import data into them via the wire protocol, it is strongly advised to avoid this column naming pattern to avoid conflicts with internal Xata handling.
 
 ### Column type consistency
 
