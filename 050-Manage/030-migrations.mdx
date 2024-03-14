@@ -1,0 +1,74 @@
+---
+title: Migrations
+navTitle: Migrations
+keywords: ['pgroll']
+description: Learn about migration file formats and commands
+slug: migrations
+published: true
+---
+
+Xata runs migrations on your database branch anytime the schema is changed. You can find a log of these changes within the UI on the <strong>Schema history</strong> page. The [CLI]() provides commands to `push` and `pull` these updates to and from remote to your local project. The files generated live in the `.xata` folder and can and should be committed with your source code.
+
+- The `xata pull [branch]` command pulls migrations from your branch and updates the `.ledger` file. It will also run any optional `codegen` (ex: TypeScript types) provided by your SDK of choice.
+- The `xata push [branch]` command pushes your migrations to a defined branch.
+
+Each migration file holds a JSON object containing the migration record, and list of operations. The file structure for beta [Postgres enabled](/docs/postgres) projects utilize [pgroll](https://github.com/xataio/pgroll) migration formats. Generally speaking you should not need to worry about these files unless you plan to build automation tools around migrations. For example our [PR based workflow](/docs/getting-started/workflow) uses these files to perform migrations on PR merges.
+
+<TabbedCode tabs={["Migration example in production", "Migration example with Postgres enabled (beta)"]}>
+
+```json
+{
+  "id": "mig_cnphjtbsf1h6sr9v804g",
+  "parentID": "mig_cnphjr3sf1h6sr9v803g",
+  "checksum": "1:f606134f7472a748c0f96f9505fe01d2045f4728761257b11101c1f39ab41238",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "description",
+          "type": "string"
+        },
+        "table": "items"
+      }
+    }
+  ]
+}
+```
+
+```json
+{
+  "done": true,
+  "migration": {
+    "name": "mig_cnphg3rsf1h6sr9v7vug",
+    "operations": [
+      {
+        "add_column": {
+          "table": "items",
+          "column": {
+            "pk": false,
+            "name": "description",
+            "type": "text",
+            "check": {
+              "name": "items_xata_string_length_description",
+              "constraint": "LENGTH(\"description\") <= 2048"
+            },
+            "unique": false,
+            "comment": "{\"xata.type\":\"string\"}",
+            "nullable": true
+          }
+        }
+      }
+    ]
+  },
+  "migrationType": "pgroll",
+  "name": "mig_cnphg3rsf1h6sr9v7vug",
+  "parent": "mig_cnphecjsf1h6sr9v7vt0",
+  "startedAt": "2024-03-14T15:30:24.782767Z"
+}
+```
+
+</TabbedCode>
+
+Migration files should not be modified. If modified, the record may become invalid. Xata keeps track of all migrations within a database and attempting to push a modified migration file to another branch will result in an error.
+
+Migrations must be ordered. Ordering is guaranteed by the `parent` and the ledger file, which is stored in `.xata/migrations/.ledger`. The ledger file is an append only file that lists all migration files in the correct order.
