@@ -8,7 +8,7 @@ published: true
 status: beta
 ---
 
-> This is a beta feature that requires a workspace administrator to turn on the `Direct access to Postgres` feature flag within their **workspace settings page**. Once enabled, any _new_ databases created within that workspace will have the option to enable the feature. For now, existing databases that weren't set up with direct access initially will need to be ported into a brand new database if you wish to utilize these features.
+![Enable Postgres connections in Xata](images/pg-enable.png)
 
 Xata provides the ability to connect to database branches via the standard Postgres wire protocol. This opens up generic Postgres tool support including `psql`, `pg_dump`, `pg_restore`, language clients, ORMs, BI tools, and more.
 
@@ -187,7 +187,28 @@ The table below provides full granularity over specific statements.
 | ALTER EXTENSION        |     |               |                | ✅                |
 | CREATE TEMPORARY TABLE |     |               |                | ✅                |
 
+## Adapt your schema to match Xata requirements
+
+Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and rejects any columns with the prefix. Avoid naming columns with this prefix as there will be functional implications.
+
+Tables created through the wire protocol will be missing the columns necessary to make Xata work. You may run into roadblocks within the UI that ask you to "Adapt your table". Doing so will quickly add the below `xata_` columns to your table and enable the UI and other functionality like full-text search.
+
+- `xata_id`: internal unique record identifier.
+- `xata_version`: discrete version counter of the record, every update will increment the counter by one.
+- `xata_createdat`: datetime in UTC of the record's creation
+- `xata_updatedat`: datetime in UTC of the record's most recent update. If none happened, then the value is equal to the creation datetime.
+
+Please reference to the [special columns](/docs/concepts/data-model#special-columns) section to learn more about these columns.
+
 ## Limitations
+
+### Postgres can not be enabled on already existing databases
+
+For now, existing databases that weren't set up with direct access initially will need to be ported into a brand new database if you wish to utilize these features.
+
+### Xata CLI and client need to be on the @next version
+
+The new Postgres abilities require breaking changes to some of our API layer. While in beta, you'll need to use `@xata.io/client@latest` and `xata.io/cli@latest`. Existing, non Postgres enabled databases are not compatible with the new client.
 
 ### Unsupported statements and functions
 
@@ -211,22 +232,13 @@ Concurrent connections are limited by [plan](/docs/concepts/pricing#pricing-plan
 - Pro plan on shared cluster: 60 concurrent connections
 - Pro plan on [dedicated cluster](/docs/dedicated-cluster): Unlimited connections
 
-### Migrations
+### Branch migrations
 
 Branch migrations are not supported yet. In databases that support direct Postgres access, you can create new branches but they cannot be merged together. This capability will become available later on.
 
-## Adapt your schema to match Xata requirements
+### ORM native migrations are unsupported
 
-Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and rejects any columns with the prefix. Avoid naming columns with this prefix as there will be functional implications.
-
-Tables created through the wire protocol will be missing the columns necessary to make Xata work. You may run into roadblocks within the UI that ask you to "Adapt your table". Doing so will quickly add the below `xata_` columns to your table and enable the UI and other functionality like full-text search.
-
-- `xata_id`: internal unique record identifier.
-- `xata_version`: discrete version counter of the record, every update will increment the counter by one.
-- `xata_createdat`: datetime in UTC of the record's creation
-- `xata_updatedat`: datetime in UTC of the record's most recent update. If none happened, then the value is equal to the creation datetime.
-
-Please reference to the [special columns](/docs/concepts/data-model#special-columns) section to learn more about these columns.
+Currently we recommend using `xata pull [branchname]`, `xata push [branchname]` and the UI's migration editor to manage your schema changes. ORM native migrations (such as those in Django, Prisma or the like) will possibly have issues during the beta. Our goals are to increase support as improve the beta experience.
 
 ## Troubleshooting
 
