@@ -258,19 +258,20 @@ psql "sslmode=verify-full sslrootcert=/etc/ssl/cert.pem user=ws1234 password=xau
 
 Keep in mind that different clients might require different configuration options. Please refer to the main Postgres documentation for more in depth information about the [sslmodes](https://www.postgresql.org/docs/current/libpq-ssl.html) option.
 
-### Type text constraint violation
+### Type constraint violations
 
-If you created a column of type `text` in your table, through the UI, a constraint limiting to a 1000 characters is created with it.
-The limitation affects search, Xata does not replicate columns that contain more than 1000 characters, hence these values will not arrive in Elasticsearch.
+The following constraints are applied automatically for columns created through the UI:
 
-You will notice the constraint violation if, e.g. you created a column `content` in a table `Urls`, with following error message:
+- `string`: length limited to 2048 characters.
+- `text`: length limited to 204800 characters.
+
+These limitations affect search and aggregations. Xata does not index longer values in the search store for these types.
+
+You will notice the constraint violation with following error message:
 
 ```text
-new row for relation "urls" violates check constraint "urls_xata_text_length_content"
+ERROR:  new row for relation "mytable" violates check constraint "mytable_xata_string_length_mystr"
 ```
 
-To remove this constraint, you need to drop it through the wire protocol:
-
-```sql
-ALTER TABLE "Urls" DROP CONSTRAINT urls_xata_text_length_content;
-```
+Xata distinguishes columns created via the UI or API using comments.
+If you drop constraints via the wire protocol, you should acknowledge the implications for features relying on the search store.
