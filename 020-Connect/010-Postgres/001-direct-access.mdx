@@ -227,6 +227,23 @@ Tables created through the wire protocol will be missing the columns necessary t
 
 Please reference to the [special columns](/docs/concepts/data-model#special-columns) section to learn more about these columns.
 
+## Column metadata
+
+Xata uses SQL comments on columns to track some replication-related metadata about certain types of columns. These comments are only ever present on columns created using the Xata UI, and only on certain types of columns.
+
+The full list of column types and their associated metadata comments is as follows:
+
+| Xata Type | Metadata comment              | Notes                                 |
+| --------- | ----------------------------- | ------------------------------------- |
+| email     | `{"xata.type":"email"}`       |                                       |
+| vector    | `{"xata.search.dimension":n}` | dimension `n` is set in the UI        |
+| string    | `{"xata.type":"string"}`      |                                       |
+| text      | `{"xata.type":"text"}`        |                                       |
+| multiple  | `{"xata.type": "t"}`          | where `t` is the type of the multiple |
+| file      | `{"xata.file.dpa":false}`     |                                       |
+
+Adding your own comments to database objects is permitted using direct Postgres access with the SQL `COMMENT` statement. Xata places no restrictions on comments, but be aware that modifying or removing the metadata comments added to columns by Xata itself may break search replication or have adverse effects on how the columns behave in the Xata UI.
+
 ## Troubleshooting
 
 ### SSL required
@@ -273,19 +290,3 @@ To remove this constraint, you need to drop it through the wire protocol:
 ```sql
 ALTER TABLE "Urls" DROP CONSTRAINT urls_xata_text_length_content;
 ```
-
-### Column comments
-
-Xata uses comments on columns to track some replication-related metadata about certain types of columns. These comments are only ever present on columns created using the Xata UI, and only on certain types of columns. An example of a metadata comment added by Xata is the one added to `vector` fields created in the UI:
-
-```json
-{"xata.search.dimension":3}
-```
-
-or the comment added to `email` type fields created in the UI:
-
-```json
-{"xata.type":"email"}
-```
-
-Adding your own comments to database objects is permitted using direct Postgres access with the SQL `COMMENT` statement. Xata places no restrictions on comments, but be aware that modifying or removing the metadata comments added to columns by Xata itself may break search replication or have adverse effects on how the columns behave in the Xata UI.
