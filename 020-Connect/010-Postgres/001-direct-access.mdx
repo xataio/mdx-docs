@@ -240,6 +240,23 @@ Branch migrations are not supported yet. In databases that support direct Postgr
 
 Currently we recommend using `xata pull [branchname]`, `xata push [branchname]` or the UI's migration editor to manage your schema changes. ORM native migrations (such as those in Django, Prisma or the like) will possibly have issues during the beta. Our goals are to increase support as we move toward general availability.
 
+## Column metadata
+
+Xata uses SQL comments on columns to track some replication-related metadata about certain types of columns. These comments are only ever present on columns created using the Xata UI, and only on certain types of columns.
+
+The full list of column types and their associated metadata comments is as follows:
+
+| Xata Type | Metadata comment                            | Notes                        |
+| --------- | ------------------------------------------- | ---------------------------- |
+| email     | &#123;"xata.type":"email"&#125;             |                              |
+| vector    | &#123;"xata.search.dimension":n&#125;       | dimension n is set in the UI |
+| string    | &#123;"xata.type":"string"&#125;            |                              |
+| text      | &#123;"xata.type":"text"&#125;              |                              |
+| file      | &#123;"xata.file.dpa":false&#125;           |                              |
+| link      | &#123;"xata.link": "referenced_table"&#125; |                              |
+
+Adding your own comments to database objects is permitted using direct Postgres access with the SQL `COMMENT` statement. Xata places no restrictions on comments, but be aware that modifying or removing the metadata comments added to columns by Xata itself may break search replication or have adverse effects on how the columns behave in the Xata UI.
+
 ## Troubleshooting
 
 ### SSL required
@@ -270,19 +287,20 @@ psql "sslmode=verify-full sslrootcert=/etc/ssl/cert.pem user=ws1234 password=xau
 
 Keep in mind that different clients might require different configuration options. Please refer to the main Postgres documentation for more in depth information about the [sslmodes](https://www.postgresql.org/docs/current/libpq-ssl.html) option.
 
-### Type text constraint violation
+### Type constraint violations
 
-If you created a column of type `text` in your table, through the UI, a constraint limiting to a 1000 characters is created with it.
-The limitation affects search, Xata does not replicate columns that contain more than 1000 characters, hence these values will not arrive in Elasticsearch.
+The following constraints are applied automatically for columns created through the UI:
 
-You will notice the constraint violation if, e.g. you created a column `content` in a table `Urls`, with following error message:
+- `string`: length limited to 2048 characters.
+- `text`: length limited to 204800 characters.
+
+These limitations affect search and aggregations. Xata does not index longer values in the search store for these types.
+
+You will notice the constraint violation with following error message:
 
 ```text
-new row for relation "urls" violates check constraint "urls_xata_text_length_content"
+ERROR:  new row for relation "mytable" violates check constraint "mytable_xata_string_length_mystr"
 ```
 
-To remove this constraint, you need to drop it through the wire protocol:
-
-```sql
-ALTER TABLE "Urls" DROP CONSTRAINT urls_xata_text_length_content;
-```
+Xata distinguishes columns created via the UI or API using comments.
+If you drop constraints via the wire protocol, you should acknowledge the implications for features relying on the search store.
