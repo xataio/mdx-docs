@@ -233,13 +233,14 @@ Xata uses SQL comments on columns to track some replication-related metadata abo
 
 The full list of column types and their associated metadata comments is as follows:
 
-| Xata Type | Metadata comment              | Notes                          |
-| --------- | ----------------------------- | ------------------------------ |
-| email     | `{"xata.type":"email"}`       |                                |
-| vector    | `{"xata.search.dimension":n}` | dimension `n` is set in the UI |
-| string    | `{"xata.type":"string"}`      |                                |
-| text      | `{"xata.type":"text"}`        |                                |
-| file      | `{"xata.file.dpa":false}`     |                                |
+| Xata Type | Metadata comment                    | Notes                          |
+| --------- | ----------------------------------- | ------------------------------ |
+| email     | `{"xata.type":"email"}`             |                                |
+| vector    | `{"xata.search.dimension":n}`       | dimension `n` is set in the UI |
+| string    | `{"xata.type":"string"}`            |                                |
+| text      | `{"xata.type":"text"}`              |                                |
+| file      | `{"xata.file.dpa":false}`           |                                |
+| link      | `{"xata.link": "referenced_table"}` |                                |
 
 Adding your own comments to database objects is permitted using direct Postgres access with the SQL `COMMENT` statement. Xata places no restrictions on comments, but be aware that modifying or removing the metadata comments added to columns by Xata itself may break search replication or have adverse effects on how the columns behave in the Xata UI.
 
