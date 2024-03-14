@@ -1,0 +1,41 @@
+---
+title: Xata Service Level Agreement (SLA)
+navTitle: Service level agreement
+keywords: ['sla', 'slo']
+description: Xata offers a Service Level Agreement (SLA) for its paid plans.
+slug: appendix/sla
+published: true
+---
+
+The following SLA applies to the Xata [Pro plan](/docs/concepts/pricing#pro-plan). For the [Enterprise plan](/docs/concepts/pricing#enterprise-plan) the SLA can be customized. The [Free plan](/docs/concepts/pricing#free-plan) does not provide any SLA. The SLA applies separately to each workspace.
+
+## Service Level Agreement
+
+The following Service Level Agreement (SLA) applies to the core Postgres database service, for both Shared and Dedicated Clusters. It includes access over the Postgres wire protocol as well as over the Data API.
+
+| Monthly Uptime Percentage                          | Service Credit Percentage |
+| -------------------------------------------------- | ------------------------- |
+| Less than 99.9% but equal to or greater than 99.0% | 10%                       |
+| Less than 99.0% but equal to or greater than 95.0% | 25%                       |
+| Less than 95.0%                                    | 100%                      |
+
+## Service credits
+
+Service Credits are calculated as a percentage of the charges paid by you for Xata for the monthly billing cycle in which the applicable SLA was not met. We will apply any Service Credits only against future payments otherwise due from you. Service Credits may not be transferred or applied to any other account.
+
+## Request credits
+
+If you think the SLA was not met for a particular month, create a claim by opening a support ticket, either by visiting the [Xata Support portal](https://support.xata.io/hc/en-us) or by sending an email to `support@xata.io`. The claim must be received by Xata within thirty (30) days of the end of the billing cycle in which the SLA was not met. If the claim is confirmed, we will issue a credit to your account.
+
+## Exclusions
+
+- Functionality marked as Alpha or Beta is not part of the SLA.
+- Delays in replication are not part of the SLA.
+- Downtime caused by factors outside of our reasonable control, including any force majeure event or internet access or related problems beyond the demarcation point of Xata is not part of the SLA.
+- Downtime caused from any voluntary actions or inactions from you is not part of the SLA.
+- Access to the web console is not part of the SLA.
+- Bugs or issues in the SDKs are not part of the SLA.
+
+## Definitions
+
+"Unavailable" and “Unavailability” mean that all connection requests to the main branch of a database, fail during a 1-minute interval.
