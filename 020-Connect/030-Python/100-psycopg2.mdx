@@ -1,0 +1,45 @@
+---
+title: Connect to Postgres with psycopg2
+navTitle: psycopg2
+keywords: ['python', 'postgres', 'psycopg2']
+description: Connect to Postgres with psycopg2
+slug: python-psycopg2
+published: true
+---
+
+To use Xata with [psycopg2](https://www.psycopg.org/docs/module.html), you have the option to connect with the connection string (DSN) or use the parameterized approach.
+Please replace the placeholders in the connection string or parameters, as indicated on the [connect to Postgres](/docs/postgres) page.
+
+## With the connection string
+
+```python
+import psycopg2
+
+dsn = "postgresql://<WORKSPACE_ID>:<API_KEY>@<REGION>.sql.xata.sh:5432/<DATABASE_NAME>:<BRANCH_NAME>"
+
+cnn = psycopg2.connect(dsn)
+cur = cnn.cursor()
+cur.execute("SELECT 1")
+print(cur.fetchone())
+# (1,)
+cnn.close()
+```
+
+## With parameters
+
+```python
+import psycopg2
+
+cnn = psycopg2.connect(
+  dbname="<DATABASE_NAME>:<BRANCH>",
+  user="<WORKSPACE_ID>",
+  password="<API_KEY>",
+  host="<REGION>.sql.xata.sh",
+  port=5432,
+)
+cur = cnn.cursor()
+cur.execute("SELECT 1")
+print(cur.fetchone())
+# (1,)
+cnn.close()
+```

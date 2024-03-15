@@ -1,0 +1,33 @@
+---
+title: Connect to Postgres with Laravel
+navTitle: Laravel
+keywords: ['php', 'laravel']
+description: Connect to Postgres with Laravel and pgsql
+slug: php-laravel
+published: false
+---
+
+<Alert status="warning">
+
+Laravel is not supported at the moment as the statement `SET search_path TO {}` is forbidden.
+See [supported statements](/docs/postgres#supported-statements) for a complete breakdown.
+
+</Alert>
+
+To connect your Laravel application to Xata, you need to adjust the database connection in the .env file as follows:
+
+```text title=".env"
+DB_CONNECTION=pgsql
+DB_HOST=<REGION>.sql.xata.sh
+DB_PORT=5432
+DB_DATABASE=<DATABASE>:<BRANCH>
+DB_USERNAME=<WORKSPACE_ID>
+DB_PASSWORD=<API_KEY>
+DB_SSLMODE=require
+```
+
+Please replace the parameters as indicated on the [connect to Postgres](/docs/postgres) page.
+
+## Known issues
+
+- `php artisan schema:dump` will not work as it tries to reset the `search_path` which is an [unsupported operation](/docs/postgres#unsupported-statements-and-functions) in Xata. Please follow the [export instructions](/docs/postgres#export) to dump a schema with pg_dump.

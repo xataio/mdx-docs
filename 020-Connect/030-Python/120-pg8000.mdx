@@ -1,0 +1,55 @@
+---
+title: Connect to Postgres with pg8000
+navTitle: pg8000
+keywords: ['python', 'postgres', 'pg8000']
+description: Connect to Postgres with pg8000
+slug: python-pg8000
+published: true
+---
+
+The [pg8000](https://pypi.org/project/pg8000/) driver comes with different API'satisfies, the [Database API v2.0](http://www.python.org/dev/peps/pep-0249/) and the pg8000 native one.
+Both API's use the parameterized approach to define the connection parameters.
+Please replace the placeholders in the connection string or parameters, as indicated on the [connect to Postgres](/docs/postgres) page.
+
+pg8000 does not default to encrypted connections out of the box, and as Xata rejects all [not encyrpted connections](/docs/postgres#sslmode), you need to specify the SSL context.
+This is done by adding the `ssl_context=True` in the connection parameters.
+The following examples both demonstrate this.
+
+## Database API v2.0
+
+```python
+import pg8000.dbapi
+
+con = pg8000.dbapi.Connection(
+  database="<DATABASE_NAME>:<BRANCH>",
+  user="<WORKSPACE_ID>",
+  password="<API_KEY>",
+  host="<REGION>.sql.xata.sh",
+  port=5432,
+  ssl_context=True, # sslmode=require
+)
+cursor = con.cursor()
+cursor.execute("SELECT 1")
+print(cursor.fetchone())
+# [1]
+con.close()
+```
+
+## Native
+
+```python
+import pg8000.native
+
+con = pg8000.native.Connection(
+  database="<DATABASE_NAME>:<BRANCH>",
+  user="<WORKSPACE_ID>",
+  password="<API_KEY>",
+  host="<REGION>.sql.xata.sh",
+  port=5432,
+  ssl_context=True, # sslmode=require
+)
+res = con.run("SELECT 1")
+print(res)
+# [[1]]
+con.close()
+```

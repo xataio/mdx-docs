@@ -1,0 +1,67 @@
+---
+title: Dedicated cluster
+navTitle: Dedicated cluster
+keywords: ['postgres', 'dedicated cluster']
+description: How to manage your own Postgres instance
+slug: dedicated-cluster
+published: false
+status: alpha
+---
+
+Xata provides you multiple deployment options, the most powerful is the dedicated cluster.
+Your own Postgres instance, that only belongs to you, so you get all the power of Postgres pair [Xata's](/docs/concepts/serverless-data-platform) features out of box.
+
+Dedicated cluster is available in the [Pro plan](/docs/concepts/pricing#pro-plan).
+
+## Supported versions
+
+At the moment Xata supports the following Postgres versions:
+
+- 15.4
+- 15.5
+- 14.10
+- 14.9
+
+As we working to promoted dedicated clusters to generaly available (GA), we will add more versions.
+Another functionality we are working on is to provide you control over the maintenance windows and the ability upgrade a version yourself.
+
+## Instances
+
+### Servless
+
+Serveless option
+
+## On demand instances
+
+- db.t4g.medium
+- db.t4g.large
+- db.t3.medium
+- db.t3.large
+- r6gd.xlarge
+- r6gd.2xlarge
+- db.r6g.large
+- db.r6g.xlarge
+- db.r6g.2xlarge
+- db.r6i.large
+- db.r6i.xlarge
+- db.r6i.2xlarge
+
+## Regions
+
+Similar to the supported Postgres version, we will launch this feature in a selected set of regions.
+If you the region you are looking for is not available please reach out to our [support team](/docs/resources/support).
+
+## Extensions
+
+You can install extensions yourself, please consult the [Postgres documentation](https://www.postgresql.org/docs/current/sql-createextension.html) for a how to.
+
+To inspect which extensions are available out-of-the-box, please connect to your database and run the following command:
+
+```sql
+SELECT * FROM pg_available_extensions;
+```
+
+## Limitations
+
+Certain SQL statements and functions are forbidden, refer to [limtations](/docs/postgres#limitations) for the complete list.
+There are **no** limits imposed on amount of open Postgres [connections](/docs/postgres#connection-limits) or [HTTP API requests](/docs/rest-api/limits#rate-limits) in a dedicated cluster.

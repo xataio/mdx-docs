@@ -1,6 +1,6 @@
 ---
-title: SQL queries over HTTP
-description: How to access Xata using SQL directly
+title: SQL over HTTP
+description: How to access Xata using SQL directly over HTTP
 keywords: ['sql', 'access', 'rest']
 slug: sdk/sql/overview
 published: true
@@ -9,35 +9,6 @@ published: true
 Xata uses PostgreSQL under the hood to store your data. You can use SQL to work with your data. The results come back in a typical Xata JSON response mechanism over HTTP. If the Xata API doesn't cover the query you need, you can use SQL directly to do queries, insert data, update information, and delete records.
 
 Xata offers support for a subset of PostgreSQL functions. This includes functions such as `subquery`, `comparison`, `aggregate`, `window`, `range`, `json`, `string`, `datetime`, and `array` functions. Functions beyond these are not permitted.
-
-## Data model
-
-Database tables are stored in PostgreSQL as tables. Xata data types are mapped to PostgreSQL types with additional constraints:
-
-| Xata data type | PostgreSQL data type | Notes                              |
-| -------------- | -------------------- | ---------------------------------- |
-| string         | text                 |                                    |
-| text           | text                 | With constraints on maximum length |
-| int            | bigint               |                                    |
-| float          | double precision     |                                    |
-| datetime       | timestamptz          |                                    |
-| bool           | boolean              |                                    |
-| email          | text                 | Validated by Xata                  |
-| multiple       | text[]               | Validated by Xata                  |
-| file           | jsonb                | Validated by Xata                  |
-| filearray      | jsonb                | Validated by Xata                  |
-| link           | foreign key          |                                    |
-
-In PostgreSQL tables are used to store and organize data. Linked columns serve as foreign keys, establishing connections to other tables. To access data from a linked column, use JOIN operations or apply WHERE conditions to locate the related records.
-
-For example, the following query shows how to retrieve email addresses and corresponding cities using a `LEFT JOIN` operation between the "Users" and "address" tables.:
-
-```sql
-SELECT "Users".email, address.city FROM "Users"
-LEFT JOIN address ON "Users".id=address.id;
-```
-
-For specific Xata data types like email, it is required you use the Xata API or SDK. This ensures that Xata can validate the inserted data's accuracy. We recommend refraining from directly writing to columns of this type and instead using the provided API for better results.
 
 ### Table and column names
 
@@ -146,8 +117,9 @@ Response:
 ### Insert a new record using a parameterized query
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
 ```ts
-const user = { name: "Keanu Reeves", email: "keanu@example.com" };
+const user = { name: 'Keanu Reeves', email: 'keanu@example.com' };
 await xata.sql`INSERT INTO "Users" (name, email) VALUES (${user.name}, ${user.email})`;
 ```
 
@@ -174,10 +146,11 @@ response = xata.sql().query(
 ### Delete record using a parameterized query
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
 ```ts
-const user = { id: "my-record-id" };
+const user = { id: 'my-record-id' };
 await xata.sql`DELETE FROM "Users" WHERE id=${user.id}`;
-````
+```
 
 ```python
 xata.sql().query(
@@ -200,10 +173,11 @@ xata.sql().query(
 ### Query records from the replica store
 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
+
 ```ts
 const response = await xata.sql<UsersRecord>({
   statement: `SELECT * FROM "Users" LIMIT 10;`,
-  consistency: "eventual",
+  consistency: 'eventual'
 });
 ```
 
@@ -259,12 +233,11 @@ By assigning aliases, you can distinguish between columns with similar names and
 Xata supports the following essential Data Manipulation Language (DML) SQL commands, which are fundamental for managing and manipulating data within database tables:
 
 - `SELECT`: This command is used to retrieve data from a database. It allows you to select one or more columns of a table, with various options for filtering, sorting, and grouping the data.
-
 - `INSERT`: This command is used to add new records (rows) to a table. It specifies the table to insert into and the values for the new row.
-
 - `DELETE`: This command removes existing records from a table. It can be used with conditions to specify which records should be deleted.
-
 - `UPDATE`: This command modifies existing records in a table such as correcting errors or updating information. Like DELETE, it can be used with conditions to specify which records should be updated and how.
+
+Please refer to the [supported commands table](/docs/postgres#supported-statements) to get a full break down.
 
 #### Unsupported commands
 
