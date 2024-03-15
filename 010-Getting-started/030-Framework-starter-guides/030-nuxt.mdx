@@ -244,7 +244,7 @@ make any further changes to the schema, run `xata pull <branch>` to update the a
 Begin by following step 2 onwards of the [Tailwind CSS and Nuxt 3 integration guide](https://tailwindcss.com/docs/guides/nuxtjs#3).
 Once completed, add the following global styling to the newly created `assets/css/main.css`:
 
-```css title="assets/css/main.css" {5-26}
+````css title="assets/css/main.css" {5-26}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -292,7 +292,7 @@ useHead({
     <NuxtPage />
   </main>
 </template>
-```
+````
 
 Ensure the `<NuxtPage />` component is before the closing `</main>` element.
 
@@ -440,7 +440,7 @@ useHead({ title: post?.title });
 As with the API route, page Routes in Nuxt support named [route parameters](https://nuxt.com/docs/getting-started/routing#route-parameters)
 represented in the file path. In this case. the parameter named `slug`. To get the value of the `slug` route parameter, get access to the `route`
 information using `useRoute`. Then, request the `/api/posts/[slug]` endpoint to fetch the single blog post information, passing the value
-of `route.params.slug` (`` await useFetch(`/api/posts/${route.params.slug}`) ``). Assign the resultant single Post information to a variable named
+of `route.params.slug` (``await useFetch(`/api/posts/${route.params.slug}`)``). Assign the resultant single Post information to a variable named
 `post` via object deconstruction and renaming (`const { data: post }`).
 
 ```vue
@@ -500,12 +500,14 @@ const xata = getXataClient();
 export default defineEventHandler(async (event) => {
   const query = getQuery(event); // [!code highlight]
   const search = query.q as string; // [!code highlight]
- // [!code highlight]
+  // [!code highlight]
   let posts = null; // [!code highlight]
-  if (search) { // [!code highlight]
+  if (search) {
+    // [!code highlight]
     const { records } = await xata.db.Posts.search(search, { fuzziness: 2 }); // [!code highlight]
     posts = records; // [!code highlight]
-  } else { // [!code highlight]
+  } else {
+    // [!code highlight]
     posts = await xata.db.Posts.getAll(); // [!code highlight]
   }
 

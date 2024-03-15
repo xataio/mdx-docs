@@ -691,11 +691,13 @@ export function routeData() {
 
     const location = useLocation(); // [!code highlight]
     const search = location.query.q; // [!code highlight]
- // [!code highlight]
+    // [!code highlight]
     let posts = null; // [!code highlight]
-    if (search) { // [!code highlight]
+    if (search) {
+      // [!code highlight]
       posts = await xata.db.Posts.search(search, { fuzziness: 2 }); // [!code highlight]
-    } else { // [!code highlight]
+    } else {
+      // [!code highlight]
       posts = await xata.db.Posts.getAll(); // [!code highlight]
     } // [!code highlight]
     return { posts, search }; // [!code highlight]
@@ -710,17 +712,23 @@ export default function Home() {
 
   return (
     <>
-      <div class="w-full max-w-5xl mt-16"> // [!code highlight]
-        <form action="/"> // [!code highlight]
+      <div class="w-full max-w-5xl mt-16">
+        {' '}
+        // [!code highlight]
+        <form action="/">
+          {' '}
+          // [!code highlight]
           <input // [!code highlight]
             name="q" // [!code highlight]
             value={search} // [!code highlight]
             placeholder="Search..." // [!code highlight]
             class="w-full rounded-lg border-2 p-2 dark:text-purple-950" // [!code highlight]
-          /> // [!code highlight]
-        </form> // [!code highlight]
-      </div> // [!code highlight]
-      ...
+          />{' '}
+          // [!code highlight]
+        </form>{' '}
+        // [!code highlight]
+      </div>{' '}
+      // [!code highlight] ...
     </>
   );
 }
@@ -793,17 +801,23 @@ export default function Home() {
 
   return (
     <>
-      <div class="w-full max-w-5xl mt-16"> // [!code highlight]
-        <form action="/"> // [!code highlight]
+      <div class="w-full max-w-5xl mt-16">
+        {' '}
+        // [!code highlight]
+        <form action="/">
+          {' '}
+          // [!code highlight]
           <input // [!code highlight]
             name="q" // [!code highlight]
             value={search} // [!code highlight]
             placeholder="Search..." // [!code highlight]
             class="w-full rounded-lg border-2 p-2 dark:text-purple-950" // [!code highlight]
-          /> // [!code highlight]
-        </form> // [!code highlight]
-      </div> // [!code highlight]
-      ...
+          />{' '}
+          // [!code highlight]
+        </form>{' '}
+        // [!code highlight]
+      </div>{' '}
+      // [!code highlight] ...
     </>
   );
 }

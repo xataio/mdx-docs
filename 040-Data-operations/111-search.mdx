@@ -154,7 +154,8 @@ Note the `xata.highlight` field in the example below which marks the search term
       "email": "keanu@example.com",
       "lifetimeBoxOffice": 500000000,
       "xata": {
-        "highlight": { // [!code highlight]
+        "highlight": {
+          // [!code highlight]
           "city": ["<em>New York</em> City"] // [!code highlight]
         }, // [!code highlight]
         "score": 0.2876821,
@@ -507,7 +508,8 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Actors",
-      "filter": { // [!code highlight]
+      "filter": {
+        // [!code highlight]
         "city": "New York" // [!code highlight]
       } // [!code highlight]
     }
@@ -594,7 +596,8 @@ const results = await xata.search.all('search term', {
       target: ['name', 'city']
     }
   ],
-  page: { // [!code highlight]
+  page: {
+    // [!code highlight]
     size: 10, // [!code highlight]
     offset: 10 // [!code highlight]
   } // [!code highlight]
@@ -628,7 +631,8 @@ results = xata.data().search_branch({
       "target": ["name", "city"]
     }
   ],
-  "page": { // [!code highlight]
+  "page": {
+    // [!code highlight]
     "size": 10, // [!code highlight]
     "offset": 10 // [!code highlight]
   } // [!code highlight]
@@ -693,12 +697,15 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "target": [ // [!code highlight]
-        { // [!code highlight]
+      "target": [
+        // [!code highlight]
+        {
+          // [!code highlight]
           "column": "title", // [!code highlight]
           "weight": 5 // [!code highlight]
         }, // [!code highlight]
-        { // [!code highlight]
+        {
+          // [!code highlight]
           "column": "genre", // [!code highlight]
           "weight": 2 // [!code highlight]
         }, // [!code highlight]
@@ -757,9 +764,12 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "boosters": [ // [!code highlight]
-        { // [!code highlight]
-          "numericBooster": { // [!code highlight]
+      "boosters": [
+        // [!code highlight]
+        {
+          // [!code highlight]
+          "numericBooster": {
+            // [!code highlight]
             "column": "views", // [!code highlight]
             "factor": 3 // [!code highlight]
           } // [!code highlight]
@@ -830,9 +840,12 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "boosters": [ // [!code highlight]
-        { // [!code highlight]
-          "numericBooster": { // [!code highlight]
+      "boosters": [
+        // [!code highlight]
+        {
+          // [!code highlight]
+          "numericBooster": {
+            // [!code highlight]
             "column": "views", // [!code highlight]
             "factor": 3, // [!code highlight]
             "modifier": "square" // [!code highlight]
@@ -893,9 +906,12 @@ results = xata.data().search_branch({
   "tables": [
     {
       "table": "Movies",
-      "boosters": [ // [!code highlight]
-        { // [!code highlight]
-          "valueBooster": { // [!code highlight]
+      "boosters": [
+        // [!code highlight]
+        {
+          // [!code highlight]
+          "valueBooster": {
+            // [!code highlight]
             "column": "genre", // [!code highlight]
             "value": "action", // [!code highlight]
             "factor": 5 // [!code highlight]
@@ -924,7 +940,8 @@ const results = await xata.search.all('search term', {
       table: 'Movies',
       boosters: [
         {
-          dateBooster: { // [!code highlight]
+          dateBooster: {
+            // [!code highlight]
             column: 'xata.createdAt', // [!code highlight]
             decay: 0.5, // [!code highlight]
             scale: '30d', // [!code highlight]
@@ -968,7 +985,8 @@ results = xata.data().search_branch({
       "table": "Movies",
       "boosters": [
         {
-          "dateBooster": { // [!code highlight]
+          "dateBooster": {
+            // [!code highlight]
             "column": "xata.createdAt", // [!code highlight]
             "decay": 0.5, // [!code highlight]
             "scale": "30d", // [!code highlight]

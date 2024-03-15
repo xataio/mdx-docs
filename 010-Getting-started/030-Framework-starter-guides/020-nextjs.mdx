@@ -429,7 +429,8 @@ Create a new file, `src/app/posts/[slug]/page.tsx`, where the Next.js framework 
 the name of the slug:
 
 ```tsx title="src/app/posts/[slug]/page.tsx" {1,10}
-export default async function Post({ params }: { params: { slug: string } }) { // [!code highlight]
+// prettier-ignore
+export default async function Post({ params }: { params: { slug: string } }) {  // [!code highlight]
   return (
     <div className="w-full max-w-5xl mt-16">
       <p className="mb-2">
@@ -437,7 +438,6 @@ export default async function Post({ params }: { params: { slug: string } }) { /
           &larr; Back to blog
         </a>
       </p>
-
       <h1 className="text-3xl mb-2">{params.slug}</h1> // [!code highlight]
     </div>
   );
@@ -450,10 +450,11 @@ Next, let's update the page to bring in the Xata client and use the slug value t
 
 ```tsx title="src/app/posts/[slug]/page.tsx" {1-3,5-6,16-18}
 import { getXataClient } from '@/xata'; // [!code highlight]
- // [!code highlight]
+// [!code highlight]
 const xata = getXataClient(); // [!code highlight]
 
-export default async function Post({ params }: { params: { slug: string } }) { // [!code highlight]
+// prettier-ignore
+export default async function Post({ params }: { params: { slug: string } }) {  // [!code highlight]
   const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst(); // [!code highlight]
 
   return (
@@ -465,7 +466,8 @@ export default async function Post({ params }: { params: { slug: string } }) { /
       </p>
 
       <h1 className="text-3xl mb-2">{post?.title}</h1> // [!code highlight]
-      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">{post?.pubDate?.toDateString()}</p> // [!code highlight]
+      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">{post?.pubDate?.toDateString()}</p> // [!code
+      highlight]
       <p className="text-xl">{post?.description}</p> // [!code highlight]
     </div>
   );
@@ -522,16 +524,17 @@ Let's add this functionality to the landing page:
 import { getXataClient } from '@/xata';
 
 const xata = getXataClient();
-
+// prettier-ignore
 export default async function Home({ searchParams }: { searchParams: { q: string } }) { // [!code highlight]
   let posts = null; // [!code highlight]
+// prettier-ignore
   if (searchParams.q) { // [!code highlight]
     const { records } = await xata.db.Posts.search(searchParams.q, { fuzziness: 2 }); // [!code highlight]
     posts = records; // [!code highlight]
   } else { // [!code highlight]
     posts = await xata.db.Posts.getAll(); // [!code highlight]
   }
-
+// prettier-ignore-start
   return (
     <> // [!code highlight]
       <div className="w-full max-w-5xl mt-16"> // [!code highlight]
@@ -547,6 +550,7 @@ export default async function Home({ searchParams }: { searchParams: { q: string
       ...
     </>
   );
+  // prettier-ignore-end
 }
 ```
 
