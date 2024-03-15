@@ -7,7 +7,7 @@ slug: migrations
 published: true
 ---
 
-Xata runs migrations on your database branch anytime the schema is changed. You can find a log of these changes within the UI on the <strong>Schema history</strong> page. The [CLI]() provides commands to `push` and `pull` these updates to and from remote to your local project. The files generated live in the `.xata` folder and can and should be committed with your source code.
+Xata runs migrations on your database branch anytime the schema is changed. You can find a log of these changes within the UI on the <strong>Schema history</strong> page. The [CLI](/docs/getting-started/cli) provides commands to `push` and `pull` these updates to and from remote to your local project. The files generated live in the `.xata` folder and can and should be committed with your source code.
 
 - The `xata pull [branch]` command pulls migrations from your branch and updates the `.ledger` file. It will also run any optional `codegen` (ex: TypeScript types) provided by your SDK of choice.
 - The `xata push [branch]` command pushes your migrations to a defined branch.
