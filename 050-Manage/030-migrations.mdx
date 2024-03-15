@@ -69,6 +69,6 @@ Each migration file holds a JSON object containing the migration record, and lis
 
 </TabbedCode>
 
-Migration files should not be modified. If modified, the record may become invalid. Xata keeps track of all migrations within a database and attempting to push a modified migration file to another branch will result in an error.
+Migration files should not be modified. If externally modified, the record will become invalid. Xata keeps track of all migrations within a database and attempting to push a modified migration file to another branch will result in an error.
 
 Migrations must be ordered. Ordering is guaranteed by the `parent` and the ledger file, which is stored in `.xata/migrations/.ledger`. The ledger file is an append only file that lists all migration files in the correct order.
