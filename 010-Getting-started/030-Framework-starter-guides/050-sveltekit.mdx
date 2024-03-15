@@ -312,7 +312,7 @@ Finally, update `src/routes/+layout.svelte` to add some shared structure across 
   <slot /> // [!code highlight]
  // [!code highlight]
 </main> // [!code highlight]
-````
+```
 
 Ensure the `<slot />` component is before the closing `</main>` element.
 
@@ -509,18 +509,15 @@ const xata = new XataClient({
   branch: import.meta.env.VITE_XATA_BRANCH
 });
 
-export const load: PageServerLoad = async ({ request }) => {
-  // [!code highlight]
+export const load: PageServerLoad = async ({ request }) => { // [!code highlight]
   const url = new URL(request.url); // [!code highlight]
   const search = url.searchParams.get('q'); // [!code highlight]
-  // [!code highlight]
+ // [!code highlight]
   let posts = null; // [!code highlight]
-  if (search) {
-    // [!code highlight]
+  if (search) { // [!code highlight]
     const { records } = await xata.db.Posts.search(search, { fuzziness: 2 }); // [!code highlight]
     posts = records; // [!code highlight]
-  } else {
-    // [!code highlight]
+  } else { // [!code highlight]
     posts = await xata.db.Posts.getAll(); // [!code highlight]
   }
 
@@ -647,3 +644,4 @@ Or dive into some of Xata's more advanced features, such as:
 [0]: https://app.xata.io
 [1]: https://app.xata.io/settings
 [2]: https://kit.svelte.dev/
+````
