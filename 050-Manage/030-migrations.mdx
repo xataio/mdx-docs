@@ -12,7 +12,7 @@ Xata runs migrations on your database branch anytime the schema is changed. You 
 - The `xata pull [branch]` command pulls migrations from your branch and updates the `.ledger` file. It will also run any optional `codegen` (ex: TypeScript types) provided by your SDK of choice.
 - The `xata push [branch]` command pushes your migrations to a defined branch.
 
-Each migration file holds a JSON object containing the migration record, and list of operations. The file structure for beta [Postgres enabled](/docs/postgres) projects utilize [pgroll](https://github.com/xataio/pgroll) migration formats. Generally speaking you should not need to worry about these files unless you plan to build automation tools around migrations. For example our [PR based workflow](/docs/getting-started/workflow) uses these files to perform migrations on PR merges.
+Each migration file holds a JSON object containing the migration record, and list of operations. The file structure for beta [Postgres enabled](/docs/postgres) projects utilizes [pgroll](https://github.com/xataio/pgroll) migration formats. Generally speaking you should not need to worry about these files unless you plan to build automation tools around migrations. For example our [PR based workflow](/docs/getting-started/workflow) uses these files to perform migrations on PR merges.
 
 <TabbedCode tabs={["Migration example in production", "Migration example with Postgres enabled (beta)"]}>
 
