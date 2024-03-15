@@ -2,15 +2,13 @@
 title: Usage metrics
 navTitle: Usage metrics
 keywords: ['usage', 'metrics', 'limits', 'consumption']
-description: Get insight into your usage limits
+description: Get insight into your Xata usage
 slug: usage-limits
 published: true
 status: beta
 ---
 
-TODO: intro text
-
-Currently, usage is only visible up to the workspace level, but we are working on making this feature available down to the database level in the [pro plan](/docs/concepts/pricing#pro-plan).
+This new feature visualizes your usage of the Xata resources and features available to you at a workspace level.
 
 The following metrics are covered:
 
@@ -20,15 +18,17 @@ The following metrics are covered:
 - AI questions: The number of questions asked to the `ask` endpoint. AI questions are an opt-in integration with OpenAI and ChatGPT.
 - Total branches: The total number of of database branches in your workspace.
 
-We will continuously release more metrics over time.
+We are actively working on enhancing this feature by exposing metrics on a database branch. We will also release more metrics in time.
 
-![Pro workspace usage overview](images/pro-usage-overview.png)
+### Pro usage metrics
+For our [pro plan](/docs/concepts/pricing#pro-plan) users, Xata provides a Usage page showing detailed metrics over a number of time ranges to choose from. Additionally, we show a higher-level metrics summary for the current calendar month on the workspace landing page.
 
-For our [pro plan](/docs/concepts/pricing#pro-plan) users, Xata provides an additional detailed usage page showing more granular insights over different a number of timespans.
+![Pro workspace Usage page](images/pro-usage-details.png)
 
-PLACEHOLDER: usage page, with duration selection
-![Pro workspace usage details](images/pro-usage-details.png)
+![Pro workspace overview](images/pro-usage-overview.png)
 
-[Free plan](/docs/concepts/pricing#free-plan) users, receive a more high-level insight into their usage. This summary view provides a concise picture of consumed resources within the [limits of the free tier](/docs/concepts/pricing#pricing-plans).
+
+### Free usage metrics
+[Free plan](/docs/concepts/pricing#free-plan) users also receive a summary view on the workspace landing page. This concisely shows the percentage of available [free tier resources](/docs/concepts/pricing#pricing-plans) that have been used in the current calendar month.
 
 ![Free workspace usage overview](images/free-usage-overview.png)
