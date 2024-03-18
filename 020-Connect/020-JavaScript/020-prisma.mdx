@@ -10,6 +10,8 @@ status: beta
 
 [Prisma ORM](https://www.prisma.io/orm) is a TypeScript ORM that is focused on type safety and developer experience.
 
+<DocsEnablePostgres docsLink={true} />
+
 ## Installation
 
 Install prisma client. You can use the following package managers:
@@ -31,7 +33,7 @@ yarn add prisma
 
 ### Usage
 
-You can use Prisma if you have enabled your Xata database to allow [Postgres connections](/docs/postgres). Once enabled, define a schema in the `schema.prisma` file. Here is an example of a schema:
+To use Xata with Prisma define a postgresql datasource in the `schema.prisma` file. Here is an example:
 
 ```prisma
 datasource db {
