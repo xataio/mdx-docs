@@ -63,7 +63,7 @@ const db = drizzle(xata);
 To create a drizzle instance with the TCP client, use the following code:
 
 ```ts
-import { drizzle } from 'drizzle-orm/pg-core';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { getXataClient } from './xata'; // Generated client
 import { Client } from 'pg';
 
@@ -75,7 +75,7 @@ const db = drizzle(client);
 For production use cases, you can create a pool of connections with the TCP client:
 
 ```ts
-import { drizzle } from 'drizzle-orm/pg-core';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { getXataClient } from './xata'; // Generated client
 import { Pool } from 'pg';
 
@@ -91,7 +91,8 @@ const db = drizzle(pool);
 A full example of using Drizzle with Xata is shown below:
 
 ```ts
-import { drizzle, pgTable, text } from 'drizzle-orm/pg-core';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { pgTable, text } from 'drizzle-orm/pg-core';
 import { eq } from 'drizzle-orm';
 import { getXataClient } from './xata'; // Generated client
 
