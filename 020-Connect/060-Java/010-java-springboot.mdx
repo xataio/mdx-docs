@@ -1,0 +1,37 @@
+---
+title: Connect to Postgres with Spring Boot
+navTitle: Spring Boot
+keywords: ['php', 'pgsql']
+description: Connect to Postgres with PHP and pgsql
+slug: java-spring-boot
+published: true
+---
+
+To connect to Xata with [Spring Boot](https://spring.io/projects/spring-boot) you to adjust your application config as follows.
+
+```properties title="application.properties"
+spring.datasource.url=jdbc:postgresql://<REGION>.sql.xata.sh:5432/<DATABASE_NAME>:<BRANCH>
+spring.datasource.username=<WORKSPACE_ID>
+spring.datasource.password=<API_KEY>
+```
+
+Analogous, if you are using a yaml file:
+
+```yaml title="application.yml"
+spring:
+  datasource:
+    url: jdbc:postgresql://<REGION>.sql.xata.sh:5432/<DATABASE_NAME>:<BRANCH>
+    username: <WORKSPACE_ID>
+    password: <API_KEY>
+```
+
+Please replace the parameters as indicated on the [connect to Postgres](/docs/postgres) page.
+
+With a shared cluster you are subject to [connection limits](/docs/postgres#connection-limits), meaning how many connections can be active concurrently.
+In order to avoid running into max open connection limit reached, please adjust the maximum pool size to 20 for free plan - and 60 for pro plan users.
+
+```properties title="application.properties"
+spring.datasource.hikari.maximum-pool-size=20
+```
+
+A [dedicated cluster](/docs/dedicated-cluster) does not have any connection limits in place.

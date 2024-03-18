@@ -1,0 +1,306 @@
+---
+title: Connect to Postgres
+navTitle: Direct access
+keywords: ['postgres', 'sql', 'connect']
+description: Learn how to connect to Postgres directly via the wire protocol
+slug: postgres
+published: true
+status: beta
+---
+
+<DocsEnablePostgres docsLink={false} />
+
+Xata provides the ability to connect to database branches via the standard Postgres wire protocol. This opens up generic Postgres tool support including `psql`, `pg_dump`, `pg_restore`, language clients, ORMs, BI tools, and more.
+
+The SQL commands that you send over the wire protocol behave identically to the way they behave on any other Postgres installation or service. We maintain a list of [supported statements](#supported-statements) which limits some statements within our default shared clusters. Full access is available with our Dedicated Cluster plans.
+
+The examples below teach you how a connection string is built and explain how different Xata parameters map to Postgres URLs when connecting via [psql](https://www.postgresql.org/docs/current/app-psql.html).
+
+## Connection string
+
+The connection string needs to be in the following format:
+
+```txt
+postgresql://[User]:[Password]@[Host]:[Port]/[Database]
+```
+
+Typical Postgres parameters have Xata equivalents.
+
+| Postgres | Xata                       | Example                 |
+| -------- | -------------------------- | ----------------------- |
+| User     | Workspace Id               | `ws1234`                |
+| Password | API key                    | `xau_apikey123456`      |
+| Host     | Region plus `.sql.xata.sh` | `us-east-1.sql.xata.sh` |
+| Port     | `5432` or empty            | `5432`                  |
+| Database | Database and branch name   | `Games:main`            |
+
+With the mapping from above, the connection string to connect to our database `Games` on branch `main` is:
+
+```txt
+postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
+```
+
+- The connection strings for HTTP access and Postgres wire protocol access are shown to you when you create a new database. You can view this connection string at any time by going to your database's settings page.
+- API keys are stored at the user level and can be accessed within [account settings](https://app.xata.io/settings).
+
+Connect with [psql](https://www.postgresql.org/docs/current/app-psql.html) using the connection string format provided above:
+
+```bash
+psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main"
+
+Games:main=>
+```
+
+## Supported versions
+
+The Postgres version depends on your deployment and plan.
+In a shared cluster, you operate in a multi tenant environment, sharing the same Postgres version. Minor version upgrades are continuously updated.
+
+If you want control of the version, you should consider a [dedicated cluster](/docs/dedicated-cluster#supported-versions).
+
+You can check the Postgres version with the following command:
+
+```bash
+psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh:[Port]/[Database]:[Branch]" -c "select version()"
+```
+
+```sql
+PostgreSQL 15.4 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-gnu-gcc (GCC) 9.5.0, 64-bit
+(1 row)
+```
+
+## Extensions
+
+Extensions are only available in [dedicated cluster](/docs/dedicated-cluster#Extensions) plans. The default shared cluster setup ships with [plpgsql](https://www.postgresql.org/docs/current/plpgsql.html) only.
+
+## Export
+
+To run `pg_dump`, you need to specify the connection parameters as indicated in the [connection string](#connection-string) section above.
+
+```bash
+pg_dump --no-acl --no-owner --no-table-access-method --host=[Region].sql.xata.sh --username=[Workspace Id] --dbname=[Database]:[Branch] --password
+```
+
+- The prompt will ask you for the password, which is your API key.
+- The flags, `--no-acl`, `--no-owner` and `--no-table-access-method` are not mandatory, but remove unnecessary noise in the file, creating a cleaner output.
+- If you are planning to import the output using `pg_restore`, add the flag `--format=tar` to the `pg_dump` command.
+
+Please refer to [pg_dump's documentation](https://www.postgresql.org/docs/current/app-pgdump.html) for a full list of features.
+
+## Import
+
+Import methods depend on your file format.
+
+### Import from an archive
+
+Use [pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html). `pg_dump` offers the flag `--format=tar` to immediately output to tar file format.
+
+```bash
+pg_restore --host=[Region].sql.xata.sh --username=[Workspace Id] --dbname=[Database]:[Branch] --password dumpdata.tar
+```
+
+### Import from a SQL file
+
+Use `psql` to import `.sql` files into a database branch.
+The following example imports the file `my_branch.sql` into the database `playground` on the branch `new_branch`.
+
+```bash
+psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh/playground:new_branch" < my_branch.sql
+```
+
+The following limitations apply:
+
+- Some warnings are to be expected during the restore operation due to restrictions from [supported statements](/docs/postgres#supported-statements).
+- The set of supported statements differs between Shared and Dedicated Clusters so the warnings when restoring from the same file may differ depending on the target environment.
+- Managing roles and table ownership is not supported, errors from such statements are expected.
+- Schemas are not supported. Data content and objects are restored under the target branch.
+- Restoring file attachments is not supported.
+
+## Supported statements
+
+Xata offers Postgres in a variety of [pricing formats](/pricing). Shared cluster plans limit statements to guarantee isolation in a multi-tenant environment. [Dedicated cluster](/docs/dedicated-cluster) plans provide more flexibility.
+
+|                     | Functions | DQL statements | (some) DML statements | DDL statements |
+| ------------------- | --------- | -------------- | --------------------- | -------------- |
+| SQL over HTTP       |           | ✅             | ✅                    | ✅             |
+| Shared cluster\*    |           | ✅             | ✅                    | ✅             |
+| Dedicated cluster\* | ✅        | ✅             | ✅                    | ✅             |
+
+\* Requires toggling on direct access connections through Postgres.
+
+The table below provides full granularity over specific statements.
+
+|                        |     | SQL over HTTP | Shared Cluster | Dedicated Cluster |
+| ---------------------- | --- | ------------- | -------------- | ----------------- |
+| SELECT                 |     | ✅            | ✅             | ✅                |
+| INSERT                 |     | ✅            | ✅             | ✅                |
+| DELETE                 |     | ✅            | ✅             | ✅                |
+| UPDATE                 |     | ✅            | ✅             | ✅                |
+| SHOW                   |     | ✅            | ✅             | ✅                |
+| ALTER TABLE            |     | ✅            | ✅             | ✅                |
+| CREATE TABLE           |     | ✅            | ✅             | ✅                |
+| DROP TABLE             |     | ✅            | ✅             | ✅                |
+| BEGIN                  |     |               | ✅             | ✅                |
+| COMMIT                 |     |               | ✅             | ✅                |
+| ROLLBACK               |     |               | ✅             | ✅                |
+| SET                    |     |               | ✅             | ✅                |
+| COPY                   |     |               | ✅             | ✅                |
+| LOCK                   |     |               | ✅             | ✅                |
+| PREPARE                |     |               | ✅             | ✅                |
+| EXECUTE                |     |               | ✅             | ✅                |
+| TRUNCATE               |     | ✅            | ✅             | ✅                |
+| ALTER INDEX            |     |               |                | ✅                |
+| CREATE INDEX           |     |               |                | ✅                |
+| DROP INDEX             |     |               |                | ✅                |
+| ALTER TRIGGER          |     |               |                | ✅                |
+| CREATE TRIGGER         |     |               |                | ✅                |
+| DROP TRIGGER           |     |               |                | ✅                |
+| ALTER EVENTTRIGGER     |     |               |                | ✅                |
+| CREATE EVENTTRIGGER    |     |               |                | ✅                |
+| DROP EVENTTRIGGER      |     |               |                | ✅                |
+| ALTER SEQUENCE         |     |               |                | ✅                |
+| CREATE SEQUENCE        |     |               |                | ✅                |
+| DROP SEQUENCE          |     |               |                | ✅                |
+| CALL                   |     |               |                | ✅                |
+| ALTER STATISTICS       |     |               |                | ✅                |
+| CREATE STATISTICS      |     |               |                | ✅                |
+| DROP STATISTICS        |     |               |                | ✅                |
+| ALTER RULE             |     |               |                | ✅                |
+| CREATE RULE            |     |               |                | ✅                |
+| DROP RULE              |     |               |                | ✅                |
+| ALTER TYPE             |     |               |                | ✅                |
+| CREATE TYPE            |     |               |                | ✅                |
+| DROP TYPE              |     |               |                | ✅                |
+| ALTER DOMAIN           |     |               |                | ✅                |
+| CREATE DOMAIN          |     |               |                | ✅                |
+| DROP DOMAIN            |     |               |                | ✅                |
+| ALTER FUNCTION         |     |               |                | ✅                |
+| CREATE FUNCTION        |     |               |                | ✅                |
+| DROP FUNCTION          |     |               |                | ✅                |
+| EXPLAIN                |     |               |                | ✅                |
+| REINDEX                |     |               |                | ✅                |
+| ALTER OPERATOR CLASS   |     |               |                | ✅                |
+| CREATE OPERATOR CLASS  |     |               |                | ✅                |
+| DROP OPERATOR CLASS    |     |               |                | ✅                |
+| CREATE EXTENSION       |     |               |                | ✅                |
+| DROP EXTENSION         |     |               |                | ✅                |
+| ALTER EXTENSION        |     |               |                | ✅                |
+| CREATE TEMPORARY TABLE |     |               |                | ✅                |
+
+## Adapt your schema to match Xata requirements
+
+Xata reserves the `xata_` column prefix for [special columns](/docs/concepts/data-model#special-columns) and rejects any columns with the prefix. Avoid naming columns with this prefix as there will be functional implications.
+
+Tables created through the wire protocol will be missing the columns necessary to make Xata work. You may run into roadblocks within the UI that ask you to "Adapt your table". Doing so will quickly add the below `xata_` columns to your table and enable the UI and other functionality like full-text search.
+
+- `xata_id`: internal unique record identifier.
+- `xata_version`: discrete version counter of the record, every update will increment the counter by one.
+- `xata_createdat`: datetime in UTC of the record's creation
+- `xata_updatedat`: datetime in UTC of the record's most recent update. If none happened, then the value is equal to the creation datetime.
+
+Please refer to the [special columns](/docs/concepts/data-model#special-columns) section to learn more about these columns.
+
+## Limitations
+
+### Postgres can not be enabled on already existing databases
+
+For now, existing databases that weren't set up with direct access initially will need to be ported into a brand new database if you wish to utilize these features. The simplest way to port content from an existing database to a new Postgres-enabled one is via [CSV](/docs/csv-data/import-data).
+
+### Xata CLI and client need to be on the @next version
+
+The new Postgres abilities require breaking changes to some of our API layer. While in beta, you'll need to use `@xata.io/client@latest` and `xata.io/cli@latest`. Existing, non Postgres enabled databases are not compatible with the new client.
+
+### Unsupported statements and functions
+
+The following statements and/or functions are not available for security reasons.
+
+- `SELECT user`
+- `SHOW password_encryption`
+- `SET ROLE`
+- `RESET ROLE`
+- `SET SESSION AUTHORIZATION`
+- `ALTER TABLESPACE`
+- `CREATE TABLESPACE`
+- `DROP TABLESPACE`
+- `SET search_path TO <SCHEMA>`
+
+### Connection limits
+
+Concurrent connections are limited by [plan](/docs/concepts/pricing#pricing-plans).
+
+- Free plan: 20 concurrent connections
+- Pro plan on shared cluster: 60 concurrent connections
+- Pro plan on [dedicated cluster](/docs/dedicated-cluster): Unlimited connections
+
+### Branch migrations
+
+Branch migrations are not supported yet. In databases that support direct Postgres access, you can create new branches but they cannot be merged together. This capability will become available later on.
+
+### ORM native migrations are unsupported
+
+Currently we recommend using `xata pull [branchname]`, `xata push [branchname]` or the UI's migration editor to manage your schema changes. ORM native migrations (such as those in Django, Prisma or the like) will possibly have issues during the beta. Our goals are to increase support as we move toward general availability.
+
+## Column metadata
+
+Xata uses SQL comments on columns to track some replication-related metadata about certain types of columns. These comments are only ever present on columns created using the Xata UI, and only on certain types of columns.
+
+The full list of column types and their associated metadata comments is as follows:
+
+| Xata Type | Metadata comment                            | Notes                        |
+| --------- | ------------------------------------------- | ---------------------------- |
+| email     | &#123;"xata.type":"email"&#125;             |                              |
+| vector    | &#123;"xata.search.dimension":n&#125;       | dimension n is set in the UI |
+| string    | &#123;"xata.type":"string"&#125;            |                              |
+| text      | &#123;"xata.type":"text"&#125;              |                              |
+| file      | &#123;"xata.file.dpa":false&#125;           |                              |
+| link      | &#123;"xata.link": "referenced_table"&#125; |                              |
+
+Adding your own comments to database objects is permitted using direct Postgres access with the SQL `COMMENT` statement. Xata places no restrictions on comments, but be aware that modifying or removing the metadata comments added to columns by Xata itself may break search replication or have adverse effects on how the columns behave in the Xata UI.
+
+## Troubleshooting
+
+### SSL required
+
+Xata does not allow plain text connections. This may cause problems with certain clients.
+If you see an error similar to the one shown below, you can explicitly force SSL by setting the `sslmode` to `require` in the connection string or passing this setting in via a parameter depending on the tool you are using.
+
+```bash
+psql: error: connection to server at "eu-west-1.sql.xata.sh" (42.42.42.42), port 5432 failed: SSL required
+```
+
+psql enforces the sslmode require by default, but for demonstration purposes, the following connection string has the option appended to enforce an encrypted connection:
+
+```bash
+psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main?sslmode=require"
+```
+
+Xata recommends that the client verifies the server certificate. With `psql` use `verify-ca` and `verify-full` modes and provide a certificate store. It is usually present in the following location.
+
+- OSX: `/etc/ssl/cert.pem`
+- GNU/Linux: `/etc/ssl/certs/ca-certificates.crt`
+
+The below example shows how to use `psql` to manage a secure connection on a OSX.
+
+```bash
+psql "sslmode=verify-full sslrootcert=/etc/ssl/cert.pem user=ws1234 password=xau_apikey123456 host=us-east-1.sql.xata.sh dbname=Games:main"
+```
+
+Keep in mind that different clients might require different configuration options. Please refer to the main Postgres documentation for more in depth information about the [sslmodes](https://www.postgresql.org/docs/current/libpq-ssl.html) option.
+
+### Type constraint violations
+
+The following constraints are applied automatically for columns created through the UI:
+
+- `string`: length limited to 2048 characters.
+- `text`: length limited to 204800 characters.
+
+These limitations affect search and aggregations. Xata does not index longer values in the search store for these types.
+
+You will notice the constraint violation with following error message:
+
+```text
+ERROR:  new row for relation "mytable" violates check constraint "mytable_xata_string_length_mystr"
+```
+
+Xata distinguishes columns created via the UI or API using comments.
+If you drop constraints via the wire protocol, you should acknowledge the implications for features relying on the search store.

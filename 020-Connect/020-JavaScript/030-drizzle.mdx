@@ -10,30 +10,70 @@ status: beta
 
 [Drizzle](https://github.com/drizzle-team/drizzle-orm) is a TypeScript ORM that is focused on type safety and closely follows the SQL syntax.
 
-### Installation
+## Installation
 
 Install both Drizzle and `@xata.io/drizzle` with the Xata client. You can use the following package managers:
 
 <TabbedCode tabs={['npm', 'pnpm', 'yarn']}>
 ```sh
-npm install drizzle-orm @xata.io/drizzle @xata.io/client
+npm install drizzle-orm @xata.io/drizzle @xata.io/client pg
 ```
 
 ```sh
-pnpm add drizzle-orm @xata.io/drizzle @xata.io/client
+pnpm add drizzle-orm @xata.io/drizzle @xata.io/client pg
 ```
 
 ```sh
-yarn add drizzle-orm @xata.io/drizzle @xata.io/client
+yarn add drizzle-orm @xata.io/drizzle @xata.io/client pg
 ```
 
 </TabbedCode>
 
-### Usage
+## Usage
 
-You can use Drizzle with a Xata, as demonstrated in the following examples:
+Drizzle works with Xata as a HTTP client or a TCP client. The HTTP client doesn't create a persistent connection to the Xata server, while the TCP client does and can be used for better performance with a higher number of requests.
 
-```tsx
+To create a drizzle instance with the HTTP client, use the following code:
+
+```ts
+import { drizzle } from '@xata.io/drizzle';
+import { getXataClient } from './xata'; // Generated client
+
+const xata = getXataClient();
+const db = drizzle(xata);
+```
+
+To create a drizzle instance with the TCP client, use the following code:
+
+```ts
+import { drizzle } from '@xata.io/drizzle/pg';
+import { getXataClient } from './xata'; // Generated client
+import { Client } from 'pg';
+
+const xata = getXataClient();
+const client = new Client({ connectionString: xata.sql.connectionString });
+const db = drizzle(client);
+```
+
+For production use cases, you can create a pool of connections with the TCP client:
+
+```ts
+import { drizzle } from '@xata.io/drizzle/pg';
+import { getXataClient } from './xata'; // Generated client
+import { Pool } from 'pg';
+
+const xata = getXataClient();
+const pool = new Pool({ connectionString: xata.sql.connectionString, max: 20 });
+const db = drizzle(pool);
+```
+
+> Depending on your current plan, you may need to adjust the `max` value to match your plan's [connection limit](/docs/rest-api/limits).
+
+## Example
+
+A full example of using Drizzle with Xata is shown below:
+
+```ts
 import { pgTable, text } from 'drizzle-orm/pg-core';
 import { drizzle } from '@xata.io/drizzle';
 import { eq } from 'drizzle-orm';
@@ -41,27 +81,27 @@ import { getXataClient } from './xata'; // Generated client
 
 const xata = getXataClient();
 
-const drivers = pgTable('drivers', {
+const actors = pgTable('Actors', {
   id: text('id').primaryKey(),
-  surname: text('surname'),
-  forename: text('forename'),
-  nationality: text('nationality')
+  name: text('name'),
+  city: text('city')
 });
 
 const db = drizzle(xata);
 
 const result = await db
-  .select({ surname: drivers.surname, forename: drivers.forename })
-  .from(drivers)
-  .where(eq(drivers.nationality, 'Spanish'))
+  .select({ name: actors.name, city: actors.city })
+  .from(actors)
+  .where(eq(actors.city, 'New York'))
   .execute();
 ```
 
 The code imports required modules from the `drizzle-orm` and `@xata.io/drizzle` libraries. It also brings in the `eq` function from `drizzle-orm` for value comparison and the `getXataClient` function from a local xata module. The `getXataClient` function is used to acquire an instance of the Xata client.
 
-Currently, we recommend manually defining the schema like in the example above. We are working on utility functions to automatically generate the Drizzle model from the Xata database schema.
+Currently, we recommend manually defining the schema like in the example above. Alternatively, you can try to use `drizzle-kit` [experimental feature](https://orm.drizzle.team/kit-docs/commands#introspect--pull) to generate the schema from the database.
 
-### Limitations
+## Limitations
 
-- Drizzle migrations are not supported yet
-- Transactions are not supported yet
+- Transactions are not supported in the HTTP client.
+- Drizzle Kit introspection has a bug with our xata_id default value. You need to manually wrap the value with backticks.
+- Xata File Storage is read-only and only shows file metadata. You need to use the SDK to upload and download files.

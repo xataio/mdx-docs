@@ -1,0 +1,40 @@
+---
+title: Connect to Postgres with PHP
+navTitle: pgsql
+keywords: ['php', 'pgsql']
+description: Connect to Postgres with PHP and pgsql
+slug: php-pgsql
+published: true
+---
+
+To connect to Xata with [pgsql](https://www.php.net/manual/en/book.pgsql.php) you can use the following code.
+Please replace the parameters as indicated on the [connect to Postgres](/docs/postgres) page.
+
+```php
+<?php
+
+$dsn = sprintf("host=%s port=%d dbname=%s user=%s password=%s",
+  "<REGION>.sql.xata.sh",
+  5432,
+  "<DATABASE_NAME>:<BRANCH_NAME>",
+  "<WORKSPACE_ID>",
+  "<API_KEY>"
+);
+
+// Run query
+$conn = pg_connect($dsn) or die("failed to connect.");
+$result = pg_query($conn, "SELECT 1") or die(pg_last_error());
+var_dump(pg_fetch_all($result));
+pg_free_result($result);
+pg_close($conn);
+
+/*
+ array(1) {
+  [0]=>
+  array(1) {
+    ["?column?"]=>
+    string(1) "1"
+  }
+}
+*/
+```

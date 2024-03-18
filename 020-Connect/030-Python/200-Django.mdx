@@ -1,0 +1,27 @@
+---
+title: Connect to Postgres with Django
+navTitle: Django
+keywords: ['python', 'postgres', 'django']
+description: Connect to Postgres with Django
+slug: python-django
+published: true
+---
+
+Connecting to Xata with Django can be done by altering the `settings.py` file:
+
+```python title="settings.py"
+DATABASES = {
+  'default': {
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': '<DATABASE_NAME>:<BRANCH>',
+    'USER': '<WORKSPACE_ID>',
+    'PASSWORD': '<API_KEY>',
+    'HOST': '<REGION>.sql.xata.sh',
+    'PORT': '5432',
+  }
+}
+```
+
+Please replace the parameters as indicated on the [connect to Postgres](/docs/postgres) page.
+
+For other options to bootstrap the database settings in Django, e.g. with environment variables, please refer to the [project documentation](https://docs.djangoproject.com/en/5.0/ref/databases/#postgresql-notes).
