@@ -1,0 +1,56 @@
+---
+title: Connect to Postgres with rust sqlx
+navTitle: sqlx
+keywords: ['rust', 'sqlx']
+description: Connect to Postgres with Rust sqlx
+slug: rust-sqlx
+published: true
+---
+
+To use Xata with Rust [sqlx](https://github.com/launchbadge/sqlx), you have the option to connect with the connection string (DSN).
+Please replace the placeholders in the connection string, as indicated on the [connect to Postgres](/docs/postgres) page. For this example sqlx is used with tokio and rustls.
+
+```rust
+use sqlx::FromRow;
+use sqlx::{Connection, PgConnection};
+
+#[tokio::main]
+async fn main() -> Result<(), sqlx::Error> {
+    let conn_string = "postgresql://<WORKSPACE_ID>:<API_KEY>@<REGION>.sql.xata.sh:5432/<DATABASE_NAME>:<BRANCH_NAME>?sslmode=require";
+
+    let mut conn = PgConnection::connect(conn_string).await?;
+
+    sqlx::query("CREATE TABLE IF NOT EXISTS test(id serial, name text);")
+        .execute(&mut conn)
+        .await?;
+
+    let _row: (i32,) = sqlx::query_as("INSERT INTO test (name) VALUES($1) RETURNING id")
+        .bind("a")
+        .fetch_one(&mut conn)
+        .await?;
+
+    #[derive(Debug, FromRow)]
+    struct TestRow {
+        id: i32,
+        name: String,
+    }
+
+    let select_query = sqlx::query_as::<_, TestRow>("SELECT id, name FROM test");
+    let rows: Vec<TestRow> = select_query.fetch_all(&mut conn).await?;
+    println!("\n=== select test rows: \n{:?}", rows);
+
+    sqlx::query("DROP TABLE IF EXISTS test;")
+        .execute(&mut conn)
+        .await?;
+
+    Ok(())
+}
+```
+
+### Cargo dependencies
+
+```toml
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+sqlx = { version = "0.7", features = [ "runtime-tokio", "tls-rustls", "postgres" ] }
+```
