@@ -10,7 +10,7 @@ status: beta
 
 [Prisma ORM](https://www.prisma.io/orm) is a TypeScript ORM that is focused on type safety and developer experience.
 
-### Installation
+## Installation
 
 Install prisma client. You can use the following package managers:
 
@@ -31,7 +31,7 @@ yarn add prisma
 
 ### Usage
 
-You can use Prisma with Xata with the default postgres client. To do so, you need to define the schema in the `schema.prisma` file. Here is an example of a schema:
+You can use Prisma if you have enabled your Xata database to allow [Postgres connections](/docs/postgres). Once enabled, define a schema in the `schema.prisma` file. Here is an example of a schema:
 
 ```prisma
 datasource db {
@@ -68,7 +68,7 @@ const result = await prisma.users.findMany({
 });
 ```
 
-### Limitations
+## Limitations
 
 - Xata File Storage is read-only and only shows file metadata. You need to use the SDK to upload and download files.
 - Prisma migrate is not yet fully supported. You need to use the Xata CLI to manage the [database migrations](/docs/migrations).
