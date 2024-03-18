@@ -1,17 +1,18 @@
 ---
-title: Dedicated cluster
-navTitle: Dedicated cluster
+title: Dedicated clusters
+navTitle: Dedicated clusters
 keywords: ['postgres', 'dedicated cluster']
 description: How to manage your own Postgres instance
 slug: dedicated-cluster
-published: false
+published: true
 status: alpha
 ---
 
-Xata provides you multiple deployment options, the most powerful is the dedicated cluster.
-Your own Postgres instance, that only belongs to you, so you get all the power of Postgres pair [Xata's](/docs/concepts/serverless-data-platform) features out of box.
+A dedicated cluster is a Postgres cluster, which includes a writer instance and potentially multiple read replicas. You can create and allocate Xata databases and branches to this cluster. Xata databases and branches behave the same whether they are allocated to the shared or dedicated cluster.
 
-Dedicated cluster is available in the [Pro plan](/docs/concepts/pricing#pro-plan).
+However, a dedicated cluster provides more isolation for your workload and enables more SQL functionality, as well as the ability to install Postgres extensions. See the table for the [supported statements](/docs/postgres#supported-statements) for more detail. For these reasons, a dedicated cluster is the best choice for production workloads.
+
+Dedicated clusters are available in the [Pro plan](/docs/concepts/pricing#pro-plan). Dedicated clusters are powered by AWS Aurora instances and the pricing for them matches the [AWS Aurora for PostgreSQL](https://aws.amazon.com/rds/aurora/pricing/) pricing.
 
 ## Supported versions
 
@@ -22,38 +23,57 @@ At the moment Xata supports the following Postgres versions:
 - 14.10
 - 14.9
 
-As we working to promoted dedicated clusters to generaly available (GA), we will add more versions.
-Another functionality we are working on is to provide you control over the maintenance windows and the ability upgrade a version yourself.
+As we work to promote dedicated clusters to generally available (GA), we will add more versions. We are also working to provide control over the maintenance windows and the ability upgrade a version yourself.
 
 ## Instances
 
-### Servless
+There are two kinds of instances that can power the Xata dedicated clusters:
 
-Serveless option
+- Provisioned instances, which have a fixed amount of CPU and memory
+- Auto-scaling instances, which can scale up and down based on the load
 
-## On demand instances
+## Provisioned instances
 
-- db.t4g.medium
-- db.t4g.large
-- db.t3.medium
-- db.t3.large
-- r6gd.xlarge
-- r6gd.2xlarge
-- db.r6g.large
-- db.r6g.xlarge
-- db.r6g.2xlarge
-- db.r6i.large
-- db.r6i.xlarge
-- db.r6i.2xlarge
+The following instance types are available via the UI. If you require other instance types or would like to reserve instances, please reach out to our [support team](/docs/resources/support). We can generally support any [instance type](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.DBInstanceClass.html) that is available in the AWS Aurora for PostgreSQL service.
+
+In the following table, the prices are listed for the us-east-1 region and should be considered estimates. You will get the exact price per hour for the instances and an estimate of the monthly cost when you create the cluster.
+
+| Instance type   | vCPU | Memory (GB) | Price per hour | Price per hour (I/O optimized ) | Description                                                |
+| --------------- | ---- | ----------- | -------------- | ------------------------------- | ---------------------------------------------------------- |
+| db.t4g.medium   | 2    | 4           | $0.073         | $0.095                          | General-purpose, Graviton2 processors.                     |
+| db.t4g.large    | 2    | 8           | $0.146         | $0.19                           | General-purpose, Graviton2 processors.                     |
+| db.t3.medium    | 2    | 4           | $0.082         | $0.107                          | General-purpose, CPU Burstable                             |
+| db.t3.large     | 2    | 8           | $0.164         | $0.213                          | General-purpose, CPU Burstable                             |
+| db.r6g.large    | 2    | 16          | $0.26          | $0.338                          | Memory-optimized, Graviton2 processors.                    |
+| db.r6g.xlarge   | 4    | 32          | $0.519         | $0.675                          | Memory-optimized, Graviton2 processors.                    |
+| db.r6g.2xlarge  | 8    | 64          | $1.038         | $1.349                          | Memory-optimized, Graviton2 processors.                    |
+| db.r6gd.xlarge  | 4    | 32          | $0.624         | $0.811                          | Memory-optimized, local SSD storage, Graviton2 processors. |
+| db.r6gd.2xlarge | 8    | 64          | $1.248         | $1.622                          | Memory-optimized, local SSD storage, Graviton2 processors. |
+| db.r6i.large    | 2    | 16          | $0.29          | $0.377                          | Memory-optimized, Intel Xeon processors.                   |
+| db.r6i.xlarge   | 4    | 32          | $0.58          | $0.754                          | Memory-optimized, Intel Xeon processors.                   |
+| db.r6i.2xlarge  | 8    | 64          | $1.16          | $1.508                          | Memory-optimized, Intel Xeon processors.                   |
+
+## Auto-scaling instances
+
+Auto-scaling instances are more expensive per GB of RAM compared to the provisioned instances, but they can scale up and down based on the load. This means that they can be more cost effective for workloads that have very variable load.
+
+You can select a minimum and maximum RAM value for the auto-scaling instances. The number vCPUs will be automatically calculated based on the selected RAM value.
+
+The Xata auto-scaling dedicated clusters are powered by the AWS Aurora Serverless v2 instances and use the same pricing.
+
+| RAM (GB) | vCPU | Price per hour | Price per hour (I/O optimized ) |
+| -------- | ---- | -------------- | ------------------------------- |
+| 1        | 0.5  | $0.06          | $0.08                           |
 
 ## Regions
 
-Similar to the supported Postgres version, we will launch this feature in a selected set of regions.
-If you the region you are looking for is not available please reach out to our [support team](/docs/resources/support).
+Similar to the supported Postgres version, we will launch this feature in a selected set of regions. If you the region you are looking for is not available please reach out to our [support team](/docs/resources/support).
 
 ## Extensions
 
-You can install extensions yourself, please consult the [Postgres documentation](https://www.postgresql.org/docs/current/sql-createextension.html) for a how to.
+All the extensions that are available in Aurora PostgreSQL are available in the dedicated clusters. The list of extensions and their versions depends on the Postgres version, please consult this [list](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraPostgreSQLReleaseNotes/AuroraPostgreSQL.Extensions.html).
+
+You can enable extensions yourself, please consult the [Postgres documentation](https://www.postgresql.org/docs/current/sql-createextension.html) for a how to.
 
 To inspect which extensions are available out-of-the-box, please connect to your database and run the following command:
 
@@ -63,5 +83,4 @@ SELECT * FROM pg_available_extensions;
 
 ## Limitations
 
-Certain SQL statements and functions are forbidden, refer to [limtations](/docs/postgres#limitations) for the complete list.
-There are **no** limits imposed on amount of open Postgres [connections](/docs/postgres#connection-limits) or [HTTP API requests](/docs/rest-api/limits#rate-limits) in a dedicated cluster.
+Certain SQL statements and functions are forbidden, refer to [limtations](/docs/postgres#limitations) for the complete list. There are **no** limits imposed on amount of open Postgres [connections](/docs/postgres#connection-limits) or [HTTP API requests](/docs/rest-api/limits#rate-limits) in a dedicated cluster.
