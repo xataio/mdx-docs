@@ -45,13 +45,13 @@ You can manually define the schema or use the introspection feature to generate 
 To introspect the database, you can use the following command:
 
 ```sh
-npx prisma db pull
+prisma db pull
 ```
 
 To generate the client, you can use the following command:
 
 ```sh
-npx prisma generate
+prisma generate
 ```
 
 After generating the client, you can use it in your code. Here is an example of using the client:
@@ -71,3 +71,4 @@ const result = await prisma.users.findMany({
 ### Limitations
 
 - Xata File Storage is read-only and only shows file metadata. You need to use the SDK to upload and download files.
+- Prisma migrate is not fully supported. You need to use the Xata CLI to manage the database migrations.
