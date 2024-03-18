@@ -1,6 +1,6 @@
 ---
-title: Dedicated cluster
-navTitle: Dedicated cluster
+title: Dedicated clusters
+navTitle: Dedicated clusters
 keywords: ['postgres', 'dedicated cluster']
 description: How to manage your own Postgres instance
 slug: dedicated-cluster
@@ -8,13 +8,11 @@ published: true
 status: alpha
 ---
 
-Xata provides you multiple deployment options for your PostgreSQL database, the most powerful is the dedicated cluster.
+A dedicated cluster is a Postgres cluster, which includes a writer instance and potentially multiple read replicas. You can create and allocate Xata databases and branches to this cluster. Xata databases and branches behave the same whether they are allocated to the shared or dedicated cluster.
 
-A dedicated cluster is a Postgres cluster, having one writer instance and potentially multiple read replicas. You can create and allocate Xata databases and branches to this cluster. Xata databases and branches behave the same whether they are allocated to the shared or dedicated cluster.
+However, a dedicated cluster provides more isolation for your workload and enables more SQL functionality, as well as the ability to install Postgres extensions. See the table for the [supported statements](/docs/postgres#supported-statements) for more detail. For these reasons, a dedicated cluster is the best choice for production workloads.
 
-However, a dedicated cluster provides more isolation for your workload and enables more SQL functionality, see the table for the [supported statements](/docs/postgres#supported-statements). For these reasons, a dedicated cluster is the best choice for production workloads.
-
-Dedicated cluster is available in the [Pro plan](/docs/concepts/pricing#pro-plan). The dedicated clusters are powered by AWS Aurora instances and the pricing for them matches the [AWS Aurora for PostgreSQL](https://aws.amazon.com/rds/aurora/pricing/) pricing.
+Dedicated clusters are available in the [Pro plan](/docs/concepts/pricing#pro-plan). Dedicated clusters are powered by AWS Aurora instances and the pricing for them matches the [AWS Aurora for PostgreSQL](https://aws.amazon.com/rds/aurora/pricing/) pricing.
 
 ## Supported versions
 
@@ -25,7 +23,7 @@ At the moment Xata supports the following Postgres versions:
 - 14.10
 - 14.9
 
-As we working to promoted dedicated clusters to generally available (GA), we will add more versions. Another functionality we are working on is to provide you control over the maintenance windows and the ability upgrade a version yourself.
+As we work to promote dedicated clusters to generally available (GA), we will add more versions. We are also working to provide control over the maintenance windows and the ability upgrade a version yourself.
 
 ## Instances
 
@@ -38,7 +36,7 @@ There are two kinds of instances that can power the Xata dedicated clusters:
 
 The following instance types are available via the UI. If you require other instance types or would like to reserve instances, please reach out to our [support team](/docs/resources/support). We can generally support any [instance type](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.DBInstanceClass.html) that is available in the AWS Aurora for PostgreSQL service.
 
-In the following table, the prices are listed for the us-east-1 region and should be considered orientative. You will get the exact price per hour for the instances and an estimate of the monthly cost when you create the cluster.
+In the following table, the prices are listed for the us-east-1 region and should be considered estimates. You will get the exact price per hour for the instances and an estimate of the monthly cost when you create the cluster.
 
 | Instance type   | vCPU | Memory (GB) | Price per hour | Price per hour (I/O optimized ) | Description                                                |
 | --------------- | ---- | ----------- | -------------- | ------------------------------- | ---------------------------------------------------------- |
@@ -69,8 +67,7 @@ The Xata auto-scaling dedicated clusters are powered by the AWS Aurora Serverles
 
 ## Regions
 
-Similar to the supported Postgres version, we will launch this feature in a selected set of regions.
-If you the region you are looking for is not available please reach out to our [support team](/docs/resources/support).
+Similar to the supported Postgres version, we will launch this feature in a selected set of regions. If you the region you are looking for is not available please reach out to our [support team](/docs/resources/support).
 
 ## Extensions
 
@@ -86,5 +83,4 @@ SELECT * FROM pg_available_extensions;
 
 ## Limitations
 
-Certain SQL statements and functions are forbidden, refer to [limtations](/docs/postgres#limitations) for the complete list.
-There are **no** limits imposed on amount of open Postgres [connections](/docs/postgres#connection-limits) or [HTTP API requests](/docs/rest-api/limits#rate-limits) in a dedicated cluster.
+Certain SQL statements and functions are forbidden, refer to [limtations](/docs/postgres#limitations) for the complete list. There are **no** limits imposed on amount of open Postgres [connections](/docs/postgres#connection-limits) or [HTTP API requests](/docs/rest-api/limits#rate-limits) in a dedicated cluster.
