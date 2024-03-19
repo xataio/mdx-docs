@@ -1,0 +1,81 @@
+---
+title: Prisma with Xata
+navTitle: Prisma
+keywords: ['orm', 'prisma', 'typescript', 'query builder']
+description: Use the Prisma integration as a TypeScript ORM
+slug: integrations/prisma
+published: true
+status: beta
+---
+
+[Prisma ORM](https://www.prisma.io/orm) is a TypeScript ORM that is focused on type safety and developer experience.
+
+## Installation
+
+Prisma currently only works with Xata databases that are set up with the ability to make [direct Postgres connections](/docs/postgres). Follow the instructions below to learn how to configure Prisma to work with Xata in this method.
+
+<DocsEnablePostgres />
+
+### Install Prisma
+
+You can use the following package managers:
+
+<TabbedCode tabs={['npm', 'pnpm', 'yarn']}>
+
+```sh
+npm install prisma
+```
+
+```sh
+pnpm add prisma
+```
+
+```sh
+yarn add prisma
+```
+
+</TabbedCode>
+
+## Usage
+
+To use Xata with Prisma define a postgresql datasource in the `schema.prisma` file. Here is an example:
+
+```ts
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
+
+You can manually define the schema or use the introspection feature to generate the schema from the database.
+
+To introspect the database, you can use the following command:
+
+```sh
+prisma db pull
+```
+
+To generate the client, you can use the following command:
+
+```sh
+prisma generate
+```
+
+After generating the client, you can use it in your code. Here is an example of using the client:
+
+```ts
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient({});
+
+const result = await prisma.users.findMany({
+  where: {
+    name: 'Alice'
+  }
+});
+```
+
+## Limitations
+
+- Xata [File attachments](/docs/sdk/file-attachments) columns are read-only and only shows file metadata. You will need to use the [SDK](/docs/sdk/typescript/overview) to upload and download files.
+- Prisma migrate is not yet fully supported. You need to use the Xata CLI to manage the [database migrations](/docs/migrations).

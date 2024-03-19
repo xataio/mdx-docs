@@ -12,19 +12,44 @@ status: beta
 
 ## Installation
 
-Install both Drizzle and `@xata.io/drizzle` with the Xata client. You can use the following package managers:
+Drizzle currently only works with Xata databases that are set up with the ability to make [direct Postgres connections](/docs/postgres). Follow the instructions below to learn how to configure Drizzle to work with Xata in this method.
+
+<DocsEnablePostgres />
+
+### Install Drizzle
+
+You can use the following package managers:
 
 <TabbedCode tabs={['npm', 'pnpm', 'yarn']}>
+
 ```sh
-npm install drizzle-orm @xata.io/drizzle @xata.io/client pg
+npm install drizzle-orm @xata.io/client@next
 ```
 
 ```sh
-pnpm add drizzle-orm @xata.io/drizzle @xata.io/client pg
+pnpm add drizzle-orm @xata.io/client@next
 ```
 
 ```sh
-yarn add drizzle-orm @xata.io/drizzle @xata.io/client pg
+yarn add drizzle-orm @xata.io/client@next
+```
+
+</TabbedCode>
+
+If you want to use the TCP client, you need to install the `pg` package as well:
+
+<TabbedCode tabs={['npm', 'pnpm', 'yarn']}>
+
+```sh
+npm install pg
+```
+
+```sh
+pnpm add pg
+```
+
+```sh
+yarn add pg
 ```
 
 </TabbedCode>
@@ -36,7 +61,7 @@ Drizzle works with Xata as a HTTP client or a TCP client. The HTTP client doesn'
 To create a drizzle instance with the HTTP client, use the following code:
 
 ```ts
-import { drizzle } from '@xata.io/drizzle';
+import { drizzle } from 'drizzle-orm/xata-http';
 import { getXataClient } from './xata'; // Generated client
 
 const xata = getXataClient();
@@ -46,7 +71,7 @@ const db = drizzle(xata);
 To create a drizzle instance with the TCP client, use the following code:
 
 ```ts
-import { drizzle } from '@xata.io/drizzle/pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { getXataClient } from './xata'; // Generated client
 import { Client } from 'pg';
 
@@ -58,7 +83,7 @@ const db = drizzle(client);
 For production use cases, you can create a pool of connections with the TCP client:
 
 ```ts
-import { drizzle } from '@xata.io/drizzle/pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { getXataClient } from './xata'; // Generated client
 import { Pool } from 'pg';
 
@@ -74,8 +99,8 @@ const db = drizzle(pool);
 A full example of using Drizzle with Xata is shown below:
 
 ```ts
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { pgTable, text } from 'drizzle-orm/pg-core';
-import { drizzle } from '@xata.io/drizzle';
 import { eq } from 'drizzle-orm';
 import { getXataClient } from './xata'; // Generated client
 
@@ -96,7 +121,7 @@ const result = await db
   .execute();
 ```
 
-The code imports required modules from the `drizzle-orm` and `@xata.io/drizzle` libraries. It also brings in the `eq` function from `drizzle-orm` for value comparison and the `getXataClient` function from a local xata module. The `getXataClient` function is used to acquire an instance of the Xata client.
+The code imports required modules from the `drizzle-orm` libraries. It also brings in the `eq` function from `drizzle-orm` for value comparison and the `getXataClient` function from a local xata module. The `getXataClient` function is used to acquire an instance of the Xata client.
 
 Currently, we recommend manually defining the schema like in the example above. Alternatively, you can try to use `drizzle-kit` [experimental feature](https://orm.drizzle.team/kit-docs/commands#introspect--pull) to generate the schema from the database.
 
@@ -104,4 +129,4 @@ Currently, we recommend manually defining the schema like in the example above. 
 
 - Transactions are not supported in the HTTP client.
 - Drizzle Kit introspection has a bug with our xata_id default value. You need to manually wrap the value with backticks.
-- Xata File Storage is read-only and only shows file metadata. You need to use the SDK to upload and download files.
+- Xata [File attachments](/docs/sdk/file-attachments) columns are read-only and only shows file metadata. You will need to use the [SDK](/docs/sdk/typescript/overview) to upload and download files.
