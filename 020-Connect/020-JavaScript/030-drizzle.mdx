@@ -10,13 +10,20 @@ status: beta
 
 [Drizzle](https://github.com/drizzle-team/drizzle-orm) is a TypeScript ORM that is focused on type safety and closely follows the SQL syntax.
 
-<DocsEnablePostgres docsLink={true} />
-
 ## Installation
 
-Install Drizzle with the Xata client. You can use the following package managers:
+Drizzle currently only works with Xata databases that are set up with the ability to make [direct Postgres connections](/docs/postgres). Follow the instructions below to learn how to configure Drizzle to work with Xata in this method.
+
+### Create a Postgres enabled database in Xata
+
+<DocsEnablePostgres />
+
+### Install Drizzle
+
+You can use the following package managers:
 
 <TabbedCode tabs={['npm', 'pnpm', 'yarn']}>
+
 ```sh
 npm install drizzle-orm @xata.io/client@next
 ```
@@ -34,6 +41,7 @@ yarn add drizzle-orm @xata.io/client@next
 If you want to use the TCP client, you need to install the `pg` package as well:
 
 <TabbedCode tabs={['npm', 'pnpm', 'yarn']}>
+
 ```sh
 npm install pg
 ```
