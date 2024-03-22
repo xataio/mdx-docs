@@ -288,7 +288,7 @@ make any further changes to the schema, run `xata pull <branch>` to update the a
 
 Replace the contents of `src/layouts/main.astro` with the following:
 
-```astro title="src/layouts/main.astro" {2,10,49}
+```astro title="src/layouts/main.astro"
 ---
 const { title } = Astro.props;
 ---
@@ -488,12 +488,13 @@ routes are identified within the `getStaticPaths` function, and site content is 
 
 Create a new file, `src/pages/posts/[slug].astro` to enable access to a `slug` parameter:
 
-```tsx astro="src/pages/posts/[slug].astro" {2,4,6-21,23-43}
+```tsx astro="src/pages/posts/[slug].astro"
 ---
-import MainLayout from '../../layouts/main.astro'
+import MainLayout from '../../layouts/main.astro' // [!code highlight]
 
-import { XataClient } from '../../xata';
+import { XataClient } from '../../xata'; // [!code highlight]
 
+// [!code highlight-start]
 export async function getStaticPaths() {
   const xata = new XataClient({
     apiKey: import.meta.env.XATA_API_KEY,
@@ -510,7 +511,8 @@ export async function getStaticPaths() {
 
   return routes;
 }
-
+// [!code highlight-end]
+// [!code highlight-start]
 const post = Astro.props;
 ---
 
@@ -532,6 +534,7 @@ const post = Astro.props;
   </div>
 
 </MainLayout>
+// [!code highlight-end]
 
 ```
 
@@ -627,7 +630,7 @@ such as search results,
 [Server Side Rendering (SSR)](https://docs.astro.build/en/core-concepts/routing/#server-ssr-mode) is required. Astro supports
 a "hybrid" mode for sites that use SSG and SSR. You enable this within `apps/getting-started-astro/astro.config.mjs` as follows:
 
-```ts title="apps/getting-started-astro/astro.config.mjs" {8}
+```ts title="apps/getting-started-astro/astro.config.mjs"
 import { defineConfig } from 'astro/config';
 
 import tailwind from '@astrojs/tailwind';
@@ -635,7 +638,7 @@ import tailwind from '@astrojs/tailwind';
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind()],
-  output: 'hybrid'
+  output: 'hybrid' // [!code highlight]
 });
 ```
 
@@ -643,7 +646,7 @@ With `output` set to `hybrid`, static pages continue to work as they did previou
 
 Adding search is as simple as updating the landing page as follows:
 
-```astro title="src/app/page.tsx" {11,13-18,22-31}
+```astro title="src/app/page.tsx"
 ---
 import MainLayout from '../layouts/main.astro';
 
@@ -654,8 +657,8 @@ const xata = new XataClient({
   branch: import.meta.env.XATA_BRANCH
 });
 
-const search = Astro.url.searchParams.get('q')! || '';
-
+const search = Astro.url.searchParams.get('q')! || ''; // [!code highlight]
+// [!code highlight-start]
 let posts = null;
 if (search) {
   const { records } = await xata.db.Posts.search(search, { fuzziness: 2 });
@@ -663,8 +666,9 @@ if (search) {
 } else {
   posts = await xata.db.Posts.getAll();
 }
+// [!code highlight-end]
 ---
-
+// [!code highlight-start]
 <MainLayout title="Get started with Xata and Astro">
   <div class="w-full max-w-5xl mt-16">
     <form action="/">
@@ -676,7 +680,7 @@ if (search) {
       />
     </form>
   </div>
-
+// [!code highlight-end]
   ...
 
 </MainLayout>

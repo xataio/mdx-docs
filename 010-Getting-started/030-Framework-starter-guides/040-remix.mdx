@@ -254,11 +254,11 @@ The first step to add some styling to the application is to add Tailwind CSS. To
 
 Once all the steps from the guide have been followed, update `app/tailwind.css` with some additional rules:
 
-```css title="app/tailwind.css" {5-26}
+```css title="app/tailwind.css"
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+// [!code highlight-start]
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -277,17 +277,18 @@ body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
+// [!code highlight-end]
 ```
 
 Finally, update `app/root.tsx` to add some shared structure across application pages. The code will end up as follows:
 
-```tsx title="app.root.tsx" {1,4,6,29}
-import type { LinksFunction } from '@remix-run/node';
+```tsx title="app.root.tsx"
+import type { LinksFunction } from '@remix-run/node'; // [!code highlight]
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 
-import styles from './tailwind.css';
+import styles from './tailwind.css'; // [!code highlight]
 
-export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]; // [!code highlight]
 
 export default function App() {
   return (
@@ -310,7 +311,7 @@ export default function App() {
               </a>
             </div>
           </div>
-          <Outlet />
+          <Outlet /> // [!code highlight]
         </main>
         <ScrollRestoration />
         <Scripts />
@@ -576,9 +577,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 Finally, the main page function makes use of the `userLoaderData` hook to retrieve the single Post information and uses the values,
 `title`, `pubDate`, and `description`, for the Post are added to the UI:
 
-```tsx {2,11,13,15}
+```tsx
 export default function Post() {
-  const { post } = useLoaderData<typeof loader>();
+  const { post } = useLoaderData<typeof loader>(); // [!code highlight]
 
   return (
     <div className="w-full max-w-5xl mt-16">
@@ -587,11 +588,11 @@ export default function Post() {
           &larr; Back to blog
         </a>
       </p>
-      <h1 className="text-3xl mb-2">{post?.title}</h1>
+      <h1 className="text-3xl mb-2">{post?.title}</h1> // [!code highlight]
       <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
-        {new Date(post?.pubDate ?? '').toDateString()}
+        {new Date(post?.pubDate ?? '').toDateString()} // [!code highlight]
       </p>
-      <p className="text-xl">{post?.description}</p>
+      <p className="text-xl">{post?.description}</p> // [!code highlight]
     </div>
   );
 }
@@ -611,13 +612,13 @@ any configuration to enable search, just need to use the
 
 Let's add this functionality to the landing page:
 
-```tsx title="app/routes/_index.tsx" {1,7-24,27,31-40}
-import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node'
+```tsx title="app/routes/_index.tsx"
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node' // [!code highlight]
 import { useLoaderData } from '@remix-run/react'
 import { getXataClient } from 'src/xata'
 
 ...
-
+// [!code highlight-start]
 export async function loader({ request }: LoaderFunctionArgs) {
   const xata = getXataClient()
 
@@ -636,12 +637,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
     search,
   })
 }
-
+// [!code highlight-end]
 export default function Index() {
-  const { posts, search } = useLoaderData<typeof loader>()
+  const { posts, search } = useLoaderData<typeof loader>() // [!code highlight]
 
   return (
     <>
+      // [!code highlight-start]
       <div className="w-full max-w-5xl mt-16">
         <form>
           <input
@@ -652,7 +654,7 @@ export default function Index() {
           />
         </form>
       </div>
-
+      // [!code highlight-end]
       ...
     </>
   )
@@ -664,14 +666,14 @@ Here's a breakdown of what's happening in the code above.
 First, update the `@remix-run/node` import to include `LoaderFunctionArgs`. Then, update the `loader` function to accept
 the `request` property from the `LoaderFunctionArgs` parameter.
 
-```tsx {1,7}
-import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node'
+```tsx
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node' // [!code highlight]
 import { useLoaderData } from '@remix-run/react'
 import { getXataClient } from 'src/xata'
 
 ...
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) { // [!code highlight]
   ...
 }
 ```

@@ -286,10 +286,10 @@ npx tailwindcss init -p
 
 Update the `content` property in `tailwind.config.js`:
 
-```js title="tailwind.config.js" {3}
+```js title="tailwind.config.js"
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  content: ['./src/**/*.{js,jsx,ts,tsx}'], // [!code highlight]
   theme: {
     extend: {}
   },
@@ -674,8 +674,8 @@ any configuration to enable search, you just need to use the
 
 Add this functionality to the landing page:
 
-```tsx title="src/routes/index.tsx" {1,15-24,32,36-45}
-import { useLocation } from '@solidjs/router';
+```tsx title="src/routes/index.tsx"
+import { useLocation } from '@solidjs/router'; // [!code highlight]
 import { Match, Switch, For } from 'solid-js';
 import { useRouteData } from 'solid-start';
 import { createServerData$ } from 'solid-start/server';
@@ -688,7 +688,7 @@ export function routeData() {
       apiKey: import.meta.env.XATA_API_KEY,
       branch: import.meta.env.XATA_BRANCH
     });
-
+    // [!code highlight-start]
     const location = useLocation();
     const search = location.query.q;
 
@@ -699,6 +699,7 @@ export function routeData() {
       posts = await xata.db.Posts.getAll();
     }
     return { posts, search };
+    // [!code highlight-end]
   });
 }
 
@@ -706,11 +707,12 @@ export default function Home() {
   const resource = useRouteData<typeof routeData>();
   const data = resource();
   const posts = data?.posts;
-  const search = data?.search || '';
+  const search = data?.search || ''; // [!code highlight]
 
   return (
     <>
       <div class="w-full max-w-5xl mt-16">
+        // [!code highlight-start]
         <form action="/">
           <input
             name="q"
@@ -720,7 +722,7 @@ export default function Home() {
           />
         </form>
       </div>
-      ...
+      // [!code highlight-end]
     </>
   );
 }
@@ -784,16 +786,17 @@ querystring in the format `{url}/?{input-name}={input-value}`. For our search fo
 a `GET` request in the format `?q={q-value}`. Since this is precisely the behavior required, and the check for the `q`
 querystring search value has been implemented already, everything is in place.
 
-```tsx {5,9-18}
+```tsx
 export default function Home() {
   const resource = useRouteData<typeof routeData>();
   const data = resource();
   const posts = data?.posts;
-  const search = data?.search || '';
+  const search = data?.search || ''; // [!code highlight]
 
   return (
     <>
       <div class="w-full max-w-5xl mt-16">
+        // [!code highlight-satrt]
         <form action="/">
           <input
             name="q"
@@ -803,7 +806,7 @@ export default function Home() {
           />
         </form>
       </div>
-      ...
+      // [!code highlight-end]
     </>
   );
 }

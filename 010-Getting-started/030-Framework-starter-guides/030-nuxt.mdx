@@ -244,11 +244,11 @@ make any further changes to the schema, run `xata pull <branch>` to update the a
 Begin by following step 2 onwards of the [Tailwind CSS and Nuxt 3 integration guide](https://tailwindcss.com/docs/guides/nuxtjs#3).
 Once completed, add the following global styling to the newly created `assets/css/main.css`:
 
-```css title="assets/css/main.css" {5-26}
+```css title="assets/css/main.css"
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+// [!code highlight-start]
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -267,6 +267,7 @@ body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
+// [!code highlight-end]
 ```
 
 Finally, update `app.vue` to add some shared structure across application pages. The code will end up as follows:
@@ -440,7 +441,7 @@ useHead({ title: post?.title });
 As with the API route, page Routes in Nuxt support named [route parameters](https://nuxt.com/docs/getting-started/routing#route-parameters)
 represented in the file path. In this case. the parameter named `slug`. To get the value of the `slug` route parameter, get access to the `route`
 information using `useRoute`. Then, request the `/api/posts/[slug]` endpoint to fetch the single blog post information, passing the value
-of `route.params.slug` (`` await useFetch(`/api/posts/${route.params.slug}`) ``). Assign the resultant single Post information to a variable named
+of `route.params.slug` (``await useFetch(`/api/posts/${route.params.slug}`)``). Assign the resultant single Post information to a variable named
 `post` via object deconstruction and renaming (`const { data: post }`).
 
 ```vue
@@ -493,11 +494,12 @@ any configuration to enable search, just need to use the
 
 Aadd this functionality to `/api/posts` API server route:
 
-```tsx title="server/api/posts.ts" {5-13}
+```tsx title="server/api/posts.ts"
 import { getXataClient } from '../../src/xata';
 const xata = getXataClient();
 
 export default defineEventHandler(async (event) => {
+  // [!code highlight-start]
   const query = getQuery(event);
   const search = query.q as string;
 
@@ -508,7 +510,7 @@ export default defineEventHandler(async (event) => {
   } else {
     posts = await xata.db.Posts.getAll();
   }
-
+  // [!code highlight-end]
   return posts;
 });
 ```

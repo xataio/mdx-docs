@@ -262,11 +262,11 @@ make any further changes to the schema, run `xata pull <branch>` to update the a
 
 Add the following global styling to the scaffolded `src/app.postcss`:
 
-```css title="src/app.postcss" {5-26}
+```css title="src/app.postcss"
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+// [!code highlight-start]
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -285,14 +285,16 @@ body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
+// [!code highlight-end]
 ```
 
 Finally, update `src/routes/+layout.svelte` to add some shared structure across application pages. The code will end up as follows:
 
-```tsx title="src/routes/+layout.svelte" {4-22}
+```tsx title="src/routes/+layout.svelte"
 <script>
   import '../app.postcss';
 </script>
+// [!code highlight-start]
 <svelte:head>
     <title>Get started with Xata and SvelteKit</title>
 </svelte:head>
@@ -312,6 +314,7 @@ Finally, update `src/routes/+layout.svelte` to add some shared structure across 
   <slot />
 
 </main>
+// [!code highlight-end]
 ```
 
 Ensure the `<slot />` component is before the closing `</main>` element.
@@ -499,7 +502,7 @@ any configuration to enable search, just need to use the
 
 Add this functionality to the landing page server functionality:
 
-```tsx title="src/routes/+page.server.ts" {10-19,23}
+```tsx title="src/routes/+page.server.ts"
 import type { PageServerLoad } from './$types';
 
 import { XataClient } from '../xata';
@@ -510,6 +513,7 @@ const xata = new XataClient({
 });
 
 export const load: PageServerLoad = async ({ request }) => {
+  // [!code highlight-start]
   const url = new URL(request.url);
   const search = url.searchParams.get('q');
 
@@ -520,9 +524,9 @@ export const load: PageServerLoad = async ({ request }) => {
   } else {
     posts = await xata.db.Posts.getAll();
   }
-
+  // [!code highlight-end]
   return {
-    posts,
+    posts, // [!code highlight]
     search
   };
 };
