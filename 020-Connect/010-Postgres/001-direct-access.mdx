@@ -158,9 +158,12 @@ The table below provides full granularity over specific statements.
 | ALTER EVENTTRIGGER     |     |               |                | ✅                |
 | CREATE EVENTTRIGGER    |     |               |                | ✅                |
 | DROP EVENTTRIGGER      |     |               |                | ✅                |
-| ALTER SEQUENCE         |     |               |                | ✅                |
-| CREATE SEQUENCE        |     |               |                | ✅                |
-| DROP SEQUENCE          |     |               |                | ✅                |
+| ALTER VIEW             |     | ✅            | ✅             | ✅                |
+| CREATE VIEW            |     | ✅            | ✅             | ✅                |
+| DROP VIEW              |     | ✅            | ✅             | ✅                |
+| ALTER SEQUENCE         |     | ✅            | ✅             | ✅                |
+| CREATE SEQUENCE        |     | ✅            | ✅             | ✅                |
+| DROP SEQUENCE          |     | ✅            | ✅             | ✅                |
 | CALL                   |     |               |                | ✅                |
 | ALTER STATISTICS       |     |               |                | ✅                |
 | CREATE STATISTICS      |     |               |                | ✅                |
@@ -186,6 +189,16 @@ The table below provides full granularity over specific statements.
 | DROP EXTENSION         |     |               |                | ✅                |
 | ALTER EXTENSION        |     |               |                | ✅                |
 | CREATE TEMPORARY TABLE |     |               |                | ✅                |
+
+### Custom types
+
+The following table illustrates the types can be created, droped and altered in SQL over HTTP, shared and dedicated clusters.
+
+|                                                                          |     | SQL over HTTP | Shared Cluster | Dedicated Cluster |
+| ------------------------------------------------------------------------ | --- | ------------- | -------------- | ----------------- |
+| [Enumerated](https://www.postgresql.org/docs/current/datatype-enum.html) |     | ✅            | ✅             | ✅                |
+| [Range](https://www.postgresql.org/docs/current/rangetypes.html)         |     | ✅            | ✅             | ✅                |
+| [Composite](https://www.postgresql.org/docs/current/rowtypes.html)       |     | ✅            | ✅             | ✅                |
 
 ## Adapt your schema to match Xata requirements
 
