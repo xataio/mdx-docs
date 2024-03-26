@@ -172,9 +172,9 @@ The table below provides full granularity over specific statements.
 | CREATE RULE            |     |               |                | ✅                |
 | DROP RULE              |     |               |                | ✅                |
 | ALTER TYPE             |     |               |                | ✅                |
-| CREATE TYPE            |     |               |                | ✅                |
-| DROP TYPE              |     |               |                | ✅                |
-| ALTER DOMAIN           |     |               |                | ✅                |
+| CREATE TYPE            |     | ✅            | ✅             | ✅                |
+| DROP TYPE              |     | ✅            | ✅             | ✅                |
+| ALTER DOMAIN           |     | ✅            | ✅             | ✅                |
 | CREATE DOMAIN          |     |               |                | ✅                |
 | DROP DOMAIN            |     |               |                | ✅                |
 | ALTER FUNCTION         |     |               |                | ✅                |
@@ -189,16 +189,6 @@ The table below provides full granularity over specific statements.
 | DROP EXTENSION         |     |               |                | ✅                |
 | ALTER EXTENSION        |     |               |                | ✅                |
 | CREATE TEMPORARY TABLE |     |               |                | ✅                |
-
-### Custom types
-
-The following table illustrates the types can be created, droped and altered in SQL over HTTP, shared and dedicated clusters.
-
-|                                                                          |     | SQL over HTTP | Shared Cluster | Dedicated Cluster |
-| ------------------------------------------------------------------------ | --- | ------------- | -------------- | ----------------- |
-| [Enumerated](https://www.postgresql.org/docs/current/datatype-enum.html) |     | ✅            | ✅             | ✅                |
-| [Range](https://www.postgresql.org/docs/current/rangetypes.html)         |     | ✅            | ✅             | ✅                |
-| [Composite](https://www.postgresql.org/docs/current/rowtypes.html)       |     | ✅            | ✅             | ✅                |
 
 ## Adapt your schema to match Xata requirements
 
