@@ -340,12 +340,12 @@ The following example will show you how to paginate through your data, and intro
 We want to limit the records per call to 25, and assume the `people` table has a total amount of records is > 25.
 So we need to make multiple calls to page through our data.
 
-> NOTE: Pagination is limited to a total possible retrieval of 50,000 records.
-
 <TabbedCode tabs={['1.x', '0.x']}>
 
 ```python
 from xata.client import XataClient
+
+xata = XataClient()
 
 records = xata.data().query("people", {
   "page": {
@@ -359,7 +359,7 @@ records = xata.data().query("people", {
 # through until we reached the last page
 while records.has_more_results():
   # fetch the next page ...
-  records = self.xata.data().query("people", {
+  records = xata.data().query("people", {
     "page": {
       "after": records.get_cursor() # get the next cursor
     }
@@ -369,6 +369,8 @@ while records.has_more_results():
 
 ```python
 from xata.client import XataClient
+
+xata = XataClient()
 
 records = xata.data().queryTable("people", {
   "page": {
@@ -382,7 +384,7 @@ records = xata.data().queryTable("people", {
 more = records.json()["meta"]["page"]["more"]
 while more:
   # fetch the next page ..
-  records = self.xata.data().query("people", {
+  records = xata.data().query("people", {
     "page": {
       "after": records..json()["meta"]["page"]["cursor"] # next cursor
     }
