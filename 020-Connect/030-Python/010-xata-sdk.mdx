@@ -347,6 +347,8 @@ So we need to make multiple calls to page through our data.
 ```python
 from xata.client import XataClient
 
+xata = XataClient()
+
 records = xata.data().query("people", {
   "page": {
     "size": 25 # limit result set to 25 records
@@ -359,7 +361,7 @@ records = xata.data().query("people", {
 # through until we reached the last page
 while records.has_more_results():
   # fetch the next page ...
-  records = self.xata.data().query("people", {
+  records = xata.data().query("people", {
     "page": {
       "after": records.get_cursor() # get the next cursor
     }
@@ -369,6 +371,8 @@ while records.has_more_results():
 
 ```python
 from xata.client import XataClient
+
+xata = XataClient()
 
 records = xata.data().queryTable("people", {
   "page": {
@@ -382,7 +386,7 @@ records = xata.data().queryTable("people", {
 more = records.json()["meta"]["page"]["more"]
 while more:
   # fetch the next page ..
-  records = self.xata.data().query("people", {
+  records = xata.data().query("people", {
     "page": {
       "after": records..json()["meta"]["page"]["cursor"] # next cursor
     }
