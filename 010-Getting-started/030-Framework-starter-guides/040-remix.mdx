@@ -484,7 +484,7 @@ This results in the page looking like the following:
 You'll notice that the post heading and "Read more →" text use the `slug` property to link to a page that doesn't
 presently exist. That's the next step in this guide.
 
-## Query and show a single posts
+## Query and show a single post
 
 To handle the single posts identified by a `slug`, make use of Remix
 [dynamic segments](https://remix.run/docs/en/main/guides/routing#dynamic-segments).
@@ -562,6 +562,18 @@ export async function loader({ params }: LoaderFunctionArgs) {
   });
 }
 ```
+
+<Alert status="warning">
+  In case you encounter a `"Runtime.UnhandledPromiseRejection"` when deploying the Remix app, try passing the Remix fetch implenentation to the XataClient.
+  ```ts
+  import { fetch as webFetch } from "@remix-run/web-fetch";
+  import { XataClient } from "src/xata";
+  
+  const xata = new XataClient({
+    fetch: webFetch,
+  });
+  ```
+</Alert>
 
 Use the values returned from the `loader` within the `MetaFunction` function to display the Post's title
 within the page's title. This function differs from the landing page version by taking a parameter containing a `data` property.
