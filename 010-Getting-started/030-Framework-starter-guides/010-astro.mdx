@@ -639,11 +639,29 @@ export default defineConfig({
 });
 ```
 
-With `output` set to `hybrid`, static pages continue to work as they did previously. Now, you are ready to add the search functionality.
+With `output` set to `hybrid`, static pages continue to work as they did previously. Now, you are ready to add the search functionality. If you like to deploy this project later. Make sure you also add the ssr adaptor parameter `adapter: your adapter here()` as well. Follow the Astro docs for that here: [Astro docs SSR Adapters](https://docs.astro.build/en/guides/server-side-rendering/)
+
+After we added our adapter, the above code would then go as follows with the adapter added:
+
+```ts title="apps/getting-started-astro/astro.config.mjs" {8}
+import { defineConfig } from 'astro/config';
+
+import tailwind from '@astrojs/tailwind';
+
+// https://astro.build/config
+export default defineConfig({
+  integrations: [tailwind()],
+  output: 'hybrid'
+  adapter: vercel();
+
+  // the other adapter's would look differently from this refer to the astro docs for more info on the other adapter's
+});
+
+```
 
 Adding search is as simple as updating the landing page as follows:
 
-```astro title="src/app/page.tsx" {11,13-18,22-31}
+```astro title="src/pages/index.astro" {11,13-18,22-31}
 ---
 import MainLayout from '../layouts/main.astro';
 
