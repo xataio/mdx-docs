@@ -24,28 +24,28 @@ like this:
 
 ```ts
 const results = await xata.db.titles.aggregate({
-  "movieGenres": {
+  movieGenres: {
     topValues: {
-      column: "genre",
-      size: 50
+      column: 'genre',
+      size: 50,
       aggs: {
-        "byReleaseDate": {
+        byReleaseDate: {
           dateHistogram: {
-            column: "releaseDate",
-            calendarInterval: "year",
-          },
-          aggs: {
-            "avgRating": {
-              average: {
-                column: "rating"
+            column: 'releaseDate',
+            calendarInterval: 'year',
+            aggs: {
+              avgRating: {
+                average: {
+                  column: 'rating'
+                }
               }
             }
           }
         }
       }
     }
-  },
-})
+  }
+});
 ```
 
 ```python
@@ -59,12 +59,12 @@ results = xata.data().aggregate("titles", {
           "byReleaseDate": {
             "dateHistogram": {
               "column": "releaseDate",
-              "calendarInterval": "year"
-            },
-            "aggs": {
-              "avgRating": {
-                "average": {
-                  "column": "rating"
+              "calendarInterval": "year",
+              "aggs": {
+                "avgRating": {
+                  "average": {
+                    "column": "rating"
+                  }
                 }
               }
             }
@@ -88,12 +88,12 @@ results = xata.data().aggregate("titles", {
           "byReleaseDate": {
             "dateHistogram": {
               "column": "releaseDate",
-              "calendarInterval": "year"
-            },
-            "aggs": {
-              "avgRating": {
-                "average": {
-                  "column": "rating"
+              "calendarInterval": "year",
+              "aggs": {
+                "avgRating": {
+                  "average": {
+                    "column": "rating"
+                  }
                 }
               }
             }
@@ -116,27 +116,27 @@ The `/aggregate` API can be combined with top-level filters using the syntax of 
 <TabbedCode tabs={['TypeScript', 'Python', 'JSON']}>
 ```ts
 const results = await xata.db.titles.aggregate({
-  "movieGenres": {
+  movieGenres: {
     topValues: {
-      column: "genre",
-      size: 50
+      column: 'genre',
+      size: 50,
       aggs: {
-        "byReleaseDate": {
+        byReleaseDate: {
           dateHistogram: {
-            column: "releaseDate",
-            calendarInterval: "year",
-          },
-          aggs: {
-            "avgRating": {
-              average: {
-                column: "rating"
+            column: 'releaseDate',
+            calendarInterval: 'year',
+            aggs: {
+              avgRating: {
+                average: {
+                  column: 'rating'
+                }
               }
             }
           }
         }
       }
     }
-  },
+  }
 },
 {
   "director":"Peter Jackson"
@@ -154,12 +154,12 @@ results = xata.data().aggregate("titles", {
           "byReleaseDate": {
             "dateHistogram": {
               "column": "releaseDate",
-              "calendarInterval": "year"
-            },
-            "aggs": {
-              "avgRating": {
-                "average": {
-                  "column": "rating"
+              "calendarInterval": "year",
+              "aggs": {
+                "avgRating": {
+                  "average": {
+                    "column": "rating"
+                  }
                 }
               }
             }
@@ -167,7 +167,7 @@ results = xata.data().aggregate("titles", {
         }
       }
     }
-  }
+  },
   "filter": {
     "director":"Peter Jackson"
   }
@@ -186,12 +186,12 @@ results = xata.data().aggregate("titles", {
           "byReleaseDate": {
             "dateHistogram": {
               "column": "releaseDate",
-              "calendarInterval": "year"
-            },
-            "aggs": {
-              "avgRating": {
-                "average": {
-                  "column": "rating"
+              "calendarInterval": "year",
+              "aggs": {
+                "avgRating": {
+                  "average": {
+                    "column": "rating"
+                  }
                 }
               }
             }
@@ -199,9 +199,9 @@ results = xata.data().aggregate("titles", {
         }
       }
     }
-  }
+  },
   "filter": {
-    "director":"Peter Jackson"
+    "director": "Peter Jackson"
   }
 }
 ```
