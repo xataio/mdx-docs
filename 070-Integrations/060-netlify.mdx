@@ -107,7 +107,7 @@ To use Xata in [Edge Functions](https://docs.netlify.com/edge-functions/overview
 
 - Import the Xata client via an [import map](https://docs.netlify.com/edge-functions/api/#import-maps)
 
-Create a `xata.json` file in your project's root directory:
+Create a `deno.json` file in your project's root directory to import the xata client file:
 
 ```json
 {
@@ -121,7 +121,7 @@ To enable the import map, declare it in netlify.toml:
 
 ```toml
 [functions]
-  deno_import_map = "xata.json"
+  deno_import_map = "deno.json"
 ```
 
 - Pass additional [configuration parameters](https://xata.io/docs/sdk/typescript/overview#configuration) to the Xata Client using `Netlify.env` variables.
