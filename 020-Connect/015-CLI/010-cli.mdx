@@ -77,6 +77,12 @@ xata init
 
 Several parameters can be passed to the `xata init` command that allow you to bypass the wizard's choices. Run `xata init -h` for a full list.
 
+It can run non-interactively for use in build scripts:
+
+```bash
+xata init --db https://workspace-1234.us-east-1.xata.sh/db/database-name --sdk --no-input --yes --force
+```
+
 ### codegen
 
 The `xata codegen` command updates the Xata client and optionally creates typings for a TypeScript based project. On its initial run, the CLI generates these files in the `src/xata.ts` directory. Subsequent runs will update the file. Since this file is automated, it is important that you'd edit it directly, but rerun the `xata codegen` command periodically as you make schema updates.
