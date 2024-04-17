@@ -100,3 +100,30 @@ When a pull request is merged, the Xata GitHub app sees that the Xata migration 
 Following this procedure, you will have made changes to your database and updated your application without any impact to your production environment or end users.
 
 If you have any questions or feedback about this integration, post in our [Discord channel](https://xata.io/discord)!
+
+## Xata in Netlify Edge Functions
+
+To use Xata in [Edge Functions](https://docs.netlify.com/edge-functions/overview/) import the Xata client via an [import map](https://docs.netlify.com/edge-functions/api/#import-maps) then create a `deno.json` file in your project's root directory to import the xata client file:
+
+```json
+{
+  "imports": {
+    "xata": "./src/xata.ts"
+  }
+}
+```
+
+To enable the import map, declare it in netlify.toml:
+
+```toml
+[functions]
+  deno_import_map = "deno.json"
+```
+
+Pass additional [configuration parameters](https://xata.io/docs/sdk/typescript/overview#configuration) to the Xata Client using `Netlify.env` variables.
+
+```ts
+const xata = new XataClient({
+  apiKey: Netlify.env.get('XATA_API_KEY')
+});
+```
