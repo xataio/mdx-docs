@@ -10,9 +10,9 @@ published: true
 In this guide, you'll create a new [Astro][2] application and walk through adding Xata database and search
 functionality. You'll build the following basic blog application features:
 
-1.  List all blog posts
-2.  Retrieve and view a single blog post
-3.  Full-text fuzzy search of blog posts
+1. List all blog posts
+2. Retrieve and view a single blog post
+3. Full-text fuzzy search of blog posts
 
 Although this application is a simple blog, you can apply these basics to other types of Astro applications.
 
@@ -217,8 +217,8 @@ The `src/xata.ts` file includes generated code you should typically never touch 
 You can use the [Xata UI][0] to manually define your schema and add data. However, for this guide, you'll walk through
 using the Xata CLI and a CSV file to:
 
-1.  Auto-generate a schema based on column headings for names and data types inferred from the column values
-2.  Import data to the database
+1. Auto-generate a schema based on column headings for names and data types inferred from the column values
+2. Import data to the database
 
 First, download the [CSV file of blog posts](https://raw.githubusercontent.com/xataio/examples/main/seed/blog-posts.csv).
 You can either do this manually or by running the following command:
@@ -639,11 +639,31 @@ export default defineConfig({
 });
 ```
 
-With `output` set to `hybrid`, static pages continue to work as they did previously. Now, you are ready to add the search functionality.
+With `output` set to `hybrid`, static pages continue to work as they did previously. Now, you are ready to add the search functionality. If you like to deploy this project later. Make sure you also add the ssr adaptor parameter `adapter: your adapter here()` as well. Follow the Astro docs for that here: [Astro docs SSR Adapters](https://docs.astro.build/en/guides/server-side-rendering/)
+
+After we added our adapter, the above code would then go as follows with the adapter added:
+
+```ts title="apps/getting-started-astro/astro.config.mjs" {8}
+import { defineConfig } from 'astro/config';
+
+import tailwind from '@astrojs/tailwind';
+
+// https://astro.build/config
+export default defineConfig({
+  integrations: [tailwind()],
+  output: 'hybrid'
+  adapter: vercel();
+
+  // the other adapter's would look differently from this refer to the astro docs for more info on the other adapter's
+});
+
+```
+
+Adding ssr for deployment adds for better functionality and allows for growth overtime as your application grows.
 
 Adding search is as simple as updating the landing page as follows:
 
-```astro title="src/app/page.tsx" {11,13-18,22-31}
+```astro title="src/pages/index.astro" {11,13-18,22-31}
 ---
 import MainLayout from '../layouts/main.astro';
 
