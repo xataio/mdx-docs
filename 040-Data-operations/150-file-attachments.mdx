@@ -626,6 +626,33 @@ curl --request PUT 'https://{workspace}.{region}.upload.xata.sh/db/{db}:{branch}
 
 </TabbedCode>
 
+Upload a file and set the `content-type`:
+
+<TabbedCode tabs={['TypeScript', 'Python', 'cURL']}>
+```ts
+await xata.files.upload({ table: 'table_name', column: 'column_name', record: 'record_id' }, file);
+```
+
+```python
+# file_content = bytes
+response = xata.files().put(
+  "table_name",
+  "record_id",
+  "column_name",
+  file_content,
+  "image/jpeg" # set the content type
+)
+```
+
+```sh
+curl --request PUT 'https://{workspace}.{region}.upload.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}/column/{column_name}/file' \
+  --header 'Content-Type: image/jpeg' \
+  --header 'Authorization: Bearer xau_REDACTED' \
+  --data-binary '@/path/to/file'
+```
+
+</TabbedCode>
+
 ### Append a file to an array using file APIs
 
 Column type is `file[]` (file array).
