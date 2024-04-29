@@ -77,10 +77,10 @@ xata init
 
 Several parameters can be passed to the `xata init` command that allow you to bypass the wizard's choices. Run `xata init -h` for a full list.
 
-It can run non-interactively for use in build scripts:
+It can run non-interactively for use in build scripts, with `XATA_API_KEY` and `XATA_BRANCH` (optional, defaults to `main`) set as env variables:
 
 ```bash
-xata init --db https://workspace-1234.us-east-1.xata.sh/db/database-name --sdk --no-input --yes --force
+xata init --db https://workspace-1234.us-east-1.xata.sh/db/database-name --sdk --no-input --yes --codegen=src/xata.ts --force
 ```
 
 ### codegen
