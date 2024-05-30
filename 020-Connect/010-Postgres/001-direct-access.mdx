@@ -37,7 +37,7 @@ Typical Postgres parameters have Xata equivalents.
 With the mapping from above, the connection string to connect to our database `Games` on branch `main` is:
 
 ```txt
-postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
+postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main?sslmode=require
 ```
 
 - The connection strings for HTTP access and Postgres wire protocol access are shown to you when you create a new database. You can view this connection string at any time by going to your database's settings page.
@@ -46,7 +46,7 @@ postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main
 Connect with [psql](https://www.postgresql.org/docs/current/app-psql.html) using the connection string format provided above:
 
 ```bash
-psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main"
+psql "postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main?sslmode=require"
 
 Games:main=>
 ```
@@ -61,7 +61,7 @@ If you want control of the version, you should consider a [dedicated cluster](/d
 You can check the Postgres version with the following command:
 
 ```bash
-psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh:[Port]/[Database]:[Branch]" -c "select version()"
+psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh:[Port]/[Database]:[Branch]?sslmode=require" -c "select version()"
 ```
 
 ```sql
@@ -105,7 +105,7 @@ Use `psql` to import `.sql` files into a database branch.
 The following example imports the file `my_branch.sql` into the database `playground` on the branch `new_branch`.
 
 ```bash
-psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh/playground:new_branch" < my_branch.sql
+psql "postgresql://[Workspace Id]:[API key]@[Region].sql.xata.sh/playground:new_branch?sslmode=require" < my_branch.sql
 ```
 
 The following limitations apply:
