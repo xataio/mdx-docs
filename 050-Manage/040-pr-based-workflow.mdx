@@ -224,6 +224,7 @@ If you've already run `xata pull` and committed it, but you are still recieving 
 
 ### Preview branch data copying limitations
 
+- Data content is only copied to an automatically generated **preview** branch, not to the branch of the Pull Request.
 - When you create a preview branch, a subset of your data from the primary branch will be copied.
 - When copying data, it is assumed that the main and preview branches have identical schemas at the time of copying.
 - We guarantee point-in-time consistency of the data. As a result, any changes made to the main branch during the data copying process will not be incorporated into the preview branch.
