@@ -625,7 +625,7 @@ As mentioned earlier, by default, Astro is in [SSG Mode](https://docs.astro.buil
 However, generating static paths for all possible user search values is impossible. So, for dynamically generated pages
 such as search results,
 [Server Side Rendering (SSR)](https://docs.astro.build/en/core-concepts/routing/#server-ssr-mode) is required. Astro supports
-a "hybrid" mode for sites that use SSG and SSR. You enable this within `apps/getting-started-astro/astro.config.mjs` as follows:
+a "server" mode for sites that use SSR. You enable this within `apps/getting-started-astro/astro.config.mjs` as follows:
 
 ```ts title="apps/getting-started-astro/astro.config.mjs" {8}
 import { defineConfig } from 'astro/config';
@@ -635,11 +635,11 @@ import tailwind from '@astrojs/tailwind';
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind()],
-  output: 'hybrid'
+  output: 'server'
 });
 ```
 
-With `output` set to `hybrid`, static pages continue to work as they did previously. Now, you are ready to add the search functionality. If you like to deploy this project later. Make sure you also add the ssr adaptor parameter `adapter: your adapter here()` as well. Follow the Astro docs for that here: [Astro docs SSR Adapters](https://docs.astro.build/en/guides/server-side-rendering/)
+With `output` set to `server`, Astro can now read paramaters from the URL. Now, you are ready to add the search functionality. If you like to deploy this project later. Make sure you also add the ssr adaptor parameter `adapter: your adapter here()` as well. Follow the Astro docs for that here: [Astro docs SSR Adapters](https://docs.astro.build/en/guides/server-side-rendering/)
 
 After we added our adapter, the above code would then go as follows with the adapter added:
 
@@ -651,7 +651,7 @@ import tailwind from '@astrojs/tailwind';
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind()],
-  output: 'hybrid'
+  output: 'server'
   adapter: vercel();
 
   // the other adapter's would look differently from this refer to the astro docs for more info on the other adapter's
@@ -779,7 +779,7 @@ function. You also added the single post page using Astro SSG, where the `slug` 
 with Astro's `getStaticPaths` to identify all possible routes and, thus, the static files to be generated.
 
 Finally, you added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
-indexing. To do this, you enabled Astro's hybrid mode to generate search results using SSR based on the search query passed
+indexing. To do this, you enabled Astro's server mode to generate search results using SSR based on the search query passed
 in the `q` query string and the results from the auto-generated `xata.db.Posts.search` function.
 
 ## Learn more
