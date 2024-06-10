@@ -77,7 +77,7 @@ const result = await prisma.users.findMany({
 
 ## Shadow Database
 
-Certain Prisma commands such as `prisma migrate dev` require an additional [shadow database](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database).
+Migrations with Prisma require a [shadow database](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database).
 
 For this purpose, create an additional database in Xata and configure its Postgres endpoint as `shadowDatabaseUrl` in the datasource, as suggested by the relevant [Prisma documentation](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database#cloud-hosted-shadow-databases-must-be-created-manually).
 
