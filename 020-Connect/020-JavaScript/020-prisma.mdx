@@ -75,7 +75,12 @@ const result = await prisma.users.findMany({
 });
 ```
 
+## Shadow Database
+
+Migrations with Prisma require a [shadow database](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database).
+
+For this purpose, create an additional database in Xata and configure its Postgres endpoint as `shadowDatabaseUrl` in the datasource, as suggested by the relevant [Prisma documentation](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database#cloud-hosted-shadow-databases-must-be-created-manually).
+
 ## Limitations
 
 - Xata [File attachments](/docs/sdk/file-attachments) columns are read-only and only shows file metadata. You will need to use the [SDK](/docs/sdk/typescript/overview) to upload and download files.
-- Prisma migrate is not yet fully supported. You need to use the Xata CLI to manage the [database migrations](/docs/migrations).
