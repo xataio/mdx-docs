@@ -5,7 +5,7 @@ keywords: ['postgres', 'dedicated cluster']
 description: How to manage your own Postgres instance
 slug: dedicated-cluster
 published: true
-status: alpha
+status: beta
 ---
 
 A dedicated cluster is a Postgres cluster, which includes a writer instance and potentially multiple read replicas. You can create and allocate Xata databases and branches to this cluster. Xata databases and branches behave the same whether they are allocated to the shared or dedicated cluster.
@@ -67,7 +67,12 @@ The Xata auto-scaling dedicated clusters are powered by the AWS Aurora Serverles
 
 ## Regions
 
-Similar to the supported Postgres version, we will launch this feature in a selected set of regions. If you the region you are looking for is not available please reach out to our [support team](/docs/resources/support).
+Similar to the supported Postgres version, we will launch this feature in a selected set of regions:
+
+- us-east-1 - North Virginia, US
+- eu-central-1 - Frankfurt, Europe
+
+If you the region you are looking for is not available please reach out to our [support team](/docs/resources/support).
 
 ## Extensions
 
