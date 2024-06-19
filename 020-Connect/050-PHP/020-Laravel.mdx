@@ -4,17 +4,10 @@ navTitle: Laravel
 keywords: ['php', 'laravel']
 description: Connect to Postgres with Laravel and pgsql
 slug: php-laravel
-published: false
+published: true
 ---
 
-<Alert status="warning">
-
-Laravel is not supported at the moment as the statement `SET search_path TO {}` is forbidden.
-See [supported statements](/docs/postgres#supported-statements) for a complete breakdown.
-
-</Alert>
-
-To connect your Laravel application to Xata, you need to adjust the database connection in the .env file as follows:
+To connect your Laravel application to Xata, you need to adjust the database connection in the .env and database.php files as follows:
 
 ```text title=".env"
 DB_CONNECTION=pgsql
@@ -28,6 +21,22 @@ DB_SSLMODE=require
 
 Please replace the parameters as indicated on the [connect to Postgres](/docs/postgres) page.
 
-## Known issues
+```php title="app/config/database.php"
+    'pgsql' => [
+        'driver' => 'pgsql',
+        'url' => env('DATABASE_URL'),
+        'host' => env('DB_HOST', '127.0.0.1'),
+        'port' => env('DB_PORT', '5432'),
+        'database' => env('DB_DATABASE', 'forge'),
+        'username' => env('DB_USERNAME', 'forge'),
+        'password' => env('DB_PASSWORD', ''),
+        'charset' => 'utf8',
+        'prefix' => env('DB_PREFIX', ''),
+        'prefix_indexes' => true,
+        //'search_path' => 'public',    // 1.
+        'sslmode' => 'require',         // 2.
+    ],
+```
 
-- `php artisan schema:dump` will not work as it tries to reset the `search_path` which is an [unsupported operation](/docs/postgres#unsupported-statements-and-functions) in Xata. Please follow the [export instructions](/docs/postgres#export) to dump a schema with pg_dump.
+1. There is a know issue with Laravel attempting to set the `search_path` to `public`. The statement `SET search_path TO "public"` is supported through `psql`, we are investigating the lack of compatibility with Laravel.
+2. Optional to set the sslmode as Xata mandates `require` as minimum, see [sslmodes](/docs/postgres#ssl-required) for more information.
