@@ -158,6 +158,8 @@ record, _ := recordsClient.Insert(context.TODO(), xata.InsertRecordRequest{
 }
 ```
 
+File names may consist of UTF-8 encoded ASCII excluding: control characters (`0x00-0x1F`,`0x7F` such as `\r`,`\n`,`\t`) and special characters `\",*,/,:,<,>,?,\\,|`.
+
 </TabbedCode>
 
 ### Update a file through updating a record
