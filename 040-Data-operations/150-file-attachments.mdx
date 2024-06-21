@@ -162,6 +162,8 @@ File names may consist of UTF-8 encoded ASCII excluding: control characters (`0x
 
 </TabbedCode>
 
+File names may consist of UTF-8 encoded ASCII excluding: control characters (`0x00-0x1F`,`0x7F` such as `\r`,`\n`,`\t`) and special characters `\",*,/,:,<,>,?,\\,|`.
+
 ### Update a file through updating a record
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
