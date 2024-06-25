@@ -92,6 +92,13 @@ Every cluster has delete protection out of the box. If you decided to terminate 
 The simplest path to deleting the branches, is to navigate to branch management, there you will find the complete list of branches labelled with the cluster name and the delete action.
 Once no branch is present on the cluster, you can terminate it.
 
+## Moving branches
+
+Every workspace hosting one or more dedicated clusters provides the ability to move branches from one cluster to another, this includes shared clusters.
+Please navigate to branch management and select the branch you move to which target cluster.
+Once started, you'll see the `MOVING` label on the branch while the operation is ongoing, furthermore all DML statements are present in the moved branch without downtime.
+DDL statements will be rejected during the moving process to ensure consistency.
+
 ## Limitations
 
 Certain SQL statements and functions are forbidden, refer to [limtations](/docs/postgres#limitations) for the complete list. There are **no** limits imposed on amount of open Postgres [connections](/docs/postgres#connection-limits) or [HTTP API requests](/docs/rest-api/limits#rate-limits) in a dedicated cluster.
