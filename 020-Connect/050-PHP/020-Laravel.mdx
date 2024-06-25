@@ -22,21 +22,20 @@ DB_SSLMODE=require
 Please replace the parameters as indicated on the [connect to Postgres](/docs/postgres) page.
 
 ```php title="app/config/database.php"
-    'pgsql' => [
-        'driver' => 'pgsql',
-        'url' => env('DATABASE_URL'),
-        'host' => env('DB_HOST', '127.0.0.1'),
-        'port' => env('DB_PORT', '5432'),
-        'database' => env('DB_DATABASE', 'forge'),
-        'username' => env('DB_USERNAME', 'forge'),
-        'password' => env('DB_PASSWORD', ''),
-        'charset' => 'utf8',
-        'prefix' => env('DB_PREFIX', ''),
-        'prefix_indexes' => true,
-        //'search_path' => 'public',    // 1.
-        'sslmode' => 'require',         // 2.
-    ],
+'pgsql' => [
+    'driver' => 'pgsql',
+    'url' => env('DATABASE_URL'),
+    'host' => env('DB_HOST', '127.0.0.1'),
+    'port' => env('DB_PORT', '5432'),
+    'database' => env('DB_DATABASE', 'forge'),
+    'username' => env('DB_USERNAME', 'forge'),
+    'password' => env('DB_PASSWORD', ''),
+    'charset' => 'utf8',
+    'prefix' => env('DB_PREFIX', ''),
+    'prefix_indexes' => true,
+    'search_path' => 'public',
+    'sslmode' => 'require', // 1.
+],
 ```
 
-1. There is a know issue with Laravel attempting to set the `search_path` to `public`. The statement `SET search_path TO "public"` is supported through `psql`, we are investigating the lack of compatibility with Laravel.
-2. Optional to set the sslmode as Xata mandates `require` as minimum, see [sslmodes](/docs/postgres#ssl-required) for more information.
+1. Optional to set the sslmode as Xata mandates `require` as minimum, see [sslmodes](/docs/postgres#ssl-required) for more information.
