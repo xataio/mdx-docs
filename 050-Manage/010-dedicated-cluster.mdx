@@ -86,6 +86,12 @@ To inspect which extensions are available out-of-the-box, please connect to your
 SELECT * FROM pg_available_extensions;
 ```
 
+## Termination
+
+Every cluster has delete protection out of the box. If you decided to terminate a cluster, you must delete all branches located on that cluster or move them to a shared cluster.
+The simplest path to deleting the branches, is to navigate to branch management, there you will find the complete list of branches labelled with the cluster name and the delete action.
+Once no branch is present on the cluster, you can terminate it.
+
 ## Limitations
 
 Certain SQL statements and functions are forbidden, refer to [limtations](/docs/postgres#limitations) for the complete list. There are **no** limits imposed on amount of open Postgres [connections](/docs/postgres#connection-limits) or [HTTP API requests](/docs/rest-api/limits#rate-limits) in a dedicated cluster.
