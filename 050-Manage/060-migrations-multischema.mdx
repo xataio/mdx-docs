@@ -8,7 +8,7 @@ published: true
 status: beta
 ---
 
-Multi Schema migrations enable you to have two active database schemas at the same time. You are able to write data to both your new and old schema simultaneously. It also allows you to seamlessly rollback a migration in the case of an unwanted schema change or backfill.
+Multi Schema migrations allow you to have two active database schemas at the same time. Both the new and old schema are readable and writeable. This allows you to seamlessly rollback a migration in the case of an unwanted schema change or backfill.
 
 Multi Schema migrations are supported by default on Posgres enabled branches (beta) via the UI.
 
@@ -19,9 +19,9 @@ Multi Schema migrations are supported by default on Posgres enabled branches (be
 
 ![The Migration Editor](images/migrations-multischema/migration-editor.png)
 
-More information on the input format for the Migration Editor can be found here [pgroll](https://github.com/xataio/pgroll).
+More information on the input format for the Migration Editor can be found [here](https://github.com/xataio/pgroll).
 
-## Multi Schema Migration Steps
+## Lifecycle
 
 A migration's life cycle consists of `start`, `complete`, and `rollback` steps.
 
@@ -35,11 +35,9 @@ You can view the submitted migration in the Schema History tab while it is `acti
 
 As more data is added to the table through either the old or the new version of the schema, the ‘other’ column is automatically updated by `pgroll` by the `up` or `down` triggers. Data in each version of the column remains editable.
 
-New columns will be showed side by side other columns in an “exploded” view.
-
 ![Adding a new column](images/migrations-multischema/add-column.png)
 
-Migrations that involve or require more than one operation may result in a temporary additional column in the UI prefixed with `*pgroll_new_[columnname]*`. This frequently occurs with alter column operations that change multiple fields. This column will disappear after the schema migration is completed or rolledback.
+Migrations that involve or require more than one operation may result in a temporary additional column in the UI prefixed with `_pgroll_new_[columnname]`. This frequently occurs with alter column operations that change multiple fields. This column will disappear after the schema migration is completed or rolled back.
 
 ![Editing an existing column](images/migrations-multischema/alter-column.png)
 
@@ -55,7 +53,7 @@ If a migration fails, the submitted migration and failure reason can be viewed u
 
 ## Rollback Step
 
-If you find something wrong with the new schema or backfill, you can rollback the mgiration. After a rollback, the schema changes from the migration will not be applied and the new schema will be deleted.
+You can cancel a migration that has not yet been completed by rolling back. This is useful if the backfill or schema changes are unwanted. After a rollback, the schema changes from the migration will not be applied and the new schema will be deleted.
 
 ## Direct SQL Wire Proxy Access
 
