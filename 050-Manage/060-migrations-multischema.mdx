@@ -8,7 +8,7 @@ published: true
 status: beta
 ---
 
-Multi Schema migrations allow you to have two active database schemas at the same time. Both the new and old schema are readable and writeable. This allows you to seamlessly rollback a migration in the case of an unwanted schema change or backfill.
+Multi Schema migrations address the pain point of having to keep your application code and database schema in sync by allowing you to have two active database schemas at the same time. With Multi Schema migrations, running a migration means being able to preview the new version of your schema alongside your old one. Data in both schemas continues to be readable and writeable. As a result of having two active schema versions, rollbacks become seamless operations which is particularly useful in the case of an unwanted schema change or backfill.
 
 Multi Schema migrations are supported by default on Posgres enabled branches (beta) via the UI.
 
