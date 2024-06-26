@@ -5,26 +5,35 @@ keywords: ['pgroll']
 description: Learn about Multi Schema migration commands
 slug: multischema-migrations
 published: true
+status: beta
 ---
 
-On Posgres enabled branches (beta) support for schema multi-version in the UI is enabled by default. This allows you to have 2 active schemas accessible at the same time - one new and one old. This behaviour is available through the Migration editor.
+With Multi Schema migrations you can have two database schemas active at the same time. This allows you to write data to both your new and old schema simultaneously. It also allows you to seamlessly rollback a migration if the resulting backfilling or schema is not to your liking.
+
+Multi Schema migrations are supported by default on Posgres enabled branches (beta) via the UI.
+
+<Alert status="warning">
+  Currenlty Multi Schema migrations are only supported via the Migration Editor in the UI. Schema operations made via
+  the table view and schema view complete automatically
+</Alert>
 
 ![The migration editor](images/migrations-multischema/migration-editor.png)
 
-Like regular Postgres enabled branch migrations, each migration file holds a JSON object containing the migration record, and list of operations. The file structure for beta [Postgres enabled](/docs/postgres) projects utilizes [pgroll](https://github.com/xataio/pgroll) migration formats.
-
-- Schema operations via the table and schema views complete automatically and cannot be rolled back. These migrations require no manual intervention apart from starting.
+More information on the input format for the Migration Editor can be found here [pgroll](https://github.com/xataio/pgroll).
 
 ## Multi Schema Migration Steps
 
-- The following steps only apply to migrations made through the Migration Editor.
+The following steps only apply to migrations made through the Migration Editor.
 
 A migration's life cycle consists of `start`, `complete`, and `rollback` steps.
 
-### Start
+### Start Step
 
-After a migration is started it is considered `active`. During this time, further schema modifications are not possible. This is reflected in disabled buttons and inputs in the UI while a migration is ongoing. While in it’s active state, the submitted migration will be viewable in the Schema History tab.
-![The Schema History tab](images/migrations-multischema/schema-history.png)
+After a migration is started it is considered `active`. During this time, further schema modifications are not possible. This is reflected in disabled buttons and inputs in the UI while a migration is ongoing.
+
+You can view the submitted migration in the Schema History tab while it is `active`.
+
+![View an active migration](images/migrations-multischema/active-migration.png)
 
 As more data is added to the table through either the old or the new version of the schema, the ‘other’ column is automatically updated by `pgroll` by the `up` or `down` triggers. Data in each version of the column remains editable.
 
@@ -35,19 +44,19 @@ New columns will be showed side by side other columns in an “exploded” view.
 
 - Migrations that involve or require more than one operation may result in a temporary additional column in the UI prefixed with `*pgroll_new_[columnname]*`. This frequently occurs with alter column operations that change multiple fields. This column will disappear after the schema migration is completed or rolledback.
 
-![Delete a column](images/migrations-multischema/delete-column.png)
+![Deleting a column](images/migrations-multischema/delete-column.png)
 
-## Complete
+### Complete Step
 
 Successfully completed migrations can be viewed under the Schema History tab in the schema view.
-![Active migration](images/migrations-multischema/active-migration.png)
+![The Schema History tab](images/migrations-multischema/schema-history.png)
 
 If a migration fails, the log and failure reason can be viewed under the Migration Errors tab in the schema view.
-![A failed migration](images/migrations-multischema/migration-errors.png)
+![Viewing a failed migration](images/migrations-multischema/migration-errors.png)
 
-## Rollback
+## Rollback Step
 
-Instead of completing a migration, there is also the option to rollback. This is essentially cancelling the migration and is useful if the user finds something wrong with the new schema or backfill. After a rollback, the schema changes from the migration will not be applied.
+You can cancel a migration if you find something wrong with the new schema or backfill. After a rollback, the schema changes from the migration will not be applied.
 
 ## Direct SQL Wire Proxy Access
 
