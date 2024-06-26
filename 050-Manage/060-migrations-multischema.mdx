@@ -13,8 +13,8 @@ Multi Schema migrations allow you to have two active database schemas at the sam
 Multi Schema migrations are supported by default on Posgres enabled branches (beta) via the UI.
 
 <Alert status="warning">
-  Currenlty Multi Schema migrations are only supported via the Migration Editor in the UI. Schema operations made via
-  the table view and Schema View will complete automatically.
+  Currenlty Multi Schema migrations are only supported via the Migration Editor in the UI. Migrations made via the Table
+  View and Schema View will complete automatically.
 </Alert>
 
 ![The Migration Editor](images/migrations-multischema/migration-editor.png)
@@ -29,15 +29,15 @@ A migration's life cycle consists of `start`, `complete`, and `rollback` steps.
 
 After a migration is started it is considered `active`. During this time, further schema modifications are not possible. This is reflected in disabled buttons and inputs in the UI while a migration is ongoing. From there you can decide whether to `complete` or `rollback` the active migration.
 
-You can view the submitted migration in the Schema History tab while it is `active`.
+You can view the submitted migration under the Schema History tab while it is `active`.
 
-![An active migration in the Schema History tab](images/migrations-multischema/active-migration.png)
+![An active migration under the Schema History tab](images/migrations-multischema/active-migration.png)
 
 As more data is added to the table through either the old or the new version of the schema, the ‘other’ column is automatically updated by `pgroll` by the `up` or `down` triggers. Data in each version of the column remains editable.
 
 ![Adding a new column](images/migrations-multischema/add-column.png)
 
-Migrations that involve or require more than one operation may result in a temporary additional column in the UI prefixed with `_pgroll_new_[columnname]`. This frequently occurs with alter column operations that change multiple fields. This column will disappear after the schema migration is completed or rolled back.
+Migrations that involve more than one operation may result in a temporary additional column in the UI prefixed with `_pgroll_new_`. This frequently occurs with alter column operations that change multiple properties. This column will disappear after the schema migration is completed or rolled back.
 
 ![Editing an existing column](images/migrations-multischema/alter-column.png)
 
@@ -51,20 +51,6 @@ Successfully completed migrations can be viewed under the Schema History tab in 
 If a migration fails, the submitted migration and failure reason can be viewed under the Migration Errors tab in the Schema View.
 ![Viewing a failed migration](images/migrations-multischema/migration-errors.png)
 
-## Rollback Step
+### Rollback Step
 
 You can cancel a migration that has not yet been completed by rolling back. This is useful if the backfill or schema changes are unwanted. After a rollback, the schema changes from the migration will not be applied and the new schema will be deleted.
-
-## Direct SQL Wire Proxy Access
-
-When connecting to your database directly over SQL, you may see up to 3 schemas during a migration. If there is no migration in progress, only 2 schemas will be shown.
-
-There will always be one base schema with all the underlying tables.
-
-There may be a second schema and third schema when a migration is in progress (true?)
-
-If you want to connect to a specific schema, you will need to use search_path parameter. EXAMPLE
-
-## Additional information
-
-- Schema multi-version support is not yet supported with the CLI
