@@ -189,14 +189,14 @@ If a migration fails, the submitted migration and failure reason can be viewed u
 
 You can cancel a migration that has not yet been completed by rolling back. This is useful if the backfill or schema changes are unwanted. After a rollback, the schema changes from the migration will not be applied and the new schema will be deleted.
 
-## Connecting directly via Wire proxy during a migration
+## Connecting via Wire Proxy
 
-If there is no active migration, there will be two schemas listed.
+If there is no active migration, the database will contain two schemas.
 
-1. The first schema will be the base schema that contains the underlying tables.
+1. The first schema will be the base schema and contain the underlying tables.
 2. The second schema will have a `_create_table` suffix and contain views on all the tables inside the first schema.
-   If there is an active migration there will be an additional third schema.
-3. The third schema is for the latest version and will also contain views on all tables in the first schema.
+
+If there is an active migration there will be an additional third schema. The third schema is for the latest version and will also contain views on all tables in the first schema.
 
 ## Limitations
 
