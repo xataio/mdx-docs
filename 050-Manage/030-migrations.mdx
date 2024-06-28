@@ -73,10 +73,129 @@ Migration files should not be modified. If externally modified, the record will 
 
 Migrations must be ordered. Ordering is guaranteed by the `parent` and the ledger file, which is stored in `.xata/migrations/.ledger`. The ledger file is an append only file that lists all migration files in the correct order.
 
-## UI Migration Editor for pgroll operations
+## UI Migration Editor (Postgres enabled branches only)
 
-Under the Schema menu, the Web UI provides a Migration Editor to create migrations using [pgroll](https://github.com/xataio/pgroll) operations.
+For Postgres enabled branches, the Web UI provides a Migration Editor to create reversible migrations using [pgroll](https://github.com/xataio/pgroll) operations.
 
-In the editor you can provide content for the pgroll operations array and start a migration. Once submitted, the migration will enter the Active state and must be manually completed with the "Complete migration" action button before further schema edits can take place. While in Active state, the migration can also be rolled back.
+Reversible migrations address the pain point of having to keep your application code in sync with your database schema by allowing you two active database schemas at once. With Reversible migrations, running a migration means being able to preview the new version of your schema alongside the old one. Reading and writing data in both schemas continues to work normally. As a result of having two active schema versions, rollbacks become seamless operations which is particularly useful in the case of an unwanted schema change or backfill. More information can be found on our [blog post](https://xata.io/blog/schema-multi-version-launch-week).
+
+<Alert status="warning">
+  Currenlty Reversible migrations are only supported via the Migration Editor in the UI. Migrations made via the Table
+  View and Schema View will complete automatically.
+</Alert>
+
+![The Migration Editor](images/migrations-multischema/migration-editor.png)
 
 See the [pgroll Operations Reference](https://github.com/xataio/pgroll/blob/main/docs/README.md#operations-reference) for the list of supported migration operations.
+
+Some common schema operations are:
+
+<TabbedCode tabs={['create_table', 'add_column', 'rename_table', 'alter_column', 'drop_table', 'drop_column']}>
+```jsonc
+[{
+      "create_table": {
+        "name": "customers",
+        "columns": [
+          {
+            "name": "id",
+            "type": "integer",
+            "pk": true
+          },
+        ]
+      }
+}]
+```
+```jsonc
+[{
+      "add_column": {
+        "table": "customers",
+        "up": "UPPER(name)",
+        "column": {
+          "name": "full_name",
+          "type": "varchar(255)",
+          "nullable": true
+        }
+      }
+}]
+```
+```jsonc
+[{
+      "rename_table": {
+        "from": "customers",
+        "to": "clients"
+      }
+}]
+```
+```jsonc
+[{
+      "alter_column": {
+        "table": "clients",
+        "column": "full_name",
+        "name": "new_full_name",
+        "up": "(SELECT CASE WHEN full_name IS NULL OR LENGTH(full_name) <= 3 THEN 'placeholder' ELSE full_name END)",
+        "down": "full_name"
+      }
+    }]
+```
+```jsonc
+[{
+      "drop_table": {
+        "name": "clients"
+      }
+}]
+```
+```jsonc
+[{
+      "drop_column": {
+        "table": "clients",
+        "column": "full_name",
+        "down": "''"
+      }
+}]
+```
+</TabbedCode>
+
+## Lifecycle
+
+A reversible migration's life cycle consists of `start`, `complete`, and `rollback` steps.
+
+### Start Step
+
+After a migration is started it is considered `active`. During this time, further schema modifications are not possible. This is reflected in disabled buttons and inputs in the UI while a migration is ongoing. From there you can decide whether to `complete` or `rollback` the active migration.
+
+You can view the submitted migration under the Schema History tab while it is `active`.
+
+![An active migration under the Schema History tab](images/migrations-multischema/active-migration.png)
+
+As more data is added to the table through either the old or the new version of the schema, the ‘other’ column is automatically updated by `pgroll` by the `up` or `down` triggers. Data in each version of the column remains editable.
+
+![Adding a new column](images/migrations-multischema/add-column.png)
+
+Migrations that involve more than one operation may result in a temporary additional column in the UI prefixed with `_pgroll_new_`. This frequently occurs with alter column operations that change multiple properties. This column will disappear after the schema migration is completed or rolled back.
+
+![Editing an existing column](images/migrations-multischema/alter-column.png)
+
+![Deleting a column](images/migrations-multischema/delete-column.png)
+
+### Complete Step
+
+Successfully completed migrations can be viewed under the Schema History tab in the Schema View.
+![The Schema History tab](images/migrations-multischema/schema-history.png)
+
+If a migration fails, the submitted migration and failure reason can be viewed under the Migration Errors tab in the Schema View.
+![Viewing a failed migration](images/migrations-multischema/migration-errors.png)
+
+### Rollback Step
+
+You can cancel a migration that has not yet been completed by rolling back. This is useful if the backfill or schema changes are unwanted. After a rollback, the schema changes from the migration will not be applied and the new schema will be deleted.
+
+## Connecting directly via Wire proxy during a migration
+
+...
+
+## Limitations
+
+- Currently we only support reversing the latest migration. Rollingback a migration after it has been "completed" is not currently possible.
+- We only offer this functionality through the UI or via the REST API endpoints [here](/docs/api-reference/db/db_branch_name/migrations).
+
+# Non Postgres enabled branches
