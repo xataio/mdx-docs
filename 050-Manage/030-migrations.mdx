@@ -75,9 +75,9 @@ Migrations must be ordered. Ordering is guaranteed by the `parent` and the ledge
 
 ## UI Migration Editor (Postgres enabled branches only)
 
-For Postgres enabled branches, the Web UI provides a Migration Editor to create reversible migrations using [pgroll](https://github.com/xataio/pgroll) operations.
+For Postgres enabled branches, the Web UI provides a Migration Editor to create [reversible migrations](https://xata.io/blog/schema-multi-version-launch-week) using [pgroll](https://github.com/xataio/pgroll) operations.
 
-Reversible migrations address the pain point of having to keep your application code in sync with your database schema by allowing you two active database schemas at once. With Reversible migrations, running a migration means being able to preview the new version of your schema alongside the old one. Reading and writing data in both schemas continues to work normally. As a result of having two active schema versions, rollbacks become seamless operations which is particularly useful in the case of an unwanted schema change or backfill. More information can be found on our [blog post](https://xata.io/blog/schema-multi-version-launch-week).
+Reversible migrations address the pain point of having to keep your application code in sync with your database schema by allowing you two active database schemas at once. With Reversible migrations, running a migration means being able to preview the new version of your schema alongside the old one. Reading and writing data in both schemas continues to work normally. As a result of having two active schema versions, rollbacks become seamless operations which is particularly useful in the case of an unwanted schema change or backfill.
 
 <Alert status="warning">
   Currenlty Reversible migrations are only supported via the Migration Editor in the UI. Migrations made via the Table
@@ -86,74 +86,74 @@ Reversible migrations address the pain point of having to keep your application 
 
 ![The Migration Editor](images/migrations-multischema/migration-editor.png)
 
-See the [pgroll Operations Reference](https://github.com/xataio/pgroll/blob/main/docs/README.md#operations-reference) for the list of supported migration operations.
-
 Some common schema operations are:
 
 <TabbedCode tabs={['create_table', 'add_column', 'rename_table', 'alter_column', 'drop_table', 'drop_column']}>
 ```jsonc
 [{
-      "create_table": {
-        "name": "customers",
-        "columns": [
-          {
-            "name": "id",
-            "type": "integer",
-            "pk": true
-          },
-        ]
-      }
+  "create_table": {
+    "name": "customers",
+    "columns": [
+      {
+        "name": "id",
+        "type": "integer",
+        "pk": true
+      },
+    ]
+  }
 }]
 ```
 ```jsonc
 [{
-      "add_column": {
-        "table": "customers",
-        "up": "UPPER(name)",
-        "column": {
-          "name": "full_name",
-          "type": "varchar(255)",
-          "nullable": true
-        }
-      }
+  "add_column": {
+    "table": "customers",
+    "up": "UPPER(name)",
+    "column": {
+      "name": "full_name",
+      "type": "varchar(255)",
+      "nullable": true
+    }
+  }
 }]
 ```
 ```jsonc
 [{
-      "rename_table": {
-        "from": "customers",
-        "to": "clients"
-      }
+  "rename_table": {
+    "from": "customers",
+    "to": "clients"
+  }
 }]
 ```
 ```jsonc
 [{
-      "alter_column": {
-        "table": "clients",
-        "column": "full_name",
-        "name": "new_full_name",
-        "up": "(SELECT CASE WHEN full_name IS NULL OR LENGTH(full_name) <= 3 THEN 'placeholder' ELSE full_name END)",
-        "down": "full_name"
-      }
-    }]
-```
-```jsonc
-[{
-      "drop_table": {
-        "name": "clients"
-      }
+  "alter_column": {
+    "table": "clients",
+    "column": "full_name",
+    "name": "new_full_name",
+    "up": "(SELECT CASE WHEN full_name IS NULL OR LENGTH(full_name) <= 3 THEN 'placeholder' ELSE full_name END)",
+    "down": "full_name"
+  }
 }]
 ```
 ```jsonc
 [{
-      "drop_column": {
-        "table": "clients",
-        "column": "full_name",
-        "down": "''"
-      }
+  "drop_table": {
+    "name": "clients"
+  }
+}]
+```
+```jsonc
+[{
+  "drop_column": {
+    "table": "clients",
+    "column": "full_name",
+    "down": "''"
+  }
 }]
 ```
 </TabbedCode>
+
+See the [pgroll Operations Reference](https://github.com/xataio/pgroll/blob/main/docs/README.md#operations-reference) for the list of supported migration operations.
 
 ## Lifecycle
 
@@ -191,11 +191,13 @@ You can cancel a migration that has not yet been completed by rolling back. This
 
 ## Connecting directly via Wire proxy during a migration
 
-...
+If there is no active migration, there will be two schemas listed.
+
+1. The first schema will be the base schema that contains the underlying tables.
+2. The second schema will have a `_create_table` suffix and contain views on all the tables inside the first schema.
+   If there is an active migration there will be an additional third schema.
+3. The third schema is for the latest version and will also contain views on all tables in the first schema.
 
 ## Limitations
 
 - Currently we only support reversing the latest migration. Rollingback a migration after it has been "completed" is not currently possible.
-- We only offer this functionality through the UI or via the REST API endpoints [here](/docs/api-reference/db/db_branch_name/migrations).
-
-# Non Postgres enabled branches
