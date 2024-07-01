@@ -73,7 +73,7 @@ Migration files should not be modified. If externally modified, the record will 
 
 Migrations must be ordered. Ordering is guaranteed by the `parent` and the ledger file, which is stored in `.xata/migrations/.ledger`. The ledger file is an append only file that lists all migration files in the correct order.
 
-## Multi-version Schema Migrations (Postgres enabled branches only)
+## Multi-version Schema Migrations (Postgres enabled only)
 
 For Postgres enabled branches, the Web UI provides a Migration Editor to create [multi-version schema migrations](https://xata.io/blog/schema-multi-version-launch-week) using [pgroll](https://github.com/xataio/pgroll) operations.
 
