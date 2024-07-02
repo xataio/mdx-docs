@@ -189,6 +189,7 @@ The table below provides full granularity over specific statements.
 | CREATE EXTENSION       |     |               |                | ✅                |
 | DROP EXTENSION         |     |               |                | ✅                |
 | ALTER EXTENSION        |     |               |                | ✅                |
+| SELECT user            |     |               |                | ✅                |
 
 ## Adapt your schema to match Xata requirements
 
@@ -217,7 +218,6 @@ The new Postgres abilities require breaking changes to some of our API layer. Wh
 
 The following statements and/or functions are not available for security reasons.
 
-- `SELECT user`
 - `SHOW password_encryption`
 - `SET ROLE`
 - `RESET ROLE`
