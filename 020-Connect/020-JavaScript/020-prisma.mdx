@@ -44,6 +44,7 @@ To use Xata with Prisma define a postgresql datasource in the `schema.prisma` fi
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 ```
 
