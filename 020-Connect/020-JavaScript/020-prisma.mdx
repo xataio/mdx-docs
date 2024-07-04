@@ -44,6 +44,7 @@ To use Xata with Prisma define a postgresql datasource in the `schema.prisma` fi
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 ```
 
@@ -54,6 +55,8 @@ To introspect the database, you can use the following command:
 ```sh
 prisma db pull
 ```
+
+Introspection is necessary after _Adapting_ an existing table in the UI. This action adds columns `xata_id`,`xata_createdat`,`xata_updatedat` to the table. `prisma db pull` updates the Prisma schema to include these.
 
 To generate the client, you can use the following command:
 
@@ -75,12 +78,12 @@ const result = await prisma.users.findMany({
 });
 ```
 
-## Shadow Database
+## Shadow Database for Migrations
 
-Migrations with Prisma require a [shadow database](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database).
+Migrations with Prisma require a [Shadow Database](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database), which is an extra database that stores migration information and state.
 
-For this purpose, create an additional database in Xata and configure its Postgres endpoint as `shadowDatabaseUrl` in the datasource, as suggested by the relevant [Prisma documentation](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database#cloud-hosted-shadow-databases-must-be-created-manually).
+Create an additional database in Xata (we recommend naming it databasename-migrations), configure this database's [Postgres connection string](/docs/postgres#connection-string) as the `shadowDatabaseUrl` in the Prisma datasource and store the connection string in your `.env` file as `SHADOW_DATABASE_URL`. Refer to Prisma's [documentation](https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database#cloud-hosted-shadow-databases-must-be-created-manually) for more details.
 
 ## Limitations
 
-- Xata [File attachments](/docs/sdk/file-attachments) columns are read-only and only shows file metadata. You will need to use the [SDK](/docs/sdk/typescript/overview) to upload and download files.
+- Xata [File attachments](/docs/sdk/file-attachments) columns are read-only and only show file metadata. You will need to use the [SDK](/docs/sdk/typescript/overview) to upload and download files.
