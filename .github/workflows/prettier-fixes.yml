@@ -18,7 +18,7 @@ jobs:
           # This makes git push to work and other workflows to run
           token: ${{ secrets.GIT_TOKEN }}
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
           version: 8
 
