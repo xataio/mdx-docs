@@ -140,86 +140,86 @@ The table below provides full granularity over specific statements.
 
 |                           |     | SQL over HTTP | Shared Cluster | Dedicated Cluster |
 | ------------------------- | --- | ------------- | -------------- | ----------------- |
-| SELECT                    |     | ✅            | ✅             | ✅                |
-| INSERT                    |     | ✅            | ✅             | ✅                |
-| DELETE                    |     | ✅            | ✅             | ✅                |
-| UPDATE                    |     | ✅            | ✅             | ✅                |
-| SHOW                      |     |               | ✅             | ✅                |
+| ADD                       |     |               |                | ✅                |
+| ALTER CONSTRAINT          |     |               | ✅             | ✅                |
+| ALTER CONVERSION          |     |               |                | ✅                |
+| ALTER DOMAIN              |     |               | ✅             | ✅                |
+| ALTER EVENT TRIGGER       |     |               |                | ✅                |
+| ALTER EXTENSION           |     |               |                | ✅                |
+| ALTER FUNCTION            |     |               |                | ✅                |
+| ALTER INDEX               |     | ✅            | ✅             | ✅                |
+| ALTER OBJECT SCHEMA       |     |               |                | ✅                |
+| ALTER OPERATOR CLASS      |     |               |                | ✅                |
+| ALTER RULE                |     |               | ✅             | ✅                |
+| ALTER SCHEMA              |     | ✅            | ✅             | ✅                |
+| ALTER SEQUENCE            |     | ✅            | ✅             | ✅                |
+| ALTER STATISTICS          |     |               |                | ✅                |
 | ALTER TABLE               |     | ✅            | ✅             | ✅                |
+| ALTER TRIGGER             |     |               |                | ✅                |
+| ALTER TYPE                |     | ✅            | ✅             | ✅                |
+| ALTER VIEW                |     | ✅            | ✅             | ✅                |
+| BEGIN                     |     | ✅            | ✅             | ✅                |
+| CALL                      |     |               |                | ✅                |
+| COMMENT                   |     |               | ✅             | ✅                |
+| COMMIT                    |     | ✅            | ✅             | ✅                |
+| COMPOSITE TYPE            |     | ✅            | ✅             | ✅                |
+| COPY                      |     |               | ✅             | ✅                |
+| CLOSE PORTAL              |     |               | ✅             | ✅                |
+| CONSTRAINTS SET           |     |               | ✅             | ✅                |
+| CREATE CONVERSION         |     |               |                | ✅                |
+| CREATE EVENT TRIGGER      |     |               |                | ✅                |
+| CREATE DOMAIN             |     |               | ✅             | ✅                |
+| CREATE EXTENSION          |     |               |                | ✅                |
+| CREATE FUNCTION           |     |               |                | ✅                |
+| CREATE INDEX              |     | ✅            | ✅             | ✅                |
+| CREATE OPERATOR CLASS     |     |               |                | ✅                |
+| CREATE RULE               |     |               | ✅             | ✅                |
+| CREATE SCHEMA             |     | ✅            | ✅             | ✅                |
+| CREATE SEQUENCE           |     | ✅            | ✅             | ✅                |
+| CREATE STATISTICS         |     |               |                | ✅                |
 | CREATE TABLE              |     | ✅            | ✅             | ✅                |
 | CREATE TABLE AS           |     | ✅            | ✅             | ✅                |
-| DROP TABLE                |     | ✅            | ✅             | ✅                |
 | CREATE TEMPORARY TABLE    |     |               |                | ✅                |
-| BEGIN                     |     | ✅            | ✅             | ✅                |
-| COMMIT                    |     | ✅            | ✅             | ✅                |
-| ROLLBACK                  |     | ✅            | ✅             | ✅                |
-| SET                       |     |               | ✅             | ✅                |
-| COPY                      |     |               | ✅             | ✅                |
-| LOCK                      |     |               | ✅             | ✅                |
-| PREPARE                   |     |               | ✅             | ✅                |
-| EXECUTE                   |     |               | ✅             | ✅                |
-| TRUNCATE                  |     | ✅            | ✅             | ✅                |
-| ALTER INDEX               |     | ✅            | ✅             | ✅                |
-| CREATE INDEX              |     | ✅            | ✅             | ✅                |
-| DROP INDEX                |     | ✅            | ✅             | ✅                |
-| ALTER TRIGGER             |     |               |                | ✅                |
 | CREATE TRIGGER            |     |               | ✅             | ✅                |
-| DROP TRIGGER              |     |               |                | ✅                |
-| ALTER EVENT TRIGGER       |     |               |                | ✅                |
-| CREATE EVENT TRIGGER      |     |               |                | ✅                |
-| DROP EVENT TRIGGER        |     |               |                | ✅                |
-| ALTER VIEW                |     | ✅            | ✅             | ✅                |
-| CREATE VIEW               |     | ✅            | ✅             | ✅                |
-| DROP VIEW                 |     | ✅            | ✅             | ✅                |
-| ALTER SEQUENCE            |     | ✅            | ✅             | ✅                |
-| CREATE SEQUENCE           |     | ✅            | ✅             | ✅                |
-| DROP SEQUENCE             |     | ✅            | ✅             | ✅                |
-| CALL                      |     |               |                | ✅                |
-| ALTER STATISTICS          |     |               |                | ✅                |
-| CREATE STATISTICS         |     |               |                | ✅                |
-| DROP STATISTICS           |     |               |                | ✅                |
-| ALTER RULE                |     |               | ✅             | ✅                |
-| CREATE RULE               |     |               | ✅             | ✅                |
-| DROP RULE                 |     |               | ✅             | ✅                |
-| ALTER TYPE                |     | ✅            | ✅             | ✅                |
 | CREATE TYPE               |     | ✅            | ✅             | ✅                |
-| DROP TYPE                 |     | ✅            | ✅             | ✅                |
-| ALTER DOMAIN              |     |               | ✅             | ✅                |
-| CREATE DOMAIN             |     |               | ✅             | ✅                |
-| DROP DOMAIN               |     |               | ✅             | ✅                |
-| ALTER FUNCTION            |     |               |                | ✅                |
-| CREATE FUNCTION           |     |               |                | ✅                |
-| DROP FUNCTION             |     |               |                | ✅                |
-| EXPLAIN                   |     |               |                | ✅                |
-| REINDEX                   |     |               |                | ✅                |
-| ALTER OPERATOR CLASS      |     |               |                | ✅                |
-| CREATE OPERATOR CLASS     |     |               |                | ✅                |
-| DROP OPERATOR CLASS       |     |               |                | ✅                |
-| CREATE EXTENSION          |     |               |                | ✅                |
-| DROP EXTENSION            |     |               |                | ✅                |
-| ALTER EXTENSION           |     |               |                | ✅                |
-| REFRESH MATERIALIZED VIEW |     | ✅            | ✅             | ✅                |
-| DROP MATERIALIZED VIEW    |     | ✅            | ✅             | ✅                |
-| CREATE SCHEMA             |     | ✅            | ✅             | ✅                |
-| DROP SCHEMA               |     | ✅            | ✅             | ✅                |
-| ALTER SCHEMA              |     | ✅            | ✅             | ✅                |
-| CONSTRAINTS SET           |     |               | ✅             | ✅                |
-| ALTER CONSTRAINT          |     |               | ✅             | ✅                |
+| CREATE VIEW               |     | ✅            | ✅             | ✅                |
 | DEALLOCATE                |     |               | ✅             | ✅                |
-| COMMENT                   |     |               | ✅             | ✅                |
 | DECLARE CURSOR            |     |               | ✅             | ✅                |
-| CLOSE PORTAL              |     |               | ✅             | ✅                |
-| FETCH                     |     |               | ✅             | ✅                |
+| DELETE                    |     | ✅            | ✅             | ✅                |
 | DO                        |     |               | ✅             | ✅                |
-| LISTEN                    |     |               | ✅             | ✅                |
-| UNLISTEN                  |     |               | ✅             | ✅                |
-| NOTIFY                    |     |               | ✅             | ✅                |
-| ALTER OBJECT SCHEMA       |     |               |                | ✅                |
-| ADD                       |     |               |                | ✅                |
-| ALTER CONVERSION          |     |               |                | ✅                |
-| CREATE CONVERSION         |     |               |                | ✅                |
+| DROP EVENT TRIGGER        |     |               |                | ✅                |
+| DROP EXTENSION            |     |               |                | ✅                |
 | DROP CONVERSION           |     |               |                | ✅                |
-| COMPOSITE TYPE            |     | ✅            | ✅             | ✅                |
+| DROP DOMAIN               |     |               | ✅             | ✅                |
+| DROP FUNCTION             |     |               |                | ✅                |
+| DROP INDEX                |     | ✅            | ✅             | ✅                |
+| DROP MATERIALIZED VIEW    |     | ✅            | ✅             | ✅                |
+| DROP OPERATOR CLASS       |     |               |                | ✅                |
+| DROP RULE                 |     |               | ✅             | ✅                |
+| DROP SCHEMA               |     | ✅            | ✅             | ✅                |
+| DROP SEQUENCE             |     | ✅            | ✅             | ✅                |
+| DROP STATISTICS           |     |               |                | ✅                |
+| DROP TABLE                |     | ✅            | ✅             | ✅                |
+| DROP TRIGGER              |     |               |                | ✅                |
+| DROP TYPE                 |     | ✅            | ✅             | ✅                |
+| DROP VIEW                 |     | ✅            | ✅             | ✅                |
+| EXECUTE                   |     |               | ✅             | ✅                |
+| EXPLAIN                   |     |               |                | ✅                |
+| FETCH                     |     |               | ✅             | ✅                |
+| INSERT                    |     | ✅            | ✅             | ✅                |
+| LISTEN                    |     |               | ✅             | ✅                |
+| LOCK                      |     |               | ✅             | ✅                |
+| NOTIFY                    |     |               | ✅             | ✅                |
+| PREPARE                   |     |               | ✅             | ✅                |
+| REFRESH MATERIALIZED VIEW |     | ✅            | ✅             | ✅                |
+| REINDEX                   |     |               |                | ✅                |
+| ROLLBACK                  |     | ✅            | ✅             | ✅                |
+| SHOW                      |     |               | ✅             | ✅                |
+| SELECT                    |     | ✅            | ✅             | ✅                |
+| SET                       |     |               | ✅             | ✅                |
+| TRUNCATE                  |     | ✅            | ✅             | ✅                |
+| UNLISTEN                  |     |               | ✅             | ✅                |
+| UPDATE                    |     | ✅            | ✅             | ✅                |
 
 ## Adapt your schema to match Xata requirements
 
