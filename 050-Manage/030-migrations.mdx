@@ -73,7 +73,7 @@ Migration files should not be modified. If externally modified, the record will 
 
 Migrations must be ordered. Ordering is guaranteed by the `parent` and the ledger file, which is stored in `.xata/migrations/.ledger`. The ledger file is an append only file that lists all migration files in the correct order.
 
-## Multi-Version Schema Migrations (Postgres enabled only)
+## Multi-version Schema Migrations (Postgres enabled only)
 
 For Postgres enabled branches, the Web UI provides a Migration Editor to create [multi-version schema migrations](https://xata.io/blog/schema-multi-version-launch-week) using [pgroll](https://github.com/xataio/pgroll) operations.
 
@@ -171,7 +171,7 @@ As more data is added to the table through either the old or the new version of 
 
 ![Adding a new column](images/migrations-multiversion/add-column.png)
 
-Migrations that involve more than one operation may result in a temporary additional column in the UI prefixed with `_pgroll_new_`. This frequently occurs with alter column operations that change multiple properties. This column will disappear after the schema migration is completed or rolled back.
+Migrations that involve more than one operation may result in a temporary additional column in the UI. This frequently occurs with alter column operations that change multiple properties. This column will disappear after the schema migration is completed or rolled back.
 
 ![Editing an existing column](images/migrations-multiversion/alter-column.png)
 
