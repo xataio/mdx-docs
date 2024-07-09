@@ -161,7 +161,7 @@ A multi-version schema migration's life cycle consists of `start`, `complete`, a
 
 ### Start Step
 
-After a migration is started it is considered `active`. During this time, further schema modifications are not possible. This is reflected in disabled buttons and inputs in the UI while a migration is ongoing. From there you can decide whether to `complete` or `rollback` the active migration.
+After a migration is started it is considered `active`. One active migration per branch is possible. This is reflected in disabled buttons and inputs in the UI while a migration is ongoing. From there you can decide whether to `complete` or `rollback` the active migration.
 
 You can view the submitted migration under the Schema History tab while it is `active`.
 
