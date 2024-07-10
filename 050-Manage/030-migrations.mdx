@@ -14,7 +14,7 @@ Xata runs migrations on your database branch anytime the schema is changed. You 
 
 Each migration file holds a JSON object containing the migration record, and list of operations. The file structure for beta [Postgres enabled](/docs/postgres) projects utilizes [pgroll](https://github.com/xataio/pgroll) migration formats. Generally speaking you should not need to worry about these files unless you plan to build automation tools around migrations. For example our [PR based workflow](/docs/getting-started/workflow) uses these files to perform migrations on PR merges.
 
-<TabbedCode tabs={["Migration example in production", "Migration example with Postgres enabled (beta)"]}>
+<TabbedCode tabs={["Migration example", "Migration example with Postgres enabled (beta)"]}>
 
 ```json
 {
@@ -153,6 +153,8 @@ Some common schema operations are:
 ```
 </TabbedCode>
 
+The `up` field should be SQL. It is executed when writing data from the old column into the new column. The `down` field should also be SQL and is executed when writing data from the new column into the old column.
+
 See the [pgroll Operations Reference](https://github.com/xataio/pgroll/blob/main/docs/README.md#operations-reference) for the list of supported migration operations.
 
 ## Lifecycle
@@ -167,7 +169,7 @@ You can view the submitted migration under the Schema History tab while it is `a
 
 ![An active migration under the Schema History tab](images/migrations-multiversion/active-migration.png)
 
-As more data is added to the table through either the old or the new version of the schema, the ‘other’ column is automatically updated by `pgroll` by the `up` or `down` triggers. Data in each version of the column remains editable.
+As more data is added to the table through either the old or the new version of the schema, the new column is automatically updated by `pgroll` with the `up` and `down` triggers. Data in each version of the column remains editable.
 
 ![Adding a new column](images/migrations-multiversion/add-column.png)
 
@@ -188,6 +190,8 @@ If a migration fails, the submitted migration and failure reason can be viewed u
 ### Rollback Step
 
 You can cancel a migration that has not yet been completed by rolling back. This is useful if the backfill or schema changes are unwanted. After a rollback, the schema changes from the migration will not be applied and the new schema will be deleted.
+
+![The option to roll back a migration](images/migrations-multiversion/migration-rollback.png)
 
 ## Connecting via Wire Proxy
 
