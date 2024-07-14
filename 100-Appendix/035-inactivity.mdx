@@ -1,0 +1,18 @@
+---
+title: Branch inactivity
+navTitle: Branch inactivity
+keywords: ['branch', 'search']
+description: Branches are set to inactive after a period of time if not in use.
+slug: inactive-branches
+published: true
+---
+
+If no traffic is detected for a branch for a full 30-day period, either through the REST API or direct [Postgres access](/docs/postgres), Xata will flag the branch as inactive and disable features.
+Once set to inactive, the search engine will be disabled. This includes [full-text search](/docs/sdk/search), [aggregations](/docs/sdk/aggregate), [vector search](/docs/sdk/vector-search), and [Ask AI](/docs/sdk/ask).
+This only effects search. All other portions of the REST API, [file attachments](/docs/sdk/file-attachments) and direct [Postgres access](/docs/postgres) will remain available.
+To re-enable the search engine, navigate to the database settings section in the corresponding workspace and turn the search engine on for the desired branch.
+
+Features will only be disabled on inactive branches in workspaces on our [Free plan](/docs/concepts/pricing#free-plan).
+Branches set to inactive will still count towards the [limits](/pricing) imposed by the [Free plan](/docs/concepts/pricing#free-plan).
+
+Xata sends a notification by email a few days before setting a branch to inactive. If the branch continues to not be used, Xata will mark it as inactive and you'll receive another email notification.

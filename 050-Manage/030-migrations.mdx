@@ -72,3 +72,11 @@ Each migration file holds a JSON object containing the migration record, and lis
 Migration files should not be modified. If externally modified, the record will become invalid. Xata keeps track of all migrations within a database and attempting to push a modified migration file to another branch will result in an error.
 
 Migrations must be ordered. Ordering is guaranteed by the `parent` and the ledger file, which is stored in `.xata/migrations/.ledger`. The ledger file is an append only file that lists all migration files in the correct order.
+
+## UI Migration Editor for pgroll operations
+
+Under the Schema menu, the Web UI provides a Migration Editor to create migrations using [pgroll](https://github.com/xataio/pgroll) operations.
+
+In the editor you can provide content for the pgroll operations array and start a migration. Once submitted, the migration will enter the Active state and must be manually completed with the "Complete migration" action button before further schema edits can take place. While in Active state, the migration can also be rolled back.
+
+See the [pgroll Operations Reference](https://github.com/xataio/pgroll/blob/main/docs/README.md#operations-reference) for the list of supported migration operations.

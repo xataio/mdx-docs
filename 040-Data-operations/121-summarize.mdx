@@ -471,7 +471,7 @@ Sort lets you decide how you'd like your results sorted. You may sort on `column
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'SQL', 'JSON']}>
   ```ts
   const records = await xata.db.sales.summarize({
-    columns: {"store_name"},
+    columns: ["store_name"],
     summaries: {
       "total_sales": {"count": "*"}
     },
@@ -486,7 +486,7 @@ Sort lets you decide how you'd like your results sorted. You may sort on `column
 
 ```python
 records = xata.data().summarize("sales", {
-  "columns": {"store_name"},
+  "columns": ["store_name"],
   "summaries": {
     "total_sales": {"count": "*"}
   },
@@ -531,15 +531,15 @@ records, _ := searchClient.Summarize(context.TODO(), xata.SummarizeTableRequest{
 ```jsonc
 // POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/summarize
 {
-  "columns": {"store_name"},
+  "columns": ["store_name"],
   "summaries": {
-    "total_sales": {"count": "*"}
+    "total_sales": { "count": "*" }
   },
   "sort": [
     // put the highest total_sales at the top
-    {"total_sales": "desc"},
+    { "total_sales": "desc" },
     // if total_sales is equal for two rows, order them by the store_name
-    {"store_name": "asc"}
+    { "store_name": "asc" }
   ]
 }
 ```
@@ -552,7 +552,7 @@ Page lets you determine how many results are returned. We currently only support
 
 The default setting for `size` , if not specified in the request, is 20 results. We allow you to set this between 1 and 1000.
 
-If this limitation is too small, we ask that you move your workload to the [aggregate](/docs/sdk/aggregate) endpoint which does not have such limitations.
+If this limitation is too small, check if a similar request can be achieved using the [aggregate](/docs/sdk/aggregate) endpoint as an alternative approach.
 
 An example of a page request looks like:
 

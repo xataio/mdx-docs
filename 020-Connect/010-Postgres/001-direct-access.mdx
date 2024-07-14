@@ -40,6 +40,7 @@ With the mapping from above, the connection string to connect to our database `G
 postgresql://ws1234:xau_apikey123456@us-east-1.sql.xata.sh:5432/Games:main?sslmode=require
 ```
 
+- The default branch is `main`. If you do not specify a branch name in the connection string, you connect to your `main` branch.
 - The connection strings for HTTP access and Postgres wire protocol access are shown to you when you create a new database. You can view this connection string at any time by going to your database's settings page.
 - API keys are stored at the user level and can be accessed within [account settings](https://app.xata.io/settings).
 
@@ -71,7 +72,14 @@ PostgreSQL 15.4 on aarch64-unknown-linux-gnu, compiled by aarch64-unknown-linux-
 
 ## Extensions
 
-Extensions are only available in [dedicated cluster](/docs/dedicated-cluster#Extensions) plans. The default shared cluster setup ships with [plpgsql](https://www.postgresql.org/docs/current/plpgsql.html) only.
+The default shared cluster setup ships with
+
+- [pgcrypto](https://www.postgresql.org/docs/15/pgcrypto.html)
+- [pgvector](https://github.com/pgvector/pgvector/tree/v0.5.0)
+- [plpgsql](https://www.postgresql.org/docs/15/plpgsql.html)
+- [uuid-ossp](https://www.postgresql.org/docs/15/uuid-ossp.html)
+
+More extensions are available in [dedicated cluster](/docs/dedicated-cluster#Extensions) plans.
 
 ## Export
 
@@ -130,65 +138,88 @@ Xata offers Postgres in a variety of [pricing formats](/pricing). Shared cluster
 
 The table below provides full granularity over specific statements.
 
-|                        |     | SQL over HTTP | Shared Cluster | Dedicated Cluster |
-| ---------------------- | --- | ------------- | -------------- | ----------------- |
-| SELECT                 |     | ✅            | ✅             | ✅                |
-| INSERT                 |     | ✅            | ✅             | ✅                |
-| DELETE                 |     | ✅            | ✅             | ✅                |
-| UPDATE                 |     | ✅            | ✅             | ✅                |
-| SHOW                   |     | ✅            | ✅             | ✅                |
-| ALTER TABLE            |     | ✅            | ✅             | ✅                |
-| CREATE TABLE           |     | ✅            | ✅             | ✅                |
-| DROP TABLE             |     | ✅            | ✅             | ✅                |
-| CREATE TEMPORARY TABLE |     |               |                | ✅                |
-| BEGIN                  |     |               | ✅             | ✅                |
-| COMMIT                 |     |               | ✅             | ✅                |
-| ROLLBACK               |     |               | ✅             | ✅                |
-| SET                    |     |               | ✅             | ✅                |
-| COPY                   |     |               | ✅             | ✅                |
-| LOCK                   |     |               | ✅             | ✅                |
-| PREPARE                |     |               | ✅             | ✅                |
-| EXECUTE                |     |               | ✅             | ✅                |
-| TRUNCATE               |     | ✅            | ✅             | ✅                |
-| ALTER INDEX            |     | ✅            | ✅             | ✅                |
-| CREATE INDEX           |     | ✅            | ✅             | ✅                |
-| DROP INDEX             |     | ✅            | ✅             | ✅                |
-| ALTER TRIGGER          |     |               |                | ✅                |
-| CREATE TRIGGER         |     |               |                | ✅                |
-| DROP TRIGGER           |     |               |                | ✅                |
-| ALTER EVENTTRIGGER     |     |               |                | ✅                |
-| CREATE EVENTTRIGGER    |     |               |                | ✅                |
-| DROP EVENTTRIGGER      |     |               |                | ✅                |
-| ALTER VIEW             |     | ✅            | ✅             | ✅                |
-| CREATE VIEW            |     | ✅            | ✅             | ✅                |
-| DROP VIEW              |     | ✅            | ✅             | ✅                |
-| ALTER SEQUENCE         |     | ✅            | ✅             | ✅                |
-| CREATE SEQUENCE        |     | ✅            | ✅             | ✅                |
-| DROP SEQUENCE          |     | ✅            | ✅             | ✅                |
-| CALL                   |     |               |                | ✅                |
-| ALTER STATISTICS       |     |               |                | ✅                |
-| CREATE STATISTICS      |     |               |                | ✅                |
-| DROP STATISTICS        |     |               |                | ✅                |
-| ALTER RULE             |     |               |                | ✅                |
-| CREATE RULE            |     |               |                | ✅                |
-| DROP RULE              |     |               |                | ✅                |
-| ALTER TYPE             |     |               |                | ✅                |
-| CREATE TYPE            |     | ✅            | ✅             | ✅                |
-| DROP TYPE              |     | ✅            | ✅             | ✅                |
-| ALTER DOMAIN           |     | ✅            | ✅             | ✅                |
-| CREATE DOMAIN          |     |               |                | ✅                |
-| DROP DOMAIN            |     |               |                | ✅                |
-| ALTER FUNCTION         |     |               |                | ✅                |
-| CREATE FUNCTION        |     |               |                | ✅                |
-| DROP FUNCTION          |     |               |                | ✅                |
-| EXPLAIN                |     |               |                | ✅                |
-| REINDEX                |     |               |                | ✅                |
-| ALTER OPERATOR CLASS   |     |               |                | ✅                |
-| CREATE OPERATOR CLASS  |     |               |                | ✅                |
-| DROP OPERATOR CLASS    |     |               |                | ✅                |
-| CREATE EXTENSION       |     |               |                | ✅                |
-| DROP EXTENSION         |     |               |                | ✅                |
-| ALTER EXTENSION        |     |               |                | ✅                |
+|                           |     | SQL over HTTP | Shared Cluster | Dedicated Cluster |
+| ------------------------- | --- | ------------- | -------------- | ----------------- |
+| ADD                       |     |               |                | ✅                |
+| ALTER CONSTRAINT          |     |               | ✅             | ✅                |
+| ALTER CONVERSION          |     |               |                | ✅                |
+| ALTER DOMAIN              |     |               | ✅             | ✅                |
+| ALTER EVENT TRIGGER       |     |               |                | ✅                |
+| ALTER EXTENSION           |     |               |                | ✅                |
+| ALTER FUNCTION            |     |               |                | ✅                |
+| ALTER INDEX               |     | ✅            | ✅             | ✅                |
+| ALTER OBJECT SCHEMA       |     |               |                | ✅                |
+| ALTER OPERATOR CLASS      |     |               |                | ✅                |
+| ALTER RULE                |     |               | ✅             | ✅                |
+| ALTER SCHEMA              |     | ✅            | ✅             | ✅                |
+| ALTER SEQUENCE            |     | ✅            | ✅             | ✅                |
+| ALTER STATISTICS          |     |               |                | ✅                |
+| ALTER TABLE               |     | ✅            | ✅             | ✅                |
+| ALTER TRIGGER             |     |               |                | ✅                |
+| ALTER TYPE                |     | ✅            | ✅             | ✅                |
+| ALTER VIEW                |     | ✅            | ✅             | ✅                |
+| BEGIN                     |     | ✅            | ✅             | ✅                |
+| CALL                      |     |               |                | ✅                |
+| COMMENT                   |     |               | ✅             | ✅                |
+| COMMIT                    |     | ✅            | ✅             | ✅                |
+| COMPOSITE TYPE            |     | ✅            | ✅             | ✅                |
+| COPY                      |     |               | ✅             | ✅                |
+| CLOSE PORTAL              |     |               | ✅             | ✅                |
+| CONSTRAINTS SET           |     |               | ✅             | ✅                |
+| CREATE CONVERSION         |     |               |                | ✅                |
+| CREATE EVENT TRIGGER      |     |               |                | ✅                |
+| CREATE DOMAIN             |     |               | ✅             | ✅                |
+| CREATE EXTENSION          |     |               |                | ✅                |
+| CREATE FUNCTION           |     |               |                | ✅                |
+| CREATE INDEX              |     | ✅            | ✅             | ✅                |
+| CREATE OPERATOR CLASS     |     |               |                | ✅                |
+| CREATE RULE               |     |               | ✅             | ✅                |
+| CREATE SCHEMA             |     | ✅            | ✅             | ✅                |
+| CREATE SEQUENCE           |     | ✅            | ✅             | ✅                |
+| CREATE STATISTICS         |     |               |                | ✅                |
+| CREATE TABLE              |     | ✅            | ✅             | ✅                |
+| CREATE TABLE AS           |     | ✅            | ✅             | ✅                |
+| CREATE TEMPORARY TABLE    |     |               |                | ✅                |
+| CREATE TRIGGER            |     |               | ✅             | ✅                |
+| CREATE TYPE               |     | ✅            | ✅             | ✅                |
+| CREATE VIEW               |     | ✅            | ✅             | ✅                |
+| DEALLOCATE                |     |               | ✅             | ✅                |
+| DECLARE CURSOR            |     |               | ✅             | ✅                |
+| DELETE                    |     | ✅            | ✅             | ✅                |
+| DO                        |     |               | ✅             | ✅                |
+| DROP EVENT TRIGGER        |     |               |                | ✅                |
+| DROP EXTENSION            |     |               |                | ✅                |
+| DROP CONVERSION           |     |               |                | ✅                |
+| DROP DOMAIN               |     |               | ✅             | ✅                |
+| DROP FUNCTION             |     |               |                | ✅                |
+| DROP INDEX                |     | ✅            | ✅             | ✅                |
+| DROP MATERIALIZED VIEW    |     | ✅            | ✅             | ✅                |
+| DROP OPERATOR CLASS       |     |               |                | ✅                |
+| DROP RULE                 |     |               | ✅             | ✅                |
+| DROP SCHEMA               |     | ✅            | ✅             | ✅                |
+| DROP SEQUENCE             |     | ✅            | ✅             | ✅                |
+| DROP STATISTICS           |     |               |                | ✅                |
+| DROP TABLE                |     | ✅            | ✅             | ✅                |
+| DROP TRIGGER              |     |               |                | ✅                |
+| DROP TYPE                 |     | ✅            | ✅             | ✅                |
+| DROP VIEW                 |     | ✅            | ✅             | ✅                |
+| EXECUTE                   |     |               | ✅             | ✅                |
+| EXPLAIN                   |     |               |                | ✅                |
+| FETCH                     |     |               | ✅             | ✅                |
+| INSERT                    |     | ✅            | ✅             | ✅                |
+| LISTEN                    |     |               | ✅             | ✅                |
+| LOCK                      |     |               | ✅             | ✅                |
+| NOTIFY                    |     |               | ✅             | ✅                |
+| PREPARE                   |     |               | ✅             | ✅                |
+| REFRESH MATERIALIZED VIEW |     | ✅            | ✅             | ✅                |
+| REINDEX                   |     |               |                | ✅                |
+| ROLLBACK                  |     | ✅            | ✅             | ✅                |
+| SHOW                      |     |               | ✅             | ✅                |
+| SELECT                    |     | ✅            | ✅             | ✅                |
+| SET                       |     |               | ✅             | ✅                |
+| TRUNCATE                  |     | ✅            | ✅             | ✅                |
+| UNLISTEN                  |     |               | ✅             | ✅                |
+| UPDATE                    |     | ✅            | ✅             | ✅                |
 
 ## Adapt your schema to match Xata requirements
 
@@ -217,8 +248,8 @@ The new Postgres abilities require breaking changes to some of our API layer. Wh
 
 The following statements and/or functions are not available for security reasons.
 
-- `SELECT user`
 - `SHOW password_encryption`
+- `SELECT pg_reload_conf()`
 - `SET ROLE`
 - `RESET ROLE`
 - `SET SESSION AUTHORIZATION`
