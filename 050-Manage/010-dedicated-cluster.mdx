@@ -5,7 +5,7 @@ keywords: ['postgres', 'dedicated cluster']
 description: How to manage your own Postgres instance
 slug: dedicated-cluster
 published: true
-status: alpha
+status: beta
 ---
 
 A dedicated cluster is a Postgres cluster, which includes a writer instance and potentially multiple read replicas. You can create and allocate Xata databases and branches to this cluster. Xata databases and branches behave the same whether they are allocated to the shared or dedicated cluster.
@@ -18,8 +18,10 @@ Dedicated clusters are available in the [Pro plan](/docs/concepts/pricing#pro-pl
 
 At the moment Xata supports the following Postgres versions:
 
-- 15.4
+- 15.6
 - 15.5
+- 15.4
+- 14.11
 - 14.10
 - 14.9
 
@@ -67,7 +69,12 @@ The Xata auto-scaling dedicated clusters are powered by the AWS Aurora Serverles
 
 ## Regions
 
-Similar to the supported Postgres version, we will launch this feature in a selected set of regions. If you the region you are looking for is not available please reach out to our [support team](/docs/resources/support).
+Similar to the supported Postgres version, we will launch this feature in a selected set of regions:
+
+- us-east-1 - North Virginia, US
+- eu-central-1 - Frankfurt, Europe
+
+If you the region you are looking for is not available please reach out to our [support team](/docs/resources/support).
 
 ## Extensions
 
@@ -79,6 +86,24 @@ To inspect which extensions are available out-of-the-box, please connect to your
 ```sql
 SELECT * FROM pg_available_extensions;
 ```
+
+- [pgcrypto](https://www.postgresql.org/docs/15/pgcrypto.html)
+- [pgvector](https://github.com/pgvector/pgvector/tree/v0.5.0)
+- [plpgsql](https://www.postgresql.org/docs/15/plpgsql.html)
+- [uuid-ossp](https://www.postgresql.org/docs/15/uuid-ossp.html)
+
+## Termination
+
+Every cluster has delete protection out of the box. If you decided to terminate a cluster, you must delete all branches located on that cluster or move them to a shared cluster.
+The simplest path to deleting the branches, is to navigate to branch management, there you will find the complete list of branches labelled with the cluster name and the delete action.
+Once no branch is present on the cluster, you can terminate it.
+
+## Moving branches
+
+Every workspace hosting one or more dedicated clusters provides the ability to move branches from one cluster to another, this includes shared clusters.
+Please navigate to branch management and select the branch you move to which target cluster.
+Once started, you'll see the `MOVING` label on the branch while the operation is ongoing, furthermore all DML statements are present in the moved branch without downtime.
+DDL statements will be rejected during the moving process to ensure consistency.
 
 ## Limitations
 
