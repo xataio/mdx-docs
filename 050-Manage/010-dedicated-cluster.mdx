@@ -87,10 +87,19 @@ To inspect which extensions are available out-of-the-box, please connect to your
 SELECT * FROM pg_available_extensions;
 ```
 
-- [pgcrypto](https://www.postgresql.org/docs/15/pgcrypto.html)
-- [pgvector](https://github.com/pgvector/pgvector/tree/v0.5.0)
-- [plpgsql](https://www.postgresql.org/docs/15/plpgsql.html)
-- [uuid-ossp](https://www.postgresql.org/docs/15/uuid-ossp.html)
+To list the installed extensions:
+
+```sql
+SELECT * FROM pg_available_extensions WHERE installed_version IS NOT NULL;
+```
+
+| name      | default_version | installed_version | comment                                                    |
+| --------- | --------------- | ----------------- | ---------------------------------------------------------- |
+| plpgsql   | 1.0             | 1.0               | PL/pgSQL procedural language                               |
+| uuid-ossp | 1.1             | 1.1               | generate universally unique identifiers (UUIDs)            |
+| postgis   | 3.4.0           | 3.4.0             | PostGIS geometry and geography spatial types and functions |
+| pgcrypto  | 1.3             | 1.3               | cryptographic functions                                    |
+| vector    | 0.5.1           | 0.5.1             | vector data type and ivfflat and hnsw access methods       |
 
 ## Termination
 
