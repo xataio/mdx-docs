@@ -122,7 +122,6 @@ The following limitations apply:
 - Some warnings are to be expected during the restore operation due to restrictions from [supported statements](/docs/postgres#supported-statements).
 - The set of supported statements differs between Shared and Dedicated Clusters so the warnings when restoring from the same file may differ depending on the target environment.
 - Managing roles and table ownership is not supported, errors from such statements are expected.
-- Schemas are not supported. Data content and objects are restored under the target branch.
 - Restoring file attachments is not supported.
 
 ## Supported statements
@@ -257,8 +256,22 @@ The following statements and/or functions are not available for security reasons
 - `ALTER TABLESPACE`
 - `CREATE TABLESPACE`
 - `DROP TABLESPACE`
-- `SET search_path TO <SCHEMA>`
 - `VACUUM`
+- `CREATE ROLE`
+- `ALTER ROLE`
+- `DROP ROLE`
+- `CREATE GROUP`
+- `ALTER GROUP`
+- `DROP GROUP`
+- `CREATE USER`
+- `ALTER USER`
+- `DROP USER`
+- `CREATE USER MAPPING`
+- `ALTER USER MAPPING`
+- `DROP USER MAPPING`
+- `CREATE POLICY`
+- `ALTER POLICY`
+- `DROP POLICY`
 
 ### Connection limits
 
@@ -292,6 +305,10 @@ The full list of column types and their associated metadata comments is as follo
 | link      | &#123;"xata.link": "referenced_table"&#125; |                              |
 
 Adding your own comments to database objects is permitted using direct Postgres access with the SQL `COMMENT` statement. Xata places no restrictions on comments, but be aware that modifying or removing the metadata comments added to columns by Xata itself may break search replication or have adverse effects on how the columns behave in the Xata UI.
+
+### Schema support
+
+The length of schema names is limited to 25 characters.
 
 ## Troubleshooting
 
