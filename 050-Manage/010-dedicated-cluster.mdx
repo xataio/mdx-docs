@@ -93,6 +93,7 @@ To list the installed extensions:
 SELECT * FROM pg_available_extensions WHERE installed_version IS NOT NULL;
 ```
 
+```txt
 | name      | default_version | installed_version | comment                                                    |
 | --------- | --------------- | ----------------- | ---------------------------------------------------------- |
 | plpgsql   | 1.0             | 1.0               | PL/pgSQL procedural language                               |
@@ -100,6 +101,7 @@ SELECT * FROM pg_available_extensions WHERE installed_version IS NOT NULL;
 | postgis   | 3.4.0           | 3.4.0             | PostGIS geometry and geography spatial types and functions |
 | pgcrypto  | 1.3             | 1.3               | cryptographic functions                                    |
 | vector    | 0.5.1           | 0.5.1             | vector data type and ivfflat and hnsw access methods       |
+```
 
 ## Termination
 
