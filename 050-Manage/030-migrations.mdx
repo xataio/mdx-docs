@@ -14,7 +14,7 @@ Xata runs migrations on your database branch anytime the schema is changed. You 
 
 Each migration file holds a JSON object containing the migration record, and list of operations. The file structure for beta [Postgres enabled](/docs/postgres) projects utilizes [pgroll](https://github.com/xataio/pgroll) migration formats. Generally speaking you should not need to worry about these files unless you plan to build automation tools around migrations. For example our [PR based workflow](/docs/getting-started/workflow) uses these files to perform migrations on PR merges.
 
-<TabbedCode tabs={["Migration example in production", "Migration example with Postgres enabled (beta)"]}>
+<TabbedCode tabs={["Migration example", "Migration example with Postgres enabled (beta)"]}>
 
 ```json
 {
@@ -73,10 +73,135 @@ Migration files should not be modified. If externally modified, the record will 
 
 Migrations must be ordered. Ordering is guaranteed by the `parent` and the ledger file, which is stored in `.xata/migrations/.ledger`. The ledger file is an append only file that lists all migration files in the correct order.
 
-## UI Migration Editor for pgroll operations
+## Multi-version Schema Migrations (Postgres enabled only)
 
-Under the Schema menu, the Web UI provides a Migration Editor to create migrations using [pgroll](https://github.com/xataio/pgroll) operations.
+For Postgres enabled branches, Xata provides a Migration Editor to create [multi-version schema migrations](https://xata.io/blog/schema-multi-version-launch-week) using [pgroll](https://github.com/xataio/pgroll) operations.
 
-In the editor you can provide content for the pgroll operations array and start a migration. Once submitted, the migration will enter the Active state and must be manually completed with the "Complete migration" action button before further schema edits can take place. While in Active state, the migration can also be rolled back.
+Multi-version schema migrations address the pain point of having to keep your application code in sync with your database schema by allowing you two active database schemas at once. With multi-version schema migrations, running a migration means being able to preview the new version of your schema alongside the old one. Reading and writing data in both schemas continues to work normally. As a result of having two active schema versions, rollbacks become seamless operations which is particularly useful in the case of an unwanted schema change or backfill.
+
+<Alert status="warning">
+  Currently multi-version schema migrations are only supported via the Migration Editor. Migrations made via the Table
+  View and Schema View will complete automatically.
+</Alert>
+
+![The Migration Editor](images/migrations-multiversion/migration-editor.png)
+
+Some common schema operations are:
+
+<TabbedCode tabs={['create_table', 'add_column', 'rename_table', 'alter_column', 'drop_table', 'drop_column']}>
+```jsonc
+[{
+  "create_table": {
+    "name": "customers",
+    "columns": [
+      {
+        "name": "id",
+        "type": "integer",
+        "pk": true
+      },
+    ]
+  }
+}]
+```
+```jsonc
+[{
+  "add_column": {
+    "table": "customers",
+    "up": "UPPER(name)",
+    "column": {
+      "name": "full_name",
+      "type": "varchar(255)",
+      "nullable": true
+    }
+  }
+}]
+```
+```jsonc
+[{
+  "rename_table": {
+    "from": "customers",
+    "to": "clients"
+  }
+}]
+```
+```jsonc
+[{
+  "alter_column": {
+    "table": "clients",
+    "column": "full_name",
+    "name": "new_full_name",
+    "up": "(SELECT CASE WHEN full_name IS NULL OR LENGTH(full_name) <= 3 THEN 'placeholder' ELSE full_name END)",
+    "down": "full_name"
+  }
+}]
+```
+```jsonc
+[{
+  "drop_table": {
+    "name": "clients"
+  }
+}]
+```
+```jsonc
+[{
+  "drop_column": {
+    "table": "clients",
+    "column": "full_name",
+    "down": "''"
+  }
+}]
+```
+</TabbedCode>
+
+The `up` field should be SQL. It is executed when writing data from the old column into the new column. The `down` field should also be SQL and is executed when writing data from the new column into the old column.
 
 See the [pgroll Operations Reference](https://github.com/xataio/pgroll/blob/main/docs/README.md#operations-reference) for the list of supported migration operations.
+
+## Lifecycle
+
+A multi-version schema migration's life cycle consists of `start`, `complete`, and `rollback` steps.
+
+### Start Step
+
+After a migration is started it is considered `active`. One active migration per branch is possible. This is reflected in disabled buttons and inputs while a migration is ongoing. From there you can decide whether to `complete` or `rollback` the active migration.
+
+You can view the submitted migration under the Schema History tab while it is `active`.
+
+![An active migration under the Schema History tab](images/migrations-multiversion/active-migration.png)
+
+As more data is added to the table through either the old or the new version of the schema, the new column is automatically updated by `pgroll` with the `up` and `down` triggers. Data in each version of the column remains editable.
+
+![Adding a new column](images/migrations-multiversion/add-column.png)
+
+Migrations that involve more than one operation may result in a temporary additional column. This frequently occurs with alter column operations that change multiple properties. This column will disappear after the schema migration is completed or rolled back.
+
+![Editing an existing column](images/migrations-multiversion/alter-column.png)
+
+![Deleting a column](images/migrations-multiversion/delete-column.png)
+
+### Complete Step
+
+Successfully completed migrations can be viewed under the Schema History tab in the Schema View.
+![The Schema History tab](images/migrations-multiversion/schema-history.png)
+
+If a migration fails, the submitted migration and failure reason can be viewed under the Migration Errors tab in the Schema View.
+![Viewing a failed migration](images/migrations-multiversion/migration-errors.png)
+
+### Rollback Step
+
+You can cancel a migration that has not yet been completed by rolling back. This is useful if the backfill or schema changes are unwanted. After a rollback, the schema changes from the migration will not be applied and the new schema will be deleted.
+
+![The option to roll back a migration](images/migrations-multiversion/migration-rollback.png)
+
+## Connecting via Wire Proxy
+
+If there is no active migration, the database will contain two schemas.
+
+1. The first schema will be the base schema and contain the underlying tables.
+2. The second schema will have a `_create_table` suffix and contain views on all the tables inside the first schema.
+
+If there is an active migration there will be an additional third schema. The third schema is for the latest version and will also contain views on all tables in the first schema.
+
+## Limitations
+
+- Currently we only support rolling back the latest migration. Rolling back a migration after it has been "completed" is not currently possible.
