@@ -118,7 +118,7 @@ results, _ := searchClient.VectorSearch(context.TODO(), xata.VectorSearchTableRe
 The results of a vector search query return a set of records from the specified table, that are most similar to the provided query vector. The response includes the following:
 
 - `totalCount`: The total number of records matching the query vector.
-- `records`: An array of the most relevant records. Each item in `records` includes the `id` and `score` within its `xata` column.
+- `records`: An array of the most relevant records. Each item in `records` includes the `id`, and `score` within its `xata` column.
 - `id`: A unique identifier for the record.
 - `score`: A similarity score (usually between 0 and 1) indicating how closely the record's vector matches the query vector.
 
