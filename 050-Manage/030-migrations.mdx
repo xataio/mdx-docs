@@ -75,7 +75,7 @@ Migrations must be ordered. Ordering is guaranteed by the `parent` and the ledge
 
 ## Multi-version Schema Migrations (Postgres enabled only)
 
-For Postgres enabled branches, Xata provides a Migration Editor to create [multi-version schema migrations](https://xata.io/blog/multi-version-schema-migrations) using [pgroll](https://github.com/xataio/pgroll) operations.
+For Postgres enabled branches, Xata provides a Migration Editor to create [multi-version schema migrations](/blog/multi-version-schema-migrations) using [pgroll](https://github.com/xataio/pgroll) operations.
 
 Multi-version schema migrations address the pain point of having to keep your application code in sync with your database schema by allowing you two active database schemas at once. With multi-version schema migrations, running a migration means being able to preview the new version of your schema alongside the old one. Reading and writing data in both schemas continues to work normally. As a result of having two active schema versions, rollbacks become seamless operations which is particularly useful in the case of an unwanted schema change or backfill.
 
