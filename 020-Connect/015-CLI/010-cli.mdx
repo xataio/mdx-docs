@@ -17,7 +17,9 @@ Xata provides a CLI (command line interface) through an **[NPM package](https://
 
 - Install Homebrew then run:
 
-`brew tap xataio/brew && brew install xata`
+```bash
+brew tap xataio/brew && brew install xata
+```
 
 ### Windows
 
@@ -28,7 +30,11 @@ Xata provides a CLI (command line interface) through an **[NPM package](https://
 
 - We provide the binaries in .gz format. The tarball contains Node.js.
 
-- Setup script for tarball users (TODO)
+- We provide a setup script for Linux users who do not want to extract the tarball themselves:
+
+```bash
+curl xata.io/install.sh | sh
+```
 
 - [macOS (m1)](https://xata-cli-assets.s3.us-east-1.amazonaws.com/channels/stable/xata-darwin-arm64.tar.gz)
 - [macOS (Intel)](https://xata-cli-assets.s3.us-east-1.amazonaws.com/channels/stable/xata-darwin-x64.tar.gz)
