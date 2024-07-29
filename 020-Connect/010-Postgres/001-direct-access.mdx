@@ -285,10 +285,6 @@ Concurrent connections are limited by [plan](/docs/concepts/pricing#pricing-plan
 
 Branch migrations are not supported yet. In databases that support direct Postgres access, you can create new branches but they cannot be merged together. This capability will become available later on.
 
-### Schema files
-
-CLI commands that apply schema files (`xata schema upload schema.json`, `xata init --schema=schema.json`) are not supported in Postgres-enabled databases. The recommended method to [export](/docs/postgres#export) and [import](/docs/postgres#import) a certain schema is via standard Postgres tools (`psql`,`pg_dump`,`pg_restore`). For example, you can add the `--schema-only` parameter to `pg_dump` to export just the schema and no data.
-
 ## Column metadata
 
 Xata uses SQL comments on columns to track some replication-related metadata about certain types of columns. These comments are only ever present on columns created using the Xata UI, and only on certain types of columns.
