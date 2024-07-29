@@ -287,7 +287,7 @@ Branch migrations are not supported yet. In databases that support direct Postgr
 
 ### Schema files
 
-CLI commands that apply schema files (`xata schema upload schema.json`, `xata init --schema=schema.json`) are not supported in Postgres-enabled databases. The recommended method to [export](/docs/postgres#export) and [import](/docs/postgres#import) a certain schema is via standard postgres tools (`psql`,`pg_dump`,`pg_restore`). For example, you can add the `--schema-only` parameter to `pg_dump` to export just the schema and no data.
+CLI commands that apply schema files (`xata schema upload schema.json`, `xata init --schema=schema.json`) are not supported in Postgres-enabled databases. The recommended method to [export](/docs/postgres#export) and [import](/docs/postgres#import) a certain schema is via standard Postgres tools (`psql`,`pg_dump`,`pg_restore`). For example, you can add the `--schema-only` parameter to `pg_dump` to export just the schema and no data.
 
 ## Column metadata
 
