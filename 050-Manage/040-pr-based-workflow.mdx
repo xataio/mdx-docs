@@ -11,13 +11,11 @@ status: beta
 ## Migrations with GitHub
 
 <Alert status="warning">
-  **This feature is in beta and is not yet compatible with databases that provide direct access to
-  [Postgres](/docs/postgres)**. We are currently rebuilding our migration strategy to incorporate
-  [pgroll](https://github.com/xataio/pgroll) alongside native Postgres support. Until then, migrations and branching as
-  documented below are limited in scope. The GitHub integration does not work within a monorepo with multiple Xata
-  databases. File attachments within records will not get copied to generated preview branches. There is no rebase
-  capability at present, which meants migrations should be linear and targeted towards the main branch. GitHub Pull
-  Requests that apply migrations cannot be reverted.
+  **This feature is in Beta with known limitations**. Migrations and branching as documented below are limited in scope.
+  The GitHub integration does not work within a monorepo with multiple Xata databases. File attachments within records
+  will not get copied to generated preview branches. No data will be copied to preview branches with Postgres-enabled
+  databases. There is no rebase capability at present, which meants migrations should be linear and targeted towards the
+  main branch. GitHub Pull Requests that apply migrations cannot be reverted.
 </Alert>
 
 This guide introduces the core Xata workflow and outlines the process of configuring a project for branching and migrations using GitHub in conjunction with Netlify or Vercel. After completing the configuration, pull requests created in GitHub will generate Xata database previews that link to preview deployments in either Vercel or Netlify. After merging the pull requests, Xata will perform database migrations in sync with your code, resulting in the deployment of changes to production.
