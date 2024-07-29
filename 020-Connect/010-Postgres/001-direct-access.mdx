@@ -285,9 +285,9 @@ Concurrent connections are limited by [plan](/docs/concepts/pricing#pricing-plan
 
 Branch migrations are not supported yet. In databases that support direct Postgres access, you can create new branches but they cannot be merged together. This capability will become available later on.
 
-### ORM native migrations are unsupported
+### Schema files
 
-Currently we recommend using `xata pull [branchname]`, `xata push [branchname]` or the UI's migration editor to manage your schema changes. ORM native migrations (such as those in Django, Prisma or the like) will possibly have issues during the beta. Our goals are to increase support as we move toward general availability.
+CLI commands that apply schema files (`xata schema upload schema.json`, `xata init --schema=schema.json`) are not supported in Postgres-enabled databases. The recommended method to [export](/docs/postgres#export) and [import](/docs/postgres#import) a certain schema is via standard postgres tools (`psql`,`pg_dump`,`pg_restore`). For example, you can add the `--schema-only` parameter to `pg_dump` to export just the schema and no data.
 
 ## Column metadata
 
