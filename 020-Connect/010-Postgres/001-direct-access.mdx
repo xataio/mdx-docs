@@ -285,10 +285,6 @@ Concurrent connections are limited by [plan](/docs/concepts/pricing#pricing-plan
 
 Branch migrations are not supported yet. In databases that support direct Postgres access, you can create new branches but they cannot be merged together. This capability will become available later on.
 
-### ORM native migrations are unsupported
-
-Currently we recommend using `xata pull [branchname]`, `xata push [branchname]` or the UI's migration editor to manage your schema changes. ORM native migrations (such as those in Django, Prisma or the like) will possibly have issues during the beta. Our goals are to increase support as we move toward general availability.
-
 ## Column metadata
 
 Xata uses SQL comments on columns to track some replication-related metadata about certain types of columns. These comments are only ever present on columns created using the Xata UI, and only on certain types of columns.
