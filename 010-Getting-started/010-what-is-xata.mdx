@@ -81,8 +81,6 @@ Nevertheless, branches on shared clusters have zero cold starts, they are never 
 
 #### Dedicated Postgres clusters
 
-<Alert status="warning">Dedicated clusters are currently in private alpha. Please reach out to request access.</Alert>
-
 These are single-tenant clusters that are dedicated to a single customer. You can create multiple Xata databases or branches on a dedicated cluster, and you can move them between clusters (including shared clusters) without downtime.
 
 Unlike the shared clusters, the dedicated clusters offer the full set of PostgreSQL functionality, including custom functions, extensions, and triggers. They have no rate limits and no concurrency limits, and are limited only by the compute size.
@@ -97,6 +95,8 @@ There are two kind of instance types to be used in dedicated clusters:
 - **Auto-scaling**, which are more cost effective for applications with unpredictable workloads.
 
 The dedicated clusters, both provisioned and auto-scaling, are powered by AWS Aurora. The auto-scaling functionality is provided by AWS Aurora Serverless v2.
+
+You can find more information about Dedicated Postgres clusters [here](/docs/dedicated-cluster).
 
 ### Integrated secondary data stores
 
