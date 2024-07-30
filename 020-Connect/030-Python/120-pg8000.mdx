@@ -11,7 +11,7 @@ The [pg8000](https://pypi.org/project/pg8000/) driver comes with different API's
 Both API's use the parameterized approach to define the connection parameters.
 Please replace the placeholders in the connection string or parameters, as indicated on the [connect to Postgres](/docs/postgres) page.
 
-pg8000 does not default to encrypted connections out of the box, and as Xata rejects all [not encyrpted connections](/docs/postgres#sslmode), you need to specify the SSL context.
+pg8000 does not default to encrypted connections out of the box, and as Xata rejects all [not encryrpted connections](/docs/postgres#sslmode), you need to specify the SSL context.
 This is done by adding the `ssl_context=True` in the connection parameters.
 The following examples both demonstrate this.
 

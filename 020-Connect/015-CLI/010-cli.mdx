@@ -52,7 +52,7 @@ The Xata CLI requires credentials (in the form of an API key) to perform command
 xata auth login
 ```
 
-Running the above will ask if you want to authenticate using an existing API key or by creating a new key. If this is your first time using Xata, choose to create a new key. The CLI willprompt you to visit the Xata website in your browser where a key will be generated. To instead use an existing key, copy a key you previously created on the [account settings][0] page.
+Running the above will ask if you want to authenticate using an existing API key or by creating a new key. If this is your first time using Xata, choose to create a new key. The CLI will prompt you to visit the Xata website in your browser where a key will be generated. To instead use an existing key, copy a key you previously created on the [account settings][0] page.
 
 Regardless of the method you chose, Xata generates a file at `~/.config/xata/credentials` to store your API keys. It looks something like this.
 
@@ -104,6 +104,64 @@ It can run non-interactively for use in build scripts, with `XATA_API_KEY` and `
 
 ```bash
 xata init --db https://workspace-1234.us-east-1.xata.sh/db/database-name --sdk --no-input --yes --codegen=src/xata.ts --force
+```
+
+### migrate
+
+Use `xata migrate` command to execute and control [multi-schema migrations](https://xata.io/blog/multi-version-schema-migrations) with CLI. The following subcommands are available: start, complete, rollback, status, list.
+The following commands use the branch name `main` as an example.
+
+To start a new migration, use
+
+```bash
+xata migrate start main --migration-json '[{ "alter_column": { "table": "table", "column": "text", "type": "text", "up": "description", "down": "description" } }]'
+```
+
+Or
+
+If you want to have the pgroll migration in a separate file, use
+
+```bash
+xata migrate start main migration.json
+```
+
+Learn about [pgroll](https://github.com/xataio/pgroll).
+See possible [pgroll migration examples](https://github.com/xataio/pgroll/tree/main/examples).
+
+To see the status of a running migration, use
+
+```bash
+xata migrate status main
+```
+
+To see the list of migration jobs, use
+
+```bash
+xata migrate status main
+```
+
+To complete a migration, use
+
+```bash
+xata migrate complete main
+```
+
+To rollback a migration, use
+
+```bash
+xata migrate rollback main
+```
+
+There are other options available with `xata migrate` commands, use the following to see all options
+
+```bash
+xata migrate --help
+```
+
+Or for sub-commands
+
+```bash
+xata migrate start --help
 ```
 
 ### codegen

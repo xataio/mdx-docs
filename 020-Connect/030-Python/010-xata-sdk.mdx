@@ -693,7 +693,7 @@ from xata.helpers import BulkProcessor
 client = XataClient()
 bp = BulkProcessor(client)
 
-# Sub to a queue and continously read messages
+# Sub to a queue and continuously read messages
 while queue.subscribed():
    msg = queue.read()
 
@@ -760,7 +760,7 @@ changed to a more concise call in `1.x`:
 lst = xata.databases().list()
 ```
 
-Continously the function arguments are also converted to the pep-8 standard, lowercased and separated by an underscore, `SessionId` becomes `session_id`.
+Continuously the function arguments are also converted to the pep-8 standard, lowercased and separated by an underscore, `SessionId` becomes `session_id`.
 
 ### Error Handling
 
