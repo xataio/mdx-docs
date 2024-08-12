@@ -9,7 +9,7 @@ published: true
 
 Xata offers general purpose file attachment capabilities. In order to simplify the management of large binary objects and to improve the developer experience, Xata integrates files support directly into the database itself. The aim is to offer a unified, seamless experience by exposing file support under one API, security model, and SDK. Using this approach, the [queries](/docs/sdk/get), [filters](/docs/sdk/filtering), [summaries](/docs/sdk/summarize), [aggregations](/docs/sdk/aggregate) from the SDK can also be used on the files' metadata. The metadata (file name, media type, tags) is also indexed for [search](/docs/sdk/search) in the optional Search store so it can be included in search results.
 
-![Add the file column type to start working with files](images/file-attachments-add.jpg)
+![Add the xata_file column type to start working with files](images/file-attachments-add.jpg)
 
 Xata provides three different ways to interact with file attachments within a file column in a database.
 
@@ -223,7 +223,7 @@ record, _ := recordsClient.Update(context.TODO(), xata.UpdateRecordRequest{
 
 ### Append a file to an array through updating a record
 
-In the following example the `photos` column is of type `file[]` (file array).
+In the following example the `photos` column is of type `xata_file_array` (`file[]`).
 The existing file ids from the array must be present in the update.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'JSON']}>
@@ -659,7 +659,7 @@ curl --request PUT 'https://{workspace}.{region}.upload.xata.sh/db/{db}:{branch}
 
 ### Append a file to an array using file APIs
 
-Column type is `file[]` (file array).
+Column type is `xata_file_array` (`file[]`).
 The `fileId` is optional and a unique id will be automatically generated if not provided.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
@@ -724,7 +724,7 @@ curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/
 
 </TabbedCode>
 
-`file[]` (file array) column type:
+`xata_file_array` (`file[]`)column type:
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
 ```ts
@@ -760,7 +760,7 @@ curl 'https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/
 
 ### Delete a file from an array using file APIs
 
-Column type is `file[]` (file array).
+Column type is `xata_file_array` (`file[]`).
 `fileId` is required to identify the array item to be deleted.
 
 <TabbedCode tabs={['TypeScript', 'Python', 'Go', 'cURL']}>
