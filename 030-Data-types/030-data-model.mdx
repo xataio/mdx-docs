@@ -7,27 +7,27 @@ slug: concepts/data-model
 published: true
 ---
 
-Xata builds on top of Postgres and thus supports the [default data types](https://www.postgresql.org/docs/current/datatype.html) inherit in that platform. Xata additionally adds to that list with unique types such as `xata_file`, `xata_file_array` and `vector` to handle platform features like [file attachements](/docs/sdk/file-attachments) and [vector searching](/docs/sdk/vector-search). In addition, there are some added types to simplify validation of common types like `email` (deprecated) and `text[]` (`multiple`). Usage of these types is ultimately optional if you wish to use Xata only as a Postgres host. If you do decide to utilize them (which is the default way Xata operates through our UI), it is required that you interact with these types through the Xata SDKs.
+Xata builds on top of Postgres and thus supports the [default data types](https://www.postgresql.org/docs/current/datatype.html) inherit in that platform. Xata additionally adds to that list with unique types such as `xata_file` (file), `xata_file_array` (file[]) and `vector` to handle platform features like [file attachements](/docs/sdk/file-attachments) and [vector searching](/docs/sdk/vector-search). In addition, there are some added types to simplify validation of common types like `email` (deprecated) and `text[]` (`multiple`). Usage of these types is ultimately optional if you wish to use Xata only as a Postgres host. If you do decide to utilize them (which is the default way Xata operates through our UI), it is required that you interact with these types through the Xata SDKs.
 
 ## Xata specific data types
 
 Below is a mapping of the additional data types Xata provides alongside Postgres types.
 
-| Xata data type                      | PostgreSQL data type | Notes                                                 |
-| ----------------------------------- | -------------------- | ----------------------------------------------------- |
-| [text](#text)                       | text                 |                                                       |
-| [string](#string) (deprecated)      | text                 | With constraints on maximum length of 2048 characters |
-| [int](#int)                         | bigint               |                                                       |
-| [float](#float)                     | double precision     |                                                       |
-| [timestamptz](#timestamptz)         | timestamptz          |                                                       |
-| [bool](#bool)                       | boolean              |                                                       |
-| [email](#email) (deprecated)        | text                 | Validated by Xata                                     |
-| [text[]](#text[])                   | text[]               | Validated by Xata                                     |
-| [xata_file](#xata_file)             | xata.xata_file       | json object stored natively as jsonb                  |
-| [xata_file_array](#xata_file_array) | xata.xata_file_array | json array stored natively as jsonb                   |
-| [link](#link)                       | foreign key          |                                                       |
-| [vector](#vector)                   | real[]               |                                                       |
-| [json](#json)                       | jsonb                |                                                       |
+| Xata data type                         | PostgreSQL data type | Notes                                                 |
+| -------------------------------------- | -------------------- | ----------------------------------------------------- |
+| [text](#text)                          | text                 |                                                       |
+| [string](#string) (deprecated)         | text                 | With constraints on maximum length of 2048 characters |
+| [int](#int)                            | bigint               |                                                       |
+| [float](#float)                        | double precision     |                                                       |
+| [timestamptz (datetime)](#timestamptz) | timestamptz          |                                                       |
+| [bool](#bool)                          | boolean              |                                                       |
+| [email](#email) (deprecated)           | text                 | Validated by Xata                                     |
+| [text[]](#text[])                      | text[]               | Validated by Xata                                     |
+| [xata_file](#xata_file)                | xata.xata_file       | json object stored natively as jsonb                  |
+| [xata_file_array](#xata_file_array)    | xata.xata_file_array | json array stored natively as jsonb                   |
+| [link](#link)                          | foreign key          |                                                       |
+| [vector](#vector)                      | real[]               |                                                       |
+| [json](#json)                          | jsonb                |                                                       |
 
 ## Limitations when using native Postgres types
 
@@ -221,8 +221,8 @@ Example definition:
 ### string
 
 <Alert status="warning">
-  Note: The string type is deprecated. Existing string columns will continue working but this type is not available for
-  new columns.
+  Note: The string type is deprecated. Existing string columns will continue working and can be created via the CLI but
+  this type is not available for new columns via the UI.
 </Alert>
 The `string` type represents a simple string. The values of this type are indexed both for quick exact matching and for full-text
 search. Set `unique` to ensure the strings you insert are unique. Set `notNull` to require a value.
@@ -309,8 +309,8 @@ Example definition:
 ### email
 
 <Alert status="warning">
-  Note: The email type is deprecated. Existing email columns will continue working but this type is not available for
-  new columns.
+  Note: The email type is deprecated. Existing email columns will continue working and can be created via the CLI but
+  this type is not available for new columns via the UI.
 </Alert>
 The `email` type represents an email address. Valid email addresses are not longer than 254 characters and respect this regular
 expression:
