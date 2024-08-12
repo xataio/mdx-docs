@@ -439,7 +439,7 @@ When reading or querying a xata_file object, Xata adds a set of read only fields
 - `uploadUrl` - an upload URL generated with a signature. This URL allows write only access without a key but has an expiration time determined by the duration configured in `uploadUrlTimeout`. The field is generated on demand and needs to be explicitly requested in the query.
 - `attributes` - a JSON object that stores key-value properties specific to the file's media type. For instance, recognized image types will have properties like height and width stored within the attributes.
 
-When the xata_file field is requested in a query, the returned xata_file object will look like the following:
+When the file field is requested in a query, the returned xata_file object will look like the following:
 
 ```json
 {
