@@ -218,11 +218,15 @@ Example definition:
 }
 ```
 
+<Alert status="warning">
+  Note: Uniqueness on text columns can only be enabled on Postgres-enabled databases via the UI.
+</Alert>
+
 ### string
 
 <Alert status="warning">
   Note: The string type is deprecated. Existing string columns will continue working and can be created via the CLI but
-  this type is not available for new columns via the UI.
+  this type is not available for new columns via the UI. Uniqueness can only be enabled via the CLI.
 </Alert>
 The `string` type represents a simple string. The values of this type are indexed both for quick exact matching and for full-text
 search. Set `unique` to ensure the strings you insert are unique. Set `notNull` to require a value.
