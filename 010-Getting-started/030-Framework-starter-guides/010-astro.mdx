@@ -661,6 +661,26 @@ export default defineConfig({
 
 Adding ssr for deployment adds for better functionality and allows for growth overtime as your application grows.
 
+Because SSR pages can’t use getStaticPaths(), they can’t receive props. Update the `src/pages/posts/[slug].astro` as follows:
+```astro title="src/pages/index.astro" {1,13}
+---
+import MainLayout from "../../layouts/main.astro";
+
+import { XataClient } from "../../xata";
+
+const { slug } = Astro.params;
+
+const xata = new XataClient({
+  apiKey: import.meta.env.XATA_API_KEY,
+  branch: import.meta.env.XATA_BRANCH,
+});
+const post = await xata.db.Posts.filter({ slug: slug }).getFirstOrThrow();
+---
+...
+
+```
+
+
 Adding search is as simple as updating the landing page as follows:
 
 ```astro title="src/pages/index.astro" {11,13-18,22-31}
