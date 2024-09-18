@@ -13,7 +13,7 @@ On top of the usual Postgres functionality, Xata provides a set of features that
 
 - **Branching**: Create a new branch of your data to work on new features or experiments without affecting the main branch. The branching can also be used for tenant separation, allowing you to create a branch for each of your customers.
 - **[Zero-downtime schema migrations](/docs/getting-started/workflow)**: Make changes to your production database with zero-downtime, reversible schema migrations and data backfilling. This functionality is powered by our open-source project [pgroll](https://github.com/xataio/pgroll).
-- **[File attachments](/docs/sdk/file-attachments)**: Store and retrieve files up to 1GB, including images, videos, and audio files. The files are stored in object storage and automatically cached on a global CDN for fast delivery. From the application point of view, however, it's just another column in the database.
+- **[File attachments](/docs/sdk/file-attachments)**: Store and retrieve files up to 5GB, including images, videos, and audio files. The files are stored in object storage and automatically cached on a global CDN for fast delivery. From the application point of view, however, it's just another column in the database.
 - **[Image transformations](/docs/sdk/image-transformations)**: Any images stored with File Attachments can perform powerful at-will image transformations.
 - **[Full-text search](/docs/sdk/search)**: Data is automatically replicated into a full-text search engine, making it easy to build search experiences, supporting fuzzy search, weights, and relevancy boosters.
 - **[Vector search](/docs/sdk/vector-search)**: Easily store embeddings and implement similarity search to power your AI applications.
