@@ -34,5 +34,11 @@
     "*.{css,json,md,yml,yaml,md}": [
       "prettier --write"
     ]
+  },
+  "pnpm": {
+    "overrides": {
+      "@apidevtools/json-schema-ref-parser@>=11.0.0 <=11.1.0": ">=11.2.0",
+      "micromatch@<4.0.8": ">=4.0.8"
+    }
   }
 }
