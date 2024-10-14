@@ -143,12 +143,14 @@ The table below provides full granularity over specific statements.
 | ADD                       |     |               |                | ✅                |
 | ALTER CONSTRAINT          |     |               | ✅             | ✅                |
 | ALTER CONVERSION          |     |               |                | ✅                |
-| ALTER DOMAIN              |     |               | ✅             | ✅                |
+| ALTER DOMAIN              |     | ✅            | ✅             | ✅                |
 | ALTER EVENT TRIGGER       |     |               |                | ✅                |
 | ALTER EXTENSION           |     |               |                | ✅                |
 | ALTER FUNCTION            |     |               |                | ✅                |
 | ALTER INDEX               |     | ✅            | ✅             | ✅                |
+| ALTER MATERIALIZED VIEW   |     | ✅            | ✅             | ✅                |
 | ALTER OBJECT SCHEMA       |     |               |                | ✅                |
+| ALTER OPERATOR            |     | ✅            | ✅             | ✅                |
 | ALTER OPERATOR CLASS      |     |               |                | ✅                |
 | ALTER RULE                |     |               | ✅             | ✅                |
 | ALTER SCHEMA              |     | ✅            | ✅             | ✅                |
@@ -160,7 +162,7 @@ The table below provides full granularity over specific statements.
 | ALTER VIEW                |     | ✅            | ✅             | ✅                |
 | BEGIN                     |     | ✅            | ✅             | ✅                |
 | CALL                      |     |               |                | ✅                |
-| COMMENT                   |     |               | ✅             | ✅                |
+| COMMENT                   |     | ✅            | ✅             | ✅                |
 | COMMIT                    |     | ✅            | ✅             | ✅                |
 | COMPOSITE TYPE            |     | ✅            | ✅             | ✅                |
 | COPY                      |     |               | ✅             | ✅                |
@@ -172,6 +174,7 @@ The table below provides full granularity over specific statements.
 | CREATE EXTENSION          |     |               |                | ✅                |
 | CREATE FUNCTION           |     |               |                | ✅                |
 | CREATE INDEX              |     | ✅            | ✅             | ✅                |
+| CREATE MATERIALIZED VIEW  |     | ✅            | ✅             | ✅                |
 | CREATE OPERATOR CLASS     |     |               |                | ✅                |
 | CREATE RULE               |     |               | ✅             | ✅                |
 | CREATE SCHEMA             |     | ✅            | ✅             | ✅                |
@@ -217,9 +220,12 @@ The table below provides full granularity over specific statements.
 | SHOW                      |     |               | ✅             | ✅                |
 | SELECT                    |     | ✅            | ✅             | ✅                |
 | SET                       |     |               | ✅             | ✅                |
+| SET CONSTRAINTS           |     |               | ✅             | ✅                |
 | TRUNCATE                  |     | ✅            | ✅             | ✅                |
 | UNLISTEN                  |     |               | ✅             | ✅                |
 | UPDATE                    |     | ✅            | ✅             | ✅                |
+| VACUUM                    |     |               |                | ✅                |
+| VALUES                    |     | ✅            | ✅             | ✅                |
 
 ## Adapt your schema to match Xata requirements
 
