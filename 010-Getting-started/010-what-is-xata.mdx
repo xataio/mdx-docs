@@ -1,39 +1,28 @@
 ---
 title: What is Xata?
 navTitle: What is Xata?
-keywords: ['serverless', 'data platform', 'PostgreSQL', 'architecture']
-description: An overview of Xata, the data platform for PostgreSQL.
+keywords: ['serverless', 'database', 'PostgreSQL', 'architecture']
+description: An overview of Xata, the PostgreSQL database platform.
 slug: concepts/serverless-data-platform
 published: true
 ---
 
-**Xata is a serverless data platform for PostgreSQL that optimizes for reliability, scalability, and developer experience.**
+**Xata is a PostgreSQL database platform that optimizes for reliability, scalability, and developer experience.**
 
-On top of the usual Postgres functionality, Xata provides a set of features that make it easier to build modern applications:
+On top of the usual Postgres functionality, Xata provides a set of features that make it faster and safer to build modern applications:
 
 - **Branching**: Create a new branch of your data to work on new features or experiments without affecting the main branch. The branching can also be used for tenant separation, allowing you to create a branch for each of your customers.
 - **[Zero-downtime schema migrations](/docs/getting-started/workflow)**: Make changes to your production database with zero-downtime, reversible schema migrations and data backfilling. This functionality is powered by our open-source project [pgroll](https://github.com/xataio/pgroll).
-- **[File attachments](/docs/sdk/file-attachments)**: Store and retrieve files up to 5GB, including images, videos, and audio files. The files are stored in object storage and automatically cached on a global CDN for fast delivery. From the application point of view, however, it's just another column in the database.
-- **[Image transformations](/docs/sdk/image-transformations)**: Any images stored with File Attachments can perform powerful at-will image transformations.
-- **[Full-text search](/docs/sdk/search)**: Data is automatically replicated into a full-text search engine, making it easy to build search experiences, supporting fuzzy search, weights, and relevancy boosters.
-- **[Vector search](/docs/sdk/vector-search)**: Easily store embeddings and implement similarity search to power your AI applications.
-- **Collaborative dashboard**: A web-based console to manage your data, including schema and data.
-- **SDKs**: Xata comes with vertically integrated SDKs for popular programming languages, including [TypeScript](/docs/sdk/typescript/overview), [JavaScript](/docs/sdk/typescript/overview), [Python](/docs/sdk/python/overview), and [Go](/docs/sdk/go/overview). In addition, Xata works with any [PostgreSQL client or ORM](/docs/postgres/).
-
-In order to provide these features, Xata uses other data stores in addition to PostgreSQL, namely [Elasticsearch](https://github.com/elastic/elasticsearch/) for full-text search, aggregations and vector search, [S3](https://aws.amazon.com/s3/) for file attachments, and the [Cloudflare CDN](https://www.cloudflare.com/application-services/products/cdn/) for file delivery and image transformations. The Postgres logical replication events are used to keep these data stores in sync with the main database.
-
-Access to the underlying data is provided in two main ways:
-
-- Via the PostgreSQL wire protocol, which is mediated by our SQL Proxy.
-- Via our SDKs, which provide a higher-level interface to the data.
-
-![PostgreSQL Data Platform](images/xata-platform.png)
+- **Location independent branches**: Branches can be easily moved from one Postgres cluster to another. This allows for simple **major version upgrades** as well for easy experimentation with various deployment options.
+- **[Full-text and vector search](/docs/sdk/search)**: Data is automatically replicated into a full-text search engine, making it easy to build search experiences, supporting fuzzy search, weights, and relevancy boosters.
+- **[File attachments](/docs/sdk/file-attachments)**: Store and retrieve files up to 5GB, including images, videos, and audio files. The files are stored in object storage and automatically cached on a global CDN for fast delivery. From the application point of view, however, it's just another column in the database. Any images stored with
+  File Attachments can perform powerful at-will image transformations.
 
 ## Who is Xata built for?
 
-Individuals and indie developers like Xata because it is easy to get started, has a generous free-tier, accelerates development speed and solves common problems in a developer-first way (e.g. file attachments, full-text search, vector search).
-
 Companies and larger teams like Xata because it is cost-efficient, consolidates tooling and reduces the operational load with its auto-scaling nature. Branching, and zero-downtime migration workflows means that your team can iterate faster when performing complex schema changes.
+
+Individuals and indie developers like Xata because it is easy to get started, has a generous free-tier, accelerates development speed and solves common problems in a developer-first way (e.g. file attachments, full-text search, vector search).
 
 ## PostgreSQL, the Xata way
 
@@ -43,11 +32,11 @@ At Xata, we strive to provide the best PostgreSQL cloud service, on a few partic
 
 ### Reliability
 
-When it comes to the reliability of the core database service, we have a very [good track record](https://www.xatastatus.com/history) and offer [SLAs](TODO) on our Pro plans and above. Our technology choices are relatively conservative, as we make use of [AWS Aurora](https://aws.amazon.com/rds/aurora/), a managed PostgreSQL service used at scale by some of the largest businesses in the world.
+When it comes to the reliability of the core database service, we have a very [good track record](https://www.xatastatus.com/history) and offer [SLAs](/docs/appendix/sla) on our Pro plans and above. Our technology choices are relatively conservative, as we make use of [AWS Aurora](https://aws.amazon.com/rds/aurora/), a managed PostgreSQL service used at scale by some of the largest businesses in the world.
 
 Even on the free tier we offer high-availability and redundancy, with replicas running in multiple availability zones. The failover from the primary instance to a replica is automatic and it's guaranteed to have no data loss. At the storage layer, the data is synchronously replicated to six storage nodes across three availability zones.
 
-On the paid plans, we offer point-in-time-recovery (PITR) and our support team will help you restore the whole database or only parts of the database (e.g. specific tables or rows) as per our support [SLA times](TODO).
+On the paid plans, we offer point-in-time-recovery (PITR) and our support team will help you restore the whole database or only parts of the database (e.g. specific tables or rows) as per our support [SLA times](/docs/appendix/sla).
 
 ### Cost efficiency
 
@@ -98,16 +87,6 @@ The dedicated clusters, both provisioned and auto-scaling, are powered by AWS Au
 
 You can find more information about Dedicated Postgres clusters [here](/docs/dedicated-cluster).
 
-### Integrated secondary data stores
-
-While PostgreSQL is an incredibly versatile database good for almost any starting application, we are of the opinion that it is not the best tool for every job.
-
-A good example of this is our [File Attachments](/docs/sdk/file-attachments) feature. While it is possible to store files as BLOBs in PostgreSQL, it would be expensive and inefficient to do so. Instead, we use S3 for file storage and the Cloudflare CDN for file delivery and image transformations.
-
-Similarly, while PostgreSQL has full-text search capabilities, we can provide a significantly better full-text search experience by using Elasticsearch. A blog post comparing the two approaches is available [here](/blog/postgres-full-text-search-postgres-vs-elasticsearch).
-
-The difference between Xata and a cloud provider that provides multiple DBaaS offerings is that in Xata the secondary data stores are **integrated**, meaning that the data is automatically replicated and kept in sync. Also, they are available via the same SDKs and APIs and authorization works the same way.
-
 ### Global control plane for databases and branches
 
 Xata databases and branches are `logical` entities, represented in the underlying PostgreSQL databases as schemas. This means that they can be created and destroyed instantly, and can be moved between clusters without downtime. They can be created in any of the regions where Xata is available and accessed via the same credentials.
@@ -119,13 +98,3 @@ This provides a lot of flexibility in a number of scenarios, for example:
 - A company might create a different Xata database for each of their micro-services, ensuring that there is isolation between the services, yet they can all share the same dedicated cluster.
 - A company might have databases in multiple regions, either on shared clusters or dedicated clusters, depending on the size of each region.
 - A company might create a branch for each of their customers, potentially with different schemas for each and potentially in multiple regions. The largest customers get dedicated clusters, while others are kept on shared clusters.
-
-### Vertically integrated Data API and SDKs
-
-Xata provides several ways to access your data:
-
-- Via the [Postgres wire protocol](/docs/postgres/), using any Postgres client, ORM, or BI tool.
-- Via [SQL over HTTP](/docs/sdk/sql/overview), which especially is useful when calling Xata from serverless functions, because it doesn't require persistent connections.
-- Via the Xata Data API, which is a [RESTful API](/docs/rest-api) that provides a higher-level abstraction over the database, and provides access to data platform functionality like full-text search, aggregations, and file attachments.
-
-The Xata SDKs support all three methods above, so it easy to switch between them depending on the use case. The SDKs are available for multiple programming languages, including [TypeScript](/docs/sdk/typescript/overview), [JavaScript](/docs/sdk/typescript/overview), [Python](/docs/sdk/python/overview), and [Go](/docs/sdk/go/overview) and are continuously tested with the Xata service.
