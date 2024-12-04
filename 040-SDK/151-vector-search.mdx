@@ -8,6 +8,12 @@ published: true
 status: beta
 ---
 
+<Alert status="warning">
+  Starting with January 10, 2025, this functionality will no longer be part of the Free plan. It will continue to be
+  available as documented to users on the Pro and Enterprises plans. For more details see this [blog
+  post](/blog/changes-free-tier).
+</Alert>
+
 The Xata [vector type](/docs/concepts/data-model#vector) can be combined with the `vectorSearch` API to perform similarity search on your data based on embeddings.
 
 An embedding is a vector of floating point numbers that represents the original data (text, image, audio, etc.). Embeddings are typically produced by a machine learning model. You can store the embeddings in Xata in a column of type `vector` and use the `vectorSearch` API call to find the nearest neighbors of a given embedding. This is useful in a number of use cases related to machine learning, such as: semantic search, recommendations, clustering, classification, and others.

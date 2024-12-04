@@ -8,6 +8,12 @@ published: true
 status: beta
 ---
 
+<Alert status="warning">
+  Starting with January 10, 2025, this functionality will no longer be part of the Free plan. It will continue to be
+  available as documented to users on the Pro and Enterprises plans. For more details see this [blog
+  post](/blog/changes-free-tier).
+</Alert>
+
 The `/aggregate` API allows you to use the search/analytics engine to perform aggregations on your data. Similar to the [search API](/docs/sdk/search) aggregations run in the optional Search store, which means: it is eventually consistent with the main transactional store,
 and it cannot access the linked fields from a table. The Search store is enabled by default and can be disabled in the Database Settings from the Web UI. The aggregate API and features described in this page require the Search store to be enabled. If these limitations are not acceptable for your use case, you should use the Summarize API. The advantages of using the Aggregation API, over the Summarize API, are:
 
