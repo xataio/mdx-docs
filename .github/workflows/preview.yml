@@ -41,7 +41,7 @@ jobs:
         with:
           node-version: 18
 
-      - run: npm i -g vercel@latest
+      - run: npm i -g vercel@37
 
       - id: deploy
         name: Deploy to Vercel
