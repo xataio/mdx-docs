@@ -7,6 +7,12 @@ slug: sdk/file-attachments
 published: true
 ---
 
+<Alert status="warning">
+  Starting with January 10, 2025, this functionality will no longer be part of the Free plan. It will continue to be
+  available as documented to users on the Pro and Enterprises plans. For more details see this [blog
+  post](/blog/changes-free-tier).
+</Alert>
+
 Xata offers general purpose file attachment capabilities. In order to simplify the management of large binary objects and to improve the developer experience, Xata integrates files support directly into the database itself. The aim is to offer a unified, seamless experience by exposing file support under one API, security model, and SDK. Using this approach, the [queries](/docs/sdk/get), [filters](/docs/sdk/filtering), [summaries](/docs/sdk/summarize), [aggregations](/docs/sdk/aggregate) from the SDK can also be used on the files' metadata. The metadata (file name, media type, tags) is also indexed for [search](/docs/sdk/search) in the optional Search store so it can be included in search results.
 
 ![Add the xata_file column type to start working with files](images/file-attachments-add.jpg)
