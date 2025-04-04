@@ -7,6 +7,10 @@ slug: dedicated-cluster
 published: true
 ---
 
+<Alert status="warning">
+  **⚠️ Deprecated**: This feature is no longer recommended for use and will be removed in the future.
+</Alert>
+
 A dedicated cluster is a Postgres cluster, which includes a writer instance and potentially multiple read replicas. You can create and allocate Xata databases and branches to this cluster. Xata databases and branches behave the same whether they are allocated to the shared or dedicated cluster.
 
 However, a dedicated cluster provides more isolation for your workload and enables more SQL functionality, as well as the ability to install Postgres extensions. See the table for the [supported statements](/docs/postgres#supported-statements) for more detail. For these reasons, a dedicated cluster is the best choice for production workloads.
