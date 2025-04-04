@@ -7,6 +7,10 @@ slug: integrations/vercel
 published: true
 ---
 
+<Alert status="warning">
+  **⚠️ Deprecated**: This feature is no longer recommended for use and will be removed in the future.
+</Alert>
+
 Vercel transforms application development for modern developers with efficient workflows through preview deployments.
 
 Xata, using [preview branches](/docs/getting-started/workflow), a [Vercel integration](https://vercel.com/integrations/xata), and an [application for GitHub](https://github.com/apps/xata-app), completes the Vercel workflow by pairing each pull request and Vercel preview with a preview branch of the production database.
@@ -49,7 +53,7 @@ Start by creating a branch for local development. The `xata branch create my_fea
    git push --set-upstream origin review_stars
    ```
 
-   When the pull request is created, you’ll see a comment with the current state of your preview branch along with the Vercel comment.
+   When the pull request is created, you'll see a comment with the current state of your preview branch along with the Vercel comment.
 
    ![Adding a column](images/column_vercel.png)
 
@@ -63,4 +67,4 @@ On merge, Xata will migrate the schema changes from the preview branch into the 
 
 ![Vercel preview on merge request](images/vercel-preview-merge.png)
 
-Without any changes to your current workflow, you’ve added in an isolated database branch for each preview deployment.
+Without any changes to your current workflow, you've added in an isolated database branch for each preview deployment.

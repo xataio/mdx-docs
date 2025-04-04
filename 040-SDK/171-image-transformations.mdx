@@ -8,9 +8,7 @@ published: true
 ---
 
 <Alert status="warning">
-  Starting with January 10, 2025, this functionality will no longer be part of the Free plan. It will continue to be
-  available as documented to users on the Pro and Enterprises plans. For more details see this [blog
-  post](/blog/changes-free-tier).
+  **⚠️ Deprecated**: This feature is no longer recommended for use and will be removed in the future.
 </Alert>
 
 Xata supports transformations for images stored in Xata's `xata_file` and `xata_file_array` [column types](/docs/sdk/file-attachments).
@@ -455,7 +453,7 @@ const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjn
 from xata.client import XataClient
 xata = XataClient()
 
-# Note that the rendered example retains the original aspect-ratio
+// Note that the rendered example retains the original aspect-ratio
 url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 100,
   "height": 100,
@@ -490,7 +488,7 @@ const url = transformImage('https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjn
 from xata.client import XataClient
 xata = XataClient()
 
-# Note that the rendered example retains the original aspect-ratio, but doesn't grow beyond the original size
+// Note that the rendered example retains the original aspect-ratio, but doesn't grow beyond the original size
 url = xata.files().transform_url("https://us-east-1.storage.xata.sh/4u1fh2o6p10blbutjnphcste94", {
   "width": 250,
   "height": 250,
