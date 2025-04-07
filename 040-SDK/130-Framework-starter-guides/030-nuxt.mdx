@@ -440,7 +440,7 @@ useHead({ title: post?.title });
 As with the API route, page Routes in Nuxt support named [route parameters](https://nuxt.com/docs/getting-started/routing#route-parameters)
 represented in the file path. In this case. the parameter named `slug`. To get the value of the `slug` route parameter, get access to the `route`
 information using `useRoute`. Then, request the `/api/posts/[slug]` endpoint to fetch the single blog post information, passing the value
-of `route.params.slug` (``await useFetch(`/api/posts/${route.params.slug}`)``). Assign the resultant single Post information to a variable named
+of `route.params.slug` (`` await useFetch(`/api/posts/${route.params.slug}`) ``). Assign the resultant single Post information to a variable named
 `post` via object deconstruction and renaming (`const { data: post }`).
 
 ```vue
