@@ -4,7 +4,7 @@ navTitle: Netlify
 keywords: ['build', 'platform']
 description: Xata integrates with Netlify to automate migrations and support the GitHub workflow for efficient web app deployment
 slug: integrations/netlify
-published: true
+published: false
 ---
 
 [Netlify](https://https://www.netlify.com/) is a platform for hosting and deploying web applications that offers continuous deployment, build automation, and team collaboration.
@@ -21,7 +21,7 @@ When a pull request is created, a preview branch for your database is also creat
 
 ## Using Xata in your front-end application
 
-In just a few steps, you’ll be up and running with this brand new workflow.
+In just a few steps, you'll be up and running with this brand new workflow.
 
 1. Install the Xata app for GitHub.
 1. Install the Xata integration and plugin for Netlify.
@@ -40,11 +40,11 @@ This walkthrough assumes you have an application using Xata in a GitHub reposito
 1. Add the listed Netlify integration.
 1. Select the Netlify site you wish to connect.
 
-The Xata Netlify integration configures the Xata API key and other required environment variables in your Netlify site, so you won’t have to manually copy & paste settings.
+The Xata Netlify integration configures the Xata API key and other required environment variables in your Netlify site, so you won't have to manually copy & paste settings.
 
 ### Install the Xata Netlify plugin
 
-In order to select the correct Xata branch for the deployment previews, Xata uses a Netlify plugin that’s easy to install:
+In order to select the correct Xata branch for the deployment previews, Xata uses a Netlify plugin that's easy to install:
 
 1. In the terminal, enter the following command:
    ```bash
@@ -82,12 +82,12 @@ The Xata GitHub app reacts to commits and pull requests just like the Netlify ap
 
 ![Preview and test the deploy](images/test-preview-deploy.png)
 
-If you click the **View on Xata** preview link, you’ll see that:
+If you click the **View on Xata** preview link, you'll see that:
 
 - Xata has created a `preview-feature1` branch just for this deployment preview.
 - Xata has automatically copied the data from the main branch to this preview branch.
 
-If you click the Netlify deploy preview link, you will notice that the deploy preview is connected to the Xata preview branch and uses the new schema. This means that the reviewers can modify the data using the preview while testing and they won’t affect the data in production.
+If you click the Netlify deploy preview link, you will notice that the deploy preview is connected to the Xata preview branch and uses the new schema. This means that the reviewers can modify the data using the preview while testing and they won't affect the data in production.
 
 The pull request contains the schema changes so you can tag reviewers to merge using your typical GitHub + Netlify workflow.
 
