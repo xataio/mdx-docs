@@ -701,4 +701,107 @@ letters changed/added/removed. See
 [fuzziness and typo tolerance](/docs/sdk/search#fuzziness-and-typo-tolerance) for more
 details.
 
-Update the return value of `loader` to return both `posts`
+Update the return value of `loader` to return both `posts` and `search`.
+
+```tsx
+export async function loader({ request }: LoaderFunctionArgs) {
+  const xata = getXataClient();
+
+  const url = new URL(request.url);
+  const search = url.searchParams.get('q');
+
+  let posts = null;
+  if (search) {
+    const { records } = await xata.db.Posts.search(search, { fuzziness: 2 });
+    posts = records;
+  } else {
+    posts = await xata.db.Posts.getAll();
+  }
+
+  return json({
+    posts,
+    search
+  });
+}
+```
+
+The last change enables the user to input and submit a search.
+
+Begin by retrieving the `posts` and the `search` values using the Remix `userLoaderData` hook.
+
+Next, add a `<form>` to the page to allow a search value to be entered and submitted. The
+default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
+string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
+a `GET` request in the format `?q={q-value}`. Since this is precisely the behavior required, and the check for the `q`
+querystring search value has been implemented already, everything is in place.
+
+```tsx
+export default function Index() {
+  const { posts, search } = useLoaderData<typeof loader>();
+
+  return (
+    <>
+      <div className="w-full max-w-5xl mt-16">
+        <form>
+          <input
+            name="q"
+            defaultValue={search || ''}
+            placeholder="Search..."
+            className="w-full rounded-lg p-2 border-2 dark:text-purple-950"
+          />
+        </form>
+      </div>
+      ...
+    </>
+  );
+}
+```
+
+![Full-text fuzzy search](images/getting-started-blog-search.png)
+
+The application now supports listing posts, viewing single posts via a dynamic segment, and full-text fuzzy search of
+posts.
+
+## What you've learned
+
+In this guide, you've learned that Remix applications and Xata are a powerful combination. You created an
+application from scratch that lists blog posts, supports viewing a single blog post, and performs full-text fuzzy search
+on all posts.
+
+You walked through setting up the Xata CLI and using it to:
+
+- Create a new Xata project
+- Create a database schema and populate it with data from an imported CSV file
+- Update the auto-generated code (in `src/xata.ts`) using `xata pull main` to reflect the updated schema
+
+You then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
+function. You also added the single post page making use of Remix dynamic segments where a `slug` was passed and used
+with `xata.db.Posts.filter({ slug: params.slug }).getFirst()`.
+
+Finally, you added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
+indexing. The search used a `q` query string and the auto-generated `xata.db.Posts.search` function.
+
+## Learn more
+
+If you enjoyed this guide, you could continue working on improving the application. Here are some suggestions:
+
+- Add [pagination](/docs/sdk/get#paginating-results) for the blog post listing
+- Add [pagination](/docs/sdk/search#pagination) for blog post search results
+- Handle single post view page not finding a result for a `slug`
+- Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to use that new field
+
+You can also explore some of the features covered in more detail:
+
+- [Getting records](/docs/sdk/get)
+- [Filtering records](/docs/sdk/filtering)
+- [Searching records](/docs/sdk/search)
+
+Or dive into some of Xata's more advanced features, such as:
+
+- [Aggregations](/docs/sdk/aggregate)
+- [Transactions](/docs/sdk/transaction)
+- [Vector search](/docs/sdk/vector-search)
+
+[0]: https://app.xata.io
+[1]: https://app.xata.io/settings
+[2]: https://remix.run/
