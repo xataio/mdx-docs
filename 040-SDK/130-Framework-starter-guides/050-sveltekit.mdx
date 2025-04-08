@@ -1,27 +1,27 @@
 ---
-title: Get started with SvelteKit and Xata
-navTitle: SvelteKit
-keywords: ['sveltekit', 'full-text search']
-description: Get started with SvelteKit and Xata
-slug: getting-started/sveltekit
+title: Get started with Remix and Xata
+navTitle: Remix
+keywords: ['remix', 'full-text search']
+description: Get started with Remix and Xata
+slug: getting-started/remix
 published: true
 ---
 
-In this guide, you'll learn how to add Xata database and search functionality to a [SvelteKit][2] application.
+In this guide, you'll learn how to add Xata database and search functionality to a [Remix][2] application.
 You'll build the following basic blog application features:
 
 1.  List all blog posts
 2.  Retrieve and view a single blog post
 3.  Full-text fuzzy search of blog posts
 
-Although this application is a simple blog, you can apply these basics to other types of SvelteKit applications.
+Although this application is a simple blog, you can apply these basics to other types of Remix applications.
 
 <ArticleVideo
   platform="html"
   src="https://github.com/xataio/mdx-docs/raw/main/010-Getting-started/videos/getting-started-app.mp4"
 />
 
-The completed [SvelteKit and Xata code](https://github.com/xataio/examples/tree/main/apps/getting-started-sveltekit) for this
+The completed [Remix and Xata code](https://github.com/xataio/examples/tree/main/apps/getting-started-remix) for this
 guide is available via the [Xata `examples` repo](https://github.com/xataio/examples) on GitHub.
 
 ## Before you begin
@@ -57,41 +57,48 @@ each OS). It looks like this:
 apiKey=YOUR_API_KEY_HERE
 ```
 
-## Create a new SvelteKit app
+## Create a new Remix app
 
-Begin by creating a new SvelteKit application, accepting the default prompt options:
+Begin by creating a new Remix application, accepting the default prompt options:
 
 ```sh
-npm init @svelte-add/kit@latest xata-sveltekit -- --with typescript+tailwindcss
+npx create-remix@latest xata-remix
 ```
 
-<Expand title="Output for command: npm init @svelte-add/kit@latest">
+<Expand title="Output for command: npx create-remix">
 
 ```sh
-$ npm init @svelte-add/kit@latest xata-sveltekit -- --with typescript+tailwindcss
-Need to install the following packages:
-  @svelte-add/create-kit@2023.8.20-0.0
-Ok to proceed? (y)
-➕ Svelte Add's SvelteKit app initializer (Version 2023.08.200.00)
-🪄 Your TypeScript + PostCSS + Tailwind CSS SvelteKit app is ready!
-  1. cd xata-sveltekit
-  2. pnpm run dev -- --open  # start developing with a browser open
+$ npx create-remix@latest xata-remix
+? What type of app do you want to create? Just the basics
+? Where do you want to deploy? Choose Remix App Server if you're unsure; it's easy to change
+deployment targets. Remix App Server
+? TypeScript or JavaScript? TypeScript
+? Do you want me to run `npm install`? Yes
+npm WARN deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+
+added 963 packages, and audited 964 packages in 26s
+
+245 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+💿 That's it! `cd` into "/Users/leggetter/tmp/xata/xata-remix" and check the README for development and deploy instructions!
 ```
 
 </Expand>
 
-Once the command has completed, go to the `xata-sveltekit` directory and run the application:
+Once the command has completed, go to the `xata-remix` directory and run the application:
 
 ```sh
-cd xata-sveltekit
+cd xata-remix
 npm run dev
 ```
 
-By default, the application will run on `http://localhost:5173/`.
+By default, the application will run on `http://localhost:3000`.
 
 ## Create a new database
 
-Once you have the Xata CLI installed, are logged in, and have set up a new SvelteKit application, you are ready to use the Xata CLI to generate a new database. Accept all the prompt defaults for the following command except for the region selection, where
+Once you have the Xata CLI installed, are logged in, and have set up a new Remix application, you are ready to use the Xata CLI to generate a new database. Accept all the prompt defaults for the following command except for the region selection where
 you should choose the region closest to your application users:
 
 ```sh
@@ -106,7 +113,7 @@ xata init
 
 You have a single workspace, using it by default: my-workspace-123456
 ✔ Select a database or create a new one › <Create a new database>
-✔ New database name … xata-sveltekit
+✔ New database name … xata-remix
 ✔ Select a region › eu-west-1
 ✔ Add .env to .gitignore? … yes
 ✔ Generate code and types from your Xata database › TypeScript
@@ -131,17 +138,12 @@ added 1 package, and audited 965 packages in 1m
 
 found 0 vulnerabilities
 
-dependencies:
-+ @xata.io/client 0.25.2
-
-Done in 3m 29.4s
-
 No new migrations to pull from main branch
 Generated Xata code to ./src/xata.ts
 
 ✔ Project setup with Xata 🦋
 
-i Setup tables and columns at https://app.xata.io/workspaces/my-workspace-123456/dbs/xata-sveltekit:eu-west-1
+i Setup tables and columns at https://app.xata.io/workspaces/my-workspace-123456/dbs/xata-remix:eu-west-1
 
 i Use xata pull main to regenerate code and types from your Xata database
 ```
@@ -158,20 +160,7 @@ XATA_API_KEY=YOUR_API_KEY_HERE
 XATA_BRANCH=main
 ```
 
-Vite is used as the development server, and it will only load environment variables prefixed with `VITE_`. So, update
-the environmental variables:
-
-```bash title=".env"
-VITE_XATA_API_KEY=YOUR_API_KEY_HERE
-VITE_XATA_BRANCH=main
-```
-
-<Alert status="info">
-  For more information on Vite's handling of environment variables and the need for the `VITE_` prefix, read the [Vite
-  environment variable docs](https://vitejs.dev/guide/env-and-mode.html).
-</Alert>
-
-Since you selected TypeScript support after running `xata init`, it also created files that provide typings and functions to call using Xata's
+Since you selected TypeScript support, it also created files that provide typings and functions to call using Xata's
 TypeScript SDK. This will additionally be referenced in the `.xatarc` file as follows:
 
 ```json
@@ -238,7 +227,7 @@ You'll also see `xata.*` [special columns](/docs/concepts/data-model#special-col
 created and maintained by Xata.
 
 With the database schema in place, the final step is to generate the code that allows you to access and query the data
-from our SvelteKit application. To do this, run:
+from our Remix application. To do this, run:
 
 ```sh
 xata pull main
@@ -260,9 +249,12 @@ make any further changes to the schema, run `xata pull <branch>` to update the a
 
 ## Basic styling and layout
 
-Add the following global styling to the scaffolded `src/app.postcss`:
+The first step to add some styling to the application is to add Tailwind CSS. To do that, follow the
+[official Remix and Tailwind CSS guide](https://remix.run/docs/en/1.19.3/guides/styling#tailwind-css).
 
-```css title="src/app.postcss" {5-26}
+Once all the steps from the guide have been followed, update `app/tailwind.css` with some additional rules:
+
+```css title="app/tailwind.css" {5-26}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -287,71 +279,155 @@ body {
 }
 ```
 
-Finally, update `src/routes/+layout.svelte` to add some shared structure across application pages. The code will end up as follows:
+Finally, update `app/root.tsx` to add some shared structure across application pages. The code will end up as follows:
 
-```tsx title="src/routes/+layout.svelte" {4-22}
-<script>
-  import '../app.postcss';
-</script>
-<svelte:head>
-    <title>Get started with Xata and SvelteKit</title>
-</svelte:head>
+```tsx title="app.root.tsx" {1,4,6,29}
+import type { LinksFunction } from '@remix-run/node';
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 
-<main class="flex flex-col items-center p-8 lg:p-24 min-h-screen">
-  <div class="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
-    <p class="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
-      <a href="/" data-sveltekit-reload>Get started with Xata and SvelteKit</a>
-    </p>
-    <div class="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-      <a href="https://xata.io" class="w-20">
-        <img alt="Xata logo" src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
-      </a>
-    </div>
-  </div>
+import styles from './tailwind.css';
 
-  <slot />
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }];
 
-</main>
+export default function App() {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <main className="flex flex-col items-center p-8 lg:p-24 min-h-screen">
+          <div className="z-10 h-50 w-full max-w-5xl items-center justify-between text-xl lg:flex">
+            <p className="fixed left-0 top-0 flex w-full justify-center pb-6 pt-8 lg:static lg:w-auto bg-gradient-to-b from-white via-white via-65% dark:from-black dark:via-black lg:bg-none">
+              <a href="/">Get started with Xata</a>
+            </p>
+            <div className="fixed bottom-0 left-0 flex w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+              <a href="https://xata.io" className="w-20">
+                <img src="https://raw.githubusercontent.com/xataio/examples/main/docs/app_logo.svg" />
+              </a>
+            </div>
+          </div>
+          <Outlet />
+        </main>
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
+      </body>
+    </html>
+  );
+}
 ```
 
-Ensure the `<slot />` component is before the closing `</main>` element.
+Ensure the `<Outlet />` component is before the closing `</main>` element.
 
 ## Query and list the posts
 
-The SvelteKit app is now ready for the Xata integration into the codebase.
+Now, you're ready to integrate Xata into the Remix codebase. Start by stripping back the landing page,
+`app/routes/_index.tsx`, to a bare template:
 
-Start by making use of
-[SvelteKit's loading data mechanism](https://kit.svelte.dev/docs/load) to retrieve all the blog posts from Xata
-and make them available within the landing page. Create `src/routes/+page.server.ts` with the following contents:
+```tsx title="app/routes/_index.tsx"
+import { MetaFunction } from '@remix-run/node';
 
-```ts title="src/routes/+page.server.ts"
-import type { PageServerLoad } from './$types';
-
-import { XataClient } from '../xata';
-
-const xata = new XataClient({
-  apiKey: import.meta.env.VITE_XATA_API_KEY,
-  branch: import.meta.env.VITE_XATA_BRANCH
-});
-
-export const load: PageServerLoad = async () => {
-  const posts = await xata.db.Posts.getAll();
-
-  return {
-    posts
-  };
+export const meta: MetaFunction = () => {
+  return [{ title: 'Xata and Remix' }];
 };
+
+export default function Index() {
+  return (
+    <>
+      <div className="w-full max-w-5xl mt-16"></div>
+    </>
+  );
+}
 ```
 
-Begin by importing the `PageServerLoad` type definition from the SvelteKit generated `$types` module.
+Next, update the page to get all the posts using Xata, and
+list them within the page:
 
-Then, import `XataClient` from the auto-generated `src/xata.ts` and create a new instance, passing in
-the updated environment variables, `VITE_XATA_API_KEY` and `VITE_XATA_BRANCH`.
+```tsx title="app/routes/_index.tsx" {1-3,9-17,20,24-43}
+import { MetaFunction, json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import { getXataClient } from 'src/xata';
 
-Define and export a `load` function. Within this function, use the `xata` client instance to get all the posts stored in the database.
-Achieve this via the auto-generated `Posts` property, which exposes a number of helper functions. In this case, use the
+export const meta: MetaFunction = () => {
+  return [{ title: 'Xata and Remix' }];
+};
+
+export async function loader() {
+  const xata = getXataClient();
+
+  const posts = await xata.db.Posts.getAll();
+
+  return json({
+    posts
+  });
+}
+
+export default function Index() {
+  const { posts } = useLoaderData<typeof loader>();
+
+  return (
+    <>
+      <div className="w-full max-w-5xl mt-16">
+        {posts.length === 0 && <p>No blog posts found</p>}
+        {posts.map((post) => (
+          <div key={post.id} className="mb-16">
+            <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
+              {new Date(post.pubDate || '').toDateString()}
+            </p>
+            <h2 className="text-2xl mb-2">
+              <a href={`posts/${post.slug}`}>{post.title}</a>
+            </h2>
+            <p className="text-purple-950 dark:text-purple-200 mb-5">{post.description}</p>
+            <a
+              href={`posts/${post.slug}`}
+              className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
+            >
+              Read more &rarr;
+            </a>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+```
+
+Here's a breakdown of what's happening in the code above.
+
+First, update the `@remix-run/node` to also bring in `json`, and a new import from
+`@remix-run/react` is introduced to bring in `useLoaderData`. The details of how those are used
+will be covered shortly. The auto-generated `getXataClient` is also imported.
+
+```tsx
+import { MetaFunction, json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import { getXataClient } from 'src/xata';
+```
+
+Next, a Remix framework server-only [`loader`](https://remix.run/docs/en/main/route/loader) function is defined
+and exported. This function provides data to the route when rendering. Within that function, an instance of the `XataClient`
+is created using `getXataClient` and assigned to the `xata` variable. Then, use the `xata` client instance
+to get all the posts stored in the database. This is achieved via the auto-generated `Posts` property,
+which exposes a number of helper functions. In this case, use the
 [`getAll`](/docs/sdk/get#the-typescript-sdk-functions-for-querying) function to get
-all the Post records. Finally, return the `posts` as part of the `load` function return value.
+all the Post records. Finally, return the posts making use of the imported Remix [`json`](https://remix.run/docs/en/main/utils/json)
+helper function.
+
+```tsx
+export async function loader() {
+  const xata = getXataClient();
+
+  const posts = await xata.db.Posts.getAll();
+
+  return json({
+    posts
+  });
+}
+```
 
 <Alert status="warning">
   `getAll()` returns all the records in the query results. This is dangerous on large tables (more than 10,000 records),
@@ -360,51 +436,46 @@ all the Post records. Finally, return the `posts` as part of the `load` function
   documentation](/docs/sdk/get#the-typescript-sdk-functions-for-querying) for more information.
 </Alert>
 
-Next, update the landing page to load the data and render the list of blog posts:
+Finally, within the `Index` function, use the [`useLoaderData` Remix hook](https://remix.run/docs/en/main/hooks/use-loader-data)
+retrieve the `posts` data.
 
-```svelte title="src/routes/+page.svelte"
-<script lang="ts">
-  import type { PageData } from './$types';
+Then, update the UI to display the results. If no records are present, show a message
+saying, "No blog posts found". Otherwise, loop through the `posts` using `posts.map` and access the columns of
+each Post record using their properties: `id` as a unique identifier for the `key` attribute, `pubDate` to show the date
+the blog post was published, `slug` to link to individual blog posts (which will be used use later), `title` for the title of
+the post, and `description` for the textual description of the post. Since `pubData` has been serialized to a string, convert
+it back into a `Date` and then use `.toDateString()` to get a slightly nicer formatted date representation for the UI:
 
-  export let data: PageData;
-</script>
+```tsx
+export default function Index() {
+  const { posts } = useLoaderData<typeof loader>();
 
-<div class="w-full max-w-5xl mt-16">
-  {#if data.posts.length === 0}
-    <p>No blog posts found</p>
-  {/if}
-  {#each data.posts as post}
-    <div class="mb-16">
-      <p class="text-xs mb-2 text-purple-950 dark:text-purple-200">
-        {post.pubDate?.toDateString()}
-      </p>
-      <h2 class="text-2xl mb-2">
-        <a href={`posts/${post.slug}`}>{post.title}</a>
-      </h2>
-      <p class="text-purple-950 dark:text-purple-200 mb-5">
-        {post.description}
-      </p>
-      <a
-        href={`posts/${post.slug}`}
-        class="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
-      >
-        Read more &rarr;
-      </a>
-    </div>
-  {/each}
-</div>
+  return (
+    <>
+      <div className="w-full max-w-5xl mt-16">
+        {posts.length === 0 && <p>No blog posts found</p>}
+        {posts.map((post) => (
+          <div key={post.id} className="mb-16">
+            <p className="text-xs mb-2 text-purple-950 dark:text-purple-200">
+              {new Date(post.pubDate || '').toDateString()}
+            </p>
+            <h2 className="text-2xl mb-2">
+              <a href={`posts/${post.slug}`}>{post.title}</a>
+            </h2>
+            <p className="text-purple-950 dark:text-purple-200 mb-5">{post.description}</p>
+            <a
+              href={`posts/${post.slug}`}
+              className="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
+            >
+              Read more &rarr;
+            </a>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
 ```
-
-Here's a walkthrough of the code above.
-
-First, import the `PageData` type. Then, define a `data` variable of type `PageData`. The value of this
-variable is automatically assigned by the framework.
-
-Next, update the logic within the UI. If no records are present, show a message saying, "No blog posts found". Otherwise, loop through the
-`data.posts` using Svelte's [each logic block](https://svelte.dev/docs/logic-blocks#each) and access the columns of
-each Post record using their properties: `pubDate` to show the date the blog post was published, `slug` to link to individual
-blog posts (which will be used use later), `title` for the title of the post, and `description` for the textual description of
-the post.
 
 This results in the page looking like the following:
 
@@ -413,77 +484,130 @@ This results in the page looking like the following:
 You'll notice that the post heading and "Read more →" text use the `slug` property to link to a page that doesn't
 presently exist. That's the next step in this guide.
 
-## Query and show a single posts
+## Query and show a single post
 
-To handle the single posts identified by a `slug`, make use of [SvelteKit page](https://kit.svelte.dev/docs/routing#page-page-js)
-parameters that are defined and passed based on file and directory naming conventions for SvelteKit pages.
+To handle the single posts identified by a `slug`, make use of Remix
+[dynamic segments](https://remix.run/docs/en/main/guides/routing#dynamic-segments).
 
-Create new files, `src/routes/posts/[slug]/+page.server.ts` and `src/routes/posts/[slug]/+page.svelte`,
-where the SvelteKit framework uses the directory `[slug]` to capture the name of the slug.
+Create a new file, `app/routes/posts.$slug.tsx`, where the Remix framework uses the filename segment `$slug` to capture
+the name of the slug:
 
-As with the landing page, use `+page.server.ts` to load data on the server. In this case, use the `slug` value to retrieve the
-details for the single blog post:
+```tsx title="app/routes/posts.$slug.tsx"
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import { getXataClient } from 'src/xata';
 
-```tsx title="src/routes/posts/[slug]/+page.server.ts"
-import type { PageServerLoad } from './$types';
+export async function loader({ params }: LoaderFunctionArgs) {
+  const xata = getXataClient();
 
-import { XataClient } from '../../../xata';
-
-const xata = new XataClient({
-  apiKey: import.meta.env.VITE_XATA_API_KEY,
-  branch: import.meta.env.VITE_XATA_BRANCH
-});
-
-export const load: PageServerLoad = async ({ params }) => {
   const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
 
-  return {
+  return json({
     post
-  };
+  });
+}
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [{ title: `${data?.post?.title} - Xata and Remix` }];
 };
+
+export default function Post() {
+  const { post } = useLoaderData<typeof loader>();
+
+  return (
+    <div className="w-full max-w-5xl mt-16">
+      <p className="mb-2">
+        <a href="/" className="text-purple-600">
+          &larr; Back to blog
+        </a>
+      </p>
+      <h1 className="text-3xl mb-2">{post?.title}</h1>
+      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
+        {new Date(post?.pubDate ?? '').toDateString()}
+      </p>
+      <p className="text-xl">{post?.description}</p>
+    </div>
+  );
+}
 ```
 
-Create a new instance of the `XataClient` client, and then use the
+Let's walk through what this does.
+
+The imports are mostly the same as the landing page with the addition of the `LoaderFunctionArgs` import:
+
+```tsx
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import { getXataClient } from 'src/xata';
+```
+
+The `loader` function does the same job as the landing page but is updated to take parameters of type `LoaderFunctionArgs`.
+The `params` property on `LoaderFunctionArgs` gives you the slug value from the URL via `params.slug`.
+
+Use the `getXataClient` function to get a Xata client instance, and then use the
 [`filter` function](/docs/sdk/get#the-typescript-sdk-functions-for-querying) on the
 auto-generated `Posts` property to perform a query on the Posts table and find the
 record where the `slug` column equals the value of `params.slug`. Use the
 [`getFirst` function](/docs/sdk/get#the-typescript-sdk-functions-for-querying) to access
-the first (and only) Post result and return the `post` as a property on the return value.
+the first (and only) Post result and return the post, again using the Remix `json` help function.
 
-Next, update the contents of `src/routes/posts/[slug]/+page.svelte` as follows to render the Post data within the UI:
+```tsx
+export async function loader({ params }: LoaderFunctionArgs) {
+  const xata = getXataClient();
 
-```svelte title="src/routes/posts/[slug]/+page.svelte"
-<script lang="ts">
-  import type { PageData } from './$types';
+  const post = await xata.db.Posts.filter({ slug: params.slug }).getFirst();
 
-  export let data: PageData;
-</script>
-
-<svelte:head>
-    <title>{data.post?.title}</title>
-</svelte:head>
-
-<div class="w-full max-w-5xl mt-16">
-  <p class="mb-2">
-    <a href="/" class="text-purple-600">
-      &larr; Back to blog
-    </a>
-  </p>
-  <h1 class="text-3xl mb-2">
-    {data.post?.title}
-  </h1>
-  <p class="text-sm mb-4 text-purple-950 dark:text-purple-200">
-    {data.post?.pubDate?.toDateString()}
-  </p>
-  <p class="text-xl">
-    {data.post?.description}
-  </p>
-</div>
+  return json({
+    post
+  });
+}
 ```
 
-In this page, first import the `PageData` type and the `data` value is automatically assigned by the framework. Then, use the value of
-`data.post?.title` to set the page title using the `<svelte:head>` element. Finally, the UI is updated to show the
-`title`, `pubDate`, and `description`.
+<Alert status="warning">
+  In case you encounter a `"Runtime.UnhandledPromiseRejection"` when deploying the Remix app, try passing the Remix fetch implementation to the XataClient.
+  ```ts
+  import { fetch as webFetch } from "@remix-run/web-fetch";
+  import { XataClient } from "src/xata";
+  
+  const xata = new XataClient({
+    fetch: webFetch,
+  });
+  ```
+</Alert>
+
+Use the values returned from the `loader` within the `MetaFunction` function to display the Post's title
+within the page's title. This function differs from the landing page version by taking a parameter containing a `data` property.
+The value in `data` is the payload returned from the `loader` function. So, the Post's `title` value can be extracted and used:
+
+```tsx
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [{ title: `${data?.post?.title} - Xata and Remix` }];
+};
+```
+
+Finally, the main page function makes use of the `userLoaderData` hook to retrieve the single Post information and uses the values,
+`title`, `pubDate`, and `description`, for the Post are added to the UI:
+
+```tsx {2,11,13,15}
+export default function Post() {
+  const { post } = useLoaderData<typeof loader>();
+
+  return (
+    <div className="w-full max-w-5xl mt-16">
+      <p className="mb-2">
+        <a href="/" className="text-purple-600">
+          &larr; Back to blog
+        </a>
+      </p>
+      <h1 className="text-3xl mb-2">{post?.title}</h1>
+      <p className="text-sm mb-4 text-purple-950 dark:text-purple-200">
+        {new Date(post?.pubDate ?? '').toDateString()}
+      </p>
+      <p className="text-xl">{post?.description}</p>
+    </div>
+  );
+}
+```
 
 The single blog post page will look as follows:
 
@@ -497,19 +621,92 @@ When you insert data into a Xata database, it is automatically indexed for full-
 any configuration to enable search, just need to use the
 [TypeScript SDK search feature](/docs/sdk/search).
 
-Add this functionality to the landing page server functionality:
+Let's add this functionality to the landing page:
 
-```tsx title="src/routes/+page.server.ts" {10-19,23}
-import type { PageServerLoad } from './$types';
+```tsx title="app/routes/_index.tsx" {1,7-24,27,31-40}
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+import { getXataClient } from 'src/xata'
 
-import { XataClient } from '../xata';
+...
 
-const xata = new XataClient({
-  apiKey: import.meta.env.VITE_XATA_API_KEY,
-  branch: import.meta.env.VITE_XATA_BRANCH
-});
+export async function loader({ request }: LoaderFunctionArgs) {
+  const xata = getXataClient()
 
-export const load: PageServerLoad = async ({ request }) => {
+  const url = new URL(request.url)
+  const search = url.searchParams.get('q')
+
+  let posts = null
+  if (search) {
+    posts = await xata.db.Posts.search(search, { fuzziness: 2 })
+  } else {
+    posts = await xata.db.Posts.getAll()
+  }
+
+  return json({
+    posts,
+    search,
+  })
+}
+
+export default function Index() {
+  const { posts, search } = useLoaderData<typeof loader>()
+
+  return (
+    <>
+      <div className="w-full max-w-5xl mt-16">
+        <form>
+          <input
+            name="q"
+            defaultValue={search || ''}
+            placeholder="Search..."
+            className="w-full rounded-lg p-2 border-2 dark:text-purple-950"
+          />
+        </form>
+      </div>
+
+      ...
+    </>
+  )
+}
+```
+
+Here's a breakdown of what's happening in the code above.
+
+First, update the `@remix-run/node` import to include `LoaderFunctionArgs`. Then, update the `loader` function to accept
+the `request` property from the `LoaderFunctionArgs` parameter.
+
+```tsx {1,7}
+import { LoaderFunctionArgs, MetaFunction, json } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+import { getXataClient } from 'src/xata'
+
+...
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  ...
+}
+```
+
+Next, update the `loader` function to conditionally perform a search based on the presence of search text within a `q` querystring parameter.
+Do this by creating a new `URL` instance and passing the `request.url` value. Then, get the `q` querystring using `url.searchParams.get('q')`
+and assign the result to a variable called `search`.
+
+The landing page should list all blog posts if `search` is an empty string. However, if
+the search has a non-empty string value, a search is performed on the Posts table using the
+[`search` function](/docs/sdk/search#searching-in-a-single-table) exposed on the
+auto-generated `Posts` property. Pass `search` as the text value to search for, and use a
+second options parameter with `fuzziness` set to `2`, which informs the fuzzy search behavior to allow for two
+letters changed/added/removed. See
+[fuzziness and typo tolerance](/docs/sdk/search#fuzziness-and-typo-tolerance) for more
+details.
+
+Update the return value of `loader` to return both `posts` and `search`.
+
+```tsx
+export async function loader({ request }: LoaderFunctionArgs) {
+  const xata = getXataClient();
+
   const url = new URL(request.url);
   const search = url.searchParams.get('q');
 
@@ -521,88 +718,53 @@ export const load: PageServerLoad = async ({ request }) => {
     posts = await xata.db.Posts.getAll();
   }
 
-  return {
+  return json({
     posts,
     search
-  };
-};
+  });
+}
 ```
 
-Update the `load` function to take an argument and deconstruct the `request` property from that argument.
-Create a new `URL` instance and get the `q` query string from the URL using `url.searchParams.get('q')`, assigning
-the result to a variable named `search`.
+The last change enables the user to input and submit a search.
 
-The landing page should list all blog posts if `search` is an empty string. However, if
-the search has a non-empty string value, a search is performed on the Posts table using the
-[`search` function](/docs/sdk/search#searching-in-a-single-table) exposed on the
-auto-generated `Posts` property. Pass `search` as the text value to search for, and use a
-second options parameter with `fuzziness` set to `2`, which informs the fuzzy search behavior to allow for two
-letters changed/added/removed. See
-[fuzziness and typo tolerance](/docs/sdk/search#fuzziness-and-typo-tolerance) for more
-details.
+Begin by retrieving the `posts` and the `search` values using the Remix `userLoaderData` hook.
 
-Update the `load` return value to include `search` in addition to the `posts` result.
-
-The last change enables the user to input and submit a search. Add a `<form>` to the page to allow a search value
-to be entered and submitted:
-
-```svelte title="src/routes/+page.svelte" {7-16}
-<script lang="ts">
-  import type { PageData } from './$types';
-
-  export let data: PageData;
-</script>
-
-<div class="w-full max-w-5xl mt-16">
-  <form data-sveltekit-reload>
-    <input
-      name="q"
-      placeholder="Search..."
-      value={data.search}
-      class="w-full rounded-lg border-2 p-2 dark:text-purple-950"
-    />
-  </form>
-</div>
-
-<div class="w-full max-w-5xl mt-16">
-  {#if data.posts.length === 0}
-    <p>No blog posts found</p>
-  {/if}
-  {#each data.posts as post}
-    <div class="mb-16">
-      <p class="text-xs mb-2 text-purple-950 dark:text-purple-200">{post.pubDate?.toDateString()}</p>
-      <h2 class="text-2xl mb-2">
-        <a href={`posts/${post.slug}`}>{post.title}</a>
-      </h2>
-      <p class="text-purple-950 dark:text-purple-200 mb-5">{post.description}</p>
-      <a
-        href={`posts/${post.slug}`}
-        class="px-4 py-2 font-semibold text-sm bg-purple-700 text-white rounded-lg shadow-sm w-fit"
-      >
-        Read more &rarr;
-      </a>
-    </div>
-    {/each}
-</div>
-```
-
-The `data.search` value is used as the default value of the `<input name="q" />` field to inform the user of the current
-search.
-
-The default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
+Next, add a `<form>` to the page to allow a search value to be entered and submitted. The
+default behavior of a form is to submit a `GET` request to the current URL with any form inputs added to the query
 string in the format `{url}/?{input-name}={input-value}`. For our search form, the result of a form submission is
-a `GET` request in the format`?q={q-value}`. To allow this default browser behavior to take place, add the
-[`data-sveltekit-reload` attribute](https://kit.svelte.dev/docs/link-options#data-sveltekit-reload) to the `<form />` element.
-With the browser default behavior set and the check for the `q` querystring search value already implemented, everything is in place.
+a `GET` request in the format `?q={q-value}`. Since this is precisely the behavior required, and the check for the `q`
+querystring search value has been implemented already, everything is in place.
+
+```tsx
+export default function Index() {
+  const { posts, search } = useLoaderData<typeof loader>();
+
+  return (
+    <>
+      <div className="w-full max-w-5xl mt-16">
+        <form>
+          <input
+            name="q"
+            defaultValue={search || ''}
+            placeholder="Search..."
+            className="w-full rounded-lg p-2 border-2 dark:text-purple-950"
+          />
+        </form>
+      </div>
+      ...
+    </>
+  );
+}
+```
 
 ![Full-text fuzzy search](images/getting-started-blog-search.png)
 
-The application now supports listing posts, viewing single posts via a `slug` page parameter, and full-text fuzzy search of
+The application now supports listing posts, viewing single posts via a dynamic segment, and full-text fuzzy search of
 posts.
 
 ## What you've learned
 
-In this guide, you've learned that SvelteKit applications and Xata are a powerful combination. You created an
+In this guide, you've learned that Remix applications and Xata are a powerful combination. You created an
 application from scratch that lists blog posts, supports viewing a single blog post, and performs full-text fuzzy search
 on all posts.
 
@@ -613,7 +775,7 @@ You walked through setting up the Xata CLI and using it to:
 - Update the auto-generated code (in `src/xata.ts`) using `xata pull main` to reflect the updated schema
 
 You then updated the landing page to list all blog posts, making use of the auto-generated `xata.db.Posts.getAll`
-function. You also added the single post page making use of SvelteKit page parameters where a `slug` was passed and used
+function. You also added the single post page making use of Remix dynamic segments where a `slug` was passed and used
 with `xata.db.Posts.filter({ slug: params.slug }).getFirst()`.
 
 Finally, you added full-text fuzzy search functionality to the landing page, leveraging Xata's automatic table
@@ -626,10 +788,9 @@ If you enjoyed this guide, you could continue working on improving the applicati
 - Add [pagination](/docs/sdk/get#paginating-results) for the blog post listing
 - Add [pagination](/docs/sdk/search#pagination) for blog post search results
 - Handle single post view page not finding a result for a `slug`
-- Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to
-  use that new field
+- Add a `body` field to the database schema to contain the full text of the blog post and update the single page view to use that new field
 
-You can explore some of the features covered in more detail:
+You can also explore some of the features covered in more detail:
 
 - [Getting records](/docs/sdk/get)
 - [Filtering records](/docs/sdk/filtering)
@@ -643,4 +804,4 @@ Or dive into some of Xata's more advanced features, such as:
 
 [0]: https://app.xata.io
 [1]: https://app.xata.io/settings
-[2]: https://kit.svelte.dev/
+[2]: https://remix.run/
