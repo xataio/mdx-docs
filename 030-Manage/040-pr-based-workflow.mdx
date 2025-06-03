@@ -9,7 +9,8 @@ published: true
 
 <Alert status="warning">
   This feature is deprecated and no longer recommended for use in new applications. It will continue to be maintained,
-  but no further enhancements are planned.
+  but no further enhancements are planned. This page is specifically about Xata Lite. See
+  [xata.io](https://xata.io/postgres-branching) for our more general take on this problem space.
 </Alert>
 
 ## Migrations with GitHub
@@ -27,7 +28,7 @@ This guide assumes:
 
 To perform automatic migrations and previews, connect Xata to the downstream services. These steps can be performed at any time with an already existing, or a brand new database.
 
-### Link your Xata account to your GitHub account
+### Link your Xata Lite account to your GitHub account
 
 If you haven't already signed up to Xata using your GitHub account, you will need to do so before you continue.
 
@@ -37,7 +38,7 @@ Click the GitHub button and authorize the website to work with Xata. This will g
 
 ![Account settings](images/settings.png)
 
-### Install the Xata integration for GitHub
+### Install the Xata Lite integration for GitHub
 
 On any database view, click the **Settings** link near the top of the page and click into the GitHub integration. If you missed the last step about connecting your Github account, you'll need to follow the links provided to first connect your account.
 
@@ -51,7 +52,7 @@ The Xata GitHub application must be installed either at the user level (for pers
 
 After permissions are granted, a list of GitHub repositories that you can connect to your database is displayed. You can only connect one repository to a Xata database. Click **Connect** to link the Xata app with your repository and keep everything in sync.
 
-### Install the Xata integration for Vercel or Netlify
+### Install the Xata Lite integration for Vercel or Netlify
 
 Similar to the GitHub integration performed in the previous step, install the Xata app to your website hosting provider. Currently, Xata provides integrations for Netlify and Vercel.
 
@@ -125,7 +126,7 @@ git checkout my_feature
 
 The Xata CLI creates client and migration files that will vary based upon the database you are pointing to. Due to this we always recommend creating a new `git` branch when making changes to a Xata database's schema.
 
-### Initialize Xata and create a branch
+### Initialize Xata Lite and create a branch
 
 In the same Xata database that we installed the integrations to, create a new database branch using either the UI or the CLI. Although the name of the branch does not need to match the Git branch we made earlier, it's typically good practice, so we'll use the CLI to make a `my_feature` branch. Xata will assume you are branching from your `main` database branch unless told otherwise.
 
@@ -224,7 +225,7 @@ If you've already run `xata pull` and committed it, but you are still receiving 
 - When copying data, it is assumed that the main and preview branches have identical schemas at the time of copying.
 - We guarantee point-in-time consistency of the data. As a result, any changes made to the main branch during the data copying process will not be incorporated into the preview branch.
 - Xata currently has a copy limit of 10,000 rows per database.
-- If your main branch database is under 10,000 rows, all your data will get copied. This includes columns with sensitive data. We have it on our [roadmap](/roadmap) to configure obfuscation of columns in the near future.
+- If your main branch database is under 10,000 rows, all your data will get copied. This includes columns with sensitive data.
 - If your main branch database has more than 10,000 rows, we will copy approximately 10,000 rows, while ensuring the subset is self-contained - meaning that all the links resolve correctly.
 - To ensure that the links resolve correctly, we will sometimes copy more than 10,000 rows.
 - Due to the wide variability in database schemas, Xata cannot guarantee a specific number of rows will be copied per table. However, Xata will ensure that at least one row is copied in every table.
