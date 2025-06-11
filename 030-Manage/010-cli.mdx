@@ -172,6 +172,11 @@ Running `xata pull my_branch` with a provided database branch will automatically
 
 ### schema
 
+<Alert status="warning">
+  The `xata schema` command is not supported for use with non-postgres-enabled databases which are deprecated. The command will continue to work for existing non-postgres-enabled databases.
+  For Postgres-enabled databases, we recommend using `pg_dump --schema-only` and `pg_restore` to migrate your schema.
+</Alert>
+
 The `xata schema` command provides three sub-commands for interacting with the schema in your current project. For an example, check the [create schema from code][2] recipe. If you edit the schema in the CLI, a `xata pull` command will be run after. If you choose to edit the schema in the web UI, remember to execute `xata pull` to update your existing client with the latest schema.
 
 - `xata schema edit` provides a wizard to edit the schema for a particular database and related tables.
