@@ -8,7 +8,9 @@ published: true
 ---
 
 <Alert status="warning">
-  Unfortunately, Xata does not support file storage. If your database contains file columns, please follow one of the guides below for exporting your files from Xata Lite. Once exported, please drop any file columns in Xata Lite and proceed with the export/import guides below.
+  Unfortunately, Xata does not support file storage. If your database contains file columns, please follow one of the
+  guides below for exporting your files from Xata Lite. Once exported, please drop any file columns in Xata Lite and
+  proceed with the export/import guides below.
 </Alert>
 
 # Exporting a pg-enabled database from Xata Lite
@@ -39,7 +41,7 @@ pg_dump \
    --no-table-access-method  \
    --no-privileges \
    --schema=public \
-   --format=tar 
+   --format=tar
    'postgresql://<workspace_id>:$XATA_API_KEY@<region>.sql.xata.sh/<dbname>:main?sslmode=require' > database_export.tar
 ```
 
@@ -142,7 +144,9 @@ pg_restore --dbname=$CONN_STRING database_export.tar
 # Export a non-pg-enabled database from Xata Lite
 
 <Alert status="warning">
-  Non-pg-enabled Xata Lite databases do not support direct connection and thus cannot be exported and imported using pg_dump and pg_restore respectively. Individual tables can be exported as `.csv` files via the Xata Lite console and imported into Xata Lite using `psql` the `COPY` SQL command.
+  Non-pg-enabled Xata Lite databases do not support direct connection and thus cannot be exported and imported using
+  pg_dump and pg_restore respectively. Individual tables can be exported as `.csv` files via the Xata Lite console and
+  imported into Xata Lite using `psql` the `COPY` SQL command.
 </Alert>
 
 1. Export tables individually to `.csv` files via the Xata Lite console.
@@ -291,56 +295,53 @@ if (!fs.existsSync(SCHEMA_FILE)) {
  * Parse SQL schema file to detect tables with Xata file columns.
  */
 function parseSchemaForFileTables(schemaFile) {
-    console.log(`🧩 Reading schema from "${schemaFile}"...`);
-    const sql = fs.readFileSync(schemaFile, 'utf-8');
-  
-    // Match CREATE TABLE statements
-    const tableRegex = /CREATE TABLE\s+(?:public\.)?"?([\w-]+)"?\s*\(([\s\S]*?)\);/g;
-    const result = {};
-  
-    let match;
-    while ((match = tableRegex.exec(sql)) !== null) {
-      const tableName = match[1];
-      const tableBody = match[2];
-      const fileColumns = [];
-  
-      // Split table body by lines to make it easier to parse
-      const lines = tableBody.split('\n');
-  
-      for (const rawLine of lines) {
-        const line = rawLine.trim();
-  
-        // Skip constraints or empty lines
-        if (!line || line.toLowerCase().startsWith('constraint')) continue;
-  
-        // Match something like: colname xata.xata_file_array or "colname" xata.xata_file
-        const colMatch = line.match(/^"?(.*?)"?\s+([a-zA-Z0-9\._]+)/);
-        if (!colMatch) continue;
-  
-        const colName = colMatch[1].trim();
-        const colType = colMatch[2].trim().toLowerCase();
-  
-        if (
-          colType.includes('xata.xata_file') ||
-          colType.includes('xata_file')
-        ) {
-          fileColumns.push(colName);
-        }
-      }
-  
-      if (fileColumns.length > 0) {
-        result[tableName] = fileColumns;
+  console.log(`🧩 Reading schema from "${schemaFile}"...`);
+  const sql = fs.readFileSync(schemaFile, 'utf-8');
+
+  // Match CREATE TABLE statements
+  const tableRegex = /CREATE TABLE\s+(?:public\.)?"?([\w-]+)"?\s*\(([\s\S]*?)\);/g;
+  const result = {};
+
+  let match;
+  while ((match = tableRegex.exec(sql)) !== null) {
+    const tableName = match[1];
+    const tableBody = match[2];
+    const fileColumns = [];
+
+    // Split table body by lines to make it easier to parse
+    const lines = tableBody.split('\n');
+
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+
+      // Skip constraints or empty lines
+      if (!line || line.toLowerCase().startsWith('constraint')) continue;
+
+      // Match something like: colname xata.xata_file_array or "colname" xata.xata_file
+      const colMatch = line.match(/^"?(.*?)"?\s+([a-zA-Z0-9\._]+)/);
+      if (!colMatch) continue;
+
+      const colName = colMatch[1].trim();
+      const colType = colMatch[2].trim().toLowerCase();
+
+      if (colType.includes('xata.xata_file') || colType.includes('xata_file')) {
+        fileColumns.push(colName);
       }
     }
-  
-    const tableCount = Object.keys(result).length;
-    console.log(`📊 Found ${tableCount} tables with file columns.`);
-    for (const [table, cols] of Object.entries(result)) {
-      console.log(`  - ${table}: ${cols.join(', ')}`);
+
+    if (fileColumns.length > 0) {
+      result[tableName] = fileColumns;
     }
-  
-    return result;
   }
+
+  const tableCount = Object.keys(result).length;
+  console.log(`📊 Found ${tableCount} tables with file columns.`);
+  for (const [table, cols] of Object.entries(result)) {
+    console.log(`  - ${table}: ${cols.join(', ')}`);
+  }
+
+  return result;
+}
 
 /**
  * Download all files from a table. Skip tables that already have download directories.
@@ -362,16 +363,15 @@ async function downloadFilesFromTable(tableName, fileColumns, concurrency = 5) {
   const baseDir = path.resolve(`./file-downloads/${tableName}`);
   fs.mkdirSync(baseDir, { recursive: true });
 
-  const existingFiles = fs.readdirSync(baseDir).filter(f => f !== '.DS_Store');
+  const existingFiles = fs.readdirSync(baseDir).filter((f) => f !== '.DS_Store');
   if (existingFiles.length > 0) {
-    console.log(`⏭ Table "${tableName}" already has downloaded files (${existingFiles.length}). Skipping entire table.`);
+    console.log(
+      `⏭ Table "${tableName}" already has downloaded files (${existingFiles.length}). Skipping entire table.`
+    );
     return;
   }
 
-  const columns = fileColumns.flatMap(col => [
-    `${col}.name`,
-    `${col}.signedUrl`,
-  ]);
+  const columns = fileColumns.flatMap((col) => [`${col}.name`, `${col}.signedUrl`]);
 
   let fileCount = 0;
   let skippedCount = 0;
@@ -385,7 +385,7 @@ async function downloadFilesFromTable(tableName, fileColumns, concurrency = 5) {
     } catch (err) {
       if (retries <= 0) throw err;
       console.warn(`⚠️ Retry for ${label}, attempts left: ${retries}`);
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 500));
       return retry(fn, label, retries - 1);
     }
   }
@@ -473,9 +473,7 @@ async function downloadFilesFromTable(tableName, fileColumns, concurrency = 5) {
         if (!value) continue;
         const files = Array.isArray(value) ? value : [value];
 
-        const tasks = files.map(file =>
-          limit(() => downloadFile(file, record.xata_id, col))
-        );
+        const tasks = files.map((file) => limit(() => downloadFile(file, record.xata_id, col)));
         await Promise.all(tasks);
       }
     }
@@ -518,7 +516,6 @@ async function main() {
 }
 
 await main();
-
 ```
 
 # Exporting files from a non-pg-enabled database
@@ -555,8 +552,8 @@ async function getAllTablesWithFiles() {
   const res = await fetch(baseUrl, {
     headers: {
       Authorization: `Bearer ${API_KEY}`,
-      Accept: 'application/json',
-    },
+      Accept: 'application/json'
+    }
   });
 
   if (!res.ok) {
@@ -572,8 +569,8 @@ async function getAllTablesWithFiles() {
   const result = {};
   for (const table of data.schema.tables) {
     const fileColumns = (table.columns || [])
-      .filter(col => col.type === 'file' || col.type === 'file[]')
-      .map(col => col.name);
+      .filter((col) => col.type === 'file' || col.type === 'file[]')
+      .map((col) => col.name);
 
     if (fileColumns.length > 0) {
       result[table.name] = fileColumns;
@@ -606,16 +603,15 @@ async function downloadFilesFromTable(tableName, fileColumns, concurrency = 5) {
   const baseDir = path.resolve(`./file-downloads/${tableName}`);
   fs.mkdirSync(baseDir, { recursive: true });
 
-  const existingFiles = fs.readdirSync(baseDir).filter(f => f !== '.DS_Store');
+  const existingFiles = fs.readdirSync(baseDir).filter((f) => f !== '.DS_Store');
   if (existingFiles.length > 0) {
-    console.log(`⏭ Table "${tableName}" already has downloaded files (${existingFiles.length}). Skipping entire table.`);
+    console.log(
+      `⏭ Table "${tableName}" already has downloaded files (${existingFiles.length}). Skipping entire table.`
+    );
     return;
   }
 
-  const columns = fileColumns.flatMap(col => [
-    `${col}.name`,
-    `${col}.signedUrl`,
-  ]);
+  const columns = fileColumns.flatMap((col) => [`${col}.name`, `${col}.signedUrl`]);
 
   let fileCount = 0;
   let skippedCount = 0;
@@ -629,7 +625,7 @@ async function downloadFilesFromTable(tableName, fileColumns, concurrency = 5) {
     } catch (err) {
       if (retries <= 0) throw err;
       console.warn(`⚠️ Retry for ${label}, attempts left: ${retries}`);
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 500));
       return retry(fn, label, retries - 1);
     }
   }
@@ -717,9 +713,7 @@ async function downloadFilesFromTable(tableName, fileColumns, concurrency = 5) {
         if (!value) continue;
         const files = Array.isArray(value) ? value : [value];
 
-        const tasks = files.map(file =>
-          limit(() => downloadFile(file, record.id, col))
-        );
+        const tasks = files.map((file) => limit(() => downloadFile(file, record.id, col)));
         await Promise.all(tasks);
       }
     }
@@ -762,5 +756,4 @@ async function main() {
 }
 
 await main();
-
 ```
