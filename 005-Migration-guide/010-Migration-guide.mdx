@@ -44,18 +44,20 @@ The migration has two parts:
 
 The data migration involves exporting the data in the pg_dump or CSV formats and then importing it to the new Xata platform (or any other Postgres provider). The exact procedure depends on whether your Xata Lite has direct Postgres access or not.
 
-In order to know what type of Xata Lite database you have, you can check the following: In the database settings page, if you see the PostgreSQL endpoint (starting with `postgres://...`), you have a database with direct Postgres access. In this case, you can export to the pg_dump format.
+In order to know what type of Xata Lite database you have, you can check the following: In the database settings page, if you see the PostgreSQL endpoint (starting with `postgres://...`), you have a database with direct Postgres access. In this case, you can export to the pg_dump format, by following [this guide](migration-postgres-enabled).
 
-If you don't see the PostgreSQL endpoint, you are having a non-Postgres direct access enabled database, and you need to export your tables to CSV.
+If you don't see the PostgreSQL endpoint, you are having a non-Postgres direct access enabled database, and you need to export your tables to CSV. Follow [this guide](migration-non-postgres-enabled).
 
-Because files and images are Xata Lite specific features, generally not supported by the new Xata platform or other Postgres services, they require a different procedure for exporting. The files are downloaded to a local folder.
+Because files and images are Xata Lite specific features, generally not supported by the new Xata platform or other Postgres services, they require a different procedure for exporting. The files are downloaded to a local folder. The procedure depends again on the database type, follow [this guide](export-files-postgres-enabled) if your database is Postgres enabled, or [this one](export-files-non-postgres-enabled) otherwise.
 
 ### Code migration
 
-If you are using only the Postgres wire protocol (e.g. with Drizzle or Prisma), you will typically not need any code changes, except for changing the connection string.
+If you are using only the Postgres wire protocol (e.g. with Drizzle or Prisma), you will typically not need any code changes, only changing the connection string.
 
-If you are using the Xata SDK, we recommend switching to Drizzle. We are providing a documentation page with several examples. Typically AI coding agents do a good job at doing the code changes for you.
+If you are using the Xata SDK, we recommend switching to Drizzle. We are providing a [migration guide](typescript-sdk-to-drizzle) with many examples. Typically AI coding agents do a good job at doing the code changes for you. We recommend pointing them to that migration guide. If you require the migration guide in markdown format, click the "Edit on GitHub" button at the top of that page and then click "Download the raw file".
 
-If you are using the search or vector search APIs, we recommend using the built-in search functionality in PostgreSQL and the pgvector extension. We are providing a documentation with a few examples that can be used by AI coding agents to migrate your code.
+If you are using the Xata REST API, we still recommend switching to Drizzle, using a similar approach. We have a [migration guide](rest-api-to-drizzle) for this case as well.
+
+If you are using the search or vector search APIs, we recommend using the built-in search functionality in PostgreSQL and the pgvector extension. We are providing a [documentation page](migrate-from-xata-lite-to-xata) with a few examples that can be used by AI coding agents to migrate your code.
 
 If you are using the files or image APIs, you need to choose a new storage provider. You can use services like S3, Cloudflare images (both of which are used internally by Xata Lite), Supabase storage, or other similar services. The code changes required depend on the service that you choose.

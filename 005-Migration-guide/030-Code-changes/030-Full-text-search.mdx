@@ -1,0 +1,397 @@
+---
+title: Migrating full-text search functionality to Postgres
+navTitle: Migrating search functionality
+keywords: ['Xata Lite', 'Xata', 'export']
+description: How to migrate data from a Xata Lite database to a Xata database.
+slug: migrate-from-xata-lite-to-xata
+published: true
+---
+
+Xata Lite full-text search functionality is using Elasticsearch under the hood. This guide covers switching from the Xata Lite search functionality to using the native full-text search implementation in PostgreSQL.
+
+## 1. Conceptual mapping
+
+Postgres gives you low-level FTS building blocks:
+
+- `tsvector` - indexed representation of your text
+- `tsquery` - normalized query representation
+- `@@` - match operator (`tsvector` vs `tsquery`)
+- GIN index - inverted index for fast text search
+- `ts_rank` / `ts_rank_cd` - relevance scoring
+
+Rough mapping:
+
+| Xata Lite search SDK      | PostgreSQL FTS                                  |
+| ------------------------- | ----------------------------------------------- |
+| `query` string            | `websearch_to_tsquery(...)` / `plainto_tsquery` |
+| “Searchable fields”       | `tsvector` built from one or more columns       |
+| Search index              | GIN index on `tsvector` column                  |
+| Relevance score           | `ts_rank` / `ts_rank_cd`                        |
+| Filters                   | Extra `WHERE` clauses                           |
+| Facets                    | `GROUP BY` + CTEs                               |
+| Boosting field importance | `setweight(...)` + custom `ORDER BY` expression |
+| Typo tolerance            | Trigram / Levenshtein around FTS                |
+
+You'll recreate the behavior of the Xata Lite SDK using these primitives.
+
+## 2. Add a generated `tsvector` column
+
+Assume a `products` table:
+
+```sql
+CREATE TABLE products (
+  id           uuid PRIMARY KEY,
+  title        text,
+  description  text,
+  tags         text,
+  in_stock     boolean DEFAULT true,
+  category     text,
+  price        numeric,
+  created_at   timestamptz DEFAULT now()
+);
+```
+
+### 2.1 Create the generated `tsvector`
+
+We'll store all searchable text in a `search_tsv` column:
+
+```sql
+ALTER TABLE products
+ADD COLUMN search_tsv tsvector GENERATED ALWAYS AS (
+  to_tsvector('english', coalesce(title, '')) ||
+  to_tsvector('english', coalesce(description, '')) ||
+  to_tsvector('simple', coalesce(tags, ''))
+) STORED;
+```
+
+This combines all searchable columns into a single `tsvector`. Postgres recomputes this column automatically on `INSERT`/`UPDATE`, which is the equivalent of the internal Xata Lite replication to the search engine.
+
+### 2.2 Add the GIN index
+
+```sql
+CREATE INDEX products_search_tsv_gin_idx
+ON products
+USING gin (search_tsv);
+```
+
+## 3. Basic search with drizzle + raw SQL
+
+We'll assume you're using drizzle in a Node/TypeScript app. Here's a minimal search function that replaces Lite SDK calls:
+
+```ts
+import { sql } from 'drizzle-orm';
+import { db } from './db'; // your drizzle instance
+
+type SearchParams = {
+  query: string;
+  page?: number;
+  pageSize?: number;
+};
+
+export async function searchProducts({ query, page = 1, pageSize = 20 }: SearchParams) {
+  const offset = (page - 1) * pageSize;
+
+  const rows = await db.execute(sql`
+    SELECT
+      id,
+      title,
+      description,
+      ts_rank(search_tsv, websearch_to_tsquery('english', ${query})) AS score
+    FROM products
+    WHERE
+      search_tsv @@ websearch_to_tsquery('english', ${query})
+    ORDER BY score DESC
+    LIMIT ${pageSize} OFFSET ${offset}
+  `);
+
+  return rows;
+}
+```
+
+Key points:
+
+- `websearch_to_tsquery('english', ${query})` converts user-typed text (“star wars lego”) into a `tsquery` with AND/OR/phrases semantics.
+- `search_tsv @@ ...` checks whether the document matches.
+- `ts_rank` gives a relevance score, used in `ORDER BY`.
+
+This is the direct FTS equivalent of a “query + pagination” Xata Lite SDK call.
+
+---
+
+## 4. Reimplementing filters and sorting
+
+### 4.1 Filters
+
+Anything you previously passed as filters to the SDK becomes **extra `WHERE` conditions**.
+
+For example:
+
+```ts
+await lite.search({
+  table: 'products',
+  query: 'lego',
+  filters: {
+    category: 'toys',
+    price: { gte: 10, lte: 100 },
+    inStock: true
+  }
+});
+```
+
+Becomes:
+
+```ts
+type FilterParams = {
+  query: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+  page?: number;
+  pageSize?: number;
+};
+
+export async function searchProductsWithFilters(params: FilterParams) {
+  const { query, category, minPrice, maxPrice, inStock, page = 1, pageSize = 20 } = params;
+
+  const offset = (page - 1) * pageSize;
+
+  // Build dynamic WHERE clause
+  const filters: any[] = [sql`search_tsv @@ websearch_to_tsquery('english', ${query})`];
+
+  if (category !== undefined) {
+    filters.push(sql`category = ${category}`);
+  }
+
+  if (minPrice !== undefined) {
+    filters.push(sql`price >= ${minPrice}`);
+  }
+
+  if (maxPrice !== undefined) {
+    filters.push(sql`price <= ${maxPrice}`);
+  }
+
+  if (inStock !== undefined) {
+    filters.push(sql`in_stock = ${inStock}`);
+  }
+
+  const whereClause = filters.length > 0 ? sql`WHERE ${sql.join(filters, sql` AND `)}` : sql``;
+
+  const rows = await db.execute(sql`
+    SELECT
+      id,
+      title,
+      description,
+      price,
+      category,
+      ts_rank(search_tsv, websearch_to_tsquery('english', ${query})) AS score
+    FROM products
+    ${whereClause}
+    ORDER BY score DESC
+    LIMIT ${pageSize} OFFSET ${offset}
+  `);
+
+  return rows;
+}
+```
+
+This gives you the same expressive power you had in the Lite SDK, with normal SQL semantics.
+
+### 4.2 Sorting and boosting
+
+To sort by relevancy, one typically uses `ts_rank` like in the following example:
+
+```ts
+const rows = await db.execute(sql`
+  WITH q AS (
+    SELECT websearch_to_tsquery('english', ${query}) AS query
+  )
+  SELECT
+    p.id,
+    p.title,
+    p.description,
+    p.created_at,
+    ts_rank(p.search_tsv, q.query) AS rank
+  FROM products p, q
+  WHERE p.search_tsv @@ q.query
+  ORDER BY
+    rank DESC,
+  LIMIT ${pageSize} OFFSET ${offset}
+`);
+```
+
+In Xata Lite, you can tune relevancy using boosters. With PostgreSQL, there's no direct equivalent to boosters, but you can simulate them using different techniques.
+
+#### 4.2.1 Setting numeric boosters
+
+For numeric boosters, you can do this:
+
+```ts
+const rows = await db.execute(sql`
+  WITH q AS (
+    SELECT websearch_to_tsquery('english', ${query}) AS query
+  )
+  SELECT
+    p.*,
+    ts_rank(p.search_tsv, q.query) AS base_rank,
+    (
+      ts_rank(p.search_tsv, q.query)
+      + 0.01 * log(1 + p.popularity_score)      -- numeric booster
+      + 0.05 * CASE WHEN p.category = 'featured' THEN 1 ELSE 0 END
+    ) AS final_rank
+  FROM products p, q
+  WHERE p.search_tsv @@ q.query
+  ORDER BY final_rank DESC
+  LIMIT ${pageSize} OFFSET ${offset}
+`);
+```
+
+This lets you recreate "boost this field/category" knobs that people might have used via the SDK.
+
+#### 4.2.2 Boosting column importance with `setweight`
+
+If you want to boost certain fields (like making matches in `title` more important than matches in `description`), you can use `setweight` in your generated `tsvector` column. This is similar to column boosters in Xata Lite.
+
+Update your `search_tsv` column definition to include weights:
+
+```sql
+ALTER TABLE products
+DROP COLUMN search_tsv;
+
+ALTER TABLE products
+ADD COLUMN search_tsv tsvector GENERATED ALWAYS AS (
+  setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
+  setweight(to_tsvector('english', coalesce(description, '')), 'B') ||
+  setweight(to_tsvector('simple', coalesce(tags, '')), 'C')
+) STORED;
+```
+
+In this example:
+
+- `A` weight for `title` (most important)
+- `B` weight for `description` (medium importance)
+- `C` weight for `tags`, using the `simple` config (good for labels)
+
+When you use `ts_rank` with weighted `tsvector` columns, matches in higher-weighted fields (like `title`) will contribute more to the relevance score than matches in lower-weighted fields (like `description`).
+
+## 5. Typo tolerance / fuzzy search
+
+Postgres FTS doesn't have built-in “fuzzy” matching, but you can layer it on.
+
+A simple pragmatic option can be done using the `pg_trgm` extension:
+
+1. Enable the extension:
+
+   ```sql
+   CREATE EXTENSION IF NOT EXISTS pg_trgm;
+   ```
+
+2. Use similarity for a fallback when FTS returns too few results:
+
+   ```ts
+   export async function fallbackFuzzySearch(query: string) {
+     const rows = await db.execute(sql`
+       SELECT
+         id,
+         title,
+         similarity(title, ${query}) AS sim
+       FROM products
+       WHERE similarity(title, ${query}) > 0.3
+       ORDER BY sim DESC
+       LIMIT 20
+     `);
+
+     return rows;
+   }
+   ```
+
+Application-side strategy:
+
+- Run the “normal” FTS search first.
+- If you get, say, `< 3` results, call `fallbackFuzzySearch` and show “Did you mean…” suggestions or additional results.
+
+---
+
+## 6. Faceted search (e.g. counts per category)
+
+If you previously relied on the SDK for facets (“X results in category Toys, Y in Electronics…”), you can implement them with **CTEs + `GROUP BY`**.
+
+Example: results + category facet in one query:
+
+```ts
+export async function searchWithCategoryFacet(query: string, page = 1, pageSize = 20) {
+  const offset = (page - 1) * pageSize;
+
+  const rows = await db.execute(sql`
+    WITH q AS (
+      SELECT websearch_to_tsquery('english', ${query}) AS query
+    ),
+    search_results AS (
+      SELECT
+        p.*,
+        ts_rank(p.search_tsv, q.query) AS rank
+      FROM products p, q
+      WHERE p.search_tsv @@ q.query
+    ),
+    category_facets AS (
+      SELECT
+        category,
+        count(*) AS count
+      FROM search_results
+      GROUP BY category
+    )
+    SELECT
+      jsonb_build_object(
+        'results', (
+          SELECT jsonb_agg(to_jsonb(sr) ORDER BY rank DESC LIMIT ${pageSize} OFFSET ${offset})
+          FROM search_results sr
+        ),
+        'facets', jsonb_build_object(
+          'category', (SELECT jsonb_agg(to_jsonb(cf)) FROM category_facets cf)
+        )
+      ) AS payload;
+  `);
+
+  // rows[0].payload is a JSON object with results + facets
+  return rows[0]?.payload;
+}
+```
+
+This gives you:
+
+- Ranked results
+- Category counts for building a faceted UI
+
+You can add more facets (price ranges, decades, ratings) using additional CTEs.
+
+---
+
+## 7. Highlighting snippets (optional)
+
+If you previously showed highlighted snippets, use `ts_headline`:
+
+```ts
+export async function searchWithHighlight(query: string) {
+  const rows = await db.execute(sql`
+    SELECT
+      id,
+      title,
+      ts_headline(
+        'english',
+        description,
+        websearch_to_tsquery('english', ${query})
+      ) AS highlighted_description
+    FROM products
+    WHERE search_tsv @@ websearch_to_tsquery('english', ${query})
+    ORDER BY ts_rank(
+      search_tsv,
+      websearch_to_tsquery('english', ${query})
+    ) DESC
+    LIMIT 20
+  `);
+
+  return rows;
+}
+```
+
+This should get you close to whatever the SDK was doing for “snippet with highlights”.
