@@ -58,6 +58,6 @@ If you are using the Xata SDK, we recommend switching to Drizzle. We are providi
 
 If you are using the Xata REST API, we still recommend switching to Drizzle, using a similar approach. We have a [migration guide](rest-api-to-drizzle) for this case as well.
 
-If you are using the search or vector search APIs, we recommend using the built-in search functionality in PostgreSQL and the pgvector extension. We are providing a [documentation page](migrate-from-xata-lite-to-xata) with a few examples that can be used by AI coding agents to migrate your code.
+If you are using the search or vector search APIs, we recommend using the built-in search functionality in PostgreSQL and the pgvector extension. We are providing a [documentation page](migrate-full-text-search) with a few examples that can be used by AI coding agents to migrate your code. Similarly, we are providing a guide from migrating from the [Xata Lite vector search implementation to pgvector](migrate-vector-search).
 
 If you are using the files or image APIs, you need to choose a new storage provider. You can use services like S3, Cloudflare images (both of which are used internally by Xata Lite), Supabase storage, or other similar services. The code changes required depend on the service that you choose.

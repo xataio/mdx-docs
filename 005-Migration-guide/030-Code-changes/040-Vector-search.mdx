@@ -1,0 +1,409 @@
+---
+title: Migrating vector search functionality to Postgres
+navTitle: Migrating vector search
+keywords: ['Xata Lite', 'Xata', 'vector search', 'pgvector']
+description: How to migrate vector search from a Xata Lite database to pgvector in PostgreSQL.
+slug: migrate-vector-search
+published: true
+---
+
+Xata Lite vector search functionality uses a separate search store. This guide covers switching from the Xata Lite vector search functionality to using the native [pgvector](https://github.com/pgvector/pgvector) extension in PostgreSQL.
+
+## 1. Conceptual mapping
+
+pgvector provides vector similarity search capabilities:
+
+- `vector` type - stores embeddings as arrays of floating-point numbers
+- Distance operators - `<->` (L2), `<#>` (negative inner product), `<=>` (cosine distance)
+- Index types - IVFFlat and HNSW for approximate nearest neighbor search
+- Distance functions - `l2_distance`, `inner_product`, `cosine_distance`
+
+You'll recreate the behavior of the Xata Lite SDK using these pgvector primitives.
+
+## 2. Enable pgvector extension
+
+First, enable the pgvector extension in your database:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+The pgvector extension is available by default in Xata Postgres databases, so this should work immediately.
+
+## 3. Create a vector column
+
+Assume a `docs` table where you want to store embeddings:
+
+```sql
+CREATE TABLE docs (
+  id           uuid PRIMARY KEY,
+  content      text,
+  embeddings   vector(1536),  -- dimension matches your embedding model (e.g., OpenAI ada-002)
+  category     text,
+  created_at   timestamptz DEFAULT now()
+);
+```
+
+The `vector(1536)` type stores a 1536-dimensional vector, which matches OpenAI's `text-embedding-ada-002` model. Adjust the dimension to match your embedding model.
+
+If you're migrating from Xata Lite, you may already have a `vector` column. In that case, you can alter it:
+
+```sql
+ALTER TABLE docs
+ALTER COLUMN embeddings TYPE vector(1536);
+```
+
+## 4. Add a vector index
+
+For efficient similarity search, create an index on the vector column. pgvector supports two index types:
+
+### 4.1 IVFFlat index (good for moderate datasets)
+
+```sql
+CREATE INDEX docs_embeddings_ivfflat_idx
+ON docs
+USING ivfflat (embeddings vector_cosine_ops)
+WITH (lists = 100);
+```
+
+- `lists` parameter: Use `rows / 1000` for tables with less than 1M rows, or `sqrt(rows)` for larger tables. Minimum value is 10.
+- `vector_cosine_ops`: Use for cosine distance (most common). Alternatives: `vector_l2_ops` for L2 distance, `vector_ip_ops` for inner product.
+
+### 4.2 HNSW index (better for large datasets)
+
+```sql
+CREATE INDEX docs_embeddings_hnsw_idx
+ON docs
+USING hnsw (embeddings vector_cosine_ops)
+WITH (m = 16, ef_construction = 64);
+```
+
+- `m`: Number of connections per layer (default 16, range 4-64)
+- `ef_construction`: Size of candidate list during construction (default 64, range 4-1000)
+
+HNSW indexes are slower to build but faster to query, especially for large datasets. IVFFlat indexes are faster to build but may have lower recall.
+
+## 5. Basic vector search with drizzle + raw SQL
+
+We'll assume you're using drizzle in a Node/TypeScript app. Here's a minimal vector search function that replaces Lite SDK calls:
+
+```ts
+import { sql } from 'drizzle-orm';
+import { db } from './db'; // your drizzle instance
+
+type VectorSearchParams = {
+  queryVector: number[];
+  page?: number;
+  pageSize?: number;
+};
+
+export async function vectorSearchDocs({ queryVector, page = 1, pageSize = 10 }: VectorSearchParams) {
+  const offset = (page - 1) * pageSize;
+
+  // Convert array to PostgreSQL array format
+  const vectorStr = `[${queryVector.join(',')}]`;
+
+  const rows = await db.execute(sql`
+    SELECT
+      id,
+      content,
+      category,
+      1 - (embeddings <=> ${sql.raw(vectorStr)}::vector) AS score
+    FROM docs
+    ORDER BY embeddings <=> ${sql.raw(vectorStr)}::vector
+    LIMIT ${pageSize} OFFSET ${offset}
+  `);
+
+  return rows;
+}
+```
+
+Key points:
+
+- `<=>` is the cosine distance operator (lower = more similar)
+- `1 - (embeddings <=> query)` converts distance to similarity score (higher = more similar), matching Xata Lite's behavior
+- The vector is cast using `::vector` syntax
+- Results are ordered by distance (ascending) to get nearest neighbors
+- We use `sql.raw()` to inject the vector array string, which is safe here since the vector values come from your application, not user input
+
+This is the direct pgvector equivalent of a basic Xata Lite `vectorSearch()` call.
+
+## 6. Reimplementing similarity functions
+
+Xata Lite supports three similarity functions: `cosineSimilarity`, `l1`, and `l2`. Here's how to implement each:
+
+### 6.1 Cosine similarity (default)
+
+```ts
+export async function vectorSearchCosine(queryVector: number[], size = 10) {
+  const vectorStr = `[${queryVector.join(',')}]`;
+
+  const rows = await db.execute(sql`
+    SELECT
+      id,
+      content,
+      1 - (embeddings <=> ${sql.raw(vectorStr)}::vector) AS score
+    FROM docs
+    ORDER BY embeddings <=> ${sql.raw(vectorStr)}::vector
+    LIMIT ${size}
+  `);
+
+  return rows;
+}
+```
+
+Note: Xata Lite returns cosine similarity scores between 0 and 2 (adding 1 to the -1 to 1 range). The `1 - distance` conversion gives you a score between 0 and 2, matching this behavior.
+
+### 6.2 L1 distance (Manhattan)
+
+```ts
+export async function vectorSearchL1(queryVector: number[], size = 10) {
+  const vectorStr = `[${queryVector.join(',')}]`;
+
+  const rows = await db.execute(sql`
+    SELECT
+      id,
+      content,
+      embeddings <-> ${sql.raw(vectorStr)}::vector AS distance
+    FROM docs
+    ORDER BY embeddings <-> ${sql.raw(vectorStr)}::vector
+    LIMIT ${size}
+  `);
+
+  return rows;
+}
+```
+
+For L1, you typically work with distance directly (lower = more similar). If you need a similarity score, you can normalize it:
+
+```ts
+const vectorStr = `[${queryVector.join(',')}]`;
+const rows = await db.execute(sql`
+  SELECT
+    id,
+    content,
+    1 / (1 + (embeddings <-> ${sql.raw(vectorStr)}::vector)) AS score
+  FROM docs
+  ORDER BY embeddings <-> ${sql.raw(vectorStr)}::vector
+  LIMIT ${size}
+`);
+```
+
+### 6.3 L2 distance (Euclidean)
+
+```ts
+export async function vectorSearchL2(queryVector: number[], size = 10) {
+  const vectorStr = `[${queryVector.join(',')}]`;
+
+  const rows = await db.execute(sql`
+    SELECT
+      id,
+      content,
+      embeddings <-> ${sql.raw(vectorStr)}::vector AS distance
+    FROM docs
+    ORDER BY embeddings <-> ${sql.raw(vectorStr)}::vector
+    LIMIT ${size}
+  `);
+
+  return rows;
+}
+```
+
+The `<->` operator works for both L1 and L2 distances. For L2, you can also normalize to a similarity score:
+
+```ts
+const vectorStr = `[${queryVector.join(',')}]`;
+const rows = await db.execute(sql`
+  SELECT
+    id,
+    content,
+    1 / (1 + (embeddings <-> ${sql.raw(vectorStr)}::vector)) AS score
+  FROM docs
+  ORDER BY embeddings <-> ${sql.raw(vectorStr)}::vector
+  LIMIT ${size}
+`);
+```
+
+## 7. Adding filters
+
+Anything you previously passed as filters to the SDK becomes **extra `WHERE` conditions**.
+
+For example:
+
+```ts
+await lite.db.Docs.vectorSearch('embeddings', queryVector, {
+  size: 5,
+  filter: {
+    category: 'technology',
+    created_at: { $ge: '2024-01-01' }
+  }
+});
+```
+
+Becomes:
+
+```ts
+type FilterParams = {
+  queryVector: number[];
+  category?: string;
+  minCreatedAt?: string;
+  size?: number;
+};
+
+export async function vectorSearchWithFilters(params: FilterParams) {
+  const { queryVector, category, minCreatedAt, size = 10 } = params;
+  const vectorStr = `[${queryVector.join(',')}]`;
+
+  // Build dynamic WHERE clause
+  const filters: any[] = [];
+
+  if (category !== undefined) {
+    filters.push(sql`category = ${category}`);
+  }
+
+  if (minCreatedAt !== undefined) {
+    filters.push(sql`created_at >= ${minCreatedAt}::timestamptz`);
+  }
+
+  const whereClause = filters.length > 0 ? sql`WHERE ${sql.join(filters, sql` AND `)}` : sql``;
+
+  const rows = await db.execute(sql`
+    SELECT
+      id,
+      content,
+      category,
+      created_at,
+      1 - (embeddings <=> ${sql.raw(vectorStr)}::vector) AS score
+    FROM docs
+    ${whereClause}
+    ORDER BY embeddings <=> ${sql.raw(vectorStr)}::vector
+    LIMIT ${size}
+  `);
+
+  return rows;
+}
+```
+
+**Important**: When using filters with vector indexes, pgvector will first filter the rows, then compute distances. For better performance with large datasets, consider using a partial index or adjusting your query strategy.
+
+## 8. Example: Using OpenAI Text Embeddings
+
+This example mirrors the one from the Xata Lite documentation, showing how to migrate a complete workflow.
+
+### 8.1 Storing embeddings
+
+```ts
+import { sql } from 'drizzle-orm';
+import { db } from './db';
+import { Configuration, OpenAIApi } from 'openai';
+
+const docs: string[] = [
+  'This is a story about a quick brown fox that jumps over the lazy dog.',
+  `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+  labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+  nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+   esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+    sunt in culpa qui officia deserunt mollit anim id est laborum.`,
+  'The lazy dog was not happy about the quick brown fox jumping over him.'
+];
+
+const openAIConfig = new Configuration({
+  apiKey: `YOUR OPENAI API KEY`
+});
+const openAI = new OpenAIApi(openAIConfig);
+
+for (const doc of docs) {
+  const resp = await openAI.createEmbedding({
+    input: doc,
+    model: 'text-embedding-3-small'
+  });
+  const [{ embedding }] = resp.data.data;
+
+  // Convert embedding array to PostgreSQL vector format
+  const vectorStr = `[${embedding.join(',')}]`;
+
+  await db.execute(sql`
+    INSERT INTO docs (content, embeddings)
+    VALUES (${doc}, ${sql.raw(vectorStr)}::vector)
+  `);
+}
+```
+
+### 8.2 Searching with embeddings
+
+```ts
+import { sql } from 'drizzle-orm';
+import { db } from './db';
+import { Configuration, OpenAIApi } from 'openai';
+
+const question = 'The quick brown fox jumps over the lazy dog.';
+
+const openAIConfig = new Configuration({
+  apiKey: `YOUR OPENAI API KEY`
+});
+const openAI = new OpenAIApi(openAIConfig);
+const resp = await openAI.createEmbedding({
+  input: question,
+  model: 'text-embedding-ada-002'
+});
+const [{ embedding }] = resp.data.data;
+
+const vectorStr = `[${embedding.join(',')}]`;
+
+const rows = await db.execute(sql`
+  SELECT
+    id,
+    content,
+    1 - (embeddings <=> ${sql.raw(vectorStr)}::vector) AS score
+  FROM docs
+  ORDER BY embeddings <=> ${sql.raw(vectorStr)}::vector
+  LIMIT 10
+`);
+
+for (const row of rows) {
+  console.log(row.content, row.score);
+}
+```
+
+## 9. Hybrid search
+
+You can combine vector similarity search with PostgreSQL's full-text search for more powerful search capabilities:
+
+```ts
+export async function hybridSearch({
+  queryVector,
+  textQuery,
+  page = 1,
+  pageSize = 10
+}: {
+  queryVector: number[];
+  textQuery: string;
+  page?: number;
+  pageSize?: number;
+}) {
+  const offset = (page - 1) * pageSize;
+  const vectorStr = `[${queryVector.join(',')}]`;
+
+  const rows = await db.execute(sql`
+    SELECT
+      id,
+      content,
+      ts_rank(search_tsv, websearch_to_tsquery('english', ${textQuery})) AS text_score,
+      1 - (embeddings <=> ${sql.raw(vectorStr)}::vector) AS vector_score,
+      (
+        0.5 * ts_rank(search_tsv, websearch_to_tsquery('english', ${textQuery}))
+        + 0.5 * (1 - (embeddings <=> ${sql.raw(vectorStr)}::vector))
+      ) AS combined_score
+    FROM docs
+    WHERE
+      search_tsv @@ websearch_to_tsquery('english', ${textQuery})
+      OR embeddings <=> ${sql.raw(vectorStr)}::vector < 0.5  -- cosine distance threshold
+    ORDER BY combined_score DESC
+    LIMIT ${pageSize} OFFSET ${offset}
+  `);
+
+  return rows;
+}
+```
+
+This combines semantic search (vector similarity) with keyword search (full-text search) for more comprehensive results.
