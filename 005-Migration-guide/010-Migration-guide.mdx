@@ -1,0 +1,61 @@
+---
+title: Migration guide from Xata Lite
+navTitle: Overview
+keywords: ['xata lite', 'migration']
+description: Everything you need to know about the Xata lite deprecation and migration.
+slug: migration-guide
+published: true
+---
+
+Xata Lite is being retired and you are required to migrate your workloads by February 28, 2026.
+
+You can migrate to the new Xata platform or to any other database provider. This migration guide is focusing on migrating
+from Xata Lite to the new Xata platform, however our support team will gladly help you migrate regardless of the destination.
+
+The new Xata platform has the following benefits:
+
+- Copy-on-Write branching with data and schema (Xata Lite has only schema branching).
+- Data anonymization functionality between environments.
+- Scale-to-zero functionality.
+- Perfect 100% compatibility with stock PostgreSQL, and all major open-source extensions.
+- High-performance NVMe/TCP storage, providing excellent PostgreSQL performance at scale.
+- More cost effective in the majority of use cases.
+- No minimal cost tier.
+
+As a Xata Lite user, you get the following benefits if you decide to migrate to the new platform:
+
+- Priority access during the beta phase.
+- $100 credits valid for one year. This is typically be enough to run a `xata.micro` instance for 12 months in the `us-east-1` region.
+- Data migration help from our support team.
+
+However, the following Xata Lite features are not currently present in the Xata platform and might require adjusting your application:
+
+- Free tier plan
+- Xata TypeScript SDK
+- Restful Search API based on Elasticsearch
+- File storage and image transformations
+- Spreadsheet-like table editor
+
+## Migration overview
+
+The migration has two parts:
+
+### Data migration
+
+The data migration involves exporting the data in the pg_dump or CSV formats and then importing it to the new Xata platform (or any other Postgres provider). The exact procedure depends on whether your Xata Lite has direct Postgres access or not.
+
+In order to know what type of Xata Lite database you have, you can check the following: In the database settings page, if you see the PostgreSQL endpoint (starting with `postgres://...`), you have a database with direct Postgres access. In this case, you can export to the pg_dump format.
+
+If you don't see the PostgreSQL endpoint, you are having a non-Postgres direct access enabled database, and you need to export your tables to CSV.
+
+Because files and images are Xata Lite specific features, generally not supported by the new Xata platform or other Postgres services, they require a different procedure for exporting. The files are downloaded to a local folder.
+
+### Code migration
+
+If you are using only the Postgres wire protocol (e.g. with Drizzle or Prisma), you will typically not need any code changes, except for changing the connection string.
+
+If you are using the Xata SDK, we recommend switching to Drizzle. We are providing a documentation page with several examples. Typically AI coding agents do a good job at doing the code changes for you.
+
+If you are using the search or vector search APIs, we recommend using the built-in search functionality in PostgreSQL and the pgvector extension. We are providing a documentation with a few examples that can be used by AI coding agents to migrate your code.
+
+If you are using the files or image APIs, you need to choose a new storage provider. You can use services like S3, Cloudflare images (both of which are used internally by Xata Lite), Supabase storage, or other similar services. The code changes required depend on the service that you choose.
