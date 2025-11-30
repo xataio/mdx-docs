@@ -1,0 +1,1434 @@
+---
+title: Migrate from Xata REST API to Drizzle
+navTitle: Xata REST API to Drizzle
+keywords: ['Xata Lite', 'Xata', 'REST API', 'Drizzle']
+description: How to migrate your code from using the Xata REST API to Drizzle ORM.
+slug: rest-api-to-drizzle
+published: true
+---
+
+Follow this guide to migrate from using the Xata REST API to Drizzle ORM. This guide provides equivalent Drizzle ORM calls for common Xata REST API operations.
+
+## Prerequisites
+
+Before migrating, ensure you have:
+
+- Installed Drizzle ORM and its dependencies
+- Set up your database schema using Drizzle's schema definition methods
+- Configured Drizzle to connect to your Xata database (see the [Drizzle integration guide](/docs/integrations/drizzle))
+
+## Getting Records
+
+### Basic Query
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Teams/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"
+```
+
+**Drizzle ORM:**
+
+```ts
+import { db } from './db';
+import { teams } from './schema';
+
+const teamsList = await db.select().from(teams);
+```
+
+### Query with Parameters
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "columns": ["name", "city"],
+    "filter": {
+      "email": "keanu@example.com"
+    },
+    "sort": {
+      "name": "asc"
+    },
+    "page": {
+      "size": 20
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq, asc } from 'drizzle-orm';
+
+const users = await db
+  .select({
+    name: users.name,
+    city: users.city
+  })
+  .from(users)
+  .where(eq(users.email, 'keanu@example.com'))
+  .orderBy(asc(users.name))
+  .limit(20);
+```
+
+### Getting a Record by ID
+
+**Xata REST API:**
+
+```bash
+# GET https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
+curl -X GET "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/myid" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const user = await db.select().from(users).where(eq(users.id, 'myid')).limit(1);
+```
+
+### Getting a Record by ID with Column Selection
+
+**Xata REST API:**
+
+```bash
+# GET https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?columns=author.*
+curl -X GET "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Posts/data/myid?columns=author.*" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+import { users } from './schema';
+
+const post = await db
+  .select({
+    posts: posts,
+    author: users
+  })
+  .from(posts)
+  .leftJoin(users, eq(posts.author, users.id))
+  .where(eq(posts.id, 'myid'))
+  .limit(1);
+```
+
+### Column Selection
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "columns": ["name", "city"]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+const users = await db
+  .select({
+    name: users.name,
+    city: users.city
+  })
+  .from(users);
+```
+
+### Selecting Columns from Linked Tables
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Teams/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "columns": ["*", "owner.*"]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { users } from './schema';
+
+const teams = await db
+  .select({
+    teams: teams,
+    owner: users
+  })
+  .from(teams)
+  .leftJoin(users, eq(teams.owner, users.id));
+```
+
+### Filtering Records
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "email": "keanu@example.com"
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const users = await db.select().from(users).where(eq(users.email, 'keanu@example.com'));
+```
+
+### Complex Filtering
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "zipcode": { "$gt": 100 },
+      "$any": [
+        { "name": { "$contains": "Keanu" } },
+        { "name": { "$contains": "Carrie" } }
+      ]
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { and, or, gt, like } from 'drizzle-orm';
+
+const users = await db
+  .select()
+  .from(users)
+  .where(and(gt(users.zipcode, 100), or(like(users.name, '%Keanu%'), like(users.name, '%Carrie%'))));
+```
+
+### Filtering Linked Columns
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "team.name": "Matrix"
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+import { teams } from './schema';
+
+const users = await db.select().from(users).leftJoin(teams, eq(users.team, teams.id)).where(eq(teams.name, 'Matrix'));
+```
+
+### Sorting Results
+
+**Xata REST API (ascending):**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sort": {
+      "name": "asc"
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { asc } from 'drizzle-orm';
+
+const users = await db.select().from(users).orderBy(asc(users.name));
+```
+
+**Xata REST API (descending):**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sort": {
+      "name": "desc"
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { desc } from 'drizzle-orm';
+
+const users = await db.select().from(users).orderBy(desc(users.name));
+```
+
+**Xata REST API (multiple sort criteria):**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sort": [
+      { "city": "desc" },
+      { "name": "asc" }
+    ]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { desc, asc } from 'drizzle-orm';
+
+const users = await db.select().from(users).orderBy(desc(users.city), asc(users.name));
+```
+
+**Xata REST API (random sorting):**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sort": {
+      "*": "random"
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { sql } from 'drizzle-orm';
+
+const users = await db
+  .select()
+  .from(users)
+  .orderBy(sql`RANDOM()`);
+```
+
+### Pagination
+
+**Xata REST API (offset-based):**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/query
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "page": {
+      "size": 10,
+      "offset": 10
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+const page = await db.select().from(users).limit(10).offset(10);
+```
+
+**Xata REST API (cursor-based):**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "page": {
+      "size": 2,
+      "after": "VMoxDsIwDAXQnWP8OUPSASFfAnZUoZDWtSEEyTFT1bujion9PdKK_"
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { gt, asc } from 'drizzle-orm';
+
+// Cursor-based pagination requires manual implementation
+// You'll need to track the last ID or timestamp from the previous page
+const lastId = 'VMoxDsIwDAXQnWP8OUPSASFfAnZUoZDWtSEEyTFT1bujion9PdKK_';
+const page = await db.select().from(users).where(gt(users.id, lastId)).orderBy(asc(users.id)).limit(2);
+```
+
+### Using the Replica Store
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "columns": ["*"],
+    "consistency": "eventual"
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+// Note: Drizzle doesn't have a direct equivalent for consistency settings
+// You would need to configure this at the connection level or use read replicas
+const users = await db.select().from(users);
+```
+
+## Creating Records
+
+### Basic Create
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "keanu@example.com",
+    "name": "Keanu Reeves"
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+const record = await db
+  .insert(users)
+  .values({
+    email: 'keanu@example.com',
+    name: 'Keanu Reeves'
+  })
+  .returning();
+```
+
+### Creating a Record with a Given ID
+
+**Xata REST API:**
+
+```bash
+# PUT https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?createOnly=true
+curl -X PUT "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/myid?createOnly=true" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "keanu@example.com",
+    "name": "Keanu Reeves"
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+const record = await db
+  .insert(users)
+  .values({
+    id: 'myid',
+    email: 'keanu@example.com',
+    name: 'Keanu Reeves'
+  })
+  .onConflictDoNothing()
+  .returning();
+```
+
+### Creating a Record with a Linked Field
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Posts/data" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Filming the Matrix",
+    "author": "rec_cd8rqcoavc42pi67lgd0"
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+const record = await db
+  .insert(posts)
+  .values({
+    title: 'Filming the Matrix',
+    author: 'rec_cd8rqcoavc42pi67lgd0'
+  })
+  .returning();
+```
+
+### Bulk Create
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/bulk
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/bulk" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "records": [
+      {
+        "email": "laurence@example.com",
+        "name": "Laurence Fishburne",
+        "team": "rec_cd8s4kbo8dsvsjilo1ug"
+      },
+      {
+        "email": "hugo@example.com",
+        "name": "Hugo Weaving",
+        "team": "rec_cd8s4kbo8dsvsjilo1ug"
+      }
+    ]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+const users = await db
+  .insert(users)
+  .values([
+    {
+      email: 'laurence@example.com',
+      name: 'Laurence Fishburne',
+      team: 'rec_cd8s4kbo8dsvsjilo1ug'
+    },
+    {
+      email: 'hugo@example.com',
+      name: 'Hugo Weaving',
+      team: 'rec_cd8s4kbo8dsvsjilo1ug'
+    }
+  ])
+  .returning();
+```
+
+## Updating Records
+
+### Partial Update
+
+**Xata REST API:**
+
+```bash
+# PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
+curl -X PATCH "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/myid" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "newemail@example.com"
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const user = await db.update(users).set({ email: 'newemail@example.com' }).where(eq(users.id, 'myid')).returning();
+```
+
+### Replace Record (Full Update)
+
+**Xata REST API:**
+
+```bash
+# PUT https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
+curl -X PUT "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/myid" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Keanu Reeves"
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const user = await db.update(users).set({ name: 'Keanu Reeves' }).where(eq(users.id, 'myid')).returning();
+```
+
+### Create or Update (Upsert)
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/myid" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "keanu@example.com",
+    "name": "Keanu Reeves"
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq, sql } from 'drizzle-orm';
+
+const user = await db
+  .insert(users)
+  .values({
+    id: 'myid',
+    name: 'Keanu Reeves',
+    email: 'keanu@example.com'
+  })
+  .onConflictDoUpdate({
+    target: users.id,
+    set: {
+      name: sql`excluded.name`,
+      email: sql`excluded.email`
+    }
+  })
+  .returning();
+```
+
+### Numeric Operations
+
+**Xata REST API (increment):**
+
+```bash
+# PATCH https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
+curl -X PATCH "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/rec_c8hnbch26un1nl0rthkg" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "counter": {
+      "$increment": 1
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq, sql } from 'drizzle-orm';
+
+const user = await db
+  .update(users)
+  .set({ counter: sql`${users.counter} + 1` })
+  .where(eq(users.id, 'rec_c8hnbch26un1nl0rthkg'))
+  .returning();
+```
+
+**Xata REST API (divide):**
+
+```bash
+curl -X PATCH "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/rec_c8hnbch26un1nl0rthkg" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "counter": {
+      "$divide": 2
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq, sql } from 'drizzle-orm';
+
+const user = await db
+  .update(users)
+  .set({ counter: sql`${users.counter} / 2` })
+  .where(eq(users.id, 'rec_c8hnbch26un1nl0rthkg'))
+  .returning();
+```
+
+### Optimistic Concurrency Control
+
+**Xata REST API:**
+
+```bash
+# PUT https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}?ifVersion=0
+curl -X PUT "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/rec_c8hnbch26un1nl0rthkg?ifVersion=0" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "keanu@example.com",
+    "name": "Keanu Reeves"
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq, and } from 'drizzle-orm';
+
+const updatedUser = await db
+  .update(users)
+  .set({
+    name: 'Keanu Reeves',
+    email: 'keanu@example.com'
+  })
+  .where(
+    and(
+      eq(users.id, 'rec_c8hnbch26un1nl0rthkg'),
+      eq(users.xataVersion, 0) // Assuming you have a version column
+    )
+  )
+  .returning();
+```
+
+## Deleting Records
+
+### Single Delete
+
+**Xata REST API:**
+
+```bash
+# DELETE https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/{table}/data/{record_id}
+curl -X DELETE "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/data/rec_cd8s3r8avc42pi67m13g" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+await db.delete(users).where(eq(users.id, 'rec_cd8s3r8avc42pi67m13g'));
+```
+
+### Bulk Delete via Transaction
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operations": [
+      {
+        "delete": {
+          "table": "Users",
+          "id": "rec_cd8s3r8avc42pi67m13g"
+        }
+      },
+      {
+        "delete": {
+          "table": "Users",
+          "id": "rec_cgh9o1oncchhigq95n2g"
+        }
+      }
+    ]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq, inArray } from 'drizzle-orm';
+
+// Option 1: Using inArray for bulk delete
+await db.delete(users).where(inArray(users.id, ['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1oncchhigq95n2g']));
+
+// Option 2: Using a transaction
+await db.transaction(async (tx) => {
+  await tx.delete(users).where(eq(users.id, 'rec_cd8s3r8avc42pi67m13g'));
+
+  await tx.delete(users).where(eq(users.id, 'rec_cgh9o1oncchhigq95n2g'));
+});
+```
+
+## Advanced Filtering Examples
+
+### Exact Match
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "name": "Keanu Reeves"
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(eq(users.name, 'Keanu Reeves'));
+```
+
+### Using $is Operator
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "name": { "$is": "Keanu Reeves" }
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(eq(users.name, 'Keanu Reeves'));
+```
+
+### $any Operator (OR logic)
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "name": {
+        "$any": ["Keanu Reeves", "Carrie-Anne Moss"]
+      }
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { inArray } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(users)
+  .where(inArray(users.name, ['Keanu Reeves', 'Carrie-Anne Moss']));
+```
+
+### Multiple Conditions (AND logic)
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "name": "Keanu Reeves",
+      "city": "New York"
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { and, eq } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(users)
+  .where(and(eq(users.name, 'Keanu Reeves'), eq(users.city, 'New York')));
+```
+
+### $all Operator
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "$all": [
+        { "$exists": "name" },
+        { "$exists": "address" }
+      ]
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { and, isNotNull } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(users)
+  .where(and(isNotNull(users.name), isNotNull(users.address)));
+```
+
+### $not Operator
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "$not": {
+        "name": "Keanu Reeves"
+      }
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { not, eq } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(users)
+  .where(not(eq(users.name, 'Keanu Reeves')));
+```
+
+### $contains Operator
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "name": { "$contains": "Keanu" }
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { like } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(like(users.name, '%Keanu%'));
+```
+
+### $iContains Operator (Case Insensitive)
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "name": { "$iContains": "keanu" }
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { ilike } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(ilike(users.name, '%keanu%'));
+```
+
+### $startsWith and $endsWith
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "name": { "$startsWith": "Keanu" }
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { like } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(like(users.name, 'Keanu%'));
+```
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "name": { "$endsWith": "Reeves" }
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { like } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(like(users.name, '%Reeves'));
+```
+
+### Comparison Operators
+
+**Xata REST API ($gt, $ge, $lt, $le):**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Posts/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "views": { "$gt": 5 }
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { gt } from 'drizzle-orm';
+
+const records = await db.select().from(posts).where(gt(posts.views, 5));
+```
+
+**Xata REST API (date range):**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Posts/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "$all": [
+        {
+          "xata.createdAt": {
+            "$ge": "2022-10-25T01:00:00.000Z"
+          }
+        },
+        {
+          "xata.createdAt": {
+            "$lt": "2022-10-25T02:00:00.000Z"
+          }
+        }
+      ]
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { and, gte, lt } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(posts)
+  .where(
+    and(
+      gte(posts.xataCreatedAt, new Date('2022-10-25T01:00:00Z')),
+      lt(posts.xataCreatedAt, new Date('2022-10-25T02:00:00Z'))
+    )
+  );
+```
+
+### $includes Operator (Array Contains)
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Posts/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "labels": {
+        "$includes": "matrix"
+      }
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { sql } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(posts)
+  .where(sql`'matrix' = ANY(${posts.labels})`);
+```
+
+### $exists and $notExists
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "$exists": "name"
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { isNotNull } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(isNotNull(users.name));
+```
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/tables/Users/query" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filter": {
+      "$notExists": "name"
+    }
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { isNull } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(isNull(users.name));
+```
+
+## Transactions
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operations": [
+      { "insert": { "table": "titles", "record": { "originalTitle": "A new film" } } },
+      { "update": { "table": "titles", "id": "new-0", "fields": { "originalTitle": "The sequel" } } },
+      { "delete": { "table": "titles", "id": "new-0" } }
+    ]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+await db.transaction(async (tx) => {
+  await tx.insert(titles).values({ originalTitle: 'A new film' });
+  await tx.update(titles).set({ originalTitle: 'The sequel' }).where(eq(titles.id, 'new-0'));
+  await tx.delete(titles).where(eq(titles.id, 'new-0'));
+});
+```
+
+### Transaction with Multiple Inserts
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operations": [
+      {
+        "insert": {
+          "table": "titles",
+          "record": { "id": "rec_cfl4g6v838og05h0iv6g", "originalTitle": "A new film" },
+          "createOnly": true
+        }
+      }
+    ]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+await db.transaction(async (tx) => {
+  await tx
+    .insert(titles)
+    .values({
+      id: 'rec_cfl4g6v838og05h0iv6g',
+      originalTitle: 'A new film'
+    })
+    .onConflictDoNothing();
+});
+```
+
+### Transaction with Updates
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operations": [
+      {
+        "update": {
+          "table": "Users",
+          "id": "rec_cmf56ugvjdkilkpcdeu0",
+          "fields": { "email": "neo@matrix.com", "name": "Neo" }
+        }
+      },
+      {
+        "update": {
+          "table": "Users",
+          "id": "rec_cmf572veoo9ahn3r96p0",
+          "fields": { "email": "trinity@matrix.com", "name": "Trinity" }
+        }
+      }
+    ]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+await db.transaction(async (tx) => {
+  await tx.update(users).set({ email: 'neo@matrix.com', name: 'Neo' }).where(eq(users.id, 'rec_cmf56ugvjdkilkpcdeu0'));
+
+  await tx
+    .update(users)
+    .set({ email: 'trinity@matrix.com', name: 'Trinity' })
+    .where(eq(users.id, 'rec_cmf572veoo9ahn3r96p0'));
+});
+```
+
+### Transaction with Deletes
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operations": [
+      {
+        "delete": {
+          "table": "titles",
+          "id": "rec_cfl4g6v00023"
+        }
+      },
+      {
+        "delete": {
+          "table": "titles",
+          "id": "rec_cfl4g6v00056"
+        }
+      }
+    ]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+await db.transaction(async (tx) => {
+  await tx.delete(titles).where(eq(titles.id, 'rec_cfl4g6v00023'));
+
+  await tx.delete(titles).where(eq(titles.id, 'rec_cfl4g6v00056'));
+});
+```
+
+### Transaction with Get Operations
+
+**Xata REST API:**
+
+```bash
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/transaction" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "operations": [
+      {
+        "get": {
+          "table": "titles",
+          "id": "rec_cfl4g6v00023",
+          "columns": ["id", "originalTitle"]
+        }
+      },
+      {
+        "get": {
+          "table": "titles",
+          "id": "rec_cfl4g6v00056",
+          "columns": ["id", "originalTitle"]
+        }
+      }
+    ]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq, inArray } from 'drizzle-orm';
+
+// Note: Drizzle doesn't have a direct equivalent for "get" operations in transactions
+// You would need to perform selects within the transaction
+await db.transaction(async (tx) => {
+  const title1 = await tx
+    .select({
+      id: titles.id,
+      originalTitle: titles.originalTitle
+    })
+    .from(titles)
+    .where(eq(titles.id, 'rec_cfl4g6v00023'))
+    .limit(1);
+
+  const title2 = await tx
+    .select({
+      id: titles.id,
+      originalTitle: titles.originalTitle
+    })
+    .from(titles)
+    .where(eq(titles.id, 'rec_cfl4g6v00056'))
+    .limit(1);
+});
+```
+
+## Using SQL Endpoint
+
+**Xata REST API:**
+
+```bash
+# POST https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql
+curl -X POST "https://{workspace}.{region}.xata.sh/db/{db}:{branch}/sql" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "statement": "SELECT * FROM \"Users\" WHERE email = $1 LIMIT 20;",
+    "params": ["keanu@example.com"]
+  }'
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
+
+// Drizzle provides a SQL template literal for raw SQL queries
+const users = await db.execute(sql`SELECT * FROM "Users" WHERE email = ${'keanu@example.com'} LIMIT 20`);
+
+// Or use Drizzle's query builder (recommended)
+const users = await db.select().from(users).where(eq(users.email, 'keanu@example.com')).limit(20);
+```
+
+## Common Drizzle Operators Reference
+
+Here's a quick reference for common Drizzle operators:
+
+- **Equality**: `eq(column, value)`
+- **Inequality**: `ne(column, value)`
+- **Greater than**: `gt(column, value)`
+- **Greater than or equal**: `gte(column, value)`
+- **Less than**: `lt(column, value)`
+- **Less than or equal**: `lte(column, value)`
+- **Like (pattern matching)**: `like(column, pattern)`
+- **Case-insensitive like**: `ilike(column, pattern)`
+- **In array**: `inArray(column, array)`
+- **Is null**: `isNull(column)`
+- **Is not null**: `isNotNull(column)`
+- **And**: `and(...conditions)`
+- **Or**: `or(...conditions)`
+- **Not**: `not(condition)`
+- **Ascending order**: `asc(column)`
+- **Descending order**: `desc(column)`
+
+## Additional Notes
+
+- **HTTP vs TCP**: The REST API examples use HTTP requests. When migrating to Drizzle, you can use either the HTTP client (`drizzle-orm/xata-http`) or the TCP client (`drizzle-orm/node-postgres`) for better performance.
+
+- **Transactions**: Note that transactions are not supported with the HTTP client in Drizzle. You'll need to use the TCP client (Postgres connection) for transaction support.
+
+- **Returning values**: Drizzle uses `.returning()` to get back the affected rows, similar to Xata's automatic return of created/updated records.
+
+- **Type safety**: Drizzle provides excellent TypeScript type inference. Make sure your schema definitions match your database structure.
+
+- **SQL functions**: For complex operations not covered by Drizzle's query builder, you can use `sql` template literals: `sql\`RANDOM()\``
+
+- **Error handling**: REST API calls return HTTP status codes. Drizzle operations will throw exceptions that you can catch with try-catch blocks.
+
+For more information on using Drizzle with Xata, see the [Drizzle integration guide](/docs/integrations/drizzle).

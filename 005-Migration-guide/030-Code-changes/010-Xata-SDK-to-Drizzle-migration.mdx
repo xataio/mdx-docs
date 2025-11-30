@@ -1,0 +1,945 @@
+---
+title: Migrate from Xata TypeScript SDK to Drizzle
+navTitle: Xata TypeScript SDK to Drizzle
+keywords: ['Xata Lite', 'Xata', 'export']
+description: How to migrate your code from using the Xata TypeScript SDK to Drizzle.
+slug: typescript-sdk-to-drizzle
+published: true
+---
+
+Follow this guide to migrate from using the Xata TypeScript SDK to Drizzle ORM. This guide provides equivalent Drizzle ORM calls for common Xata SDK operations.
+
+## Prerequisites
+
+Before migrating, ensure you have:
+
+- Installed Drizzle ORM and its dependencies
+- Set up your database schema using Drizzle's schema definition methods
+- Configured Drizzle to connect to your Xata database (see the [Drizzle integration guide](/docs/integrations/drizzle))
+
+## Getting Records
+
+### Basic Query
+
+**Xata SDK:**
+
+```ts
+const teams = await xata.db.Teams.getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { db } from './db';
+import { teams } from './schema';
+
+const teamsList = await db.select().from(teams);
+```
+
+### Getting a Record by ID
+
+**Xata SDK:**
+
+```ts
+const user = await xata.db.Users.read('myid');
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const user = await db.select().from(users).where(eq(users.id, 'myid')).limit(1);
+```
+
+### Column Selection
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.select(['name', 'city']).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+const users = await db
+  .select({
+    name: users.name,
+    city: users.city
+  })
+  .from(users);
+```
+
+### Selecting Columns from Linked Tables
+
+**Xata SDK:**
+
+```ts
+const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { users } from './schema';
+
+const teams = await db
+  .select({
+    teams: teams,
+    owner: users
+  })
+  .from(teams)
+  .leftJoin(users, eq(teams.owner, users.id));
+```
+
+### Filtering Records
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.filter({ email: 'keanu@example.com' }).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const users = await db.select().from(users).where(eq(users.email, 'keanu@example.com'));
+```
+
+### Complex Filtering
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.filter({
+  zipcode: { $gt: 100 },
+  $any: [{ name: { $contains: 'Keanu' } }, { name: { $contains: 'Carrie' } }]
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { and, or, gt, like } from 'drizzle-orm';
+
+const users = await db
+  .select()
+  .from(users)
+  .where(and(gt(users.zipcode, 100), or(like(users.name, '%Keanu%'), like(users.name, '%Carrie%'))));
+```
+
+### Sorting Results
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.sort('name', 'asc').getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { asc } from 'drizzle-orm';
+
+const users = await db.select().from(users).orderBy(asc(users.name));
+```
+
+**Xata SDK (descending):**
+
+```ts
+const users = await xata.db.Users.sort('name', 'desc').getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { desc } from 'drizzle-orm';
+
+const users = await db.select().from(users).orderBy(desc(users.name));
+```
+
+**Xata SDK (multiple sort criteria):**
+
+```ts
+const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { desc, asc } from 'drizzle-orm';
+
+const users = await db.select().from(users).orderBy(desc(users.city), asc(users.name));
+```
+
+**Xata SDK (random sorting):**
+
+```ts
+const users = await xata.db.Users.sort('*', 'random').getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { sql } from 'drizzle-orm';
+
+const users = await db
+  .select()
+  .from(users)
+  .orderBy(sql`RANDOM()`);
+```
+
+### Pagination
+
+**Xata SDK (offset-based):**
+
+```ts
+const page = await xata.db.Users.getPaginated({
+  pagination: { size: 10, offset: 10 }
+});
+```
+
+**Drizzle ORM:**
+
+```ts
+const page = await db.select().from(users).limit(10).offset(10);
+```
+
+**Xata SDK (cursor-based):**
+
+```ts
+const page1 = await xata.db.Users.getPaginated({
+  pagination: { size: 2 }
+});
+
+const page2 = await page1.nextPage();
+```
+
+**Drizzle ORM:**
+
+```ts
+// Cursor-based pagination requires manual implementation
+// You'll need to track the last ID or timestamp from the previous page
+const page1 = await db.select().from(users).orderBy(asc(users.id)).limit(2);
+
+const lastId = page1[page1.length - 1]?.id;
+const page2 = await db.select().from(users).where(gt(users.id, lastId)).orderBy(asc(users.id)).limit(2);
+```
+
+## Creating Records
+
+### Basic Create
+
+**Xata SDK:**
+
+```ts
+const record = await xata.db.Users.create({
+  email: 'keanu@example.com',
+  name: 'Keanu Reeves'
+});
+```
+
+**Drizzle ORM:**
+
+```ts
+const record = await db
+  .insert(users)
+  .values({
+    email: 'keanu@example.com',
+    name: 'Keanu Reeves'
+  })
+  .returning();
+```
+
+### Creating a Record with a Given ID
+
+**Xata SDK:**
+
+```ts
+const record = await xata.db.Users.create('myid', {
+  email: 'keanu@example.com',
+  name: 'Keanu Reeves'
+});
+```
+
+**Drizzle ORM:**
+
+```ts
+const record = await db
+  .insert(users)
+  .values({
+    id: 'myid',
+    email: 'keanu@example.com',
+    name: 'Keanu Reeves'
+  })
+  .returning();
+```
+
+### Creating a Record with a Linked Field
+
+**Xata SDK:**
+
+```ts
+const record = await xata.db.Posts.create({
+  title: 'Filming the Matrix',
+  author: 'rec_cd8rqcoavc42pi67lgd0'
+});
+```
+
+**Drizzle ORM:**
+
+```ts
+const record = await db
+  .insert(posts)
+  .values({
+    title: 'Filming the Matrix',
+    author: 'rec_cd8rqcoavc42pi67lgd0'
+  })
+  .returning();
+```
+
+### Bulk Create
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.create([
+  {
+    email: 'laurence@example.com',
+    name: 'Laurence Fishburne',
+    team: 'rec_cd8s4kbo8dsvsjilo1ug'
+  },
+  {
+    email: 'hugo@example.com',
+    name: 'Hugo Weaving',
+    team: 'rec_cd8s4kbo8dsvsjilo1ug'
+  }
+]);
+```
+
+**Drizzle ORM:**
+
+```ts
+const users = await db
+  .insert(users)
+  .values([
+    {
+      email: 'laurence@example.com',
+      name: 'Laurence Fishburne',
+      team: 'rec_cd8s4kbo8dsvsjilo1ug'
+    },
+    {
+      email: 'hugo@example.com',
+      name: 'Hugo Weaving',
+      team: 'rec_cd8s4kbo8dsvsjilo1ug'
+    }
+  ])
+  .returning();
+```
+
+## Updating Records
+
+### Partial Update
+
+**Xata SDK:**
+
+```ts
+const user = await xata.db.Users.update('myid', { email: 'newemail@example.com' });
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const user = await db.update(users).set({ email: 'newemail@example.com' }).where(eq(users.id, 'myid')).returning();
+```
+
+### Create or Update (Upsert)
+
+**Xata SDK:**
+
+```ts
+const user = await xata.db.Users.createOrUpdate('myid', {
+  name: 'Keanu Reeves',
+  email: 'keanu@example.com'
+});
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
+
+const user = await db
+  .insert(users)
+  .values({
+    id: 'myid',
+    name: 'Keanu Reeves',
+    email: 'keanu@example.com'
+  })
+  .onConflictDoUpdate({
+    target: users.id,
+    set: {
+      name: sql`excluded.name`,
+      email: sql`excluded.email`
+    }
+  })
+  .returning();
+```
+
+### Numeric Operations
+
+**Xata SDK (increment):**
+
+```ts
+const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', {
+  counter: { $increment: 1 }
+});
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq, sql } from 'drizzle-orm';
+
+const user = await db
+  .update(users)
+  .set({ counter: sql`${users.counter} + 1` })
+  .where(eq(users.id, 'rec_c8hnbch26un1nl0rthkg'))
+  .returning();
+```
+
+**Xata SDK (decrement, multiply, divide):**
+
+```ts
+const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', {
+  counter: { $divide: 2 }
+});
+```
+
+**Drizzle ORM:**
+
+```ts
+const user = await db
+  .update(users)
+  .set({ counter: sql`${users.counter} / 2` })
+  .where(eq(users.id, 'rec_c8hnbch26un1nl0rthkg'))
+  .returning();
+```
+
+### Optimistic Concurrency Control
+
+**Xata SDK:**
+
+```ts
+const updatedUser = await xata.db.Users.update(
+  'rec_c8hnbch26un1nl0rthkg',
+  {
+    name: 'Keanu Reeves',
+    email: 'keanu@example.com'
+  },
+  {
+    ifVersion: 0
+  }
+);
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq, and } from 'drizzle-orm';
+
+const updatedUser = await db
+  .update(users)
+  .set({
+    name: 'Keanu Reeves',
+    email: 'keanu@example.com'
+  })
+  .where(
+    and(
+      eq(users.id, 'rec_c8hnbch26un1nl0rthkg'),
+      eq(users.xataVersion, 0) // Assuming you have a version column
+    )
+  )
+  .returning();
+```
+
+## Deleting Records
+
+### Single Delete
+
+**Xata SDK:**
+
+```ts
+const user = await xata.db.Users.delete('rec_cd8s3r8avc42pi67m13g');
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+await db.delete(users).where(eq(users.id, 'rec_cd8s3r8avc42pi67m13g'));
+```
+
+### Bulk Delete
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.delete(['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1oncchhigq95n2g']);
+```
+
+**Drizzle ORM:**
+
+```ts
+import { inArray } from 'drizzle-orm';
+
+await db.delete(users).where(inArray(users.id, ['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1oncchhigq95n2g']));
+```
+
+## Advanced Filtering Examples
+
+### Exact Match
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: 'Keanu Reeves'
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(eq(users.name, 'Keanu Reeves'));
+```
+
+### Using $is Operator
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $is: 'Keanu Reeves' }
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(eq(users.name, 'Keanu Reeves'));
+```
+
+### $any Operator (OR logic)
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $any: ['Keanu Reeves', 'Carrie-Anne Moss'] }
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { inArray } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(users)
+  .where(inArray(users.name, ['Keanu Reeves', 'Carrie-Anne Moss']));
+```
+
+### Multiple Conditions (AND logic)
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: 'Keanu Reeves',
+  city: 'New York'
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { and, eq } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(users)
+  .where(and(eq(users.name, 'Keanu Reeves'), eq(users.city, 'New York')));
+```
+
+### $all Operator
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  $all: [{ $exists: 'name' }, { $exists: 'address' }]
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { and, isNotNull } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(users)
+  .where(and(isNotNull(users.name), isNotNull(users.address)));
+```
+
+### $not Operator
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  $not: {
+    name: 'Keanu Reeves'
+  }
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { not, eq } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(users)
+  .where(not(eq(users.name, 'Keanu Reeves')));
+```
+
+### $contains Operator
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $contains: 'Keanu' }
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { like } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(like(users.name, '%Keanu%'));
+```
+
+### $iContains Operator (Case Insensitive)
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $iContains: 'keanu' }
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { ilike } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(ilike(users.name, '%keanu%'));
+```
+
+### $startsWith and $endsWith
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $startsWith: 'Keanu' }
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { like } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(like(users.name, 'Keanu%'));
+```
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $endsWith: 'Reeves' }
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { like } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(like(users.name, '%Reeves'));
+```
+
+### Comparison Operators
+
+**Xata SDK ($gt, $ge, $lt, $le):**
+
+```ts
+const records = await xata.db.Posts.filter({
+  views: { $gt: 5 }
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { gt } from 'drizzle-orm';
+
+const records = await db.select().from(posts).where(gt(posts.views, 5));
+```
+
+**Xata SDK (date range):**
+
+```ts
+const records = await xata.db.Posts.filter({
+  $all: [
+    { 'xata.createdAt': { $ge: new Date('2022-10-25T01:00:00Z') } },
+    { 'xata.createdAt': { $lt: new Date('2022-10-25T02:00:00Z') } }
+  ]
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { and, gte, lt } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(posts)
+  .where(
+    and(
+      gte(posts.xataCreatedAt, new Date('2022-10-25T01:00:00Z')),
+      lt(posts.xataCreatedAt, new Date('2022-10-25T02:00:00Z'))
+    )
+  );
+```
+
+### $includes Operator (Array Contains)
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Posts.filter({
+  labels: { $includes: 'matrix' }
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { sql } from 'drizzle-orm';
+
+const records = await db
+  .select()
+  .from(posts)
+  .where(sql`'matrix' = ANY(${posts.labels})`);
+```
+
+### $exists and $notExists
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  $exists: 'name'
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { isNotNull } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(isNotNull(users.name));
+```
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  $notExists: 'name'
+}).getMany();
+```
+
+**Drizzle ORM:**
+
+```ts
+import { isNull } from 'drizzle-orm';
+
+const records = await db.select().from(users).where(isNull(users.name));
+```
+
+## Transactions
+
+**Xata SDK:**
+
+```ts
+const result = await xata.transactions.run([
+  { insert: { table: 'titles', record: { originalTitle: 'A new film' } } },
+  { update: { table: 'titles', id: 'new-0', fields: { originalTitle: 'The sequel' } } },
+  { delete: { table: 'titles', id: 'new-0' } }
+]);
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+await db.transaction(async (tx) => {
+  await tx.insert(titles).values({ originalTitle: 'A new film' });
+  await tx.update(titles).set({ originalTitle: 'The sequel' }).where(eq(titles.id, 'new-0'));
+  await tx.delete(titles).where(eq(titles.id, 'new-0'));
+});
+```
+
+### Transaction with Multiple Inserts
+
+**Xata SDK:**
+
+```ts
+const result = await xata.transactions.run([
+  {
+    insert: {
+      table: 'titles',
+      record: { id: 'rec_cfl4g6v838og05h0iv6g', originalTitle: 'A new film' },
+      createOnly: true
+    }
+  }
+]);
+```
+
+**Drizzle ORM:**
+
+```ts
+await db.transaction(async (tx) => {
+  await tx
+    .insert(titles)
+    .values({
+      id: 'rec_cfl4g6v838og05h0iv6g',
+      originalTitle: 'A new film'
+    })
+    .onConflictDoNothing();
+});
+```
+
+### Transaction with Updates
+
+**Xata SDK:**
+
+```ts
+const result = await xata.transactions.run([
+  {
+    update: {
+      table: 'Users',
+      id: 'rec_cmf56ugvjdkilkpcdeu0',
+      fields: { email: 'neo@matrix.com', name: 'Neo' }
+    }
+  },
+  {
+    update: {
+      table: 'Users',
+      id: 'rec_cmf572veoo9ahn3r96p0',
+      fields: { email: 'trinity@matrix.com', name: 'Trinity' }
+    }
+  }
+]);
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+await db.transaction(async (tx) => {
+  await tx.update(users).set({ email: 'neo@matrix.com', name: 'Neo' }).where(eq(users.id, 'rec_cmf56ugvjdkilkpcdeu0'));
+
+  await tx
+    .update(users)
+    .set({ email: 'trinity@matrix.com', name: 'Trinity' })
+    .where(eq(users.id, 'rec_cmf572veoo9ahn3r96p0'));
+});
+```
+
+### Transaction with Deletes
+
+**Xata SDK:**
+
+```ts
+const result = await xata.transactions.run([
+  {
+    delete: {
+      table: 'titles',
+      id: 'rec_cfl4g6v00023'
+    }
+  },
+  {
+    delete: {
+      table: 'titles',
+      id: 'rec_cfl4g6v00056'
+    }
+  }
+]);
+```
+
+**Drizzle ORM:**
+
+```ts
+import { eq } from 'drizzle-orm';
+
+await db.transaction(async (tx) => {
+  await tx.delete(titles).where(eq(titles.id, 'rec_cfl4g6v00023'));
+
+  await tx.delete(titles).where(eq(titles.id, 'rec_cfl4g6v00056'));
+});
+```
+
+## Common Drizzle Operators Reference
+
+Here's a quick reference for common Drizzle operators:
+
+- **Equality**: `eq(column, value)`
+- **Inequality**: `ne(column, value)`
+- **Greater than**: `gt(column, value)`
+- **Greater than or equal**: `gte(column, value)`
+- **Less than**: `lt(column, value)`
+- **Less than or equal**: `lte(column, value)`
+- **Like (pattern matching)**: `like(column, pattern)`
+- **Case-insensitive like**: `ilike(column, pattern)`
+- **In array**: `inArray(column, array)`
+- **Is null**: `isNull(column)`
+- **Is not null**: `isNotNull(column)`
+- **And**: `and(...conditions)`
+- **Or**: `or(...conditions)`
+- **Not**: `not(condition)`
+- **Ascending order**: `asc(column)`
+- **Descending order**: `desc(column)`
