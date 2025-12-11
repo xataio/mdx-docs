@@ -98,6 +98,7 @@ CREATE SEQUENCE xata_private.xid_serial
 ```
 
 3. Create each of your tables as they were in Xata Lite. You can use the query workspace in the UI to execute the `CREATE TABLE` statements. Below is an example CREATE TABLE statement for a Xata Lite table with Xata columns.
+
 ```sql
 CREATE TABLE xata.catalogs (
     xata_id text DEFAULT ('rec_'::text || (xata_private.xid())::text) NOT NULL,
