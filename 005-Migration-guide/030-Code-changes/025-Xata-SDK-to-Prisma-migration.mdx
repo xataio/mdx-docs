@@ -1,0 +1,1044 @@
+---
+title: Migrate from Xata TypeScript SDK to Prisma
+navTitle: Xata TypeScript SDK to Prisma
+keywords: ['Xata Lite', 'Xata', 'export']
+description: How to migrate your code from using the Xata TypeScript SDK to Prisma.
+slug: typescript-sdk-to-prisma
+published: true
+---
+
+Follow this guide to migrate from using the Xata TypeScript SDK to Prisma ORM. This guide provides equivalent Prisma ORM calls for common Xata SDK operations.
+
+## Prerequisites
+
+Before migrating, ensure you have:
+
+- Installed Prisma ORM and its dependencies
+- Set up your database schema using Prisma's schema definition
+- Configured Prisma to connect to your Xata database (see the [Prisma integration guide](/docs/integrations/prisma))
+
+## Getting Records
+
+### Basic Query
+
+**Xata SDK:**
+
+```ts
+const teams = await xata.db.Teams.getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+const teams = await prisma.teams.findMany();
+```
+
+### Getting a Record by ID
+
+**Xata SDK:**
+
+```ts
+const user = await xata.db.Users.read('myid');
+```
+
+**Prisma ORM:**
+
+```ts
+const user = await prisma.users.findUnique({
+  where: { id: 'myid' }
+});
+```
+
+### Column Selection
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.select(['name', 'city']).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const users = await prisma.users.findMany({
+  select: {
+    name: true,
+    city: true
+  }
+});
+```
+
+### Selecting Columns from Linked Tables
+
+**Xata SDK:**
+
+```ts
+const teams = await xata.db.Teams.select(['*', 'owner.*']).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const teams = await prisma.teams.findMany({
+  include: {
+    owner: true
+  }
+});
+```
+
+### Filtering Records
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.filter({ email: 'keanu@example.com' }).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const users = await prisma.users.findMany({
+  where: {
+    email: 'keanu@example.com'
+  }
+});
+```
+
+### Complex Filtering
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.filter({
+  zipcode: { $gt: 100 },
+  $any: [{ name: { $contains: 'Keanu' } }, { name: { $contains: 'Carrie' } }]
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const users = await prisma.users.findMany({
+  where: {
+    zipcode: {
+      gt: 100
+    },
+    OR: [{ name: { contains: 'Keanu' } }, { name: { contains: 'Carrie' } }]
+  }
+});
+```
+
+### Sorting Results
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.sort('name', 'asc').getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const users = await prisma.users.findMany({
+  orderBy: {
+    name: 'asc'
+  }
+});
+```
+
+**Xata SDK (descending):**
+
+```ts
+const users = await xata.db.Users.sort('name', 'desc').getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const users = await prisma.users.findMany({
+  orderBy: {
+    name: 'desc'
+  }
+});
+```
+
+**Xata SDK (multiple sort criteria):**
+
+```ts
+const users = await xata.db.Users.sort('city', 'desc').sort('name', 'asc').getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const users = await prisma.users.findMany({
+  orderBy: [{ city: 'desc' }, { name: 'asc' }]
+});
+```
+
+**Xata SDK (random sorting):**
+
+```ts
+const users = await xata.db.Users.sort('*', 'random').getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+// Prisma doesn't have built-in random sorting
+// You can use raw SQL or fetch all and shuffle in application code
+const users = await prisma.$queryRaw`
+  SELECT * FROM "Users" ORDER BY RANDOM()
+`;
+```
+
+### Pagination
+
+**Xata SDK (offset-based):**
+
+```ts
+const page = await xata.db.Users.getPaginated({
+  pagination: { size: 10, offset: 10 }
+});
+```
+
+**Prisma ORM:**
+
+```ts
+const page = await prisma.users.findMany({
+  take: 10,
+  skip: 10
+});
+```
+
+**Xata SDK (cursor-based):**
+
+```ts
+const page1 = await xata.db.Users.getPaginated({
+  pagination: { size: 2 }
+});
+
+const page2 = await page1.nextPage();
+```
+
+**Prisma ORM:**
+
+```ts
+// Cursor-based pagination requires manual implementation
+// You'll need to track the last ID or timestamp from the previous page
+const page1 = await prisma.users.findMany({
+  take: 2,
+  orderBy: { id: 'asc' }
+});
+
+const lastId = page1[page1.length - 1]?.id;
+if (lastId) {
+  const page2 = await prisma.users.findMany({
+    take: 2,
+    skip: 1, // Skip the cursor record itself
+    cursor: {
+      id: lastId
+    },
+    orderBy: { id: 'asc' }
+  });
+}
+```
+
+## Creating Records
+
+### Basic Create
+
+**Xata SDK:**
+
+```ts
+const record = await xata.db.Users.create({
+  email: 'keanu@example.com',
+  name: 'Keanu Reeves'
+});
+```
+
+**Prisma ORM:**
+
+```ts
+const record = await prisma.users.create({
+  data: {
+    email: 'keanu@example.com',
+    name: 'Keanu Reeves'
+  }
+});
+```
+
+### Creating a Record with a Given ID
+
+**Xata SDK:**
+
+```ts
+const record = await xata.db.Users.create('myid', {
+  email: 'keanu@example.com',
+  name: 'Keanu Reeves'
+});
+```
+
+**Prisma ORM:**
+
+```ts
+const record = await prisma.users.create({
+  data: {
+    id: 'myid',
+    email: 'keanu@example.com',
+    name: 'Keanu Reeves'
+  }
+});
+```
+
+### Creating a Record with a Linked Field
+
+**Xata SDK:**
+
+```ts
+const record = await xata.db.Posts.create({
+  title: 'Filming the Matrix',
+  author: 'rec_cd8rqcoavc42pi67lgd0'
+});
+```
+
+**Prisma ORM:**
+
+```ts
+const record = await prisma.posts.create({
+  data: {
+    title: 'Filming the Matrix',
+    author: 'rec_cd8rqcoavc42pi67lgd0'
+  }
+});
+```
+
+### Bulk Create
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.create([
+  {
+    email: 'laurence@example.com',
+    name: 'Laurence Fishburne',
+    team: 'rec_cd8s4kbo8dsvsjilo1ug'
+  },
+  {
+    email: 'hugo@example.com',
+    name: 'Hugo Weaving',
+    team: 'rec_cd8s4kbo8dsvsjilo1ug'
+  }
+]);
+```
+
+**Prisma ORM:**
+
+```ts
+// Note: createMany doesn't return the created records, only a count
+// If you need the records, use a transaction with individual creates
+const result = await prisma.users.createMany({
+  data: [
+    {
+      email: 'laurence@example.com',
+      name: 'Laurence Fishburne',
+      team: 'rec_cd8s4kbo8dsvsjilo1ug'
+    },
+    {
+      email: 'hugo@example.com',
+      name: 'Hugo Weaving',
+      team: 'rec_cd8s4kbo8dsvsjilo1ug'
+    }
+  ]
+});
+
+// Alternative: If you need the created records back
+const users = await prisma.$transaction([
+  prisma.users.create({
+    data: {
+      email: 'laurence@example.com',
+      name: 'Laurence Fishburne',
+      team: 'rec_cd8s4kbo8dsvsjilo1ug'
+    }
+  }),
+  prisma.users.create({
+    data: {
+      email: 'hugo@example.com',
+      name: 'Hugo Weaving',
+      team: 'rec_cd8s4kbo8dsvsjilo1ug'
+    }
+  })
+]);
+```
+
+## Updating Records
+
+### Partial Update
+
+**Xata SDK:**
+
+```ts
+const user = await xata.db.Users.update('myid', { email: 'newemail@example.com' });
+```
+
+**Prisma ORM:**
+
+```ts
+const user = await prisma.users.update({
+  where: { id: 'myid' },
+  data: { email: 'newemail@example.com' }
+});
+```
+
+### Create or Update (Upsert)
+
+**Xata SDK:**
+
+```ts
+const user = await xata.db.Users.createOrUpdate('myid', {
+  name: 'Keanu Reeves',
+  email: 'keanu@example.com'
+});
+```
+
+**Prisma ORM:**
+
+```ts
+const user = await prisma.users.upsert({
+  where: { id: 'myid' },
+  create: {
+    id: 'myid',
+    name: 'Keanu Reeves',
+    email: 'keanu@example.com'
+  },
+  update: {
+    name: 'Keanu Reeves',
+    email: 'keanu@example.com'
+  }
+});
+```
+
+### Numeric Operations
+
+**Xata SDK (increment):**
+
+```ts
+const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', {
+  counter: { $increment: 1 }
+});
+```
+
+**Prisma ORM:**
+
+```ts
+const user = await prisma.users.update({
+  where: { id: 'rec_c8hnbch26un1nl0rthkg' },
+  data: {
+    counter: {
+      increment: 1
+    }
+  }
+});
+```
+
+**Xata SDK (decrement, multiply, divide):**
+
+```ts
+const user = await xata.db.Users.update('rec_c8hnbch26un1nl0rthkg', {
+  counter: { $divide: 2 }
+});
+```
+
+**Prisma ORM:**
+
+```ts
+// Prisma doesn't have built-in multiply/divide operations
+// Use raw SQL for atomic operations
+await prisma.$executeRaw`
+  UPDATE "Users" 
+  SET counter = counter / 2 
+  WHERE id = ${'rec_c8hnbch26un1nl0rthkg'}
+`;
+
+// Or fetch, calculate, and update (not atomic)
+const user = await prisma.users.findUnique({
+  where: { id: 'rec_c8hnbch26un1nl0rthkg' }
+});
+if (user) {
+  await prisma.users.update({
+    where: { id: 'rec_c8hnbch26un1nl0rthkg' },
+    data: { counter: user.counter / 2 }
+  });
+}
+```
+
+### Optimistic Concurrency Control
+
+**Xata SDK:**
+
+```ts
+const updatedUser = await xata.db.Users.update(
+  'rec_c8hnbch26un1nl0rthkg',
+  {
+    name: 'Keanu Reeves',
+    email: 'keanu@example.com'
+  },
+  {
+    ifVersion: 0
+  }
+);
+```
+
+**Prisma ORM:**
+
+```ts
+const updatedUser = await prisma.users.update({
+  where: {
+    id: 'rec_c8hnbch26un1nl0rthkg',
+    xataVersion: 0 // Assuming you have a version column
+  },
+  data: {
+    name: 'Keanu Reeves',
+    email: 'keanu@example.com'
+  }
+});
+```
+
+## Deleting Records
+
+### Single Delete
+
+**Xata SDK:**
+
+```ts
+const user = await xata.db.Users.delete('rec_cd8s3r8avc42pi67m13g');
+```
+
+**Prisma ORM:**
+
+```ts
+await prisma.users.delete({
+  where: { id: 'rec_cd8s3r8avc42pi67m13g' }
+});
+```
+
+### Bulk Delete
+
+**Xata SDK:**
+
+```ts
+const users = await xata.db.Users.delete(['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1oncchhigq95n2g']);
+```
+
+**Prisma ORM:**
+
+```ts
+await prisma.users.deleteMany({
+  where: {
+    id: {
+      in: ['rec_cd8s3r8avc42pi67m13g', 'rec_cgh9o1oncchhigq95n2g']
+    }
+  }
+});
+```
+
+## Advanced Filtering Examples
+
+### Exact Match
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: 'Keanu Reeves'
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    name: 'Keanu Reeves'
+  }
+});
+```
+
+### Using $is Operator
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $is: 'Keanu Reeves' }
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    name: 'Keanu Reeves'
+  }
+});
+```
+
+### $any Operator (OR logic)
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $any: ['Keanu Reeves', 'Carrie-Anne Moss'] }
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    name: {
+      in: ['Keanu Reeves', 'Carrie-Anne Moss']
+    }
+  }
+});
+```
+
+### Multiple Conditions (AND logic)
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: 'Keanu Reeves',
+  city: 'New York'
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    name: 'Keanu Reeves',
+    city: 'New York'
+  }
+});
+```
+
+### $all Operator
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  $all: [{ $exists: 'name' }, { $exists: 'address' }]
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    AND: [{ name: { not: null } }, { address: { not: null } }]
+  }
+});
+```
+
+### $not Operator
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  $not: {
+    name: 'Keanu Reeves'
+  }
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    name: {
+      not: 'Keanu Reeves'
+    }
+  }
+});
+```
+
+### $contains Operator
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $contains: 'Keanu' }
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    name: {
+      contains: 'Keanu'
+    }
+  }
+});
+```
+
+### $iContains Operator (Case Insensitive)
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $iContains: 'keanu' }
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+// For PostgreSQL, use mode: 'insensitive' for case-insensitive matching
+const records = await prisma.users.findMany({
+  where: {
+    name: {
+      contains: 'keanu',
+      mode: 'insensitive'
+    }
+  }
+});
+```
+
+### $startsWith and $endsWith
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $startsWith: 'Keanu' }
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    name: {
+      startsWith: 'Keanu'
+    }
+  }
+});
+```
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  name: { $endsWith: 'Reeves' }
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    name: {
+      endsWith: 'Reeves'
+    }
+  }
+});
+```
+
+### Comparison Operators
+
+**Xata SDK ($gt, $ge, $lt, $le):**
+
+```ts
+const records = await xata.db.Posts.filter({
+  views: { $gt: 5 }
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.posts.findMany({
+  where: {
+    views: {
+      gt: 5
+    }
+  }
+});
+```
+
+**Xata SDK (date range):**
+
+```ts
+const records = await xata.db.Posts.filter({
+  $all: [
+    { 'xata.createdAt': { $ge: new Date('2022-10-25T01:00:00Z') } },
+    { 'xata.createdAt': { $lt: new Date('2022-10-25T02:00:00Z') } }
+  ]
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.posts.findMany({
+  where: {
+    AND: [
+      {
+        xataCreatedAt: {
+          gte: new Date('2022-10-25T01:00:00Z')
+        }
+      },
+      {
+        xataCreatedAt: {
+          lt: new Date('2022-10-25T02:00:00Z')
+        }
+      }
+    ]
+  }
+});
+```
+
+### $includes Operator (Array Contains)
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Posts.filter({
+  labels: { $includes: 'matrix' }
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+// For array fields in PostgreSQL, use hasSome or hasEvery
+const records = await prisma.posts.findMany({
+  where: {
+    labels: {
+      hasSome: ['matrix']
+    }
+  }
+});
+```
+
+### $exists and $notExists
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  $exists: 'name'
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    name: {
+      not: null
+    }
+  }
+});
+```
+
+**Xata SDK:**
+
+```ts
+const records = await xata.db.Users.filter({
+  $notExists: 'name'
+}).getMany();
+```
+
+**Prisma ORM:**
+
+```ts
+const records = await prisma.users.findMany({
+  where: {
+    name: null
+  }
+});
+```
+
+## Transactions
+
+**Xata SDK:**
+
+```ts
+const result = await xata.transactions.run([
+  { insert: { table: 'titles', record: { originalTitle: 'A new film' } } },
+  { update: { table: 'titles', id: 'new-0', fields: { originalTitle: 'The sequel' } } },
+  { delete: { table: 'titles', id: 'new-0' } }
+]);
+```
+
+**Prisma ORM:**
+
+```ts
+const result = await prisma.$transaction(async (tx) => {
+  await tx.titles.create({
+    data: { originalTitle: 'A new film' }
+  });
+
+  await tx.titles.update({
+    where: { id: 'new-0' },
+    data: { originalTitle: 'The sequel' }
+  });
+
+  await tx.titles.delete({
+    where: { id: 'new-0' }
+  });
+});
+```
+
+### Transaction with Multiple Inserts
+
+**Xata SDK:**
+
+```ts
+const result = await xata.transactions.run([
+  {
+    insert: {
+      table: 'titles',
+      record: { id: 'rec_cfl4g6v838og05h0iv6g', originalTitle: 'A new film' },
+      createOnly: true
+    }
+  }
+]);
+```
+
+**Prisma ORM:**
+
+```ts
+await prisma.$transaction(async (tx) => {
+  await tx.titles.upsert({
+    where: { id: 'rec_cfl4g6v838og05h0iv6g' },
+    create: {
+      id: 'rec_cfl4g6v838og05h0iv6g',
+      originalTitle: 'A new film'
+    },
+    update: {}
+  });
+});
+```
+
+### Transaction with Updates
+
+**Xata SDK:**
+
+```ts
+const result = await xata.transactions.run([
+  {
+    update: {
+      table: 'Users',
+      id: 'rec_cmf56ugvjdkilkpcdeu0',
+      fields: { email: 'neo@matrix.com', name: 'Neo' }
+    }
+  },
+  {
+    update: {
+      table: 'Users',
+      id: 'rec_cmf572veoo9ahn3r96p0',
+      fields: { email: 'trinity@matrix.com', name: 'Trinity' }
+    }
+  }
+]);
+```
+
+**Prisma ORM:**
+
+```ts
+await prisma.$transaction(async (tx) => {
+  await tx.users.update({
+    where: { id: 'rec_cmf56ugvjdkilkpcdeu0' },
+    data: { email: 'neo@matrix.com', name: 'Neo' }
+  });
+
+  await tx.users.update({
+    where: { id: 'rec_cmf572veoo9ahn3r96p0' },
+    data: { email: 'trinity@matrix.com', name: 'Trinity' }
+  });
+});
+```
+
+### Transaction with Deletes
+
+**Xata SDK:**
+
+```ts
+const result = await xata.transactions.run([
+  {
+    delete: {
+      table: 'titles',
+      id: 'rec_cfl4g6v00023'
+    }
+  },
+  {
+    delete: {
+      table: 'titles',
+      id: 'rec_cfl4g6v00056'
+    }
+  }
+]);
+```
+
+**Prisma ORM:**
+
+```ts
+await prisma.$transaction(async (tx) => {
+  await tx.titles.delete({
+    where: { id: 'rec_cfl4g6v00023' }
+  });
+
+  await tx.titles.delete({
+    where: { id: 'rec_cfl4g6v00056' }
+  });
+});
+```
+
+## Common Prisma Operators Reference
+
+Here's a quick reference for common Prisma filter operators:
+
+- **Equality**: `{ field: value }`
+- **Inequality**: `{ field: { not: value } }`
+- **Greater than**: `{ field: { gt: value } }`
+- **Greater than or equal**: `{ field: { gte: value } }`
+- **Less than**: `{ field: { lt: value } }`
+- **Less than or equal**: `{ field: { lte: value } }`
+- **Contains (string)**: `{ field: { contains: value } }`
+- **Case-insensitive contains**: `{ field: { contains: value, mode: 'insensitive' } }`
+- **Starts with**: `{ field: { startsWith: value } }`
+- **Ends with**: `{ field: { endsWith: value } }`
+- **In array**: `{ field: { in: array } }`
+- **Is null**: `{ field: null }`
+- **Is not null**: `{ field: { not: null } }`
+- **Array contains**: `{ field: { hasSome: array } }` or `{ field: { hasEvery: array } }`
+- **And**: `{ AND: [condition1, condition2] }`
+- **Or**: `{ OR: [condition1, condition2] }`
+- **Not**: `{ NOT: condition }`
+- **Ascending order**: `{ orderBy: { field: 'asc' } }`
+- **Descending order**: `{ orderBy: { field: 'desc' } }`
+- **Increment**: `{ field: { increment: value } }`
+- **Decrement**: `{ field: { decrement: value } }`
