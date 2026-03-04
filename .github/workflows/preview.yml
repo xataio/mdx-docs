@@ -45,11 +45,13 @@ jobs:
 
       - id: deploy
         name: Deploy to Vercel
+        env:
+          HEAD_REF: ${{ github.head_ref || github.ref_name }}
         run: |
           vercel deploy --no-wait \
             --token ${{ secrets.VERCEL_TOKEN }} \
-            --build-env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}' \
-            --env MDX_DOCS_BRANCH='${{ github.head_ref || github.ref_name }}' \
+            --build-env MDX_DOCS_BRANCH="$HEAD_REF" \
+            --env MDX_DOCS_BRANCH="$HEAD_REF" \
             --build-env XATA_PREVIEW=none \
             --env XATA_PREVIEW=none \
             --build-env XATA_BRANCH=main \
